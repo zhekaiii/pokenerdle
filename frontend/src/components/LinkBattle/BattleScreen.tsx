@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import api from "../../api";
 import battleScreenClasses from "./BattleScreen.module.scss";
+import PokemonCard from "./PokemonCard";
 
 type Props = {
   socket: Socket;
@@ -49,12 +50,17 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
       setIsSubmittingAnswer(false);
       setInput("");
     });
+    socket.on("wrongAnswer", () => {
+      setIsSubmittingAnswer(false);
+      setInput("");
+    });
     (async () => {
       const pokemonNames = await api.data.getPokemonNames();
       setPokemonNames(pokemonNames);
     })();
     return () => {
       socket.off("pushPokemon");
+      socket.off("wrongAnswer");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only run once
   }, []);
@@ -107,20 +113,7 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
       />
       <div style={{ display: "flex", flexDirection: "column-reverse" }}>
         {pokemons.map((pokemon) => (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-            key={pokemon.id}
-          >
-            <img src={pokemon.sprites.front_default ?? ""} alt={pokemon.name} />
-            <span>{pokemon.name}</span>
-            {pokemon.abilities.map(({ ability }) => (
-              <span>{ability.name}</span>
-            ))}
-          </div>
+          <PokemonCard key={pokemon.id} pokemon={pokemon} />
         ))}
       </div>
     </div>
