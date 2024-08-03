@@ -119,7 +119,7 @@ const LinkBattle: React.FC = () => {
           },
         }}
         disabled={isSubmittingAnswer}
-        onChange={(e, value, r) => {
+        onChange={(_, value, r) => {
           if (!value) {
             return;
           }
