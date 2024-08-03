@@ -10,7 +10,7 @@ export default {
     socket.on("disconnect", () => {
       setRoomCode(null);
     });
-    socket.on("error", (error: string) => {
+    socket.on("roomError", (error: string) => {
       console.error(error);
       setRoomCode(null);
     });
@@ -24,5 +24,8 @@ export default {
   },
   joinRoom: (socket: Socket, roomCode: string) => {
     socket.emit("join", roomCode);
+  },
+  validatePokemon: (socket: Socket, pokemonName: string, roomId: string) => {
+    socket.emit("answer", pokemonName, roomId);
   },
 };

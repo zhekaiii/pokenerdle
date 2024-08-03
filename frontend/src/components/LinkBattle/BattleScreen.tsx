@@ -6,10 +6,16 @@ import {
 } from "@mui/material";
 import { Pokemon } from "pokeapi-js-wrapper";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Socket } from "socket.io-client";
 import api from "../../api";
 import inputClasses from "./LinkBattle.module.scss";
 
-const BattleScreen: React.FC = () => {
+type Props = {
+  socket: Socket;
+  roomCode: string;
+};
+
+const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
@@ -26,22 +32,9 @@ const BattleScreen: React.FC = () => {
         return;
       }
       setIsSubmittingAnswer(true);
-      const previousPokemon = pokemons[pokemons.length - 1];
-      try {
-        const pokemon = await api.data.validatePokemon(
-          pokemonName,
-          previousPokemon.name
-        );
-        if (pokemon) {
-          setPokemons([...pokemons, pokemon]);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-      setIsSubmittingAnswer(false);
-      setInput("");
+      api.battles.validatePokemon(socket, pokemonName, roomCode);
     },
-    [pokemons, pokemonNames, isSubmittingAnswer]
+    [isSubmittingAnswer, pokemonNames, pokemons, socket, roomCode]
   );
 
   useEffect(() => {
@@ -51,12 +44,19 @@ const BattleScreen: React.FC = () => {
   }, [isSubmittingAnswer]);
 
   useEffect(() => {
+    socket.on("pushPokemon", (pokemon: Pokemon) => {
+      setPokemons((pokemons) => [...pokemons, pokemon]);
+      setIsSubmittingAnswer(false);
+      setInput("");
+    });
     (async () => {
       const pokemonNames = await api.data.getPokemonNames();
       setPokemonNames(pokemonNames);
-      const starterPokemon = await api.data.getStarterPokemon();
-      setPokemons([starterPokemon]);
     })();
+    return () => {
+      socket.off("pushPokemon");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only run once
   }, []);
 
   const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {

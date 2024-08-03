@@ -21,11 +21,16 @@ const LinkBattle: React.FC = () => {
     };
   }, [socket]);
 
+  useEffect(() => {
+    if (roomCode) return;
+    setIsOpponentConnected(false);
+  }, [roomCode]);
+
   return (
     <PageContainer>
-      {roomCode ? (
+      {roomCode && socket ? (
         isOpponentConnected ? (
-          <BattleScreen />
+          <BattleScreen socket={socket} roomCode={roomCode} />
         ) : (
           <WaitingForOpponent roomCode={roomCode} />
         )

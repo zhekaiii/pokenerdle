@@ -15,7 +15,7 @@ const Home: React.FC<Props> = ({ socket }) => {
 
   useEffect(() => {
     if (!socket) return;
-    socket.on("error", () => {
+    socket.on("roomError", () => {
       setIsConnecting(false);
     });
   }, [socket]);
