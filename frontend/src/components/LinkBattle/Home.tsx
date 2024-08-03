@@ -2,6 +2,7 @@ import { Button, OutlinedInput } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import api from "../../api";
+import LoadingDialog from "../recyclables/LoadingDialog";
 
 type Props = {
   socket?: Socket;
@@ -54,6 +55,7 @@ const Home: React.FC<Props> = ({ socket }) => {
       >
         Create Room
       </Button>
+      <LoadingDialog open={isConnecting} />
     </div>
   );
 };

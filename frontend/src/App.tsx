@@ -1,6 +1,7 @@
 import { createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
+import { RouterProvider } from "react-router-dom";
 import "./App.scss";
-import LinkBattle from "./components/LinkBattle";
+import { router } from "./routes";
 
 const darkTheme = createTheme({
   palette: {
@@ -19,7 +20,7 @@ function App() {
 
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <LinkBattle />
+      <RouterProvider router={router} />
     </ThemeProvider>
   );
 }

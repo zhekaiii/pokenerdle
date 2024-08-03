@@ -1,4 +1,6 @@
+import { Alert, Snackbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import api from "../../api";
 import PageContainer from "../../layout/PageContainer";
@@ -7,14 +9,26 @@ import Home from "./Home";
 import WaitingForOpponent from "./WaitingForOpponent";
 
 const LinkBattle: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [roomCode, setRoomCode] = useState<string | null>(null);
   const [socket, setSocket] = useState<Socket | undefined>(undefined);
   const [isOpponentConnected, setIsOpponentConnected] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 
   useEffect(() => {
     if (!socket) {
-      setSocket(api.battles.connect(setRoomCode, setIsOpponentConnected));
+      setSocket(
+        api.battles.connect(setRoomCode, setIsOpponentConnected, (error) => {
+          setError(error);
+          setIsSnackbarOpen(true);
+          setSearchParams();
+        })
+      );
       return;
+    }
+    if (searchParams.get("roomCode")) {
+      socket.emit("join", searchParams.get("roomCode"));
     }
     return () => {
       socket.disconnect();
@@ -37,6 +51,16 @@ const LinkBattle: React.FC = () => {
       ) : (
         <Home socket={socket} />
       )}
+
+      <Snackbar
+        open={isSnackbarOpen}
+        onClose={() => setIsSnackbarOpen(false)}
+        autoHideDuration={3000}
+      >
+        <Alert severity="error" variant="filled">
+          {error}
+        </Alert>
+      </Snackbar>
     </PageContainer>
   );
 };

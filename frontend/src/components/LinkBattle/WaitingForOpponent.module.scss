@@ -1,0 +1,36 @@
+.WaitingForOpponent__Card {
+  --border-color: var(--pokeball-white);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-block: auto;
+  max-width: 700px;
+  text-align: center;
+  gap: 16px;
+  padding: 20px;
+  background-image: radial-gradient(
+      circle at center,
+      var(--pokeball-white) 12%,
+      var(--pokeball-stripe) 12%,
+      var(--pokeball-stripe) 20%,
+      transparent 20%
+    ),
+    linear-gradient(
+      140deg,
+      var(--pokeball-red) 48%,
+      var(--pokeball-stripe) 48%,
+      var(--pokeball-stripe) 52%,
+      var(--pokeball-white) 52%
+    );
+  border-radius: 20px;
+  height: 400px;
+  border: 8px solid var(--border-color);
+
+  @media (prefers-color-scheme: light) {
+    --border-color: var(--pokeball-stripe);
+  }
+
+  &Title {
+    font-weight: 600;
+  }
+}
