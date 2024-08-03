@@ -8,7 +8,7 @@ import { Pokemon } from "pokeapi-js-wrapper";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import api from "../../api";
-import inputClasses from "./LinkBattle.module.scss";
+import battleScreenClasses from "./BattleScreen.module.scss";
 
 type Props = {
   socket: Socket;
@@ -66,7 +66,7 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
   };
 
   return (
-    <div className="full-width">
+    <div className={battleScreenClasses["BattleScreen__Contents"]}>
       <Autocomplete<string>
         autoFocus
         inputValue={input}
@@ -88,7 +88,7 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
           <Paper
             {...props}
             elevation={3}
-            className={inputClasses["Autocomplete__Paper"]}
+            className={battleScreenClasses["BattleScreen__AutocompletePaper"]}
           />
         )}
         componentsProps={{
