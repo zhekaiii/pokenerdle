@@ -5,7 +5,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Pokedex, Pokemon } from "pokeapi-js-wrapper";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import PageContainer from "../../layout/PageContainer";
 import inputClasses from "./LinkBattle.module.scss";
 
@@ -15,28 +15,41 @@ const LinkBattle: React.FC = () => {
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const enterPokemon = useCallback(
     async (pokemonName: string) => {
-      if (!pokemonNames.includes(pokemonName)) {
+      if (isSubmittingAnswer || !pokemonNames.includes(pokemonName)) {
         return;
       }
       if (pokemons.some((pokemon) => pokemon.name === pokemonName)) {
         setInput("");
         return;
       }
-      const pokemon = await pokedex.getPokemonByName(pokemonName);
-      if (
-        pokemons[pokemons.length - 1].abilities.some(({ ability }) =>
-          pokemon.abilities.some((a) => a.ability.name === ability.name)
-        )
-      ) {
-        setPokemons([...pokemons, pokemon]);
+      setIsSubmittingAnswer(true);
+      try {
+        const pokemon = await pokedex.getPokemonByName(pokemonName);
+        if (
+          pokemons[pokemons.length - 1].abilities.some(({ ability }) =>
+            pokemon.abilities.some((a) => a.ability.name === ability.name)
+          )
+        ) {
+          setPokemons([...pokemons, pokemon]);
+        }
+      } finally {
+        setIsSubmittingAnswer(false);
+        setInput("");
       }
-      setInput("");
     },
-    [pokemons, pokemonNames]
+    [pokemons, pokemonNames, isSubmittingAnswer]
   );
+
+  useEffect(() => {
+    if (!isSubmittingAnswer) {
+      inputRef.current?.focus();
+    }
+  }, [isSubmittingAnswer]);
 
   useEffect(() => {
     (async () => {
@@ -77,15 +90,16 @@ const LinkBattle: React.FC = () => {
   return (
     <PageContainer>
       <Autocomplete<string>
+        autoFocus
         inputValue={input}
         renderInput={(props) => (
           <TextField
             {...props}
             onKeyDown={onKeyDown}
             onChange={(e) => setInput(e.target.value)}
+            inputRef={inputRef}
           />
         )}
-        onInputChange={(_, value) => setInput(value)}
         options={pokemonNames}
         autoComplete
         fullWidth
@@ -103,6 +117,14 @@ const LinkBattle: React.FC = () => {
           popper: {
             open: input.length > 0,
           },
+        }}
+        disabled={isSubmittingAnswer}
+        onChange={(e, value, r) => {
+          if (!value) {
+            return;
+          }
+          setInput(value);
+          r === "selectOption" && enterPokemon(value);
         }}
       />
       <div style={{ display: "flex", flexDirection: "column-reverse" }}>
