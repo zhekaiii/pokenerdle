@@ -9,6 +9,8 @@ import { createRandomString } from "../utils/random.js";
 type BattleRoom = {
   players: [string] | [string, string];
   pokemon: Pokemon[];
+  timer: number;
+  showAbility: boolean;
 };
 
 const ongoingBattles: Record<string, BattleRoom> = {};
@@ -27,7 +29,11 @@ const onSocketDisconnect = (socket: Socket, roomId: string) => {
   console.log(ongoingBattles);
 };
 
-export const createBattleRoom = async (socket: Socket) => {
+export const createBattleRoom = async (
+  socket: Socket,
+  timer: number,
+  showAbility: boolean
+) => {
   while (true) {
     const roomId = createRandomString(8);
     if (roomId in ongoingBattles) {
@@ -36,10 +42,12 @@ export const createBattleRoom = async (socket: Socket) => {
     ongoingBattles[roomId] = {
       players: [socket.id],
       pokemon: [],
+      timer,
+      showAbility,
     };
     socket.on("disconnect", () => onSocketDisconnect(socket, roomId));
     socket.join(roomId);
-    socket.emit("roomCode", roomId);
+    socket.emit("roomCode", roomId, timer, showAbility);
     console.log("Room created", roomId);
     console.log(ongoingBattles);
     return;
@@ -52,27 +60,24 @@ export const joinRoom = async (socket: Socket, roomId: string) => {
     socket.emit("roomError", ErrorRoomNotFound);
     return;
   }
-  if (ongoingBattles[roomId].players.length === 2) {
+  const room = ongoingBattles[roomId];
+  if (room.players.length === 2) {
     socket.emit("roomError", ErrorRoomNotFound);
     return;
   }
-  ongoingBattles[roomId].players = [
-    ongoingBattles[roomId].players[0],
-    socket.id,
-  ];
+  room.players = [room.players[0], socket.id];
   socket.join(roomId);
-  socket.emit("roomCode", roomId);
+  socket.emit("roomCode", roomId, room.timer, room.showAbility);
   socket.on("disconnect", () => onSocketDisconnect(socket, roomId));
   io.of(RouteNames.BATTLES_WS).to(roomId).emit("opponentJoined");
   console.log(ongoingBattles);
 
   const pokemon = await dataService.getStarterPokemon();
-  ongoingBattles[roomId].pokemon.push(pokemon);
+  room.pokemon.push(pokemon);
   io.of(RouteNames.BATTLES_WS).to(roomId).emit("pushPokemon", pokemon);
   console.log(`Pushed Pokemon ${pokemon.name} to room ${roomId}`);
 
-  const firstPlayer =
-    ongoingBattles[roomId].players[Math.random() < 0.5 ? 0 : 1];
+  const firstPlayer = room.players[Math.random() < 0.5 ? 0 : 1];
   io.of(RouteNames.BATTLES_WS).to(roomId).emit("canMove", firstPlayer);
 };
 

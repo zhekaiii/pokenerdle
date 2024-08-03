@@ -6,11 +6,12 @@ import classes from "./PokemonCard.module.scss";
 
 type Props = {
   pokemon: Pokemon;
+  showAbility: boolean;
 };
 
 const SHINY_PROBABILITY = 1 / 2 ** 13;
 
-const PokemonCard: React.FC<Props> = ({ pokemon }) => {
+const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
   const isShiny = useMemo(() => Math.random() <= SHINY_PROBABILITY, []);
   const abilities = useMemo(
     () => uniqBy(pokemon.abilities, "ability.name"),
@@ -34,9 +35,8 @@ const PokemonCard: React.FC<Props> = ({ pokemon }) => {
       <span className={classes["PokemonCard__PkmnName"]}>
         #{pokemonNumber} {pokemon.species.name} {isShiny && "✨"}
       </span>
-      {abilities.map(({ ability }) => (
-        <span>{ability.name}</span>
-      ))}
+      {showAbility &&
+        abilities.map(({ ability }) => <span>{ability.name}</span>)}
     </Paper>
   );
 };

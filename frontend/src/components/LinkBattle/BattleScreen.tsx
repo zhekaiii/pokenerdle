@@ -21,9 +21,16 @@ import battleScreenClasses from "./BattleScreen.module.scss";
 type Props = {
   socket: Socket;
   roomCode: string;
+  timer: number;
+  showAbility: boolean;
 };
 
-const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
+const BattleScreen: React.FC<Props> = ({
+  socket,
+  roomCode,
+  timer,
+  showAbility,
+}) => {
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
@@ -135,7 +142,7 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
           r === "selectOption" && enterPokemon(value);
         }}
       />
-      <BattleBoard pokemons={pokemons} />
+      <BattleBoard pokemons={pokemons} showAbility={showAbility} />
     </div>
   );
 };

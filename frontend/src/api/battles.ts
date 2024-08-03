@@ -2,18 +2,22 @@ import { io, Socket } from "socket.io-client";
 
 export default {
   connect: (
-    setRoomCode: (roomCode: string | null) => void,
+    onRoomReady: (
+      roomCode: string,
+      timer: number,
+      showAbility: boolean
+    ) => void,
     setIsOpponentJoined: (value: boolean) => void,
     onError: (error: string | null) => void
   ) => {
     const socket = io(`${import.meta.env.VITE_BACKEND_URL}/ws/battles`);
-    socket.on("roomCode", (roomCode: string) => setRoomCode(roomCode));
+    socket.on("roomCode", onRoomReady);
     socket.on("disconnect", () => {
-      setRoomCode(null);
+      onRoomReady("", 20, true);
     });
     socket.on("roomError", (error: string) => {
       console.error(error);
-      setRoomCode(null);
+      onRoomReady("", 20, true);
       onError(error);
     });
     socket.on("opponentJoined", () => {

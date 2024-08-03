@@ -6,6 +6,7 @@ import PokemonCard from "./PokemonCard";
 
 type Props = {
   pokemons: Pokemon[];
+  showAbility: boolean;
 };
 
 const getSharedAbilities = (pokemon1: Pokemon, pokemon2: Pokemon) => {
@@ -16,12 +17,12 @@ const getSharedAbilities = (pokemon1: Pokemon, pokemon2: Pokemon) => {
   );
 };
 
-const BattleBoard: React.FC<Props> = ({ pokemons }) => {
+const BattleBoard: React.FC<Props> = ({ pokemons, showAbility }) => {
   return (
     <div className={battleBoardClasses.BattleBoard}>
       {pokemons.map((pokemon, pkmnIndex) => (
         <React.Fragment key={pokemon.id}>
-          <PokemonCard pokemon={pokemon} />
+          <PokemonCard pokemon={pokemon} showAbility={showAbility} />
           <div className={battleBoardClasses["BattleBoard__Separator"]} />
           {pkmnIndex < pokemons.length - 1 &&
             getSharedAbilities(pokemon, pokemons[pkmnIndex + 1]).map(
