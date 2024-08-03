@@ -5,7 +5,7 @@ import { Socket } from "socket.io-client";
 import api from "../../api";
 import PageContainer from "../../layout/PageContainer";
 import BattleScreen from "./BattleScreen";
-import Home from "./Home";
+import LinkBattleHome from "./LinkBattleHome";
 import WaitingForOpponent from "./WaitingForOpponent";
 
 const LinkBattle: React.FC = () => {
@@ -49,7 +49,7 @@ const LinkBattle: React.FC = () => {
           <WaitingForOpponent roomCode={roomCode} />
         )
       ) : (
-        <Home socket={socket} />
+        <LinkBattleHome socket={socket} />
       )}
 
       <Snackbar

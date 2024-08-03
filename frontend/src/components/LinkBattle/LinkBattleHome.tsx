@@ -10,7 +10,7 @@ type Props = {
 
 const MAX_ROOM_CODE_LENGTH = 8;
 
-const Home: React.FC<Props> = ({ socket }) => {
+const LinkBattleHome: React.FC<Props> = ({ socket }) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [roomCodeInput, setRoomCodeInput] = useState("");
 
@@ -60,4 +60,4 @@ const Home: React.FC<Props> = ({ socket }) => {
   );
 };
 
-export default Home;
+export default LinkBattleHome;

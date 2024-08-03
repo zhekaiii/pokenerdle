@@ -5,8 +5,7 @@
   align-items: flex-start;
   margin-block: auto;
   max-width: 700px;
-  text-align: center;
-  gap: 16px;
+  gap: 8px;
   padding: 20px;
   background-image: radial-gradient(
       circle at center,
@@ -32,5 +31,6 @@
 
   &Title {
     font-weight: 600;
+    white-space: pre-line;
   }
 }

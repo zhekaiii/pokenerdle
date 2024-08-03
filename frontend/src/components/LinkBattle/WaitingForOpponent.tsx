@@ -30,7 +30,8 @@ const WaitingForOpponent: React.FC<Props> = ({ roomCode }) => {
   return (
     <div className={classes["WaitingForOpponent__Card"]}>
       <span className={classes["WaitingForOpponent__CardTitle"]}>
-        Waiting for opponent to join room {roomCode}
+        Waiting for opponent to join room {"\n"}
+        {roomCode}
       </span>
       <Button onClick={onClickButton} variant="outlined" color="inherit">
         {buttonLabel}
