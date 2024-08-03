@@ -6,6 +6,7 @@ import {
 } from "@mui/material";
 import { Pokedex, Pokemon } from "pokeapi-js-wrapper";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import api from "../../api";
 import PageContainer from "../../layout/PageContainer";
 import inputClasses from "./LinkBattle.module.scss";
 
@@ -53,31 +54,10 @@ const LinkBattle: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      const response = await pokedex.getPokemonsList({
-        offset: 0,
-        limit: 10000,
-      });
-      setPokemonNames(response.results.map((pokemon) => pokemon.name));
-      // eslint-disable-next-line no-constant-condition -- This has to terminate... right?
-      while (true) {
-        const starterIndex = Math.floor(
-          Math.random() * response.results.length
-        );
-        const starterPokemon = await pokedex.getPokemonByName(
-          response.results[starterIndex].name
-        );
-        const uniqueAbilities = await Promise.all(
-          starterPokemon.abilities.map(async ({ ability }) => {
-            const abilityData = await pokedex.getAbilityByName(ability.name);
-            return abilityData.pokemon.length == 1;
-          })
-        );
-        if (uniqueAbilities.every((unique) => unique)) {
-          continue;
-        }
-        setPokemons([starterPokemon]);
-        break;
-      }
+      const pokemonNames = await api.data.getPokemonNames();
+      setPokemonNames(pokemonNames);
+      const starterPokemon = await api.data.getStarterPokemon();
+      setPokemons([starterPokemon]);
     })();
   }, []);
 
