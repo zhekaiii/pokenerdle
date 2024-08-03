@@ -14,7 +14,8 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "pokedex-promise-v2": "^4.2.0"
+    "pokedex-promise-v2": "^4.2.0",
+    "redis": "^4.7.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
