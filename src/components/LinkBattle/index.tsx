@@ -18,7 +18,7 @@ const LinkBattle: React.FC = () => {
 
   const enterPokemon = useCallback(
     async (pokemonName: string) => {
-      if (!pokemonNames.includes(pokemonName) && pokemons.length > 0) {
+      if (!pokemonNames.includes(pokemonName)) {
         return;
       }
       if (pokemons.some((pokemon) => pokemon.name === pokemonName)) {
@@ -26,10 +26,6 @@ const LinkBattle: React.FC = () => {
         return;
       }
       const pokemon = await pokedex.getPokemonByName(pokemonName);
-      if (pokemons.length == 0) {
-        setPokemons([pokemon]);
-        return;
-      }
       if (
         pokemons[pokemons.length - 1].abilities.some(({ ability }) =>
           pokemon.abilities.some((a) => a.ability.name === ability.name)
@@ -49,10 +45,27 @@ const LinkBattle: React.FC = () => {
         limit: 10000,
       });
       setPokemonNames(response.results.map((pokemon) => pokemon.name));
-      const starter = Math.floor(Math.random() * response.results.length);
-      enterPokemon(response.results[starter].name);
+      // eslint-disable-next-line no-constant-condition -- This has to terminate... right?
+      while (true) {
+        const starterIndex = Math.floor(
+          Math.random() * response.results.length
+        );
+        const starterPokemon = await pokedex.getPokemonByName(
+          response.results[starterIndex].name
+        );
+        const uniqueAbilities = await Promise.all(
+          starterPokemon.abilities.map(async ({ ability }) => {
+            const abilityData = await pokedex.getAbilityByName(ability.name);
+            return abilityData.pokemon.length == 1;
+          })
+        );
+        if (uniqueAbilities.every((unique) => unique)) {
+          continue;
+        }
+        setPokemons([starterPokemon]);
+        break;
+      }
     })();
-    (async () => {})();
   }, []);
 
   const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
