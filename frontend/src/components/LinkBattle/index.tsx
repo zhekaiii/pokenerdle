@@ -4,6 +4,7 @@ import api from "../../api";
 import PageContainer from "../../layout/PageContainer";
 import BattleScreen from "./BattleScreen";
 import Home from "./Home";
+import WaitingForOpponent from "./WaitingForOpponent";
 
 const LinkBattle: React.FC = () => {
   const [roomCode, setRoomCode] = useState<string | null>(null);
@@ -12,7 +13,7 @@ const LinkBattle: React.FC = () => {
 
   useEffect(() => {
     if (!socket) {
-      setSocket(api.battles.connect(setRoomCode));
+      setSocket(api.battles.connect(setRoomCode, setIsOpponentConnected));
       return;
     }
     return () => {
@@ -22,8 +23,15 @@ const LinkBattle: React.FC = () => {
 
   return (
     <PageContainer>
-      {socket?.id}
-      {roomCode ? <BattleScreen /> : <Home socket={socket} />}
+      {roomCode ? (
+        isOpponentConnected ? (
+          <BattleScreen />
+        ) : (
+          <WaitingForOpponent roomCode={roomCode} />
+        )
+      ) : (
+        <Home socket={socket} />
+      )}
     </PageContainer>
   );
 };

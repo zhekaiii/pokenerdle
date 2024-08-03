@@ -5,6 +5,7 @@ import { createRandomString } from "../utils/random.js";
 const ongoingBattles: Record<string, [string, string] | [string]> = {};
 
 const onSocketDisconnect = (socket: Socket, roomId: string) => {
+  console.log(`Socket ${socket.id} left room ${roomId}`);
   if (roomId in ongoingBattles) {
     ongoingBattles[roomId].forEach((id) => {
       if (id !== socket.id) {
@@ -14,6 +15,7 @@ const onSocketDisconnect = (socket: Socket, roomId: string) => {
     });
     delete ongoingBattles[roomId];
   }
+  console.log(ongoingBattles);
 };
 
 export const createBattleRoom = async (socket: Socket) => {
@@ -47,4 +49,6 @@ export const joinRoom = (socket: Socket, roomId: string) => {
   socket.join(roomId);
   socket.emit("roomCode", roomId);
   socket.on("disconnect", () => onSocketDisconnect(socket, roomId));
+  socket.to(roomId).emit("opponentJoined");
+  socket.emit("opponentJoined");
 };
