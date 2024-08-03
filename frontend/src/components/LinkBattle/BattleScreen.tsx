@@ -28,8 +28,8 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const suggestions = useMemo(
     () =>
-      pokemonNames.filter((name) =>
-        pokemons.some((pokemon) => pokemon.name == name)
+      pokemonNames.filter(
+        (name) => !pokemons.some((pokemon) => pokemon.name == name)
       ),
     [pokemonNames, pokemons]
   );
@@ -120,8 +120,9 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
           setInput(value);
           r === "selectOption" && enterPokemon(value);
         }}
+        className="tw-mb-4"
       />
-      <div style={{ display: "flex", flexDirection: "column-reverse" }}>
+      <div className={battleScreenClasses["BattleScreen_PokemonsContainer"]}>
         {pokemons.map((pokemon) => (
           <PokemonCard key={pokemon.id} pokemon={pokemon} />
         ))}

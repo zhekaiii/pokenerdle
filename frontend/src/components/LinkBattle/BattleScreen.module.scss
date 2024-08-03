@@ -6,3 +6,12 @@
   width: 100%;
   max-width: 700px;
 }
+
+.BattleScreen_PokemonsContainer {
+  display: flex;
+  flex-direction: column-reverse;
+  width: fit-content;
+  margin-inline: auto;
+  min-width: 300px;
+  gap: 16px;
+}

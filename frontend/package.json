@@ -15,6 +15,7 @@
     "@mui/material": "^5.16.6",
     "axios": "^1.7.3",
     "clsx": "^2.1.1",
+    "lodash": "^4.17.21",
     "pokeapi-js-wrapper": "^1.2.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -23,6 +24,7 @@
     "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.7",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
