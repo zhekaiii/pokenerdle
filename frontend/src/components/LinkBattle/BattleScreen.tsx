@@ -5,7 +5,13 @@ import {
   TextField,
 } from "@mui/material";
 import { Pokemon } from "pokeapi-js-wrapper";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Socket } from "socket.io-client";
 import api from "../../api";
 import battleScreenClasses from "./BattleScreen.module.scss";
@@ -20,22 +26,26 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const suggestions = useMemo(
+    () =>
+      pokemonNames.filter((name) =>
+        pokemons.some((pokemon) => pokemon.name == name)
+      ),
+    [pokemonNames, pokemons]
+  );
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const enterPokemon = useCallback(
     async (pokemonName: string) => {
-      if (isSubmittingAnswer || !pokemonNames.includes(pokemonName)) {
-        return;
-      }
-      if (pokemons.some((pokemon) => pokemon.name === pokemonName)) {
+      if (isSubmittingAnswer || !suggestions.includes(pokemonName)) {
         setInput("");
         return;
       }
       setIsSubmittingAnswer(true);
       api.battles.validatePokemon(socket, pokemonName, roomCode);
     },
-    [isSubmittingAnswer, pokemonNames, pokemons, socket, roomCode]
+    [isSubmittingAnswer, roomCode, socket, suggestions]
   );
 
   useEffect(() => {
@@ -84,7 +94,7 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
             inputRef={inputRef}
           />
         )}
-        options={pokemonNames}
+        options={suggestions}
         autoComplete
         fullWidth
         noOptionsText={null}
