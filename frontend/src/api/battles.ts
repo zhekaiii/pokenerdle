@@ -21,8 +21,8 @@ export default {
     });
     return socket;
   },
-  createBattleRoom: (socket: Socket) => {
-    socket.emit("create");
+  createBattleRoom: (socket: Socket, timer: number, showAbility: boolean) => {
+    socket.emit("create", timer, showAbility);
   },
   joinRoom: (socket: Socket, roomCode: string) => {
     socket.emit("join", roomCode);

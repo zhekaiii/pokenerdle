@@ -1,0 +1,16 @@
+.LinkBattleHome {
+  display: flex;
+  flex-direction: column;
+  margin-block: auto;
+  gap: 8px;
+  min-width: 300px;
+  white-space: nowrap;
+}
+
+.LinkBattleHome__Settings {
+  border: 2px solid currentColor;
+  border-radius: 8px;
+  padding: 8px 12px;
+  gap: 12px;
+  margin-top: 8px;
+}
