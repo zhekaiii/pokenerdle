@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import express from "express";
 import "./data/cache.js";
-import { RouteNames } from "./data/const.js";
 import battlesRouter from "./routes/battles.routes.js";
 import dataRouter from "./routes/data.routes.js";
 
@@ -9,6 +8,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3456;
+const router = express.Router();
 
 // CORS
 app.use((req, res, next) => {
@@ -20,8 +20,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(RouteNames.BATTLES, battlesRouter);
-app.use(RouteNames.DATA, dataRouter);
+// Prefix all routes with /api
+router.use(battlesRouter);
+router.use(dataRouter);
+
+app.use("/api", router);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

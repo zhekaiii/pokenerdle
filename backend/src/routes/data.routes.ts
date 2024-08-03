@@ -3,10 +3,11 @@ import {
   getPokemonNames,
   getStarterPokemon,
 } from "../controllers/data.controllers.js";
+import { RouteNames } from "../data/const.js";
 
 const router = Router();
 
 router.get("/pokemon-names", getPokemonNames);
 router.get("/starter-pokemon", getStarterPokemon);
 
-export default router;
+export default Router().use(RouteNames.DATA, router);

@@ -1,4 +1,4 @@
 export const RouteNames = Object.freeze({
-  BATTLES: "/battles",
-  DATA: "/data",
+  BATTLES: "/v1/battles",
+  DATA: "/v1/data",
 });
