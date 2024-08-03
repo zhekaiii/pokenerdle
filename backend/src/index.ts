@@ -1,12 +1,25 @@
 import dotenv from "dotenv";
 import express from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
 import "./data/cache.js";
-import battlesRouter from "./routes/battles.routes.js";
+import "./routes/battles.routes.js";
+import { initializeBattleRoutes } from "./routes/battles.routes.js";
 import dataRouter from "./routes/data.routes.js";
 
 dotenv.config();
 
 const app = express();
+const httpServer = createServer(app);
+export const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+  },
+});
+io.on("connection", (socket) => {
+  console.log("a user connected, id: ", socket.id);
+});
+
 const port = process.env.PORT || 3456;
 const router = express.Router();
 
@@ -21,12 +34,11 @@ app.use((req, res, next) => {
 });
 app.use(express.json());
 
-// Prefix all routes with /api
-router.use(battlesRouter);
+initializeBattleRoutes(io);
 router.use(dataRouter);
 
 app.use("/api", router);
 
-app.listen(port, () => {
+httpServer.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
