@@ -1,0 +1,14 @@
+.BattleBoard {
+  display: flex;
+  flex-direction: column-reverse;
+  width: fit-content;
+  margin-inline: auto;
+  min-width: 300px;
+}
+
+.BattleBoard__Separator {
+  background-color: currentColor;
+  height: 40px;
+  width: 4px;
+  align-self: center;
+}

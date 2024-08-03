@@ -14,8 +14,8 @@ import React, {
 } from "react";
 import { Socket } from "socket.io-client";
 import api from "../../api";
+import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
-import PokemonCard from "./PokemonCard";
 
 type Props = {
   socket: Socket;
@@ -120,13 +120,8 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
           setInput(value);
           r === "selectOption" && enterPokemon(value);
         }}
-        className="tw-mb-4"
       />
-      <div className={battleScreenClasses["BattleScreen_PokemonsContainer"]}>
-        {pokemons.map((pokemon) => (
-          <PokemonCard key={pokemon.id} pokemon={pokemon} />
-        ))}
-      </div>
+      <BattleBoard pokemons={pokemons} />
     </div>
   );
 };
