@@ -1,6 +1,6 @@
 export const RouteNames = Object.freeze({
-  BATTLES: "/ws/battles",
-  DATA: "/v1/data",
+  BATTLES_WS: "/ws/battles",
+  DATA_ENDPOINT: "/v1/data",
 });
 
 export enum StatusCode {

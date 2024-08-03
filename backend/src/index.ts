@@ -4,7 +4,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import "./data/cache.js";
 import "./routes/battles.routes.js";
-import { initializeBattleRoutes } from "./routes/battles.routes.js";
+import { initializeBattleWsRoutes } from "./routes/battles.routes.js";
 import dataRouter from "./routes/data.routes.js";
 
 dotenv.config();
@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 });
 app.use(express.json());
 
-initializeBattleRoutes(io);
+initializeBattleWsRoutes(io);
 router.use(dataRouter);
 
 app.use("/api", router);
