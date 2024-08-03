@@ -56,7 +56,10 @@ export const joinRoom = async (socket: Socket, roomId: string) => {
     socket.emit("roomError", ErrorRoomNotFound);
     return;
   }
-  ongoingBattles[roomId].players.push(socket.id);
+  ongoingBattles[roomId].players = [
+    ongoingBattles[roomId].players[0],
+    socket.id,
+  ];
   socket.join(roomId);
   socket.emit("roomCode", roomId);
   socket.on("disconnect", () => onSocketDisconnect(socket, roomId));
@@ -67,6 +70,10 @@ export const joinRoom = async (socket: Socket, roomId: string) => {
   ongoingBattles[roomId].pokemon.push(pokemon);
   io.of(RouteNames.BATTLES_WS).to(roomId).emit("pushPokemon", pokemon);
   console.log(`Pushed Pokemon ${pokemon.name} to room ${roomId}`);
+
+  const firstPlayer =
+    ongoingBattles[roomId].players[Math.random() < 0.5 ? 0 : 1];
+  io.of(RouteNames.BATTLES_WS).to(roomId).emit("canMove", firstPlayer);
 };
 
 export const validatePokemon = async (
@@ -87,4 +94,9 @@ export const validatePokemon = async (
   io.of(RouteNames.BATTLES_WS)
     .to(roomId)
     .emit("pushPokemon", pokemon, socket.id);
+
+  const nextPlayer = ongoingBattles[roomId].players.find(
+    (id) => id !== socket.id
+  );
+  io.of(RouteNames.BATTLES_WS).to(roomId).emit("canMove", nextPlayer);
 };

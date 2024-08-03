@@ -1,4 +1,5 @@
 import {
+  Alert,
   Autocomplete,
   createFilterOptions,
   Paper,
@@ -35,6 +36,7 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
   );
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [canMove, setCanMove] = useState(false);
 
   const enterPokemon = useCallback(
     async (pokemonName: string) => {
@@ -55,6 +57,9 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
   }, [isSubmittingAnswer]);
 
   useEffect(() => {
+    socket.on("canMove", (socketId: string) => {
+      setCanMove(socketId === socket.id);
+    });
     socket.on("pushPokemon", (pokemon: Pokemon) => {
       setPokemons((pokemons) => [...pokemons, pokemon]);
       setIsSubmittingAnswer(false);
@@ -71,6 +76,7 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
     return () => {
       socket.off("pushPokemon");
       socket.off("wrongAnswer");
+      socket.off("canMove");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only run once
   }, []);
@@ -83,6 +89,13 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
 
   return (
     <div className={battleScreenClasses["BattleScreen__Contents"]}>
+      <Alert
+        className="tw-mb-2 tw-justify-center"
+        icon={false}
+        color={canMove ? "success" : "error"}
+      >
+        {canMove ? "Your turn" : "Opponent's turn"}
+      </Alert>
       <Autocomplete<string>
         autoFocus
         inputValue={input}
@@ -92,6 +105,7 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
             onKeyDown={onKeyDown}
             onChange={(e) => setInput(e.target.value)}
             inputRef={inputRef}
+            placeholder="e.g. Pikachu"
           />
         )}
         options={suggestions}
@@ -112,7 +126,7 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode }) => {
             open: input.length > 0,
           },
         }}
-        disabled={isSubmittingAnswer}
+        disabled={isSubmittingAnswer || !canMove}
         onChange={(_, value, r) => {
           if (!value) {
             return;
