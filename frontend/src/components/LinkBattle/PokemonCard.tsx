@@ -32,7 +32,7 @@ const PokemonCard: React.FC<Props> = ({ pokemon }) => {
       />
 
       <span className={classes["PokemonCard__PkmnName"]}>
-        #{pokemonNumber} {pokemon.name} {isShiny && "✨"}
+        #{pokemonNumber} {pokemon.species.name} {isShiny && "✨"}
       </span>
       {abilities.map(({ ability }) => (
         <span>{ability.name}</span>
