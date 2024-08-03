@@ -45,3 +45,21 @@ export const getStarterPokemon = async () => {
     return starterPokemon;
   }
 };
+
+export const validatePokemon = async (
+  pokemonName: string,
+  previousPokemonName: string
+) => {
+  const [pokemon, previousPokemon] = await Promise.all([
+    pokedex.getPokemonByName(pokemonName),
+    pokedex.getPokemonByName(previousPokemonName),
+  ]);
+  if (
+    previousPokemon.abilities.some(({ ability }) =>
+      pokemon.abilities.some((a) => a.ability.name === ability.name)
+    )
+  ) {
+    return pokemon;
+  }
+  return null;
+};

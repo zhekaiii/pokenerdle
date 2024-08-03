@@ -19,6 +19,7 @@ app.use((req, res, next) => {
   );
   next();
 });
+app.use(express.json());
 
 // Prefix all routes with /api
 router.use(battlesRouter);

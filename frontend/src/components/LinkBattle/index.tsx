@@ -4,13 +4,11 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { Pokedex, Pokemon } from "pokeapi-js-wrapper";
+import { Pokemon } from "pokeapi-js-wrapper";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import api from "../../api";
 import PageContainer from "../../layout/PageContainer";
 import inputClasses from "./LinkBattle.module.scss";
-
-const pokedex = new Pokedex();
 
 const LinkBattle: React.FC = () => {
   const [input, setInput] = useState("");
@@ -29,19 +27,20 @@ const LinkBattle: React.FC = () => {
         return;
       }
       setIsSubmittingAnswer(true);
+      const previousPokemon = pokemons[pokemons.length - 1];
       try {
-        const pokemon = await pokedex.getPokemonByName(pokemonName);
-        if (
-          pokemons[pokemons.length - 1].abilities.some(({ ability }) =>
-            pokemon.abilities.some((a) => a.ability.name === ability.name)
-          )
-        ) {
+        const pokemon = await api.data.validatePokemon(
+          pokemonName,
+          previousPokemon.name
+        );
+        if (pokemon) {
           setPokemons([...pokemons, pokemon]);
         }
-      } finally {
-        setIsSubmittingAnswer(false);
-        setInput("");
+      } catch (error) {
+        console.error(error);
       }
+      setIsSubmittingAnswer(false);
+      setInput("");
     },
     [pokemons, pokemonNames, isSubmittingAnswer]
   );
