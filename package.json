@@ -1,0 +1,9 @@
+{
+    "name": "pokenerdle",
+    "private": true,
+    "version": "0.0.1",
+    "scripts": {
+        "fe": "cd frontend && yarn dev",
+        "build": "cd frontend && yarn build"
+    }
+}
