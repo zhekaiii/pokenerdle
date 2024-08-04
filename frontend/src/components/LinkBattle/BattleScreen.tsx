@@ -38,18 +38,22 @@ const BattleScreen: React.FC<Props> = ({
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([starterPokemon]);
-  const suggestions = useMemo(
-    () =>
-      pokemonNames.filter(
-        (name) => !pokemons.some((pokemon) => pokemon.name == name)
-      ),
-    [pokemonNames, pokemons]
-  );
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [canMove, setCanMove] = useState(isGoingFirst);
   const [timerEndsAt, setTimerEndsAt] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(0);
+  const [guesses, setGuesses] = useState<string[]>([]);
+
+  const suggestions = useMemo(
+    () =>
+      pokemonNames.filter(
+        (name) =>
+          !guesses.includes(name) &&
+          !pokemons.some((pokemon) => pokemon.name == name)
+      ),
+    [pokemonNames, pokemons, guesses]
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -78,6 +82,7 @@ const BattleScreen: React.FC<Props> = ({
         return;
       }
       setIsSubmittingAnswer(true);
+      setGuesses((guesses) => [...guesses, pokemonName]);
       api.battles.validatePokemon(socket, pokemonName, roomCode);
     },
     [isSubmittingAnswer, roomCode, socket, suggestions]
@@ -98,6 +103,7 @@ const BattleScreen: React.FC<Props> = ({
     });
     socket.on("pushPokemon", (pokemon: Pokemon) => {
       setPokemons((pokemons) => [...pokemons, pokemon]);
+      setGuesses([]);
       setIsSubmittingAnswer(false);
       setInput("");
     });
