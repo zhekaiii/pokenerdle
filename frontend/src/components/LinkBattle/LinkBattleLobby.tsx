@@ -35,7 +35,12 @@ const LinkBattleLobby: React.FC<Props> = ({
   };
 
   const onClickJoin = async () => {
-    if (isConnecting || !socket) return;
+    if (
+      isConnecting ||
+      !socket ||
+      roomCodeInput.length !== MAX_ROOM_CODE_LENGTH
+    )
+      return;
     setIsConnecting(true);
     setIsOpponentConnected(true);
     api.battles.joinRoom(socket, roomCodeInput);
@@ -43,16 +48,26 @@ const LinkBattleLobby: React.FC<Props> = ({
 
   return (
     <div className={classes.LinkBattleLobby}>
-      <OutlinedInput
-        placeholder="Room Code"
-        disabled={isConnecting}
-        value={roomCodeInput}
-        onChange={(e) =>
-          setRoomCodeInput(
-            e.target.value.substring(0, MAX_ROOM_CODE_LENGTH).toUpperCase()
-          )
-        }
-      />
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onClickJoin();
+        }}
+      >
+        <OutlinedInput
+          fullWidth
+          placeholder="Room Code"
+          disabled={isConnecting}
+          value={roomCodeInput}
+          onChange={(e) =>
+            setRoomCodeInput(
+              e.target.value.substring(0, MAX_ROOM_CODE_LENGTH).toUpperCase()
+            )
+          }
+          spellCheck={false}
+          autoComplete="off"
+        />
+      </form>
       <Button variant="contained" disabled={isConnecting} onClick={onClickJoin}>
         Join Room
       </Button>

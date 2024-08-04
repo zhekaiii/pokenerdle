@@ -123,15 +123,6 @@ const BattleScreen: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only run once
   }, []);
 
-  const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = useCallback(
-    (e) => {
-      if (e.key === "Enter") {
-        enterPokemon(input);
-      }
-    },
-    [enterPokemon, input]
-  );
-
   const textField = useMemo(
     () => (
       <Autocomplete<string>
@@ -140,10 +131,11 @@ const BattleScreen: React.FC<Props> = ({
         renderInput={(props) => (
           <TextField
             {...props}
-            onKeyDown={onKeyDown}
             onChange={(e) => setInput(e.target.value)}
             inputRef={inputRef}
             placeholder="e.g. Pikachu"
+            spellCheck={false}
+            autoComplete="off"
           />
         )}
         options={suggestions}
@@ -174,7 +166,7 @@ const BattleScreen: React.FC<Props> = ({
         }}
       />
     ),
-    [canMove, enterPokemon, input, isSubmittingAnswer, onKeyDown, suggestions]
+    [canMove, enterPokemon, input, isSubmittingAnswer, suggestions]
   );
 
   return (
@@ -193,7 +185,14 @@ const BattleScreen: React.FC<Props> = ({
           />
         </div>
       </Alert>
-      {textField}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          enterPokemon(input);
+        }}
+      >
+        {textField}
+      </form>
       <BattleBoard pokemons={pokemons} showAbility={settings.showAbility} />
     </div>
   );
