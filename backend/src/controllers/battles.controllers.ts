@@ -47,6 +47,7 @@ export const createBattleRoom = async (
   socket: Socket,
   settings: BattleRoomSettings
 ) => {
+  console.log(`Received create request from ${socket.id}`);
   while (true) {
     const roomId = createRandomString(8);
     if (roomId in ongoingBattles) {
@@ -78,7 +79,12 @@ export const joinRoom = async (socket: Socket, roomId: string) => {
   }
   const room = ongoingBattles[roomId];
   if (room.players.length === 2) {
-    socket.emit("roomError", ErrorRoomNotFound);
+    if (!room.players.includes(socket.id)) {
+      console.log(
+        `${socket.id} tried to join but room ${roomId} has ${room.players}`
+      );
+      socket.emit("roomError", ErrorRoomNotFound);
+    }
     return;
   }
   room.players = [room.players[0], socket.id];

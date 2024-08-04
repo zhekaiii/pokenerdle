@@ -9,12 +9,14 @@ import classes from "./LinkBattleLobby.module.scss";
 type Props = {
   socket?: Socket;
   setIsOpponentConnected: (isConnected: boolean) => void;
+  createSocket: () => Socket;
 };
 
 const MAX_ROOM_CODE_LENGTH = 8;
 const LinkBattleLobby: React.FC<Props> = ({
   socket,
   setIsOpponentConnected,
+  createSocket,
 }) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [roomCodeInput, setRoomCodeInput] = useState("");
@@ -23,27 +25,29 @@ const LinkBattleLobby: React.FC<Props> = ({
 
   useEffect(() => {
     if (!socket) return;
-    socket.on("roomError", () => {
+    const hideLoadingDialog = () => {
       setIsConnecting(false);
-    });
+    };
+    hideLoadingDialog();
+    socket.on("roomError", hideLoadingDialog);
+    return () => {
+      socket.off("roomError", hideLoadingDialog);
+    };
   }, [socket]);
 
   const onClickCreate = async () => {
-    if (isConnecting || !socket) return;
+    if (isConnecting) return;
+    const socket = createSocket();
     setIsConnecting(true);
-    api.battles.createBattleRoom(socket, { timer, showAbility });
+    api.battles.createBattleRoom(socket!, { timer, showAbility });
   };
 
   const onClickJoin = async () => {
-    if (
-      isConnecting ||
-      !socket ||
-      roomCodeInput.length !== MAX_ROOM_CODE_LENGTH
-    )
-      return;
+    if (isConnecting || roomCodeInput.length !== MAX_ROOM_CODE_LENGTH) return;
+    const socket = createSocket();
     setIsConnecting(true);
     setIsOpponentConnected(true);
-    api.battles.joinRoom(socket, roomCodeInput);
+    api.battles.joinRoom(socket!, roomCodeInput);
   };
 
   return (

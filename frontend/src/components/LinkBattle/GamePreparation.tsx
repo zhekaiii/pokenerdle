@@ -29,19 +29,16 @@ const GamePreparation: React.FC<Props> = ({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setSecondsLeft((secondsLeft) => {
-        if (secondsLeft <= 1) {
-          onReady();
-          clearInterval(interval);
-        }
-        return secondsLeft - 1;
-      });
+      if (secondsLeft <= 1) {
+        onReady();
+        clearInterval(interval);
+      }
+      setSecondsLeft((prev) => prev - 1);
     }, 1000);
     return () => {
       clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to run this once
-  }, []);
+  }, [secondsLeft]);
 
   return (
     <div className={classes.GamePreparation}>

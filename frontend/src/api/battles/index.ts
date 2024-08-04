@@ -7,12 +7,14 @@ export default {
   connect: (
     onRoomReady: (roomCode: string, settings?: BattleRoomSettings) => void,
     setIsOpponentJoined: (value: boolean) => void,
-    onError: (error: string | null) => void
+    onError: (error: string | null) => void,
+    setSocket: (socket?: Socket) => void
   ) => {
     const socket = io(`${import.meta.env.VITE_BACKEND_URL}/ws/battles`);
     socket.on("roomCode", onRoomReady);
     socket.on("disconnect", () => {
       onRoomReady("");
+      setSocket(undefined);
     });
     socket.on("roomError", (error: string) => {
       console.error(error);

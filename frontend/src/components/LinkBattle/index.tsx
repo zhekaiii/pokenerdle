@@ -12,7 +12,7 @@ import WaitingLobby from "./WaitingLobby";
 const LinkBattle: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [roomCode, setRoomCode] = useState<string | null>(null);
-  const [socket, setSocket] = useState<Socket | undefined>(undefined);
+  const [socket, setSocket] = useState<Socket>();
 
   const [isOpponentConnected, setIsOpponentConnected] = useState(false);
   const [settings, setSettings] = useState<BattleRoomSettings>({
@@ -22,33 +22,39 @@ const LinkBattle: React.FC = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
-
-  useEffect(() => {
-    if (!socket) {
-      setSocket(
-        api.battles.connect(
-          (roomCode, settings = { timer: 20, showAbility: true }) => {
-            setRoomCode(roomCode);
-            setSettings(settings);
-          },
-          setIsOpponentConnected,
-          (error) => {
-            setError(error);
-            setIsSnackbarOpen(true);
-            setSearchParams();
-          }
-        )
-      );
-      return;
+  const createSocket = () => {
+    if (socket) {
+      return socket;
     }
+    const createdSocket = api.battles.connect(
+      (roomCode, settings = { timer: 20, showAbility: true }) => {
+        setRoomCode(roomCode);
+        setSettings(settings);
+      },
+      setIsOpponentConnected,
+      (error) => {
+        setError(error);
+        setIsSnackbarOpen(true);
+        setSearchParams();
+      },
+      setSocket
+    );
+    setSocket(createdSocket);
+    return createdSocket;
+  };
+
+  // This runs twice on dev because of React strict mode, so it errors out
+  // because backend thinks that a third player is trying to join
+  useEffect(() => {
     if (searchParams.get("roomCode")) {
+      const socket = createSocket();
       socket.emit("join", searchParams.get("roomCode"));
     }
     return () => {
-      socket.disconnect();
+      socket?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to run this once
-  }, [socket]);
+  }, []);
 
   useEffect(() => {
     if (roomCode) return;
@@ -67,6 +73,7 @@ const LinkBattle: React.FC = () => {
         <LinkBattleLobby
           socket={socket}
           setIsOpponentConnected={setIsOpponentConnected}
+          createSocket={createSocket}
         />
       )}
 
