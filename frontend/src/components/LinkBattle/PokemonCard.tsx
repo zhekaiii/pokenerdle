@@ -2,6 +2,7 @@ import { Paper } from "@mui/material";
 import { uniqBy } from "lodash";
 import { Pokemon } from "pokeapi-js-wrapper";
 import React, { useMemo } from "react";
+import { formatAbilityName } from "../../utils/formatters";
 import classes from "./PokemonCard.module.scss";
 
 type Props = {
@@ -37,7 +38,7 @@ const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
       </span>
       {showAbility &&
         abilities.map(({ ability }) => (
-          <span key={ability.name}>{ability.name}</span>
+          <span key={ability.name}>{formatAbilityName(ability.name)}</span>
         ))}
     </Paper>
   );
