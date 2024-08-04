@@ -47,6 +47,7 @@ const LinkBattle: React.FC = () => {
     return () => {
       socket.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to run this once
   }, [socket]);
 
   useEffect(() => {

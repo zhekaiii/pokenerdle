@@ -26,7 +26,9 @@ const BattleBoard: React.FC<Props> = ({ pokemons, showAbility }) => {
           <div className={battleBoardClasses["BattleBoard__Separator"]} />
           {pkmnIndex < pokemons.length - 1 &&
             getSharedAbilities(pokemon, pokemons[pkmnIndex + 1]).map(
-              ({ ability }) => <AbilityChip abilityName={ability.name} />
+              ({ ability }) => (
+                <AbilityChip key={pokemon.id} abilityName={ability.name} />
+              )
             )}
           <div className={battleBoardClasses["BattleBoard__Separator"]} />
         </React.Fragment>

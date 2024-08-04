@@ -36,7 +36,9 @@ const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
         #{pokemonNumber} {pokemon.species.name} {isShiny && "✨"}
       </span>
       {showAbility &&
-        abilities.map(({ ability }) => <span>{ability.name}</span>)}
+        abilities.map(({ ability }) => (
+          <span key={ability.name}>{ability.name}</span>
+        ))}
     </Paper>
   );
 };

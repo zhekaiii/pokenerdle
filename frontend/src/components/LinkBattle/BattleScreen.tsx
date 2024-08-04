@@ -60,6 +60,7 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode, settings }) => {
     return () => {
       clearInterval(interval);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't have to include canMove as dependency
   }, [timerEndsAt]);
 
   const enterPokemon = useCallback(
