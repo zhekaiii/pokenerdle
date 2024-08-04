@@ -14,6 +14,7 @@ export default {
     socket.on("roomCode", onRoomReady);
     socket.on("disconnect", () => {
       onRoomReady("");
+      socket.removeAllListeners();
       setSocket(undefined);
     });
     socket.on("roomError", (error: string) => {

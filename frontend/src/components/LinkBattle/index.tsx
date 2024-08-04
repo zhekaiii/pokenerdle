@@ -67,7 +67,7 @@ const LinkBattle: React.FC = () => {
         isOpponentConnected ? (
           <GameScreen socket={socket} roomCode={roomCode} settings={settings} />
         ) : (
-          <WaitingLobby roomCode={roomCode} />
+          <WaitingLobby roomCode={roomCode} socket={socket} />
         )
       ) : (
         <LinkBattleLobby

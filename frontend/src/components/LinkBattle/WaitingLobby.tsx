@@ -1,12 +1,15 @@
-import { Button, debounce } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { Button, debounce, IconButton } from "@mui/material";
 import React, { useCallback, useMemo, useState } from "react";
+import { Socket } from "socket.io-client";
 import classes from "./WaitingLobby.module.scss";
 
 type Props = {
   roomCode: string;
+  socket: Socket;
 };
 
-const WaitingLobby: React.FC<Props> = ({ roomCode }) => {
+const WaitingLobby: React.FC<Props> = ({ socket, roomCode }) => {
   const [buttonLabel, setButtonLabel] = useState("Copy invite link");
   const shareLink = useMemo(() => {
     const url = new URL(location.href);
@@ -27,8 +30,23 @@ const WaitingLobby: React.FC<Props> = ({ roomCode }) => {
     setButtonLabel("Copied!");
     resetButtonLabel();
   };
+
+  const exitWaitingRoom = () => {
+    socket.close();
+  };
+
   return (
     <div className={classes["WaitingLobby__Card"]}>
+      <IconButton
+        sx={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+        }}
+        onClick={exitWaitingRoom}
+      >
+        <CloseIcon />
+      </IconButton>
       <span className={classes["WaitingLobby__CardTitle"]}>
         Waiting for opponent to join room {"\n"}
         {roomCode}

@@ -10,20 +10,21 @@ import { BattleRoom, BattleRoomSettings } from "./types.js";
 const ongoingBattles: Record<string, BattleRoom> = {};
 
 export const onSocketDisconnect = (socket: Socket) => {
-  const roomId = getUserRoom(socket);
-  if (!roomId) {
-    return;
-  }
-  console.log(`Socket ${socket.id} left room ${roomId}`);
-  const room = ongoingBattles[roomId];
-  room.timer && clearTimeout(room.timer);
-  ongoingBattles[roomId].players.forEach((id) => {
-    if (id !== socket.id) {
-      socket.to(id).emit("roomError", "Opponent disconnected");
+  console.log(`Socket ${socket.id} disconnected.`);
+  socket.rooms.forEach((roomId) => {
+    const room = ongoingBattles[roomId];
+    if (!room) {
+      return;
     }
-    socket.leave(roomId);
+    room.timer && clearTimeout(room.timer);
+    ongoingBattles[roomId].players.forEach((id) => {
+      if (id !== socket.id) {
+        socket.to(id).emit("roomError", "Opponent disconnected");
+      }
+      io.socketsLeave(roomId);
+    });
+    delete ongoingBattles[roomId];
   });
-  delete ongoingBattles[roomId];
   console.log(ongoingBattles);
 };
 
