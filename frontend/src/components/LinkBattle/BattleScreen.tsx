@@ -2,6 +2,7 @@ import {
   Alert,
   Autocomplete,
   createFilterOptions,
+  LinearProgress,
   Paper,
   TextField,
 } from "@mui/material";
@@ -15,22 +16,17 @@ import React, {
 } from "react";
 import { Socket } from "socket.io-client";
 import api from "../../api";
+import { BattleRoomSettings } from "../../api/types";
 import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
 
 type Props = {
   socket: Socket;
   roomCode: string;
-  timer: number;
-  showAbility: boolean;
+  settings: BattleRoomSettings;
 };
 
-const BattleScreen: React.FC<Props> = ({
-  socket,
-  roomCode,
-  timer,
-  showAbility,
-}) => {
+const BattleScreen: React.FC<Props> = ({ socket, roomCode, settings }) => {
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
@@ -44,6 +40,27 @@ const BattleScreen: React.FC<Props> = ({
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [canMove, setCanMove] = useState(false);
+  const [timerEndsAt, setTimerEndsAt] = useState(0);
+  const [secondsLeft, setSecondsLeft] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const secondsLeft = Math.max(
+        0,
+        Math.floor((timerEndsAt - Date.now()) / 100) / 10
+      );
+      setSecondsLeft(secondsLeft);
+      if (secondsLeft == 0) {
+        clearInterval(interval);
+        if (canMove) {
+          setIsSubmittingAnswer(true);
+        }
+      }
+    }, 100);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [timerEndsAt]);
 
   const enterPokemon = useCallback(
     async (pokemonName: string) => {
@@ -64,8 +81,11 @@ const BattleScreen: React.FC<Props> = ({
   }, [isSubmittingAnswer]);
 
   useEffect(() => {
-    socket.on("canMove", (socketId: string) => {
+    socket.on("canMove", (socketId: string, timerEndsAt: number) => {
       setCanMove(socketId === socket.id);
+      setTimerEndsAt(timerEndsAt);
+      setIsSubmittingAnswer(false);
+      setInput("");
     });
     socket.on("pushPokemon", (pokemon: Pokemon) => {
       setPokemons((pokemons) => [...pokemons, pokemon]);
@@ -88,21 +108,17 @@ const BattleScreen: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only run once
   }, []);
 
-  const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
-    if (e.key === "Enter") {
-      enterPokemon(input);
-    }
-  };
+  const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = useCallback(
+    (e) => {
+      if (e.key === "Enter") {
+        enterPokemon(input);
+      }
+    },
+    [enterPokemon, input]
+  );
 
-  return (
-    <div className={battleScreenClasses["BattleScreen__Contents"]}>
-      <Alert
-        className="tw-mb-2 tw-justify-center"
-        icon={false}
-        color={canMove ? "success" : "error"}
-      >
-        {canMove ? "Your turn" : "Opponent's turn"}
-      </Alert>
+  const textField = useMemo(
+    () => (
       <Autocomplete<string>
         autoFocus
         inputValue={input}
@@ -142,7 +158,28 @@ const BattleScreen: React.FC<Props> = ({
           r === "selectOption" && enterPokemon(value);
         }}
       />
-      <BattleBoard pokemons={pokemons} showAbility={showAbility} />
+    ),
+    [canMove, enterPokemon, input, isSubmittingAnswer, onKeyDown, suggestions]
+  );
+
+  return (
+    <div className={battleScreenClasses["BattleScreen__Contents"]}>
+      <Alert
+        className="tw-mb-2 tw-justify-center tw-relative tw-overflow-hidden"
+        icon={false}
+        color={canMove ? "success" : "error"}
+      >
+        <span>{canMove ? "Your turn" : "Opponent's turn"}</span>
+        <div className="tw-absolute tw-bottom-0 tw-left-0 tw-right-0">
+          <LinearProgress
+            color={canMove ? "success" : "error"}
+            value={(secondsLeft / settings.timer) * 100}
+            variant="determinate"
+          />
+        </div>
+      </Alert>
+      {textField}
+      <BattleBoard pokemons={pokemons} showAbility={settings.showAbility} />
     </div>
   );
 };

@@ -79,7 +79,7 @@ const LinkBattleHome: React.FC<Props> = ({ socket }) => {
               value={timer}
               max={MAX_TIMER}
               min={MIN_TIMER}
-              onChange={(e, value) => setTimer(value as number)}
+              onChange={(_, value) => setTimer(value as number)}
             />
             <span>{timer} seconds</span>
           </Stack>
@@ -88,7 +88,7 @@ const LinkBattleHome: React.FC<Props> = ({ socket }) => {
           control={
             <Switch
               checked={showAbility}
-              onChange={(e, checked) => setShowAbility(checked)}
+              onChange={(_, checked) => setShowAbility(checked)}
             />
           }
           label="Show abilities"

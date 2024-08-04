@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import api from "../../api";
+import { BattleRoomSettings } from "../../api/types";
 import PageContainer from "../../layout/PageContainer";
 import BattleScreen from "./BattleScreen";
 import LinkBattleHome from "./LinkBattleHome";
@@ -14,8 +15,10 @@ const LinkBattle: React.FC = () => {
   const [socket, setSocket] = useState<Socket | undefined>(undefined);
 
   const [isOpponentConnected, setIsOpponentConnected] = useState(false);
-  const [timer, setTimer] = useState(20);
-  const [showAbility, setShowAbility] = useState(true);
+  const [settings, setSettings] = useState<BattleRoomSettings>({
+    timer: 20,
+    showAbility: true,
+  });
 
   const [error, setError] = useState<string | null>(null);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
@@ -26,8 +29,7 @@ const LinkBattle: React.FC = () => {
         api.battles.connect(
           (roomCode, settings = { timer: 20, showAbility: true }) => {
             setRoomCode(roomCode);
-            setTimer(settings.timer);
-            setShowAbility(settings.showAbility);
+            setSettings(settings);
           },
           setIsOpponentConnected,
           (error) => {
@@ -59,8 +61,7 @@ const LinkBattle: React.FC = () => {
           <BattleScreen
             socket={socket}
             roomCode={roomCode}
-            timer={timer}
-            showAbility={showAbility}
+            settings={settings}
           />
         ) : (
           <WaitingForOpponent roomCode={roomCode} />
