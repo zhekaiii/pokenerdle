@@ -48,7 +48,7 @@ const BattleScreen: React.FC<Props> = ({
   const [timerEndsAt, setTimerEndsAt] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [guesses, setGuesses] = useState<string[]>([]);
-
+  const [isGameEnded, setIsGameEnded] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
   const [previousGuess, setPreviousGuess] = useState<string | null>(null);
 
@@ -63,6 +63,9 @@ const BattleScreen: React.FC<Props> = ({
   );
 
   useEffect(() => {
+    if (isGameEnded) {
+      return;
+    }
     const interval = setInterval(() => {
       const secondsLeft = Math.max(
         0,
@@ -80,7 +83,7 @@ const BattleScreen: React.FC<Props> = ({
       clearInterval(interval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't have to include canMove as dependency
-  }, [timerEndsAt]);
+  }, [timerEndsAt, isGameEnded]);
 
   const enterPokemon = useCallback(
     async (pokemonName: string) => {
@@ -123,6 +126,9 @@ const BattleScreen: React.FC<Props> = ({
       setInput("");
       closePopover();
     });
+    socket.on("gameEnd", () => {
+      setIsGameEnded(true);
+    });
     (async () => {
       const pokemonNames = await api.data.getPokemonNames();
       setPokemonNames(pokemonNames);
@@ -131,6 +137,7 @@ const BattleScreen: React.FC<Props> = ({
       socket.off("pushPokemon");
       socket.off("wrongAnswer");
       socket.off("canMove");
+      socket.off("gameEnd");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only run once
   }, []);
@@ -194,47 +201,63 @@ const BattleScreen: React.FC<Props> = ({
       <Alert
         className="tw-mb-2 tw-justify-center tw-relative tw-overflow-hidden"
         icon={false}
-        color={canMove ? "success" : "error"}
+        color={canMove != isGameEnded ? "success" : "error"}
       >
-        <span>{canMove ? "Your turn" : "Opponent's turn"}</span>
-        <div className="tw-absolute tw-bottom-0 tw-left-0 tw-right-0">
-          <LinearProgress
-            color={canMove ? "success" : "error"}
-            value={(secondsLeft / settings.timer) * 100}
-            variant="determinate"
-          />
-        </div>
+        <span>
+          {isGameEnded
+            ? `${
+                canMove ? "You" : "Your opponent"
+              } took too long to enter a Pokémon!`
+            : canMove
+            ? "Your turn"
+            : "Opponent's turn"}
+        </span>
+        {!isGameEnded && (
+          <div className="tw-absolute tw-bottom-0 tw-left-0 tw-right-0">
+            <LinearProgress
+              color={canMove ? "success" : "error"}
+              value={(secondsLeft / settings.timer) * 100}
+              variant="determinate"
+            />
+          </div>
+        )}
       </Alert>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          enterPokemon(input);
-        }}
-      >
-        {textField}
-        <Popper
-          open={isErrorOpen}
-          anchorEl={inputRef.current}
-          placement="bottom"
-          modifiers={[{ name: "offset", options: { offset: [0, 16] } }]}
-          transition
+      {!isGameEnded && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            enterPokemon(input);
+          }}
         >
-          {({ TransitionProps }) => (
-            <Slide {...TransitionProps} timeout={350}>
-              <Alert
-                className={battleScreenClasses.BattleScreen__WrongAnswerAlert}
-                icon={<CloseIcon />}
-                severity="error"
-                variant="outlined"
-              >
-                {canMove ? "You" : "Your opponent"} guessed{" "}
-                <span className="tw-capitalize">{previousGuess}</span>
-              </Alert>
-            </Slide>
-          )}
-        </Popper>
-      </form>
-      <BattleBoard pokemons={pokemons} showAbility={settings.showAbility} />
+          {textField}
+          <Popper
+            open={isErrorOpen}
+            anchorEl={inputRef.current}
+            placement="bottom"
+            modifiers={[{ name: "offset", options: { offset: [0, 16] } }]}
+            transition
+          >
+            {({ TransitionProps }) => (
+              <Slide {...TransitionProps} timeout={350}>
+                <Alert
+                  className={battleScreenClasses.BattleScreen__WrongAnswerAlert}
+                  icon={<CloseIcon />}
+                  severity="error"
+                  variant="outlined"
+                >
+                  {canMove ? "You" : "Your opponent"} guessed{" "}
+                  <span className="tw-capitalize">{previousGuess}</span>
+                </Alert>
+              </Slide>
+            )}
+          </Popper>
+        </form>
+      )}
+      <BattleBoard
+        pokemons={pokemons}
+        showAbility={settings.showAbility}
+        isGameEnded={isGameEnded}
+      />
     </div>
   );
 };

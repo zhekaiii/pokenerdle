@@ -1,5 +1,5 @@
 import { Button, Stack } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { BattleRoomSettings } from "../../api/battles/types";
 import classes from "./GamePreparation.module.scss";
@@ -27,18 +27,19 @@ const GamePreparation: React.FC<Props> = ({
     socket.emit("ready", roomCode);
   }, [isReady, roomCode, socket]);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (secondsLeft <= 1) {
-  //       onReady();
-  //       clearInterval(interval);
-  //     }
-  //     setSecondsLeft((prev) => prev - 1);
-  //   }, 1000);
-  //   return () => {
-  //     clearInterval(interval);
-  //   };
-  // }, [secondsLeft]);
+  useEffect(() => {
+    if (secondsLeft <= 0) {
+      onReady();
+      return;
+    }
+    const timeout = setTimeout(() => {
+      setSecondsLeft((prev) => prev - 1);
+    }, 1000);
+    return () => {
+      clearTimeout(timeout);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't need to rerun this when onReady changes
+  }, [secondsLeft]);
 
   return (
     <div className={classes.GamePreparation}>

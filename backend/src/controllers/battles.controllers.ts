@@ -40,7 +40,7 @@ const nextTurn = (roomId: string, isFirstTurn?: true) => {
     .emit("canMove", nextPlayer, Date.now() + room.settings.timer * 1000);
   room.timer = setTimeout(() => {
     console.log("Timeout");
-    nextTurn(roomId);
+    io.of(RouteNames.BATTLES_WS).to(roomId).emit("gameEnd");
   }, room.settings.timer * 1000);
 };
 

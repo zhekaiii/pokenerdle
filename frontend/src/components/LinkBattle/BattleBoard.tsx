@@ -7,6 +7,7 @@ import PokemonCard from "./PokemonCard";
 type Props = {
   pokemons: Pokemon[];
   showAbility: boolean;
+  isGameEnded: boolean;
 };
 
 const getSharedAbilities = (pokemon1: Pokemon, pokemon2: Pokemon) => {
@@ -17,20 +18,28 @@ const getSharedAbilities = (pokemon1: Pokemon, pokemon2: Pokemon) => {
   );
 };
 
-const BattleBoard: React.FC<Props> = ({ pokemons, showAbility }) => {
+const BattleBoard: React.FC<Props> = ({
+  pokemons,
+  showAbility,
+  isGameEnded,
+}) => {
   return (
     <div className={battleBoardClasses.BattleBoard}>
       {pokemons.map((pokemon, pkmnIndex) => (
         <React.Fragment key={pokemon.id}>
           <PokemonCard pokemon={pokemon} showAbility={showAbility} />
-          <div className={battleBoardClasses["BattleBoard__Separator"]} />
+          {(!isGameEnded || pkmnIndex < pokemons.length - 1) && (
+            <div className={battleBoardClasses["BattleBoard__Separator"]} />
+          )}
           {pkmnIndex < pokemons.length - 1 &&
             getSharedAbilities(pokemon, pokemons[pkmnIndex + 1]).map(
               ({ ability }) => (
                 <AbilityChip key={pokemon.id} abilityName={ability.name} />
               )
             )}
-          <div className={battleBoardClasses["BattleBoard__Separator"]} />
+          {(!isGameEnded || pkmnIndex < pokemons.length - 1) && (
+            <div className={battleBoardClasses["BattleBoard__Separator"]} />
+          )}
         </React.Fragment>
       ))}
     </div>
