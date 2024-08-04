@@ -1,9 +1,13 @@
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Alert,
   Autocomplete,
   createFilterOptions,
+  debounce,
   LinearProgress,
   Paper,
+  Popper,
+  Slide,
   TextField,
 } from "@mui/material";
 import { Pokemon } from "pokeapi-js-wrapper";
@@ -44,6 +48,9 @@ const BattleScreen: React.FC<Props> = ({
   const [timerEndsAt, setTimerEndsAt] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [guesses, setGuesses] = useState<string[]>([]);
+
+  const [isErrorOpen, setIsErrorOpen] = useState(false);
+  const [previousGuess, setPreviousGuess] = useState<string | null>(null);
 
   const suggestions = useMemo(
     () =>
@@ -100,16 +107,21 @@ const BattleScreen: React.FC<Props> = ({
       setTimerEndsAt(timerEndsAt);
       setIsSubmittingAnswer(false);
       setInput("");
+      setIsErrorOpen(false);
     });
     socket.on("pushPokemon", (pokemon: Pokemon) => {
       setPokemons((pokemons) => [...pokemons, pokemon]);
       setGuesses([]);
       setIsSubmittingAnswer(false);
       setInput("");
+      setIsErrorOpen(false);
     });
-    socket.on("wrongAnswer", () => {
+    socket.on("wrongAnswer", (guess: string) => {
+      setIsErrorOpen(true);
+      setPreviousGuess(guess);
       setIsSubmittingAnswer(false);
       setInput("");
+      closePopover();
     });
     (async () => {
       const pokemonNames = await api.data.getPokemonNames();
@@ -169,6 +181,14 @@ const BattleScreen: React.FC<Props> = ({
     [canMove, enterPokemon, input, isSubmittingAnswer, suggestions]
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- there are no unknown dependencies
+  const closePopover = useCallback(
+    debounce(() => {
+      setIsErrorOpen(false);
+    }, 4000),
+    []
+  );
+
   return (
     <div className={battleScreenClasses["BattleScreen__Contents"]}>
       <Alert
@@ -192,6 +212,27 @@ const BattleScreen: React.FC<Props> = ({
         }}
       >
         {textField}
+        <Popper
+          open={isErrorOpen}
+          anchorEl={inputRef.current}
+          placement="bottom"
+          modifiers={[{ name: "offset", options: { offset: [0, 16] } }]}
+          transition
+        >
+          {({ TransitionProps }) => (
+            <Slide {...TransitionProps} timeout={350}>
+              <Alert
+                className={battleScreenClasses.BattleScreen__WrongAnswerAlert}
+                icon={<CloseIcon />}
+                severity="error"
+                variant="outlined"
+              >
+                {canMove ? "You" : "Your opponent"} guessed{" "}
+                <span className="tw-capitalize">{previousGuess}</span>
+              </Alert>
+            </Slide>
+          )}
+        </Popper>
       </form>
       <BattleBoard pokemons={pokemons} showAbility={settings.showAbility} />
     </div>

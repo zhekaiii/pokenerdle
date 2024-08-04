@@ -61,5 +61,5 @@ export const validatePokemon = async (
   ) {
     return pokemon;
   }
-  return null;
+  return pokemon.species.name;
 };

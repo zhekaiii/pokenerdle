@@ -3,13 +3,19 @@
 @tailwind utilities;
 
 :root {
+  --pokeball-red: #ee1515;
+  --pokeball-stripe: #222224;
+  --pokeball-white: #f0f0f0;
+
+  --default-text-color: #213547;
+  --default-bg-color: #ffffff;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--default-text-color);
+  background-color: var(--default-bg-color);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -39,11 +45,14 @@ h1 {
   line-height: 1.1;
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --default-text-color: rgba(255, 255, 255, 0.87);
+    --default-bg-color: #242424;
   }
+}
+
+@media (prefers-color-scheme: light) {
   a:hover {
     color: #747bff;
   }

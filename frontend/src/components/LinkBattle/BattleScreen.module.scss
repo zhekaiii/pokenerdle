@@ -6,3 +6,19 @@
   width: 100%;
   max-width: 700px;
 }
+
+.BattleScreen__WrongAnswerAlert:global(.MuiAlert-root) {
+  padding: 4px 6px;
+  align-items: center;
+  font-size: 12px;
+  background-color: var(--default-bg-color);
+
+  :global(.MuiAlert-icon),
+  :global(.MuiAlert-message) {
+    padding: 0;
+  }
+
+  :global(.MuiAlert-icon) {
+    margin-right: 4px;
+  }
+}

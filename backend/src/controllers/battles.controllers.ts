@@ -113,8 +113,8 @@ export const validatePokemon = async (
     pokemonName,
     previousPokemonName
   );
-  if (!pokemon) {
-    socket.emit("wrongAnswer", "Invalid Pokemon");
+  if (typeof pokemon === "string") {
+    io.of(RouteNames.BATTLES_WS).to(roomId).emit("wrongAnswer", pokemon);
     return;
   }
   if (room.timer) {
