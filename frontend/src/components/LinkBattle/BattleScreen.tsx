@@ -24,12 +24,20 @@ type Props = {
   socket: Socket;
   roomCode: string;
   settings: BattleRoomSettings;
+  isGoingFirst: boolean;
+  starterPokemon: Pokemon;
 };
 
-const BattleScreen: React.FC<Props> = ({ socket, roomCode, settings }) => {
+const BattleScreen: React.FC<Props> = ({
+  socket,
+  roomCode,
+  settings,
+  isGoingFirst,
+  starterPokemon,
+}) => {
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const [pokemons, setPokemons] = useState<Pokemon[]>([starterPokemon]);
   const suggestions = useMemo(
     () =>
       pokemonNames.filter(
@@ -39,7 +47,7 @@ const BattleScreen: React.FC<Props> = ({ socket, roomCode, settings }) => {
   );
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [canMove, setCanMove] = useState(false);
+  const [canMove, setCanMove] = useState(isGoingFirst);
   const [timerEndsAt, setTimerEndsAt] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(0);
 

@@ -1,17 +1,9 @@
-import {
-  Button,
-  Divider,
-  FormControlLabel,
-  FormGroup,
-  OutlinedInput,
-  Slider,
-  Stack,
-  Switch,
-} from "@mui/material";
+import { Button, Divider, OutlinedInput } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import api from "../../api";
 import LoadingDialog from "../recyclables/LoadingDialog";
+import GameSettings from "./GameSettings";
 import classes from "./LinkBattleLobby.module.scss";
 
 type Props = {
@@ -19,9 +11,6 @@ type Props = {
 };
 
 const MAX_ROOM_CODE_LENGTH = 8;
-const MAX_TIMER = 90;
-const MIN_TIMER = 5;
-
 const LinkBattleLobby: React.FC<Props> = ({ socket }) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [roomCodeInput, setRoomCodeInput] = useState("");
@@ -71,30 +60,12 @@ const LinkBattleLobby: React.FC<Props> = ({ socket }) => {
         Create Room
       </Button>
 
-      <FormGroup className={classes.LinkBattleLobby__Settings}>
-        <div>
-          Time per turn
-          <Stack direction="row" spacing={2}>
-            <Slider
-              value={timer}
-              max={MAX_TIMER}
-              min={MIN_TIMER}
-              onChange={(_, value) => setTimer(value as number)}
-            />
-            <span>{timer} seconds</span>
-          </Stack>
-        </div>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={showAbility}
-              onChange={(_, checked) => setShowAbility(checked)}
-            />
-          }
-          label="Show abilities"
-          labelPlacement="start"
-        ></FormControlLabel>
-      </FormGroup>
+      <GameSettings
+        settings={{ showAbility, timer }}
+        setTimer={setTimer}
+        setShowAbility={setShowAbility}
+      />
+
       <LoadingDialog open={isConnecting} />
     </div>
   );

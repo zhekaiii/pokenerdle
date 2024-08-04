@@ -5,7 +5,7 @@ import { Socket } from "socket.io-client";
 import api from "../../api";
 import { BattleRoomSettings } from "../../api/battles/types";
 import PageContainer from "../../layout/PageContainer";
-import BattleScreen from "./BattleScreen";
+import GameScreen from "./GameScreen";
 import LinkBattleLobby from "./LinkBattleLobby";
 import WaitingLobby from "./WaitingLobby";
 
@@ -59,11 +59,7 @@ const LinkBattle: React.FC = () => {
     <PageContainer>
       {roomCode && socket ? (
         isOpponentConnected ? (
-          <BattleScreen
-            socket={socket}
-            roomCode={roomCode}
-            settings={settings}
-          />
+          <GameScreen socket={socket} roomCode={roomCode} settings={settings} />
         ) : (
           <WaitingLobby roomCode={roomCode} />
         )

@@ -1,3 +1,5 @@
+import axios from "axios";
+import { Pokemon } from "pokeapi-js-wrapper";
 import { io, Socket } from "socket.io-client";
 import { BattleRoomSettings } from "./types";
 
@@ -30,5 +32,11 @@ export default {
   },
   validatePokemon: (socket: Socket, pokemonName: string, roomId: string) => {
     socket.emit("answer", pokemonName, roomId);
+  },
+  getStarterPokemon: async (roomId: string) => {
+    const { data } = await axios.get<Pokemon>("/v1/battles/starter-pokemon", {
+      params: { roomId },
+    });
+    return data;
   },
 };
