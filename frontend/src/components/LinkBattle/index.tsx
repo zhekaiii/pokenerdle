@@ -24,10 +24,10 @@ const LinkBattle: React.FC = () => {
     if (!socket) {
       setSocket(
         api.battles.connect(
-          (roomCode, timer, showAbility) => {
+          (roomCode, settings = { timer: 20, showAbility: true }) => {
             setRoomCode(roomCode);
-            setTimer(timer);
-            setShowAbility(showAbility);
+            setTimer(settings.timer);
+            setShowAbility(settings.showAbility);
           },
           setIsOpponentConnected,
           (error) => {

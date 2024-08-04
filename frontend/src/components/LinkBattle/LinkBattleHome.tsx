@@ -38,7 +38,7 @@ const LinkBattleHome: React.FC<Props> = ({ socket }) => {
   const onClickCreate = async () => {
     if (isConnecting || !socket) return;
     setIsConnecting(true);
-    api.battles.createBattleRoom(socket, timer, showAbility);
+    api.battles.createBattleRoom(socket, { timer, showAbility });
   };
 
   const onClickJoin = async () => {

@@ -1,18 +1,10 @@
-import { Pokemon } from "pokedex-promise-v2";
 import { Socket } from "socket.io";
 import { RouteNames } from "../data/const.js";
 import { ErrorRoomNotFound } from "../errors/index.js";
 import { io } from "../index.js";
 import * as dataService from "../services/data.services.js";
 import { createRandomString } from "../utils/random.js";
-
-type BattleRoom = {
-  players: [string] | [string, string];
-  pokemon: Pokemon[];
-  timer: number;
-  showAbility: boolean;
-};
-
+import { BattleRoom, BattleRoomSettings } from "./types.js";
 const ongoingBattles: Record<string, BattleRoom> = {};
 
 const onSocketDisconnect = (socket: Socket, roomId: string) => {
@@ -31,8 +23,7 @@ const onSocketDisconnect = (socket: Socket, roomId: string) => {
 
 export const createBattleRoom = async (
   socket: Socket,
-  timer: number,
-  showAbility: boolean
+  settings: BattleRoomSettings
 ) => {
   while (true) {
     const roomId = createRandomString(8);
@@ -42,12 +33,11 @@ export const createBattleRoom = async (
     ongoingBattles[roomId] = {
       players: [socket.id],
       pokemon: [],
-      timer,
-      showAbility,
+      settings,
     };
     socket.on("disconnect", () => onSocketDisconnect(socket, roomId));
     socket.join(roomId);
-    socket.emit("roomCode", roomId, timer, showAbility);
+    socket.emit("roomCode", roomId, settings);
     console.log("Room created", roomId);
     console.log(ongoingBattles);
     return;
@@ -67,7 +57,7 @@ export const joinRoom = async (socket: Socket, roomId: string) => {
   }
   room.players = [room.players[0], socket.id];
   socket.join(roomId);
-  socket.emit("roomCode", roomId, room.timer, room.showAbility);
+  socket.emit("roomCode", roomId, room.settings);
   socket.on("disconnect", () => onSocketDisconnect(socket, roomId));
   io.of(RouteNames.BATTLES_WS).to(roomId).emit("opponentJoined");
   console.log(ongoingBattles);

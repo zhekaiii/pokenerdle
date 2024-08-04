@@ -1,23 +1,20 @@
 import { io, Socket } from "socket.io-client";
+import { BattleRoomSettings } from "./types";
 
 export default {
   connect: (
-    onRoomReady: (
-      roomCode: string,
-      timer: number,
-      showAbility: boolean
-    ) => void,
+    onRoomReady: (roomCode: string, settings?: BattleRoomSettings) => void,
     setIsOpponentJoined: (value: boolean) => void,
     onError: (error: string | null) => void
   ) => {
     const socket = io(`${import.meta.env.VITE_BACKEND_URL}/ws/battles`);
     socket.on("roomCode", onRoomReady);
     socket.on("disconnect", () => {
-      onRoomReady("", 20, true);
+      onRoomReady("");
     });
     socket.on("roomError", (error: string) => {
       console.error(error);
-      onRoomReady("", 20, true);
+      onRoomReady("");
       onError(error);
     });
     socket.on("opponentJoined", () => {
@@ -25,8 +22,8 @@ export default {
     });
     return socket;
   },
-  createBattleRoom: (socket: Socket, timer: number, showAbility: boolean) => {
-    socket.emit("create", timer, showAbility);
+  createBattleRoom: (socket: Socket, settings: BattleRoomSettings) => {
+    socket.emit("create", settings);
   },
   joinRoom: (socket: Socket, roomCode: string) => {
     socket.emit("join", roomCode);
