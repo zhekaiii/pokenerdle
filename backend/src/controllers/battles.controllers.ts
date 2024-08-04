@@ -60,7 +60,7 @@ export const createBattleRoom = async (
       settings,
       timer: null,
       turn: Math.random() < 0.5 ? 0 : 1,
-      readyCount: 0,
+      readyPlayers: [],
     };
     socket.join(roomId);
     socket.emit("roomCode", roomId, settings);
@@ -144,14 +144,17 @@ export const getUserRoom = (socket: Socket) => {
 };
 
 export const userReady = (socket: Socket) => {
-  console.log(`User ${socket.id} is ready`);
   const roomId = getUserRoom(socket);
   if (!roomId) {
     return;
   }
   const room = ongoingBattles[roomId];
-  room.readyCount++;
-  if (room.readyCount === 2) {
+  if (room.readyPlayers.includes(socket.id)) {
+    return;
+  }
+  console.log(`User ${socket.id} is ready`);
+  room.readyPlayers.push(socket.id);
+  if (room.readyPlayers.length === 2) {
     console.log("Both players are ready");
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("startGame");
     nextTurn(roomId, true);

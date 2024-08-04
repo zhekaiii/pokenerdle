@@ -11,5 +11,5 @@ export type BattleRoom = {
   settings: BattleRoomSettings;
   turn: number;
   timer: NodeJS.Timeout | null;
-  readyCount: number;
+  readyPlayers: string[];
 };
