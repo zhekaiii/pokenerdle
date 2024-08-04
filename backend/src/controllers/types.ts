@@ -9,5 +9,7 @@ export type BattleRoom = {
   players: [string] | [string, string];
   pokemon: Pokemon[];
   settings: BattleRoomSettings;
+  turn: number;
   timer: NodeJS.Timeout | null;
+  readyCount: number;
 };
