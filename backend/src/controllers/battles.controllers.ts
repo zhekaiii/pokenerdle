@@ -27,16 +27,18 @@ export const onSocketDisconnect = (socket: Socket) => {
   console.log(ongoingBattles);
 };
 
-const nextTurn = (roomId: string) => {
+const nextTurn = (roomId: string, isFirstTurn?: true) => {
   const room = ongoingBattles[roomId];
   // only switch turn if it is not the first turn
-  room.turn = Number(!room.turn);
+  if (!isFirstTurn) {
+    room.turn = Number(!room.turn);
+  }
   const nextPlayer = room.players[room.turn];
-  console.log("Timeout");
   io.of(RouteNames.BATTLES_WS)
     .to(roomId)
     .emit("canMove", nextPlayer, Date.now() + room.settings.timer * 1000);
   room.timer = setTimeout(() => {
+    console.log("Timeout");
     nextTurn(roomId);
   }, room.settings.timer * 1000);
 };
@@ -92,6 +94,14 @@ export const validatePokemon = async (
   roomId: string
 ) => {
   const room = ongoingBattles[roomId];
+  if (!room) {
+    return;
+  }
+  if (room.players[room.turn] !== socket.id) {
+    console.log(`${socket.id} tried to move out of turn`);
+    return;
+  }
+  console.log(`${socket.id} answered ${pokemonName}`);
   const previousPokemonName = room.pokemon.at(-1)!.name;
   const pokemon = await dataService.validatePokemon(
     pokemonName,
@@ -144,9 +154,7 @@ export const userReady = (socket: Socket) => {
   if (room.readyCount === 2) {
     console.log("Both players are ready");
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("startGame");
-    room.timer = setTimeout(() => {
-      nextTurn(roomId);
-    }, room.settings.timer * 1000);
+    nextTurn(roomId, true);
   }
 };
 

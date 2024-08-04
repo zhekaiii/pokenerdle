@@ -12,10 +12,13 @@ module.exports = {
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
   plugins: ["react", "@typescript-eslint", "css-modules"],
-  rules: {},
+  rules: {
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+  },
   settings: {
     react: {
-      version: 'detect'
-    }
-  }
+      version: "detect",
+    },
+  },
 };

@@ -64,7 +64,10 @@ const LinkBattle: React.FC = () => {
           <WaitingLobby roomCode={roomCode} />
         )
       ) : (
-        <LinkBattleLobby socket={socket} />
+        <LinkBattleLobby
+          socket={socket}
+          setIsOpponentConnected={setIsOpponentConnected}
+        />
       )}
 
       <Snackbar

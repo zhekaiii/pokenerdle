@@ -45,11 +45,11 @@ const GameSettings: React.FC<Props> = ({
             onChange={
               setShowAbility && ((_, checked) => setShowAbility(checked))
             }
-            readOnly={!setShowAbility}
           />
         }
         label="Show abilities"
         labelPlacement="start"
+        disabled={!setShowAbility}
       ></FormControlLabel>
     </FormGroup>
   );

@@ -8,10 +8,14 @@ import classes from "./LinkBattleLobby.module.scss";
 
 type Props = {
   socket?: Socket;
+  setIsOpponentConnected: (isConnected: boolean) => void;
 };
 
 const MAX_ROOM_CODE_LENGTH = 8;
-const LinkBattleLobby: React.FC<Props> = ({ socket }) => {
+const LinkBattleLobby: React.FC<Props> = ({
+  socket,
+  setIsOpponentConnected,
+}) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [showAbility, setShowAbility] = useState(true);
@@ -33,6 +37,7 @@ const LinkBattleLobby: React.FC<Props> = ({ socket }) => {
   const onClickJoin = async () => {
     if (isConnecting || !socket) return;
     setIsConnecting(true);
+    setIsOpponentConnected(true);
     api.battles.joinRoom(socket, roomCodeInput);
   };
 
