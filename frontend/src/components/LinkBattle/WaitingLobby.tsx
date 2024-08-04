@@ -44,6 +44,7 @@ const WaitingLobby: React.FC<Props> = ({ socket, roomCode }) => {
           right: 0,
         }}
         onClick={exitWaitingRoom}
+        color="inherit"
       >
         <CloseIcon />
       </IconButton>

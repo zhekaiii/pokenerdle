@@ -25,6 +25,7 @@
   border-radius: 20px;
   height: 400px;
   border: 8px solid var(--border-color);
+  color: white;
 
   @media (prefers-color-scheme: light) {
     --border-color: var(--pokeball-stripe);
