@@ -1,6 +1,6 @@
 import axios from "axios";
 import battles from "./battles";
-import data from "./data";
+import data from "./data/data";
 
 axios.defaults.baseURL = `${import.meta.env.VITE_BACKEND_URL}/api`;
 

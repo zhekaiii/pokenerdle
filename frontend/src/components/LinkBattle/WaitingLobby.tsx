@@ -1,12 +1,12 @@
 import { Button, debounce } from "@mui/material";
 import React, { useCallback, useMemo, useState } from "react";
-import classes from "./WaitingForOpponent.module.scss";
+import classes from "./WaitingLobby.module.scss";
 
 type Props = {
   roomCode: string;
 };
 
-const WaitingForOpponent: React.FC<Props> = ({ roomCode }) => {
+const WaitingLobby: React.FC<Props> = ({ roomCode }) => {
   const [buttonLabel, setButtonLabel] = useState("Copy invite link");
   const shareLink = useMemo(() => {
     const url = new URL(location.href);
@@ -28,8 +28,8 @@ const WaitingForOpponent: React.FC<Props> = ({ roomCode }) => {
     resetButtonLabel();
   };
   return (
-    <div className={classes["WaitingForOpponent__Card"]}>
-      <span className={classes["WaitingForOpponent__CardTitle"]}>
+    <div className={classes["WaitingLobby__Card"]}>
+      <span className={classes["WaitingLobby__CardTitle"]}>
         Waiting for opponent to join room {"\n"}
         {roomCode}
       </span>
@@ -40,4 +40,4 @@ const WaitingForOpponent: React.FC<Props> = ({ roomCode }) => {
   );
 };
 
-export default WaitingForOpponent;
+export default WaitingLobby;

@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import api from "../../api";
-import { BattleRoomSettings } from "../../api/types";
+import { BattleRoomSettings } from "../../api/battles/types";
 import PageContainer from "../../layout/PageContainer";
 import BattleScreen from "./BattleScreen";
-import LinkBattleHome from "./LinkBattleHome";
-import WaitingForOpponent from "./WaitingForOpponent";
+import LinkBattleLobby from "./LinkBattleLobby";
+import WaitingLobby from "./WaitingLobby";
 
 const LinkBattle: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -65,10 +65,10 @@ const LinkBattle: React.FC = () => {
             settings={settings}
           />
         ) : (
-          <WaitingForOpponent roomCode={roomCode} />
+          <WaitingLobby roomCode={roomCode} />
         )
       ) : (
-        <LinkBattleHome socket={socket} />
+        <LinkBattleLobby socket={socket} />
       )}
 
       <Snackbar

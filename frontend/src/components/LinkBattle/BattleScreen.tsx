@@ -16,7 +16,7 @@ import React, {
 } from "react";
 import { Socket } from "socket.io-client";
 import api from "../../api";
-import { BattleRoomSettings } from "../../api/types";
+import { BattleRoomSettings } from "../../api/battles/types";
 import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
 

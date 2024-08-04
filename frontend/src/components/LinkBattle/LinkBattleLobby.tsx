@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import api from "../../api";
 import LoadingDialog from "../recyclables/LoadingDialog";
-import classes from "./LinkBattleHome.module.scss";
+import classes from "./LinkBattleLobby.module.scss";
 
 type Props = {
   socket?: Socket;
@@ -22,7 +22,7 @@ const MAX_ROOM_CODE_LENGTH = 8;
 const MAX_TIMER = 90;
 const MIN_TIMER = 5;
 
-const LinkBattleHome: React.FC<Props> = ({ socket }) => {
+const LinkBattleLobby: React.FC<Props> = ({ socket }) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [showAbility, setShowAbility] = useState(true);
@@ -48,7 +48,7 @@ const LinkBattleHome: React.FC<Props> = ({ socket }) => {
   };
 
   return (
-    <div className={classes.LinkBattleHome}>
+    <div className={classes.LinkBattleLobby}>
       <OutlinedInput
         placeholder="Room Code"
         disabled={isConnecting}
@@ -71,7 +71,7 @@ const LinkBattleHome: React.FC<Props> = ({ socket }) => {
         Create Room
       </Button>
 
-      <FormGroup className={classes.LinkBattleHome__Settings}>
+      <FormGroup className={classes.LinkBattleLobby__Settings}>
         <div>
           Time per turn
           <Stack direction="row" spacing={2}>
@@ -100,4 +100,4 @@ const LinkBattleHome: React.FC<Props> = ({ socket }) => {
   );
 };
 
-export default LinkBattleHome;
+export default LinkBattleLobby;
