@@ -59,7 +59,13 @@ export const validatePokemon = async (
       pokemon.abilities.some((a) => a.ability.name === ability.name)
     )
   ) {
-    return pokemon;
+    const pokemonSpecies = await pokedex.getPokemonSpeciesByName(
+      pokemon.species.name
+    );
+    return [
+      pokemon,
+      pokemonSpecies.varieties.map((variety) => variety.pokemon.name),
+    ] as const;
   }
   return pokemon.species.name;
 };

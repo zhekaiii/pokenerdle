@@ -51,12 +51,16 @@ const BattleScreen: React.FC<Props> = ({
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [canMove, setCanMove] = useState(isGoingFirst);
-  const [timerEndsAt, setTimerEndsAt] = useState(0);
+  const [timerEndsAt, setTimerEndsAt] = useState(
+    Date.now() + settings.timer * 1000
+  );
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [guesses, setGuesses] = useState<string[]>([]);
   const [isGameEnded, setIsGameEnded] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
+
   const [previousGuess, setPreviousGuess] = useState<string | null>(null);
+  const [disallowedPokemon, setDisallowedPokemon] = useState<string[]>([]);
 
   const [rematch, setRematch] = useState(false);
   const [opponentRematch, setOpponentRematch] = useState(false);
@@ -65,11 +69,9 @@ const BattleScreen: React.FC<Props> = ({
   const suggestions = useMemo(
     () =>
       pokemonNames.filter(
-        (name) =>
-          !guesses.includes(name) &&
-          !pokemons.some((pokemon) => pokemon.name == name)
+        (name) => !guesses.includes(name) && !disallowedPokemon.includes(name)
       ),
-    [pokemonNames, pokemons, guesses]
+    [pokemonNames, disallowedPokemon, guesses]
   );
   const hasWon = useMemo(() => isGameEnded && !canMove, [canMove, isGameEnded]);
 
@@ -131,6 +133,14 @@ const BattleScreen: React.FC<Props> = ({
     socket.disconnect();
   }, [socket]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- there are no unknown dependencies
+  const closePopover = useCallback(
+    debounce(() => {
+      setIsErrorOpen(false);
+    }, 4000),
+    []
+  );
+
   useEffect(() => {
     if (!isSubmittingAnswer) {
       inputRef.current?.focus();
@@ -145,13 +155,20 @@ const BattleScreen: React.FC<Props> = ({
       setInput("");
       setIsErrorOpen(false);
     });
-    socket.on("pushPokemon", (pokemon: Pokemon) => {
-      setPokemons((pokemons) => [...pokemons, pokemon]);
-      setGuesses([]);
-      setIsSubmittingAnswer(false);
-      setInput("");
-      setIsErrorOpen(false);
-    });
+    socket.on(
+      "pushPokemon",
+      (pokemon: Pokemon, socketId: string, sameSpecies: string[]) => {
+        setPokemons((pokemons) => [...pokemons, pokemon]);
+        setDisallowedPokemon((disallowedPokemon) => [
+          ...disallowedPokemon,
+          ...sameSpecies,
+        ]);
+        setGuesses([]);
+        setIsSubmittingAnswer(false);
+        setInput("");
+        setIsErrorOpen(false);
+      }
+    );
     socket.on("wrongAnswer", (guess: string) => {
       setIsErrorOpen(true);
       setPreviousGuess(guess);
@@ -181,8 +198,8 @@ const BattleScreen: React.FC<Props> = ({
       socket.off("canMove");
       socket.off("gameEnd");
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only run once
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't need to rerun this when goBackToPreparation changes
+  }, [socket, goBackToPreparation, closePopover]);
 
   const textField = useMemo(
     () => (
@@ -228,14 +245,6 @@ const BattleScreen: React.FC<Props> = ({
       />
     ),
     [canMove, enterPokemon, input, isSubmittingAnswer, suggestions]
-  );
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- there are no unknown dependencies
-  const closePopover = useCallback(
-    debounce(() => {
-      setIsErrorOpen(false);
-    }, 4000),
-    []
   );
 
   return (

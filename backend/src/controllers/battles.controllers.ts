@@ -111,14 +111,15 @@ export const validatePokemon = async (
   }
   console.log(`${socket.id} answered ${pokemonName}`);
   const previousPokemonName = room.pokemon.at(-1)!.name;
-  const pokemon = await dataService.validatePokemon(
+  const result = await dataService.validatePokemon(
     pokemonName,
     previousPokemonName
   );
-  if (typeof pokemon === "string") {
-    io.of(RouteNames.BATTLES_WS).to(roomId).emit("wrongAnswer", pokemon);
+  if (typeof result === "string") {
+    io.of(RouteNames.BATTLES_WS).to(roomId).emit("wrongAnswer", result);
     return;
   }
+  const [pokemon, sameSpecies] = result;
   if (room.timer) {
     clearTimeout(room.timer);
     room.timer = null;
@@ -126,7 +127,7 @@ export const validatePokemon = async (
   room.pokemon.push(pokemon);
   io.of(RouteNames.BATTLES_WS)
     .to(roomId)
-    .emit("pushPokemon", pokemon, socket.id);
+    .emit("pushPokemon", pokemon, socket.id, sameSpecies);
 
   nextTurn(roomId);
 };
