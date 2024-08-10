@@ -1,5 +1,6 @@
 import { Pokemon } from "pokeapi-js-wrapper";
 import React from "react";
+import { getSharedAbilities } from "../../utils/linkBattleUtils";
 import AbilityChip from "./AbilityChip";
 import battleBoardClasses from "./BattleBoard.module.scss";
 import PokemonCard from "./PokemonCard";
@@ -8,20 +9,14 @@ type Props = {
   pokemons: Pokemon[];
   showAbility: boolean;
   isGameEnded: boolean;
-};
-
-const getSharedAbilities = (pokemon1: Pokemon, pokemon2: Pokemon) => {
-  return pokemon1.abilities.filter((ability1) =>
-    pokemon2.abilities.some(
-      (ability2) => ability1.ability.name === ability2.ability.name
-    )
-  );
+  sharedLinks: Record<string, number>;
 };
 
 const BattleBoard: React.FC<Props> = ({
   pokemons,
   showAbility,
   isGameEnded,
+  sharedLinks,
 }) => {
   return (
     <div className={battleBoardClasses.BattleBoard}>
@@ -34,7 +29,11 @@ const BattleBoard: React.FC<Props> = ({
           {pkmnIndex < pokemons.length - 1 &&
             getSharedAbilities(pokemon, pokemons[pkmnIndex + 1]).map(
               ({ ability }) => (
-                <AbilityChip key={pokemon.id} abilityName={ability.name} />
+                <AbilityChip
+                  key={ability.name}
+                  abilityName={ability.name}
+                  count={sharedLinks[ability.name]}
+                />
               )
             )}
           {(!isGameEnded || pkmnIndex < pokemons.length - 1) && (

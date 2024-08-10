@@ -23,8 +23,10 @@ import React, {
   useState,
 } from "react";
 import { Socket } from "socket.io-client";
+import { useImmer } from "use-immer";
 import api from "../../api";
 import { BattleRoomSettings } from "../../api/battles/types";
+import { updateSharedLinks } from "../../utils/linkBattleUtils";
 import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
 
@@ -51,16 +53,18 @@ const BattleScreen: React.FC<Props> = ({
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [canMove, setCanMove] = useState(isGoingFirst);
+  const [isGameEnded, setIsGameEnded] = useState(false);
+
   const [timerEndsAt, setTimerEndsAt] = useState(
     Date.now() + settings.timer * 1000
   );
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [guesses, setGuesses] = useState<string[]>([]);
-  const [isGameEnded, setIsGameEnded] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
 
   const [previousGuess, setPreviousGuess] = useState<string | null>(null);
   const [disallowedPokemon, setDisallowedPokemon] = useState<string[]>([]);
+  const [sharedLinks, setSharedLinks] = useImmer<Record<string, number>>({});
 
   const [rematch, setRematch] = useState(false);
   const [opponentRematch, setOpponentRematch] = useState(false);
@@ -158,6 +162,9 @@ const BattleScreen: React.FC<Props> = ({
     socket.on(
       "pushPokemon",
       (pokemon: Pokemon, socketId: string, sameSpecies: string[]) => {
+        setSharedLinks((draft) => {
+          updateSharedLinks(pokemons[pokemons.length - 1], pokemon, draft);
+        });
         setPokemons((pokemons) => [...pokemons, pokemon]);
         setDisallowedPokemon((disallowedPokemon) => [
           ...disallowedPokemon,
@@ -199,7 +206,7 @@ const BattleScreen: React.FC<Props> = ({
       socket.off("gameEnd");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't need to rerun this when goBackToPreparation changes
-  }, [socket, goBackToPreparation, closePopover]);
+  }, [socket, goBackToPreparation, closePopover, pokemons]);
 
   const textField = useMemo(
     () => (
@@ -339,6 +346,7 @@ const BattleScreen: React.FC<Props> = ({
         pokemons={pokemons}
         showAbility={settings.showAbility}
         isGameEnded={isGameEnded}
+        sharedLinks={sharedLinks}
       />
     </div>
   );

@@ -64,6 +64,7 @@ export const createBattleRoom = async (
       turn: Math.random() < 0.5 ? 0 : 1,
       readyPlayers: [],
       wantToRematch: [],
+      usedLinks: {},
     };
     socket.join(roomId);
     socket.emit("roomCode", roomId, settings);
@@ -113,7 +114,8 @@ export const validatePokemon = async (
   const previousPokemonName = room.pokemon.at(-1)!.name;
   const result = await dataService.validatePokemon(
     pokemonName,
-    previousPokemonName
+    previousPokemonName,
+    room.usedLinks
   );
   if (typeof result === "string") {
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("wrongAnswer", result);
@@ -200,5 +202,6 @@ export const onRematch = (socket: Socket) => {
     room.wantToRematch = [];
     room.readyPlayers = [];
     room.pokemon = [room.pokemon[0]];
+    room.usedLinks = {};
   }
 };

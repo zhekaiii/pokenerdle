@@ -1,5 +1,7 @@
 import { Pokemon } from "pokedex-promise-v2";
 
+export const MAX_LINKS = 3;
+
 export type BattleRoomSettings = {
   timer: number;
   showAbility: boolean;
@@ -13,4 +15,5 @@ export type BattleRoom = {
   timer: NodeJS.Timeout | null;
   readyPlayers: string[];
   wantToRematch: string[];
+  usedLinks: Record<string, number>;
 };

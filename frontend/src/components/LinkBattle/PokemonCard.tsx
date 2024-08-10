@@ -2,7 +2,10 @@ import { Paper } from "@mui/material";
 import { uniqBy } from "lodash";
 import { Pokemon } from "pokeapi-js-wrapper";
 import React, { useMemo } from "react";
-import { formatAbilityName } from "../../utils/formatters";
+import {
+  formatAbilityName,
+  getFormattedPokemonName,
+} from "../../utils/formatters";
 import classes from "./PokemonCard.module.scss";
 
 type Props = {
@@ -34,7 +37,7 @@ const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
       />
 
       <span className={classes["PokemonCard__PkmnName"]}>
-        #{pokemonNumber} {pokemon.species.name} {isShiny && "✨"}
+        #{pokemonNumber} {getFormattedPokemonName(pokemon)} {isShiny && "✨"}
       </span>
       {showAbility &&
         abilities.map(({ ability }) => (
