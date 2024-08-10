@@ -43,18 +43,20 @@ const LinkBattle: React.FC = () => {
     return createdSocket;
   };
 
-  // This runs twice on dev because of React strict mode, so it errors out
-  // because backend thinks that a third player is trying to join
   useEffect(() => {
     if (searchParams.get("roomCode")) {
-      const socket = createSocket();
+      if (!socket) {
+        setSocket(createSocket());
+        return;
+      }
       socket.emit("join", searchParams.get("roomCode"));
+      setSearchParams();
     }
     return () => {
       socket?.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to run this once
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     if (roomCode) return;
