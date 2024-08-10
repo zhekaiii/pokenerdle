@@ -19,7 +19,7 @@ export const onSocketDisconnect = (socket: Socket) => {
     room.timer && clearTimeout(room.timer);
     ongoingBattles[roomId].players.forEach((id) => {
       if (id !== socket.id) {
-        socket.to(id).emit("roomError", "Opponent disconnected");
+        socket.to(id).emit("roomError", "Opponent left the battle!");
       }
       io.socketsLeave(roomId);
     });
@@ -63,6 +63,7 @@ export const createBattleRoom = async (
       timer: null,
       turn: Math.random() < 0.5 ? 0 : 1,
       readyPlayers: [],
+      wantToRematch: [],
     };
     socket.join(roomId);
     socket.emit("roomCode", roomId, settings);
@@ -177,4 +178,25 @@ export const getStarterPokemon = async (req: Request, res: Response) => {
   const pokemon = room.pokemon[0];
   console.log(`Starter Pokemon of room ${roomId} is ${pokemon.name}`);
   res.json(pokemon);
+};
+
+export const onRematch = (socket: Socket) => {
+  console.log(`User ${socket.id} wants to rematch`);
+  const roomId = getUserRoom(socket);
+  if (!roomId) {
+    return;
+  }
+  const room = ongoingBattles[roomId];
+  if (room.wantToRematch.includes(socket.id)) {
+    return;
+  }
+  room.wantToRematch.push(socket.id);
+  io.of(RouteNames.BATTLES_WS)
+    .to(roomId)
+    .emit("rematch", socket.id, room.wantToRematch.length == 2);
+  if (room.wantToRematch.length === 2) {
+    room.wantToRematch = [];
+    room.readyPlayers = [];
+    room.pokemon = [room.pokemon[0]];
+  }
 };

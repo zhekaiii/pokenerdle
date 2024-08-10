@@ -1,5 +1,5 @@
 import { Pokemon } from "pokeapi-js-wrapper";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import api from "../../api";
 import { BattleRoomSettings } from "../../api/battles/types";
@@ -16,6 +16,10 @@ const GameScreen: React.FC<Props> = ({ socket, roomCode, settings }) => {
   const [isGoingFirst, setIsGoingFirst] = useState<boolean>();
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [starterPokemon, setStarterPokemon] = useState<Pokemon>();
+  const goBackToPreparation = useCallback(() => {
+    socket.emit("isMyTurn", setIsGoingFirst);
+    setIsGameStarted(false);
+  }, [socket]);
 
   useEffect(() => {
     socket.emit("isMyTurn", setIsGoingFirst);
@@ -23,6 +27,9 @@ const GameScreen: React.FC<Props> = ({ socket, roomCode, settings }) => {
       setIsGameStarted(true);
     });
     api.battles.getStarterPokemon(roomCode).then(setStarterPokemon);
+    return () => {
+      socket.off("startGame");
+    };
   }, [socket, roomCode]);
 
   return !isGameStarted ||
@@ -41,6 +48,7 @@ const GameScreen: React.FC<Props> = ({ socket, roomCode, settings }) => {
       settings={settings}
       isGoingFirst={isGoingFirst}
       starterPokemon={starterPokemon}
+      goBackToPreparation={goBackToPreparation}
     />
   );
 };

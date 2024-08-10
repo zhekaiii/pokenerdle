@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon",
+    "dev": "bun --watch run ./src/index.ts",
     "build": "tsc",
     "start": "node --es-module-specifier-resolution=node dist/index.js"
   },

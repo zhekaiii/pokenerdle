@@ -1,13 +1,16 @@
+import { Autorenew, ExitToApp } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Alert,
   Autocomplete,
+  Button,
   createFilterOptions,
   debounce,
   LinearProgress,
   Paper,
   Popper,
   Slide,
+  Stack,
   TextField,
 } from "@mui/material";
 import { Pokemon } from "pokeapi-js-wrapper";
@@ -30,6 +33,7 @@ type Props = {
   settings: BattleRoomSettings;
   isGoingFirst: boolean;
   starterPokemon: Pokemon;
+  goBackToPreparation: () => void;
 };
 
 const BattleScreen: React.FC<Props> = ({
@@ -38,6 +42,7 @@ const BattleScreen: React.FC<Props> = ({
   settings,
   isGoingFirst,
   starterPokemon,
+  goBackToPreparation,
 }) => {
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
@@ -51,6 +56,10 @@ const BattleScreen: React.FC<Props> = ({
   const [isGameEnded, setIsGameEnded] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
   const [previousGuess, setPreviousGuess] = useState<string | null>(null);
+  const [rematch, setRematch] = useState(false);
+  const [opponentRematch, setOpponentRematch] = useState(false);
+
+  const [rematchTimer, setRematchTimer] = useState(0);
 
   const suggestions = useMemo(
     () =>
@@ -61,6 +70,7 @@ const BattleScreen: React.FC<Props> = ({
       ),
     [pokemonNames, pokemons, guesses]
   );
+  const hasWon = useMemo(() => isGameEnded && !canMove, [canMove, isGameEnded]);
 
   useEffect(() => {
     if (isGameEnded) {
@@ -98,6 +108,28 @@ const BattleScreen: React.FC<Props> = ({
     [isSubmittingAnswer, roomCode, socket, suggestions]
   );
 
+  const onRematch = useCallback(() => {
+    socket.emit("rematch");
+    setRematch(true);
+  }, [socket]);
+
+  useEffect(() => {
+    if (!opponentRematch) {
+      return;
+    }
+    if (rematchTimer <= 0) {
+      socket.disconnect();
+      return;
+    }
+    setTimeout(() => {
+      setRematchTimer(rematchTimer - 1);
+    }, 1000);
+  }, [opponentRematch, rematchTimer, socket]);
+
+  const onClose = useCallback(() => {
+    socket.disconnect();
+  }, [socket]);
+
   useEffect(() => {
     if (!isSubmittingAnswer) {
       inputRef.current?.focus();
@@ -128,6 +160,15 @@ const BattleScreen: React.FC<Props> = ({
     });
     socket.on("gameEnd", () => {
       setIsGameEnded(true);
+      socket.on("rematch", (socketId: string, bothOk: boolean) => {
+        if (socketId !== socket.id) {
+          setOpponentRematch(true);
+          setRematchTimer(15);
+        }
+        if (bothOk) {
+          goBackToPreparation();
+        }
+      });
     });
     (async () => {
       const pokemonNames = await api.data.getPokemonNames();
@@ -201,13 +242,11 @@ const BattleScreen: React.FC<Props> = ({
       <Alert
         className="tw-mb-2 tw-justify-center tw-relative tw-overflow-hidden"
         icon={false}
-        color={canMove != isGameEnded ? "success" : "error"}
+        color={hasWon || canMove ? "success" : "error"}
       >
         <span>
           {isGameEnded
-            ? `${
-                canMove ? "You" : "Your opponent"
-              } took too long to enter a Pokémon!`
+            ? `${hasWon ? "You" : "Your opponent"} won!`
             : canMove
             ? "Your turn"
             : "Opponent's turn"}
@@ -252,6 +291,35 @@ const BattleScreen: React.FC<Props> = ({
             )}
           </Popper>
         </form>
+      )}
+      {isGameEnded && (
+        <Stack
+          direction="row"
+          alignItems="self-start"
+          spacing={2}
+          marginBottom={1}
+        >
+          <Button
+            startIcon={<ExitToApp />}
+            variant="outlined"
+            onClick={onClose}
+            color="error"
+          >
+            Exit
+          </Button>
+          <Stack spacing={1} textAlign="center" flexGrow={1}>
+            <Button
+              startIcon={<Autorenew />}
+              fullWidth
+              variant="contained"
+              onClick={onRematch}
+              disabled={rematch}
+            >
+              Rematch {rematchTimer > 0 && `(${rematchTimer})`}
+            </Button>
+            {opponentRematch && "Rematch requested"}
+          </Stack>
+        </Stack>
       )}
       <BattleBoard
         pokemons={pokemons}

@@ -5,6 +5,7 @@ import {
   createBattleRoom,
   getStarterPokemon,
   joinRoom,
+  onRematch,
   onSocketDisconnect,
   userReady,
   validatePokemon,
@@ -26,6 +27,7 @@ export const initializeBattleWsRoutes = (io: Server) => {
       checkIsUsersTurn(socket, callback);
     });
     socket.on("ready", () => userReady(socket));
+    socket.on("rematch", () => onRematch(socket));
   });
 };
 

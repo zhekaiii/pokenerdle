@@ -18,7 +18,7 @@ const GamePreparation: React.FC<Props> = ({
   settings,
   isGoingFirst,
 }) => {
-  const [secondsLeft, setSecondsLeft] = useState(25);
+  const [secondsLeft, setSecondsLeft] = useState(15);
   const [isReady, setIsReady] = useState(false);
 
   const onReady = useCallback(() => {
