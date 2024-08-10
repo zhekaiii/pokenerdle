@@ -162,6 +162,7 @@ export const userReady = (socket: Socket) => {
   }
   console.log(`User ${socket.id} is ready`);
   room.readyPlayers.push(socket.id);
+  io.of(RouteNames.BATTLES_WS).to(roomId).emit("ready", socket.id);
   if (room.readyPlayers.length === 2) {
     console.log("Both players are ready");
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("startGame");

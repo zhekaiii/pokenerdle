@@ -12,6 +12,7 @@ import {
   Slide,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Pokemon } from "pokeapi-js-wrapper";
 import React, {
@@ -56,9 +57,9 @@ const BattleScreen: React.FC<Props> = ({
   const [isGameEnded, setIsGameEnded] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
   const [previousGuess, setPreviousGuess] = useState<string | null>(null);
+
   const [rematch, setRematch] = useState(false);
   const [opponentRematch, setOpponentRematch] = useState(false);
-
   const [rematchTimer, setRematchTimer] = useState(0);
 
   const suggestions = useMemo(
@@ -317,7 +318,11 @@ const BattleScreen: React.FC<Props> = ({
             >
               Rematch {rematchTimer > 0 && `(${rematchTimer})`}
             </Button>
-            {opponentRematch && "Rematch requested"}
+            {opponentRematch && (
+              <Typography variant="caption">
+                Opponent wants a rematch
+              </Typography>
+            )}
           </Stack>
         </Stack>
       )}

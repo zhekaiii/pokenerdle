@@ -1,4 +1,4 @@
-import { Button, Stack } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { BattleRoomSettings } from "../../api/battles/types";
@@ -20,6 +20,7 @@ const GamePreparation: React.FC<Props> = ({
 }) => {
   const [secondsLeft, setSecondsLeft] = useState(15);
   const [isReady, setIsReady] = useState(false);
+  const [isOpponentReady, setIsOpponentReady] = useState(false);
 
   const onReady = useCallback(() => {
     if (isReady) return;
@@ -41,6 +42,17 @@ const GamePreparation: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't need to rerun this when onReady changes
   }, [secondsLeft]);
 
+  useEffect(() => {
+    socket.on("ready", (socketId: string) => {
+      if (socketId !== socket.id) {
+        setIsOpponentReady(true);
+      }
+    });
+    return () => {
+      socket.off("opponentReady");
+    };
+  });
+
   return (
     <div className={classes.GamePreparation}>
       {isGoingFirst !== undefined && (
@@ -49,7 +61,7 @@ const GamePreparation: React.FC<Props> = ({
 
       <GameSettings settings={settings} />
 
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={2} alignItems="self-start">
         <Button
           className={classes.GamePreparation__Buttons}
           variant="contained"
@@ -58,14 +70,19 @@ const GamePreparation: React.FC<Props> = ({
         >
           Close
         </Button>
-        <Button
-          className={classes.GamePreparation__Buttons}
-          variant="contained"
-          onClick={onReady}
-          disabled={isReady}
-        >
-          Ready ({secondsLeft})
-        </Button>
+        <Stack textAlign="center">
+          <Button
+            className={classes.GamePreparation__Buttons}
+            variant="contained"
+            onClick={onReady}
+            disabled={isReady}
+          >
+            Ready ({secondsLeft})
+          </Button>
+          {isOpponentReady && (
+            <Typography variant="caption">Opponent is ready</Typography>
+          )}
+        </Stack>
       </Stack>
     </div>
   );
