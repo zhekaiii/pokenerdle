@@ -1,5 +1,5 @@
 import { Paper } from "@mui/material";
-import { uniqBy } from "lodash";
+import { uniqBy } from "es-toolkit";
 import { Pokemon } from "pokeapi-js-wrapper";
 import React, { useMemo } from "react";
 import {
@@ -18,7 +18,7 @@ const SHINY_PROBABILITY = 1 / 2 ** 13;
 const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
   const isShiny = useMemo(() => Math.random() <= SHINY_PROBABILITY, []);
   const abilities = useMemo(
-    () => uniqBy(pokemon.abilities, "ability.name"),
+    () => uniqBy(pokemon.abilities, (ability) => ability.ability.name),
     [pokemon]
   );
   const pokemonNumber = useMemo(() => {

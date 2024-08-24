@@ -162,6 +162,9 @@ const BattleScreen: React.FC<Props> = ({
     socket.on(
       "pushPokemon",
       (pokemon: Pokemon, socketId: string, sameSpecies: string[]) => {
+        if (pokemons.some((p) => p.id === pokemon.id)) {
+          return;
+        }
         setSharedLinks((draft) => {
           updateSharedLinks(pokemons[pokemons.length - 1], pokemon, draft);
         });

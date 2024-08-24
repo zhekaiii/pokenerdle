@@ -1,4 +1,4 @@
-import { uniqBy } from "lodash";
+import { uniqBy } from "es-toolkit";
 import { Pokemon } from "pokeapi-js-wrapper";
 
 const MAX_LINKS = 3;
@@ -10,7 +10,7 @@ export const getSharedAbilities = (pokemon1: Pokemon, pokemon2: Pokemon) => {
         (ability2) => ability1.ability.name === ability2.ability.name
       )
     ),
-    "ability.name"
+    (ability) => ability.ability.name
   );
 };
 
