@@ -1,50 +1,36 @@
-import Pokedex from "pokedex-promise-v2";
 import { MAX_LINKS } from "../controllers/types.js";
-import { redisClient } from "../data/cache.js";
-
-export const pokedex = new Pokedex();
+import { isTruthy, PokemonWithAbilities } from "../utils/types.js";
 
 export const getPokemonNames = async () => {
-  try {
-    const pokemonNamesString = await redisClient.get("pokemonNames");
-    const pokemonNames = pokemonNamesString
-      ? JSON.parse(pokemonNamesString)
-      : null;
-    if (pokemonNames) {
-      return pokemonNames;
-    }
-  } catch (error) {
-    console.error(error);
-  }
-  const pokemonList = await pokedex.getPokemonsList({
-    offset: 0,
-    limit: 10000,
+  const pokemons = await prisma.pokemon_v2_pokemon.findMany({
+    select: { name: true },
+    orderBy: { id: "asc" },
   });
-  const names = pokemonList.results
-    .filter((pokemon) => !pokemon.name.endsWith("gmax"))
-    .map((pokemon) => pokemon.name);
-  await redisClient.set("pokemonNames", JSON.stringify(names));
-  return names;
+  return pokemons.map(({ name }) => name);
 };
 
-export const getStarterPokemon = async () => {
-  const pokemonNames = await getPokemonNames();
-  while (true) {
-    const starterIndex = Math.floor(Math.random() * pokemonNames.length);
-    const starterPokemon = await pokedex.getPokemonByName(
-      pokemonNames[starterIndex]
-    );
-    // Generate another Pokemon if this one has only one ability
-    if (
-      starterPokemon.abilities.every(
-        ({ ability }) =>
-          ability.name == starterPokemon.abilities[0].ability.name
-      )
-    ) {
-      continue;
-    }
-    return starterPokemon;
+export const getStarterPokemon = async (): Promise<PokemonWithAbilities> => {
+  const [{ pokemon_id: pokemonId }]: { pokemon_id: number }[] =
+    await prisma.$queryRaw`SELECT pokemon_id FROM pokemon_v2_pokemonability GROUP BY pokemon_id HAVING COUNT(DISTINCT ability_id) > 1 ORDER BY RANDOM() LIMIT 1;`;
+  const pokemon = await prisma.pokemon_v2_pokemon.findUnique({
+    where: { id: pokemonId },
+    include: {
+      pokemon_v2_pokemonability: {
+        select: { pokemon_v2_ability: true },
+      },
+    },
+  });
+
+  if (!pokemon) {
+    throw new Error("No starter Pokemon found");
   }
+
+  return {
+    ...pokemon,
+    abilities: pokemon.pokemon_v2_pokemonability
+      .map(({ pokemon_v2_ability }) => pokemon_v2_ability)
+      .filter(isTruthy),
+  };
 };
 
 export const validatePokemon = async (
@@ -53,31 +39,59 @@ export const validatePokemon = async (
   usedLinks: Record<string, number>
 ) => {
   const [pokemon, previousPokemon] = await Promise.all([
-    pokedex.getPokemonByName(pokemonName),
-    pokedex.getPokemonByName(previousPokemonName),
+    prisma.pokemon_v2_pokemon.findFirstOrThrow({
+      where: { name: pokemonName },
+      include: {
+        pokemon_v2_pokemonability: {
+          select: { pokemon_v2_ability: true },
+        },
+        pokemon_v2_pokemonspecies: {
+          include: {
+            pokemon_v2_pokemon: true,
+          },
+        },
+      },
+    }),
+    prisma.pokemon_v2_pokemon.findFirstOrThrow({
+      where: { name: previousPokemonName },
+      include: {
+        pokemon_v2_pokemonability: {
+          select: { pokemon_v2_ability: true },
+        },
+      },
+    }),
   ]);
-  const commonAbilities = pokemon.abilities.filter(({ ability }) =>
-    previousPokemon.abilities.some((a) => a.ability.name === ability.name)
-  );
+  const commonAbilities = pokemon.pokemon_v2_pokemonability
+    .map(({ pokemon_v2_ability }) => pokemon_v2_ability)
+    .filter((ability) =>
+      previousPokemon.pokemon_v2_pokemonability.some(
+        ({ pokemon_v2_ability }) => pokemon_v2_ability?.id === ability?.id
+      )
+    )
+    .filter(isTruthy);
   if (
     commonAbilities.length > 0 &&
     commonAbilities.every(
-      ({ ability }) => (usedLinks[ability.name] ?? 0) < MAX_LINKS
+      (ability) => (usedLinks[ability.name] ?? 0) < MAX_LINKS
     )
   ) {
-    commonAbilities.forEach(({ ability }) => {
+    commonAbilities.forEach((ability) => {
       usedLinks[ability.name] = Math.min(
         (usedLinks[ability.name] ?? 0) + 1,
         MAX_LINKS
       );
     });
-    const pokemonSpecies = await pokedex.getPokemonSpeciesByName(
-      pokemon.species.name
-    );
     console.log(`${pokemonName} is a valid answer`);
     return [
-      pokemon,
-      pokemonSpecies.varieties.map((variety) => variety.pokemon.name),
+      {
+        ...pokemon,
+        abilities: pokemon.pokemon_v2_pokemonability
+          .map(({ pokemon_v2_ability }) => pokemon_v2_ability)
+          .filter(isTruthy),
+      } as PokemonWithAbilities,
+      pokemon.pokemon_v2_pokemonspecies?.pokemon_v2_pokemon.map(
+        ({ name }) => name
+      ) ?? [],
     ] as const;
   }
   console.log(
@@ -87,5 +101,5 @@ export const validatePokemon = async (
         : "no abilities are shared"
     }`
   );
-  return pokemon.species.name;
+  return pokemon.pokemon_v2_pokemonspecies!.name;
 };

@@ -1,4 +1,4 @@
-import { Pokemon } from "pokedex-promise-v2";
+import { PokemonWithAbilities } from "../utils/types.js";
 
 export const MAX_LINKS = 3;
 
@@ -9,7 +9,7 @@ export type BattleRoomSettings = {
 
 export type BattleRoom = {
   players: [string] | [string, string];
-  pokemon: Pokemon[];
+  pokemon: PokemonWithAbilities[];
   settings: BattleRoomSettings;
   turn: number;
   timer: NodeJS.Timeout | null;
