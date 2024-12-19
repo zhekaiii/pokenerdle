@@ -1,15 +1,15 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { Button, debounce, IconButton } from "@mui/material";
 import React, { useCallback, useMemo, useState } from "react";
-import { Socket } from "socket.io-client";
+import { useSocket } from "../../hooks/useSocket";
 import classes from "./WaitingLobby.module.scss";
 
 type Props = {
   roomCode: string;
-  socket: Socket;
 };
 
-const WaitingLobby: React.FC<Props> = ({ socket, roomCode }) => {
+const WaitingLobby: React.FC<Props> = ({ roomCode }) => {
+  const socket = useSocket();
   const [buttonLabel, setButtonLabel] = useState("Copy invite link");
   const shareLink = useMemo(() => {
     const url = new URL(location.href);

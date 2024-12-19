@@ -1,6 +1,7 @@
 import { createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
 import { RouterProvider } from "react-router-dom";
 import "./App.scss";
+import { SocketProvider } from "./contexts/SocketContext";
 import { router } from "./routes";
 
 const darkTheme = createTheme({
@@ -20,7 +21,9 @@ function App() {
 
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <RouterProvider router={router} />
+      <SocketProvider>
+        <RouterProvider router={router} />
+      </SocketProvider>
     </ThemeProvider>
   );
 }

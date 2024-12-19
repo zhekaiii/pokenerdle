@@ -22,16 +22,15 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Socket } from "socket.io-client";
 import { useImmer } from "use-immer";
 import api from "../../api";
 import { BattleRoomSettings } from "../../api/battles/types";
+import { useSocket } from "../../hooks/useSocket";
 import { updateSharedLinks } from "../../utils/linkBattleUtils";
 import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
 
 type Props = {
-  socket: Socket;
   roomCode: string;
   settings: BattleRoomSettings;
   isGoingFirst: boolean;
@@ -40,13 +39,13 @@ type Props = {
 };
 
 const BattleScreen: React.FC<Props> = ({
-  socket,
   roomCode,
   settings,
   isGoingFirst,
   starterPokemon,
   goBackToPreparation,
 }) => {
+  const socket = useSocket();
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([starterPokemon]);

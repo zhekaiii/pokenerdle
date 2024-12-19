@@ -1,23 +1,22 @@
 import { Button, Stack, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
-import { Socket } from "socket.io-client";
 import { BattleRoomSettings } from "../../api/battles/types";
+import { useSocket } from "../../hooks/useSocket";
 import classes from "./GamePreparation.module.scss";
 import GameSettings from "./GameSettings";
 
 type Props = {
-  socket: Socket;
   roomCode: string;
   settings: BattleRoomSettings;
   isGoingFirst?: boolean;
 };
 
 const GamePreparation: React.FC<Props> = ({
-  socket,
   roomCode,
   settings,
   isGoingFirst,
 }) => {
+  const socket = useSocket();
   const [secondsLeft, setSecondsLeft] = useState(15);
   const [isReady, setIsReady] = useState(false);
   const [isOpponentReady, setIsOpponentReady] = useState(false);

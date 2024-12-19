@@ -1,18 +1,18 @@
 import { Pokemon } from "pokeapi-js-wrapper";
 import React, { useCallback, useEffect, useState } from "react";
-import { Socket } from "socket.io-client";
 import api from "../../api";
 import { BattleRoomSettings } from "../../api/battles/types";
+import { useSocket } from "../../hooks/useSocket";
 import BattleScreen from "./BattleScreen";
 import GamePreparation from "./GamePreparation";
 
 type Props = {
-  socket: Socket;
   roomCode: string;
   settings: BattleRoomSettings;
 };
 
-const GameScreen: React.FC<Props> = ({ socket, roomCode, settings }) => {
+const GameScreen: React.FC<Props> = ({ roomCode, settings }) => {
+  const socket = useSocket();
   const [isGoingFirst, setIsGoingFirst] = useState<boolean>();
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [starterPokemon, setStarterPokemon] = useState<Pokemon>();
@@ -36,14 +36,12 @@ const GameScreen: React.FC<Props> = ({ socket, roomCode, settings }) => {
     isGoingFirst === undefined ||
     starterPokemon == undefined ? (
     <GamePreparation
-      socket={socket}
       roomCode={roomCode}
       settings={settings}
       isGoingFirst={isGoingFirst}
     />
   ) : (
     <BattleScreen
-      socket={socket}
       roomCode={roomCode}
       settings={settings}
       isGoingFirst={isGoingFirst}

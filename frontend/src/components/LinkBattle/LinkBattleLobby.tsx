@@ -1,30 +1,24 @@
 import { Button, Divider, OutlinedInput } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Socket } from "socket.io-client";
 import api from "../../api";
+import { useSocket } from "../../hooks/useSocket";
 import LoadingDialog from "../recyclables/LoadingDialog";
 import GameSettings from "./GameSettings";
 import classes from "./LinkBattleLobby.module.scss";
 
 type Props = {
-  socket?: Socket;
   setIsOpponentConnected: (isConnected: boolean) => void;
-  createSocket: () => Socket;
 };
 
 const MAX_ROOM_CODE_LENGTH = 8;
-const LinkBattleLobby: React.FC<Props> = ({
-  socket,
-  setIsOpponentConnected,
-  createSocket,
-}) => {
+const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
+  const socket = useSocket();
   const [isConnecting, setIsConnecting] = useState(false);
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [showAbility, setShowAbility] = useState(true);
   const [timer, setTimer] = useState(20);
 
   useEffect(() => {
-    if (!socket) return;
     const hideLoadingDialog = () => {
       setIsConnecting(false);
     };
@@ -37,14 +31,12 @@ const LinkBattleLobby: React.FC<Props> = ({
 
   const onClickCreate = async () => {
     if (isConnecting) return;
-    const socket = createSocket();
     setIsConnecting(true);
     api.battles.createBattleRoom(socket!, { timer, showAbility });
   };
 
   const onClickJoin = async () => {
     if (isConnecting || roomCodeInput.length !== MAX_ROOM_CODE_LENGTH) return;
-    const socket = createSocket();
     setIsConnecting(true);
     setIsOpponentConnected(true);
     api.battles.joinRoom(socket!, roomCodeInput);

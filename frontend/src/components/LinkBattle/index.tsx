@@ -1,18 +1,17 @@
 import { Alert, Snackbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Socket } from "socket.io-client";
-import api from "../../api";
 import { BattleRoomSettings } from "../../api/battles/types";
+import { useSocket } from "../../hooks/useSocket";
 import PageContainer from "../../layout/PageContainer";
 import GameScreen from "./GameScreen";
 import LinkBattleLobby from "./LinkBattleLobby";
 import WaitingLobby from "./WaitingLobby";
 
 const LinkBattle: React.FC = () => {
+  const socket = useSocket();
   const [searchParams, setSearchParams] = useSearchParams();
   const [roomCode, setRoomCode] = useState<string | null>(null);
-  const [socket, setSocket] = useState<Socket>();
 
   const [isOpponentConnected, setIsOpponentConnected] = useState(false);
   const [settings, setSettings] = useState<BattleRoomSettings>({
@@ -22,41 +21,45 @@ const LinkBattle: React.FC = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
-  const createSocket = () => {
-    if (socket) {
-      return socket;
-    }
-    const createdSocket = api.battles.connect(
+
+  useEffect(() => {
+    socket.on(
+      "roomCode",
       (roomCode, settings = { timer: 20, showAbility: true }) => {
         setRoomCode(roomCode);
         setSettings(settings);
-      },
-      setIsOpponentConnected,
-      (error) => {
-        setError(error);
-        setIsSnackbarOpen(true);
-        setSearchParams();
-      },
-      setSocket
+      }
     );
-    setSocket(createdSocket);
-    return createdSocket;
-  };
+    socket.on("disconnect", () => {
+      setRoomCode("");
+      socket.removeAllListeners();
+    });
+    socket.on("roomError", (error: string) => {
+      console.error(error);
+      setRoomCode("");
+      setError(error);
+      setIsSnackbarOpen(true);
+      setSearchParams();
+    });
+    socket.on("opponentJoined", () => {
+      setIsOpponentConnected(true);
+    });
+
+    return () => {
+      socket.off("roomCode");
+      socket.off("disconnect");
+      socket.off("roomError");
+      socket.off("opponentJoined");
+    };
+  }, [setSearchParams, socket]);
 
   useEffect(() => {
     if (searchParams.get("roomCode")) {
-      if (!socket) {
-        setSocket(createSocket());
-        return;
-      }
       socket.emit("join", searchParams.get("roomCode"));
       setSearchParams();
     }
-    return () => {
-      socket?.disconnect();
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to run this once
-  }, [socket]);
+  }, []);
 
   useEffect(() => {
     if (roomCode) return;
@@ -67,16 +70,12 @@ const LinkBattle: React.FC = () => {
     <PageContainer>
       {roomCode && socket ? (
         isOpponentConnected ? (
-          <GameScreen socket={socket} roomCode={roomCode} settings={settings} />
+          <GameScreen roomCode={roomCode} settings={settings} />
         ) : (
-          <WaitingLobby roomCode={roomCode} socket={socket} />
+          <WaitingLobby roomCode={roomCode} />
         )
       ) : (
-        <LinkBattleLobby
-          socket={socket}
-          setIsOpponentConnected={setIsOpponentConnected}
-          createSocket={createSocket}
-        />
+        <LinkBattleLobby setIsOpponentConnected={setIsOpponentConnected} />
       )}
 
       <Snackbar

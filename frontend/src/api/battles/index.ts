@@ -1,21 +1,19 @@
 import axios from "axios";
 import { Pokemon } from "pokeapi-js-wrapper";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { BattleRoomSettings } from "./types";
 
 export default {
-  connect: (
+  init: (
+    socket: Socket,
     onRoomReady: (roomCode: string, settings?: BattleRoomSettings) => void,
     setIsOpponentJoined: (value: boolean) => void,
-    onError: (error: string | null) => void,
-    setSocket: (socket?: Socket) => void
+    onError: (error: string | null) => void
   ) => {
-    const socket = io(`${import.meta.env.VITE_BACKEND_URL}/ws/battles`);
     socket.on("roomCode", onRoomReady);
     socket.on("disconnect", () => {
       onRoomReady("");
       socket.removeAllListeners();
-      setSocket(undefined);
     });
     socket.on("roomError", (error: string) => {
       console.error(error);
