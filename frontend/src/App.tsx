@@ -1,5 +1,5 @@
 import { createTheme, ThemeProvider, useMediaQuery } from "@mui/material";
-import { RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router";
 import "./App.scss";
 import { SocketProvider } from "./contexts/SocketContext";
 import { router } from "./routes";

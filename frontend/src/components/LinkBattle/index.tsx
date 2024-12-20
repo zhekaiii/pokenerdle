@@ -1,6 +1,6 @@
 import { Alert, Snackbar } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { BattleRoomSettings } from "../../api/battles/types";
 import { useSocket } from "../../hooks/useSocket";
 import PageContainer from "../../layout/PageContainer";
