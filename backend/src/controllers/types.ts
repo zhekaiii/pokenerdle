@@ -1,6 +1,7 @@
 import { PokemonWithAbilities } from "@pokenerdle/shared";
 
-export const MAX_LINKS = 3;
+export const MAX_ABILITY_LINKS = 3;
+export const MAX_EVOLUTION_LINKS = 3;
 
 export type BattleRoomSettings = {
   timer: number;
@@ -16,4 +17,18 @@ export type BattleRoom = {
   readyPlayers: string[];
   wantToRematch: string[];
   usedLinks: Record<string, number>;
+  evolutionLinkCount: [number, number];
 };
+
+export type TurnResult =
+  | {
+      validAnswer: false;
+      pokemonName: string;
+    }
+  | {
+      validAnswer: true;
+      pokemon: PokemonWithAbilities;
+      sameSpecies: string[];
+      usedLinks: string[];
+      isSameEvoline: boolean;
+    };

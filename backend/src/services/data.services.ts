@@ -1,5 +1,14 @@
 import { PokemonWithAbilities } from "@pokenerdle/shared";
-import { MAX_LINKS } from "../controllers/types.js";
+import {
+  MAX_ABILITY_LINKS,
+  MAX_EVOLUTION_LINKS,
+  TurnResult,
+} from "../controllers/types.js";
+import {
+  getPokemonWithAbilities,
+  getRandomPokemonIdWithMultipleAbilities,
+  prettifyQueriedPokemon,
+} from "../repositories/pokemon.repository.js";
 import { isTruthy } from "../utils/types.js";
 
 export const getPokemonNames = async () => {
@@ -11,46 +20,20 @@ export const getPokemonNames = async () => {
 };
 
 export const getStarterPokemon = async (): Promise<PokemonWithAbilities> => {
-  const [{ pokemon_id: pokemonId }]: { pokemon_id: number }[] =
-    await prisma.$queryRaw`SELECT pokemon_id FROM pokemon_v2_pokemonability GROUP BY pokemon_id HAVING COUNT(DISTINCT ability_id) > 1 ORDER BY RANDOM() LIMIT 1;`;
-  const pokemon = await prisma.pokemon_v2_pokemon.findUnique({
-    where: { id: pokemonId },
-    include: {
-      pokemon_v2_pokemonability: {
-        select: { pokemon_v2_ability: true },
-      },
-      pokemon_v2_pokemonspecies: {
-        select: {
-          name: true,
-        },
-      },
-      pokemon_v2_pokemonsprites: {
-        select: {
-          sprites: true,
-        },
-      },
-    },
-  });
-
+  const pokemonId = await getRandomPokemonIdWithMultipleAbilities();
+  const pokemon = await getPokemonWithAbilities(pokemonId);
   if (!pokemon) {
     throw new Error("No starter Pokemon found");
   }
-
-  return {
-    ...pokemon,
-    abilities: pokemon.pokemon_v2_pokemonability
-      .map(({ pokemon_v2_ability }) => pokemon_v2_ability)
-      .filter(isTruthy),
-    speciesName: pokemon.pokemon_v2_pokemonspecies!.name,
-    sprites: JSON.parse(pokemon.pokemon_v2_pokemonsprites[0]?.sprites ?? "{}"),
-  };
+  return pokemon;
 };
 
 export const validatePokemon = async (
   pokemonName: string,
   previousPokemonName: string,
-  usedLinks: Record<string, number>
-) => {
+  usedLinks: Record<string, number>,
+  evolutionLinkCount: number
+): Promise<TurnResult> => {
   const [pokemon, previousPokemon] = await Promise.all([
     prisma.pokemon_v2_pokemon.findFirstOrThrow({
       where: { name: pokemonName },
@@ -76,9 +59,26 @@ export const validatePokemon = async (
         pokemon_v2_pokemonability: {
           select: { pokemon_v2_ability: true },
         },
+        pokemon_v2_pokemonspecies: true,
       },
     }),
   ]);
+  const pokemonFullName = pokemon.pokemon_v2_pokemonspecies!.name;
+
+  const isSameEvolutionChain =
+    pokemon.pokemon_v2_pokemonspecies!.evolution_chain_id ===
+    previousPokemon.pokemon_v2_pokemonspecies!.evolution_chain_id;
+
+  if (isSameEvolutionChain && evolutionLinkCount >= MAX_EVOLUTION_LINKS) {
+    console.log(
+      `${pokemonName} is an invalid answer because the evolution link count is at maximum`
+    );
+    return {
+      validAnswer: false,
+      pokemonName: pokemonFullName,
+    };
+  }
+
   const commonAbilities = pokemon.pokemon_v2_pokemonability
     .map(({ pokemon_v2_ability }) => pokemon_v2_ability)
     .filter((ability) =>
@@ -90,31 +90,20 @@ export const validatePokemon = async (
   if (
     commonAbilities.length > 0 &&
     commonAbilities.every(
-      (ability) => (usedLinks[ability.name] ?? 0) < MAX_LINKS
+      (ability) => (usedLinks[ability.name] ?? 0) < MAX_ABILITY_LINKS
     )
   ) {
-    commonAbilities.forEach((ability) => {
-      usedLinks[ability.name] = Math.min(
-        (usedLinks[ability.name] ?? 0) + 1,
-        MAX_LINKS
-      );
-    });
     console.log(`${pokemonName} is a valid answer`);
-    return [
-      {
-        ...pokemon,
-        abilities: pokemon.pokemon_v2_pokemonability
-          .map(({ pokemon_v2_ability }) => pokemon_v2_ability)
-          .filter(isTruthy),
-        speciesName: pokemon.pokemon_v2_pokemonspecies!.name,
-        sprites: JSON.parse(
-          pokemon.pokemon_v2_pokemonsprites[0]?.sprites ?? "{}"
-        ),
-      } as PokemonWithAbilities,
-      pokemon.pokemon_v2_pokemonspecies?.pokemon_v2_pokemon.map(
-        ({ name }) => name
-      ) ?? [],
-    ] as const;
+    return {
+      validAnswer: true,
+      pokemon: prettifyQueriedPokemon(pokemon),
+      sameSpecies:
+        pokemon.pokemon_v2_pokemonspecies?.pokemon_v2_pokemon.map(
+          ({ name }) => name
+        ) ?? [],
+      usedLinks: commonAbilities.map((ability) => ability.name),
+      isSameEvoline: isSameEvolutionChain,
+    };
   }
   console.log(
     `${pokemonName} is an invalid answer because ${
@@ -123,5 +112,8 @@ export const validatePokemon = async (
         : "no abilities are shared"
     }`
   );
-  return pokemon.pokemon_v2_pokemonspecies!.name;
+  return {
+    validAnswer: false,
+    pokemonName: pokemonFullName,
+  };
 };

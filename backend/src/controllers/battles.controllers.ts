@@ -5,7 +5,12 @@ import { ErrorRoomNotFound } from "../errors/index.js";
 import { io } from "../index.js";
 import * as dataService from "../services/data.services.js";
 import { createRandomString } from "../utils/random.js";
-import { BattleRoom, BattleRoomSettings } from "./types.js";
+import {
+  BattleRoom,
+  BattleRoomSettings,
+  MAX_ABILITY_LINKS,
+  TurnResult,
+} from "./types.js";
 
 const ongoingBattles: Record<string, BattleRoom> = {};
 
@@ -65,6 +70,7 @@ export const createBattleRoom = async (
       readyPlayers: [],
       wantToRematch: [],
       usedLinks: {},
+      evolutionLinkCount: [0, 0],
     };
     socket.join(roomId);
     socket.emit("roomCode", roomId, settings);
@@ -115,23 +121,40 @@ export const validatePokemon = async (
   const result = await dataService.validatePokemon(
     pokemonName,
     previousPokemonName,
-    room.usedLinks
+    room.usedLinks,
+    room.evolutionLinkCount[room.turn]
   );
-  if (typeof result === "string") {
+  if (!result.validAnswer) {
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("wrongAnswer", result);
     return;
   }
-  const [pokemon, sameSpecies] = result;
   if (room.timer) {
     clearTimeout(room.timer);
     room.timer = null;
   }
-  room.pokemon.push(pokemon);
+  postTurn(room, result, room.turn);
+
   io.of(RouteNames.BATTLES_WS)
     .to(roomId)
-    .emit("pushPokemon", pokemon, socket.id, sameSpecies);
+    .emit("pushPokemon", result.pokemon, socket.id, result.sameSpecies);
 
   nextTurn(roomId);
+};
+
+const postTurn = (room: BattleRoom, turnResult: TurnResult, turn: number) => {
+  if (!turnResult.validAnswer) {
+    return;
+  }
+  for (const abilityName of turnResult.usedLinks) {
+    room.usedLinks[abilityName] = Math.min(
+      (room.usedLinks[abilityName] ?? 0) + 1,
+      MAX_ABILITY_LINKS
+    );
+  }
+  if (turnResult.isSameEvoline) {
+    room.evolutionLinkCount[turn] += 1;
+  }
+  room.pokemon.push(turnResult.pokemon);
 };
 
 export const checkIsUsersTurn = (
