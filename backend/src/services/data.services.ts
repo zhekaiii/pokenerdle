@@ -4,24 +4,15 @@ import {
   MAX_EVOLUTION_LINKS,
   TurnResult,
 } from "../controllers/types.js";
-import {
-  getPokemonWithAbilities,
-  getRandomPokemonIdWithMultipleAbilities,
-  prettifyQueriedPokemon,
-} from "../repositories/pokemon.repository.js";
+import * as pokemonRepository from "../repositories/pokemon.repository.js";
 import { isTruthy } from "../utils/types.js";
 
-export const getPokemonNames = async () => {
-  const pokemons = await prisma.pokemon_v2_pokemon.findMany({
-    select: { name: true },
-    orderBy: { id: "asc" },
-  });
-  return pokemons.map(({ name }) => name);
-};
+export { getPokemonNames } from "../repositories/pokemon.repository.js";
 
 export const getStarterPokemon = async (): Promise<PokemonWithAbilities> => {
-  const pokemonId = await getRandomPokemonIdWithMultipleAbilities();
-  const pokemon = await getPokemonWithAbilities(pokemonId);
+  const pokemonId =
+    await pokemonRepository.getRandomPokemonIdWithMultipleAbilities();
+  const pokemon = await pokemonRepository.getPokemonWithAbilities(pokemonId);
   if (!pokemon) {
     throw new Error("No starter Pokemon found");
   }
@@ -96,7 +87,7 @@ export const validatePokemon = async (
     console.log(`${pokemonName} is a valid answer`);
     return {
       validAnswer: true,
-      pokemon: prettifyQueriedPokemon(pokemon),
+      pokemon: pokemonRepository.prettifyQueriedPokemon(pokemon),
       sameSpecies:
         pokemon.pokemon_v2_pokemonspecies?.pokemon_v2_pokemon.map(
           ({ name }) => name
