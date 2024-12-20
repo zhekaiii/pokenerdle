@@ -234,18 +234,6 @@ const BattleScreen: React.FC<Props> = ({
         noOptionsText={null}
         popupIcon={null}
         filterOptions={createFilterOptions({ limit: 5, matchFrom: "start" })}
-        PaperComponent={(props) => (
-          <Paper
-            {...props}
-            elevation={3}
-            className={battleScreenClasses["BattleScreen__AutocompletePaper"]}
-          />
-        )}
-        componentsProps={{
-          popper: {
-            open: input.length > 0,
-          },
-        }}
         disabled={isSubmittingAnswer || !canMove}
         onChange={(_, value, r) => {
           if (!value) {
@@ -253,6 +241,20 @@ const BattleScreen: React.FC<Props> = ({
           }
           setInput(value);
           if (r === "selectOption") enterPokemon(value);
+        }}
+        slots={{
+          paper: (props) => (
+            <Paper
+              {...props}
+              elevation={3}
+              className={battleScreenClasses["BattleScreen__AutocompletePaper"]}
+            />
+          ),
+        }}
+        slotProps={{
+          popper: {
+            open: input.length > 0,
+          },
         }}
       />
     ),
