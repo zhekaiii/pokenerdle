@@ -1,4 +1,4 @@
-import { PokemonWithAbilities } from "@pokenerdle/shared";
+import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
 import axios from "axios";
 import { Socket } from "socket.io-client";
 import { BattleRoomSettings } from "./types";
@@ -31,8 +31,12 @@ export default {
   joinRoom: (socket: Socket, roomCode: string) => {
     socket.emit("join", roomCode);
   },
-  validatePokemon: (socket: Socket, pokemonName: string, roomId: string) => {
-    socket.emit("answer", pokemonName, roomId);
+  validatePokemon: (
+    socket: Socket,
+    pokemon: PokemonNamesResponse,
+    roomId: string
+  ) => {
+    socket.emit("answer", pokemon, roomId);
   },
   getStarterPokemon: async (roomId: string) => {
     const { data } = await axios.get<PokemonWithAbilities>(

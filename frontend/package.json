@@ -17,10 +17,12 @@
     "axios": "^1.7.3",
     "clsx": "^2.1.1",
     "es-toolkit": "^1.16.0",
+    "fuse.js": "^7.0.0",
     "immer": "^10.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.0.2",
+    "react-use": "^17.6.0",
     "sass": "^1.77.8",
     "socket.io-client": "^4.7.5",
     "use-immer": "^0.11.0"

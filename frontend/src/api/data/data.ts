@@ -1,8 +1,11 @@
+import { PokemonNamesResponse } from "@pokenerdle/shared";
 import axios from "axios";
 
 export default {
   getPokemonNames: async () => {
-    const { data } = await axios.get<string[]>("/v1/data/pokemon-names");
+    const { data } = await axios.get<PokemonNamesResponse[]>(
+      "/v1/data/pokemon-names"
+    );
     return data;
   },
 };

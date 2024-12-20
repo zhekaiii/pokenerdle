@@ -14,7 +14,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { PokemonWithAbilities } from "@pokenerdle/shared";
+import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
+import Fuse from "fuse.js";
 import React, {
   useCallback,
   useEffect,
@@ -22,6 +23,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useLocalStorage } from "react-use";
 import { useImmer } from "use-immer";
 import api from "../../api";
 import { BattleRoomSettings } from "../../api/battles/types";
@@ -47,7 +49,9 @@ const BattleScreen: React.FC<Props> = ({
 }) => {
   const socket = useSocket();
   const [input, setInput] = useState("");
-  const [pokemonNames, setPokemonNames] = useState<string[]>([]);
+  const [pokemonNames, setPokemonNames] = useLocalStorage<
+    PokemonNamesResponse[]
+  >("pokemonNames", []);
   const [pokemons, setPokemons] = useState<PokemonWithAbilities[]>([
     starterPokemon,
   ]);
@@ -60,24 +64,35 @@ const BattleScreen: React.FC<Props> = ({
     Date.now() + settings.timer * 1000
   );
   const [secondsLeft, setSecondsLeft] = useState(0);
-  const [guesses, setGuesses] = useState<string[]>([]);
+  const [guesses, setGuesses] = useState<number[]>([]);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
 
   const [previousGuess, setPreviousGuess] = useState<string | null>(null);
-  const [disallowedPokemon, setDisallowedPokemon] = useState<string[]>([]);
+  const [disallowedPokemon, setDisallowedPokemon] = useState<number[]>([]);
   const [sharedLinks, setSharedLinks] = useImmer<Record<string, number>>({});
 
   const [rematch, setRematch] = useState(false);
   const [opponentRematch, setOpponentRematch] = useState(false);
   const [rematchTimer, setRematchTimer] = useState(0);
 
-  const suggestions = useMemo(
+  const filteredPokemon = useMemo(
     () =>
-      pokemonNames.filter(
-        (name) => !guesses.includes(name) && !disallowedPokemon.includes(name)
+      new Fuse(
+        pokemonNames?.filter(
+          (pokemon) =>
+            !guesses.includes(pokemon.id) &&
+            !disallowedPokemon.includes(pokemon.id)
+        ) ?? [],
+        { keys: ["name", { name: "speciesName", weight: 2 }] }
       ),
     [pokemonNames, disallowedPokemon, guesses]
   );
+
+  const suggestions = useMemo(
+    () => filteredPokemon.search(input, { limit: 10 }).map(({ item }) => item),
+    [filteredPokemon, input]
+  );
+
   const hasWon = useMemo(() => isGameEnded && !canMove, [canMove, isGameEnded]);
 
   useEffect(() => {
@@ -103,16 +118,16 @@ const BattleScreen: React.FC<Props> = ({
   }, [timerEndsAt, isGameEnded]);
 
   const enterPokemon = useCallback(
-    async (pokemonName: string) => {
-      if (isSubmittingAnswer || !suggestions.includes(pokemonName)) {
+    async (pokemon: PokemonNamesResponse) => {
+      if (isSubmittingAnswer) {
         setInput("");
         return;
       }
       setIsSubmittingAnswer(true);
-      setGuesses((guesses) => [...guesses, pokemonName]);
-      api.battles.validatePokemon(socket, pokemonName, roomCode);
+      setGuesses((guesses) => [...guesses, pokemon.id]);
+      api.battles.validatePokemon(socket, pokemon, roomCode);
     },
-    [isSubmittingAnswer, roomCode, socket, suggestions]
+    [isSubmittingAnswer, roomCode, socket]
   );
 
   const onRematch = useCallback(() => {
@@ -163,7 +178,7 @@ const BattleScreen: React.FC<Props> = ({
       (
         pokemon: PokemonWithAbilities,
         socketId: string,
-        sameSpecies: string[]
+        sameSpecies: number[]
       ) => {
         if (pokemons.some((p) => p.id === pokemon.id)) {
           return;
@@ -215,7 +230,7 @@ const BattleScreen: React.FC<Props> = ({
 
   const textField = useMemo(
     () => (
-      <Autocomplete<string>
+      <Autocomplete<PokemonNamesResponse>
         autoFocus
         inputValue={input}
         renderInput={(props) => (
@@ -235,12 +250,12 @@ const BattleScreen: React.FC<Props> = ({
         popupIcon={null}
         filterOptions={createFilterOptions({ limit: 5, matchFrom: "start" })}
         disabled={isSubmittingAnswer || !canMove}
-        onChange={(_, value, r) => {
-          if (!value) {
+        onChange={(_, pokemon, r) => {
+          if (!pokemon) {
             return;
           }
-          setInput(value);
-          if (r === "selectOption") enterPokemon(value);
+          setInput(pokemon.name);
+          if (r === "selectOption") enterPokemon(pokemon);
         }}
         slots={{
           paper: (props) => (
@@ -256,6 +271,8 @@ const BattleScreen: React.FC<Props> = ({
             open: input.length > 0,
           },
         }}
+        getOptionKey={(option) => option.id}
+        getOptionLabel={(option) => option.name}
       />
     ),
     [canMove, enterPokemon, input, isSubmittingAnswer, suggestions]
@@ -289,7 +306,6 @@ const BattleScreen: React.FC<Props> = ({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            enterPokemon(input);
           }}
         >
           {textField}
