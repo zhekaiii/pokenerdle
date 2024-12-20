@@ -1,4 +1,4 @@
-import { PokemonWithAbilities } from "../utils/types.js";
+import { PokemonWithAbilities } from "@pokenerdle/shared";
 
 export const MAX_LINKS = 3;
 

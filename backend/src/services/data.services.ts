@@ -1,5 +1,6 @@
+import { PokemonWithAbilities } from "@pokenerdle/shared";
 import { MAX_LINKS } from "../controllers/types.js";
-import { isTruthy, PokemonWithAbilities } from "../utils/types.js";
+import { isTruthy } from "../utils/types.js";
 
 export const getPokemonNames = async () => {
   const pokemons = await prisma.pokemon_v2_pokemon.findMany({
@@ -18,6 +19,11 @@ export const getStarterPokemon = async (): Promise<PokemonWithAbilities> => {
       pokemon_v2_pokemonability: {
         select: { pokemon_v2_ability: true },
       },
+      pokemon_v2_pokemonspecies: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 
@@ -30,6 +36,7 @@ export const getStarterPokemon = async (): Promise<PokemonWithAbilities> => {
     abilities: pokemon.pokemon_v2_pokemonability
       .map(({ pokemon_v2_ability }) => pokemon_v2_ability)
       .filter(isTruthy),
+    speciesName: pokemon.pokemon_v2_pokemonspecies!.name,
   };
 };
 
@@ -88,6 +95,7 @@ export const validatePokemon = async (
         abilities: pokemon.pokemon_v2_pokemonability
           .map(({ pokemon_v2_ability }) => pokemon_v2_ability)
           .filter(isTruthy),
+        speciesName: pokemon.pokemon_v2_pokemonspecies!.name,
       } as PokemonWithAbilities,
       pokemon.pokemon_v2_pokemonspecies?.pokemon_v2_pokemon.map(
         ({ name }) => name
