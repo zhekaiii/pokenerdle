@@ -100,7 +100,6 @@ const BattleScreen: React.FC<Props> = ({
     return () => {
       clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't have to include canMove as dependency
   }, [timerEndsAt, isGameEnded]);
 
   const enterPokemon = useCallback(
@@ -138,7 +137,6 @@ const BattleScreen: React.FC<Props> = ({
     socket.disconnect();
   }, [socket]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- there are no unknown dependencies
   const closePopover = useCallback(
     debounce(() => {
       setIsErrorOpen(false);
@@ -213,7 +211,6 @@ const BattleScreen: React.FC<Props> = ({
       socket.off("canMove");
       socket.off("gameEnd");
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't need to rerun this when goBackToPreparation changes
   }, [socket, goBackToPreparation, closePopover, pokemons]);
 
   const textField = useMemo(
@@ -255,7 +252,7 @@ const BattleScreen: React.FC<Props> = ({
             return;
           }
           setInput(value);
-          r === "selectOption" && enterPokemon(value);
+          if (r === "selectOption") enterPokemon(value);
         }}
       />
     ),
