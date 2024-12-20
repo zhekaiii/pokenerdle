@@ -14,7 +14,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Pokemon } from "pokeapi-js-wrapper";
+import { PokemonWithAbilities } from "@pokenerdle/shared";
 import React, {
   useCallback,
   useEffect,
@@ -34,7 +34,7 @@ type Props = {
   roomCode: string;
   settings: BattleRoomSettings;
   isGoingFirst: boolean;
-  starterPokemon: Pokemon;
+  starterPokemon: PokemonWithAbilities;
   goBackToPreparation: () => void;
 };
 
@@ -48,7 +48,9 @@ const BattleScreen: React.FC<Props> = ({
   const socket = useSocket();
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useState<string[]>([]);
-  const [pokemons, setPokemons] = useState<Pokemon[]>([starterPokemon]);
+  const [pokemons, setPokemons] = useState<PokemonWithAbilities[]>([
+    starterPokemon,
+  ]);
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [canMove, setCanMove] = useState(isGoingFirst);
@@ -160,7 +162,11 @@ const BattleScreen: React.FC<Props> = ({
     });
     socket.on(
       "pushPokemon",
-      (pokemon: Pokemon, socketId: string, sameSpecies: string[]) => {
+      (
+        pokemon: PokemonWithAbilities,
+        socketId: string,
+        sameSpecies: string[]
+      ) => {
         if (pokemons.some((p) => p.id === pokemon.id)) {
           return;
         }

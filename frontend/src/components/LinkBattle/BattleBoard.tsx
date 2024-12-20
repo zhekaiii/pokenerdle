@@ -1,4 +1,4 @@
-import { Pokemon } from "pokeapi-js-wrapper";
+import { PokemonWithAbilities } from "@pokenerdle/shared";
 import React from "react";
 import { getSharedAbilities } from "../../utils/linkBattleUtils";
 import AbilityChip from "./AbilityChip";
@@ -6,7 +6,7 @@ import battleBoardClasses from "./BattleBoard.module.scss";
 import PokemonCard from "./PokemonCard";
 
 type Props = {
-  pokemons: Pokemon[];
+  pokemons: PokemonWithAbilities[];
   showAbility: boolean;
   isGameEnded: boolean;
   sharedLinks: Record<string, number>;

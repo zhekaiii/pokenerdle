@@ -1,4 +1,4 @@
-import { Pokemon } from "pokeapi-js-wrapper";
+import { PokemonWithAbilities } from "@pokenerdle/shared";
 
 export const formatAbilityName = (abilityName: string) => {
   return abilityName
@@ -7,7 +7,7 @@ export const formatAbilityName = (abilityName: string) => {
     .join(" ");
 };
 
-export const getFormattedPokemonName = (pokemon: Pokemon) => {
+export const getFormattedPokemonName = (pokemon: PokemonWithAbilities) => {
   const megaMatch = pokemon.name.match(/^(.*)-mega(?:-(.+))?$/);
   if (megaMatch) {
     const [_, pokemonName, form] = megaMatch;
@@ -15,6 +15,6 @@ export const getFormattedPokemonName = (pokemon: Pokemon) => {
       form ?? ""
     }`.trim();
   }
-  const speciesName = pokemon.species.name;
+  const speciesName = pokemon.speciesName;
   return speciesName[0].toUpperCase() + speciesName.slice(1);
 };

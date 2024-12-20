@@ -1,5 +1,5 @@
+import { PokemonWithAbilities } from "@pokenerdle/shared";
 import axios from "axios";
-import { Pokemon } from "pokeapi-js-wrapper";
 import { Socket } from "socket.io-client";
 import { BattleRoomSettings } from "./types";
 
@@ -35,9 +35,12 @@ export default {
     socket.emit("answer", pokemonName, roomId);
   },
   getStarterPokemon: async (roomId: string) => {
-    const { data } = await axios.get<Pokemon>("/v1/battles/starter-pokemon", {
-      params: { roomId },
-    });
+    const { data } = await axios.get<PokemonWithAbilities>(
+      "/v1/battles/starter-pokemon",
+      {
+        params: { roomId },
+      }
+    );
     return data;
   },
 };

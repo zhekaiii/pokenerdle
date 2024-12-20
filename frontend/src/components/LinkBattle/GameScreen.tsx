@@ -1,4 +1,4 @@
-import { Pokemon } from "pokeapi-js-wrapper";
+import { PokemonWithAbilities } from "@pokenerdle/shared";
 import React, { useCallback, useEffect, useState } from "react";
 import api from "../../api";
 import { BattleRoomSettings } from "../../api/battles/types";
@@ -15,7 +15,7 @@ const GameScreen: React.FC<Props> = ({ roomCode, settings }) => {
   const socket = useSocket();
   const [isGoingFirst, setIsGoingFirst] = useState<boolean>();
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [starterPokemon, setStarterPokemon] = useState<Pokemon>();
+  const [starterPokemon, setStarterPokemon] = useState<PokemonWithAbilities>();
   const goBackToPreparation = useCallback(() => {
     socket.emit("isMyTurn", setIsGoingFirst);
     setIsGameStarted(false);

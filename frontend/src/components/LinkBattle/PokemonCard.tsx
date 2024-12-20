@@ -1,6 +1,6 @@
 import { Paper } from "@mui/material";
+import { PokemonWithAbilities } from "@pokenerdle/shared";
 import { uniqBy } from "es-toolkit";
-import { Pokemon } from "pokeapi-js-wrapper";
 import React, { useMemo } from "react";
 import {
   formatAbilityName,
@@ -9,7 +9,7 @@ import {
 import classes from "./PokemonCard.module.scss";
 
 type Props = {
-  pokemon: Pokemon;
+  pokemon: PokemonWithAbilities;
   showAbility: boolean;
 };
 
@@ -18,13 +18,10 @@ const SHINY_PROBABILITY = 1 / 2 ** 13;
 const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
   const isShiny = useMemo(() => Math.random() <= SHINY_PROBABILITY, []);
   const abilities = useMemo(
-    () => uniqBy(pokemon.abilities, (ability) => ability.ability.name),
+    () => uniqBy(pokemon.abilities, (ability) => ability.name),
     [pokemon]
   );
-  const pokemonNumber = useMemo(() => {
-    const speciesUrl = pokemon.species.url;
-    return speciesUrl.match(/.*\/(\d+)/)?.[1].padStart(3, "0");
-  }, [pokemon]);
+  const pokemonNumber = pokemon.pokemon_species_id;
   return (
     <Paper className={classes["PokemonCard"]} elevation={3}>
       <img
@@ -40,7 +37,7 @@ const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
         #{pokemonNumber} {getFormattedPokemonName(pokemon)} {isShiny && "✨"}
       </span>
       {showAbility &&
-        abilities.map(({ ability }) => (
+        abilities.map((ability) => (
           <span key={ability.name}>{formatAbilityName(ability.name)}</span>
         ))}
     </Paper>
