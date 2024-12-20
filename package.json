@@ -8,7 +8,8 @@
     "dev": "concurrently \"yarn fe-dev\" \"bun run be-dev\"",
     "fe-build": "cd frontend && yarn build",
     "be-build": "cd backend && yarn build",
-    "build": "concurrently \"yarn fe-build\" \"yarn be-build\""
+    "build": "concurrently \"yarn fe-build\" \"yarn be-build\"",
+    "reinstall-shared": "cd frontend && yarn remove @pokenerdle/shared && yarn add -D file:../shared && cd ../backend && yarn remove @pokenerdle/shared && yarn add -D file:../shared"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

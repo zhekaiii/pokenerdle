@@ -28,7 +28,7 @@ const BattleBoard: React.FC<Props> = ({
           )}
           {pkmnIndex < pokemons.length - 1 &&
             getSharedAbilities(pokemon, pokemons[pkmnIndex + 1]).map(
-              ({ ability }) => (
+              (ability) => (
                 <AbilityChip
                   key={ability.name}
                   abilityName={ability.name}

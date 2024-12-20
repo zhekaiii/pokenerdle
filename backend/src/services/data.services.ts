@@ -24,6 +24,11 @@ export const getStarterPokemon = async (): Promise<PokemonWithAbilities> => {
           name: true,
         },
       },
+      pokemon_v2_pokemonsprites: {
+        select: {
+          sprites: true,
+        },
+      },
     },
   });
 
@@ -37,6 +42,7 @@ export const getStarterPokemon = async (): Promise<PokemonWithAbilities> => {
       .map(({ pokemon_v2_ability }) => pokemon_v2_ability)
       .filter(isTruthy),
     speciesName: pokemon.pokemon_v2_pokemonspecies!.name,
+    sprites: JSON.parse(pokemon.pokemon_v2_pokemonsprites[0]?.sprites ?? "{}"),
   };
 };
 
@@ -55,6 +61,11 @@ export const validatePokemon = async (
         pokemon_v2_pokemonspecies: {
           include: {
             pokemon_v2_pokemon: true,
+          },
+        },
+        pokemon_v2_pokemonsprites: {
+          select: {
+            sprites: true,
           },
         },
       },
@@ -96,6 +107,9 @@ export const validatePokemon = async (
           .map(({ pokemon_v2_ability }) => pokemon_v2_ability)
           .filter(isTruthy),
         speciesName: pokemon.pokemon_v2_pokemonspecies!.name,
+        sprites: JSON.parse(
+          pokemon.pokemon_v2_pokemonsprites[0]?.sprites ?? "{}"
+        ),
       } as PokemonWithAbilities,
       pokemon.pokemon_v2_pokemonspecies?.pokemon_v2_pokemon.map(
         ({ name }) => name
