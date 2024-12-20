@@ -14,4 +14,11 @@ export default defineConfig({
       typescript: true,
     }),
   ],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern-compiler",
+      },
+    },
+  },
 });
