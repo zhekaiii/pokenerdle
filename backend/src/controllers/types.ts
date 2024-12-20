@@ -28,7 +28,7 @@ export type TurnResult =
   | {
       validAnswer: true;
       pokemon: PokemonWithAbilities;
-      sameSpecies: string[];
+      sameSpecies: number[];
       usedLinks: string[];
       isSameEvoline: boolean;
     };

@@ -1,3 +1,4 @@
+import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { Request, Response } from "express";
 import { Socket } from "socket.io";
 import { RouteNames } from "../data/const.js";
@@ -42,11 +43,11 @@ const nextTurn = (roomId: string, isFirstTurn?: true) => {
   const nextPlayer = room.players[room.turn];
   io.of(RouteNames.BATTLES_WS)
     .to(roomId)
-    .emit("canMove", nextPlayer, Date.now() + room.settings.timer * 1000);
+    .emit("canMove", nextPlayer, Date.now() + room.settings.timer * 100000);
   room.timer = setTimeout(() => {
     console.log("Timeout");
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("gameEnd");
-  }, room.settings.timer * 1000);
+  }, room.settings.timer * 100000);
 };
 
 export const createBattleRoom = async (
@@ -105,7 +106,7 @@ export const joinRoom = async (socket: Socket, roomId: string) => {
 
 export const validatePokemon = async (
   socket: Socket,
-  pokemonName: string,
+  pokemonGuess: PokemonNamesResponse,
   roomId: string
 ) => {
   const room = ongoingBattles[roomId];
@@ -116,16 +117,18 @@ export const validatePokemon = async (
     console.log(`${socket.id} tried to move out of turn`);
     return;
   }
-  console.log(`${socket.id} answered ${pokemonName}`);
-  const previousPokemonName = room.pokemon.at(-1)!.name;
+  console.log(`${socket.id} answered ${pokemonGuess.name}`);
+  const previousPokemon = room.pokemon.at(-1)!;
   const result = await dataService.validatePokemon(
-    pokemonName,
-    previousPokemonName,
+    pokemonGuess,
+    previousPokemon,
     room.usedLinks,
     room.evolutionLinkCount[room.turn]
   );
   if (!result.validAnswer) {
-    io.of(RouteNames.BATTLES_WS).to(roomId).emit("wrongAnswer", result);
+    io.of(RouteNames.BATTLES_WS)
+      .to(roomId)
+      .emit("wrongAnswer", result.pokemonName);
     return;
   }
   if (room.timer) {

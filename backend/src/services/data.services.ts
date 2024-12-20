@@ -1,4 +1,4 @@
-import { PokemonWithAbilities } from "@pokenerdle/shared";
+import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
 import {
   MAX_ABILITY_LINKS,
   MAX_EVOLUTION_LINKS,
@@ -20,14 +20,14 @@ export const getStarterPokemon = async (): Promise<PokemonWithAbilities> => {
 };
 
 export const validatePokemon = async (
-  pokemonName: string,
-  previousPokemonName: string,
+  pokemonGuess: PokemonNamesResponse,
+  previousPokemonGuess: PokemonNamesResponse,
   usedLinks: Record<string, number>,
   evolutionLinkCount: number
 ): Promise<TurnResult> => {
   const [pokemon, previousPokemon] = await Promise.all([
-    prisma.pokemon_v2_pokemon.findFirstOrThrow({
-      where: { name: pokemonName },
+    prisma.pokemon_v2_pokemon.findUniqueOrThrow({
+      where: { id: pokemonGuess.id },
       include: {
         pokemon_v2_pokemonability: {
           select: { pokemon_v2_ability: true },
@@ -44,8 +44,8 @@ export const validatePokemon = async (
         },
       },
     }),
-    prisma.pokemon_v2_pokemon.findFirstOrThrow({
-      where: { name: previousPokemonName },
+    prisma.pokemon_v2_pokemon.findUniqueOrThrow({
+      where: { id: previousPokemonGuess.id },
       include: {
         pokemon_v2_pokemonability: {
           select: { pokemon_v2_ability: true },
@@ -62,7 +62,7 @@ export const validatePokemon = async (
 
   if (isSameEvolutionChain && evolutionLinkCount >= MAX_EVOLUTION_LINKS) {
     console.log(
-      `${pokemonName} is an invalid answer because the evolution link count is at maximum`
+      `${pokemonGuess.name} is an invalid answer because the evolution link count is at maximum`
     );
     return {
       validAnswer: false,
@@ -84,20 +84,20 @@ export const validatePokemon = async (
       (ability) => (usedLinks[ability.name] ?? 0) < MAX_ABILITY_LINKS
     )
   ) {
-    console.log(`${pokemonName} is a valid answer`);
+    console.log(`${pokemonGuess.name} is a valid answer`);
     return {
       validAnswer: true,
       pokemon: pokemonRepository.prettifyQueriedPokemon(pokemon),
       sameSpecies:
         pokemon.pokemon_v2_pokemonspecies?.pokemon_v2_pokemon.map(
-          ({ name }) => name
+          ({ id }) => id
         ) ?? [],
       usedLinks: commonAbilities.map((ability) => ability.name),
       isSameEvoline: isSameEvolutionChain,
     };
   }
   console.log(
-    `${pokemonName} is an invalid answer because ${
+    `${pokemonGuess.name} is an invalid answer because ${
       commonAbilities.length > 0
         ? "all common abilities are used"
         : "no abilities are shared"

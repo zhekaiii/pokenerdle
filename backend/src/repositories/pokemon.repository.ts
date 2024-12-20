@@ -11,7 +11,7 @@ export const getPokemonNames = async () => {
         OR COUNT(fn.id) = 0 THEN psn.name
         ELSE fn.pokemon_name
       END AS name,
-      psn.name AS species_name
+      psn.name AS speciesName
     FROM
       pokemon_v2_pokemonform f
       INNER JOIN pokemon_v2_pokemon p ON p.id = f.pokemon_id

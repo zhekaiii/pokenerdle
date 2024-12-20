@@ -1,3 +1,4 @@
+import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { Router } from "express";
 import { Server } from "socket.io";
 import {
@@ -19,8 +20,8 @@ export const initializeBattleWsRoutes = (io: Server) => {
       createBattleRoom(socket, settings)
     );
     socket.on("join", (roomId: string) => joinRoom(socket, roomId));
-    socket.on("answer", (pokemonName: string, roomId: string) =>
-      validatePokemon(socket, pokemonName, roomId)
+    socket.on("answer", (pokemon: PokemonNamesResponse, roomId: string) =>
+      validatePokemon(socket, pokemon, roomId)
     );
     socket.on("disconnecting", () => onSocketDisconnect(socket));
     socket.on("isMyTurn", (callback) => {
