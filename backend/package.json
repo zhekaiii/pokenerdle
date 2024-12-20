@@ -1,5 +1,6 @@
 {
-  "name": "pokenerdle-backend",
+  "name": "@pokenerdle/backend",
+  "private": true,
   "version": "0.0.1",
   "main": "dist/index.js",
   "scripts": {
@@ -21,6 +22,7 @@
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
+    "@pokenerdle/shared": "file:../shared",
     "@types/express": "^4.17.21",
     "@types/node": "^22.1.0",
     "nodemon": "^3.1.4",
