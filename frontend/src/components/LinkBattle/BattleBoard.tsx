@@ -1,8 +1,8 @@
 import React from "react";
 import { PokemonGuess } from "../../api/battles/types";
 import { getSharedAbilities } from "../../utils/linkBattleUtils";
-import AbilityChip from "./AbilityChip";
 import battleBoardClasses from "./BattleBoard.module.scss";
+import LinkChip from "./LinkChip";
 import PokemonCard from "./PokemonCard";
 
 type Props = {
@@ -31,16 +31,17 @@ const BattleBoard: React.FC<Props> = ({
           {pkmnIndex < pokemons.length - 1 &&
             pokemons[pkmnIndex + 1].isSameEvoline &&
             pokemons[pkmnIndex + 1].guessedBy && (
-              <AbilityChip
-                abilityName="Same evolution line"
+              <LinkChip
+                variant="evolution"
                 count={evolutionLinkCount[pokemons[pkmnIndex + 1].guessedBy!]}
               />
             )}
           {pkmnIndex < pokemons.length - 1 &&
             getSharedAbilities(pokemon, pokemons[pkmnIndex + 1]).map(
               (ability) => (
-                <AbilityChip
+                <LinkChip
                   key={ability.name}
+                  variant="ability"
                   abilityName={ability.name}
                   count={sharedLinks[ability.name]}
                 />
