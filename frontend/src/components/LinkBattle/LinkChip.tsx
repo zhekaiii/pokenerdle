@@ -1,9 +1,8 @@
-import { Commit } from "@mui/icons-material";
-import CloseIcon from "@mui/icons-material/Close";
-import LinkIcon from "@mui/icons-material/Link";
-import { Chip, Stack } from "@mui/material";
+import clsx from "clsx";
+import { GitBranch, Link, X } from "lucide-react";
 import React, { useState } from "react";
 import { formatAbilityName } from "../../utils/formatters";
+import { Chip } from "../ui/Chip";
 
 type Props =
   | {
@@ -19,27 +18,24 @@ type Props =
 const LinkChip: React.FC<Props> = (props) => {
   const [frozenCount] = useState(props.count ?? 0);
   return (
-    <Chip
-      icon={props.variant == "ability" ? <LinkIcon /> : <Commit />}
-      className="tw-capitalize tw-self-center tw-my-1 tw-whitespace-nowrap"
-      label={
-        <>
-          <Stack direction="row" display="inline-flex" alignItems="center">
-            {props.variant == "ability"
-              ? formatAbilityName(props.abilityName)
-              : "Same evolution line"}
-            {Array.from({ length: frozenCount }, (_, i) => (
-              <CloseIcon
-                sx={i > 0 ? { marginLeft: "-8px" } : {}}
-                fontSize="small"
-                key={i}
-                color="error"
-              />
-            ))}
-          </Stack>
-        </>
-      }
-    />
+    <Chip className="tw-capitalize tw-self-center tw-my-1 tw-whitespace-nowrap">
+      <div className="tw-inline-flex tw-items-center">
+        {props.variant == "ability" ? <Link /> : <GitBranch />}
+        <span className="tw-mx-1">
+          {props.variant == "ability"
+            ? formatAbilityName(props.abilityName)
+            : "Same evolution line"}
+        </span>
+        <div className="tw-flex">
+          {Array.from({ length: frozenCount }, (_, i) => (
+            <X
+              className={clsx(i > 0 && "tw--ml-2", "tw-text-red-600")}
+              key={i}
+            />
+          ))}
+        </div>
+      </div>
+    </Chip>
   );
 };
 

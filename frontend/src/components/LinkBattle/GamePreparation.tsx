@@ -69,7 +69,7 @@ const GamePreparation: React.FC<Props> = ({
         >
           Close
         </Button>
-        <div className="text-center">
+        <div className="tw-flex tw-flex-col tw-text-center">
           <Button
             className={classes.GamePreparation__Buttons}
             onClick={onReady}
