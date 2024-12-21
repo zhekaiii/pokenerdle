@@ -9,9 +9,10 @@ import GamePreparation from "./GamePreparation";
 type Props = {
   roomCode: string;
   settings: BattleRoomSettings;
+  exitRoom: () => void;
 };
 
-const GameScreen: React.FC<Props> = ({ roomCode, settings }) => {
+const GameScreen: React.FC<Props> = ({ roomCode, settings, exitRoom }) => {
   const socket = useSocket();
   const [isGoingFirst, setIsGoingFirst] = useState<boolean>();
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -39,6 +40,7 @@ const GameScreen: React.FC<Props> = ({ roomCode, settings }) => {
       roomCode={roomCode}
       settings={settings}
       isGoingFirst={isGoingFirst}
+      exitRoom={exitRoom}
     />
   ) : (
     <BattleScreen

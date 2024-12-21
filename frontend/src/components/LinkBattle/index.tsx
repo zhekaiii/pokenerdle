@@ -22,6 +22,17 @@ const LinkBattle: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 
+  const exitRoom = () => {
+    socket.emit("leave", roomCode, () => {
+      setRoomCode(null);
+      setIsOpponentConnected(false);
+      setSettings({ timer: 20, showAbility: true });
+      setError(null);
+      setIsSnackbarOpen(false);
+      setSearchParams();
+    });
+  };
+
   useEffect(() => {
     socket.on(
       "roomCode",
@@ -58,7 +69,6 @@ const LinkBattle: React.FC = () => {
       socket.emit("join", searchParams.get("roomCode"));
       setSearchParams();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to run this once
   }, []);
 
   useEffect(() => {
@@ -70,9 +80,13 @@ const LinkBattle: React.FC = () => {
     <PageContainer>
       {roomCode && socket ? (
         isOpponentConnected ? (
-          <GameScreen roomCode={roomCode} settings={settings} />
+          <GameScreen
+            roomCode={roomCode}
+            settings={settings}
+            exitRoom={exitRoom}
+          />
         ) : (
-          <WaitingLobby roomCode={roomCode} />
+          <WaitingLobby roomCode={roomCode} exitRoom={exitRoom} />
         )
       ) : (
         <LinkBattleLobby setIsOpponentConnected={setIsOpponentConnected} />

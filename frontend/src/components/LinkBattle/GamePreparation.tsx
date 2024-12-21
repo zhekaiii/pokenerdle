@@ -9,12 +9,14 @@ type Props = {
   roomCode: string;
   settings: BattleRoomSettings;
   isGoingFirst?: boolean;
+  exitRoom: () => void;
 };
 
 const GamePreparation: React.FC<Props> = ({
   roomCode,
   settings,
   isGoingFirst,
+  exitRoom,
 }) => {
   const socket = useSocket();
   const [secondsLeft, setSecondsLeft] = useState(15);
@@ -38,7 +40,6 @@ const GamePreparation: React.FC<Props> = ({
     return () => {
       clearTimeout(timeout);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- we don't need to rerun this when onReady changes
   }, [secondsLeft]);
 
   useEffect(() => {
@@ -64,7 +65,7 @@ const GamePreparation: React.FC<Props> = ({
         <Button
           className={classes.GamePreparation__Buttons}
           variant="contained"
-          onClick={() => socket.close()}
+          onClick={exitRoom}
           color="secondary"
         >
           Close

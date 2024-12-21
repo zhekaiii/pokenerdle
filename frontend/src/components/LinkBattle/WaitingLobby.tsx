@@ -1,15 +1,14 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { Button, debounce, IconButton } from "@mui/material";
 import React, { useCallback, useMemo, useState } from "react";
-import { useSocket } from "../../hooks/useSocket";
 import classes from "./WaitingLobby.module.scss";
 
 type Props = {
   roomCode: string;
+  exitRoom: () => void;
 };
 
-const WaitingLobby: React.FC<Props> = ({ roomCode }) => {
-  const socket = useSocket();
+const WaitingLobby: React.FC<Props> = ({ roomCode, exitRoom }) => {
   const [buttonLabel, setButtonLabel] = useState("Copy invite link");
   const shareLink = useMemo(() => {
     const url = new URL(location.href);
@@ -17,7 +16,6 @@ const WaitingLobby: React.FC<Props> = ({ roomCode }) => {
     return url.toString();
   }, [roomCode]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- there are no unknown dependencies
   const resetButtonLabel = useCallback(
     debounce(() => {
       setButtonLabel("Copy invite link");
@@ -31,10 +29,6 @@ const WaitingLobby: React.FC<Props> = ({ roomCode }) => {
     resetButtonLabel();
   };
 
-  const exitWaitingRoom = () => {
-    socket.close();
-  };
-
   return (
     <div className={classes["WaitingLobby__Card"]}>
       <IconButton
@@ -43,7 +37,7 @@ const WaitingLobby: React.FC<Props> = ({ roomCode }) => {
           top: 0,
           right: 0,
         }}
-        onClick={exitWaitingRoom}
+        onClick={exitRoom}
         color="inherit"
       >
         <CloseIcon />
