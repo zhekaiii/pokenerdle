@@ -6,6 +6,7 @@ import {
   createBattleRoom,
   getStarterPokemon,
   joinRoom,
+  leaveRoom,
   onRematch,
   onSocketDisconnect,
   userReady,
@@ -22,6 +23,9 @@ export const initializeBattleWsRoutes = (io: Server) => {
     socket.on("join", (roomId: string) => joinRoom(socket, roomId));
     socket.on("answer", (pokemon: PokemonNamesResponse, roomId: string) =>
       validatePokemon(socket, pokemon, roomId)
+    );
+    socket.on("leave", (roomId: string, callback: () => void) =>
+      leaveRoom(socket, roomId, callback)
     );
     socket.on("disconnecting", () => onSocketDisconnect(socket));
     socket.on("isMyTurn", (callback) => {

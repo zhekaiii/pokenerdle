@@ -18,18 +18,7 @@ const ongoingBattles: Record<string, BattleRoom> = {};
 export const onSocketDisconnect = (socket: Socket) => {
   console.log(`Socket ${socket.id} disconnected.`);
   socket.rooms.forEach((roomId) => {
-    const room = ongoingBattles[roomId];
-    if (!room) {
-      return;
-    }
-    room.timer && clearTimeout(room.timer);
-    ongoingBattles[roomId].players.forEach((id) => {
-      if (id !== socket.id) {
-        socket.to(id).emit("roomError", "Opponent left the battle!");
-      }
-      io.socketsLeave(roomId);
-    });
-    delete ongoingBattles[roomId];
+    leaveRoom(socket, roomId);
   });
   console.log(ongoingBattles);
 };
@@ -43,11 +32,11 @@ const nextTurn = (roomId: string, isFirstTurn?: true) => {
   const nextPlayer = room.players[room.turn];
   io.of(RouteNames.BATTLES_WS)
     .to(roomId)
-    .emit("canMove", nextPlayer, Date.now() + room.settings.timer * 100000);
+    .emit("canMove", nextPlayer, Date.now() + room.settings.timer * 1000);
   room.timer = setTimeout(() => {
     console.log("Timeout");
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("gameEnd");
-  }, room.settings.timer * 100000);
+  }, room.settings.timer * 1000);
 };
 
 export const createBattleRoom = async (
@@ -81,7 +70,7 @@ export const createBattleRoom = async (
   }
 };
 
-export const joinRoom = async (socket: Socket, roomId: string) => {
+export const joinRoom = (socket: Socket, roomId: string) => {
   console.log("Joining room", roomId);
   if (!(roomId in ongoingBattles)) {
     socket.emit("roomError", ErrorRoomNotFound);
@@ -102,6 +91,27 @@ export const joinRoom = async (socket: Socket, roomId: string) => {
   socket.emit("roomCode", roomId, room.settings);
   io.of(RouteNames.BATTLES_WS).to(roomId).emit("opponentJoined");
   console.log(ongoingBattles);
+};
+
+export const leaveRoom = (
+  socket: Socket,
+  roomId: string,
+  callback?: () => void
+) => {
+  console.log(`Socket ${socket.id} is leaving room ${roomId}.`);
+  const room = ongoingBattles[roomId];
+  if (!room) {
+    return;
+  }
+  room.timer && clearTimeout(room.timer);
+  ongoingBattles[roomId].players.forEach((id) => {
+    if (id !== socket.id) {
+      socket.to(id).emit("roomError", "Opponent left the battle!");
+    }
+    io.socketsLeave(roomId);
+  });
+  delete ongoingBattles[roomId];
+  callback?.();
 };
 
 export const validatePokemon = async (
