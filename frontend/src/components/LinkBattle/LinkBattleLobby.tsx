@@ -1,13 +1,12 @@
-import { Add, GroupOutlined } from "@mui/icons-material";
 import {
-  Button,
   Card,
   CardContent,
-  OutlinedInput,
-  Tab,
-  Tabs,
-  Typography,
-} from "@mui/material";
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/Card";
+import { Add, GroupOutlined } from "@mui/icons-material";
+import { Button, OutlinedInput, Tab, Tabs } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import api from "../../api";
 import { useSocket } from "../../hooks/useSocket";
@@ -105,15 +104,15 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
   );
 
   return (
-    <Card className={classes.LinkBattleLobby} variant="outlined">
-      <CardContent className={classes.LinkBattleLobby__Contents}>
-        <Typography align="center" variant="h4">
-          Pokémon Link Battle
-        </Typography>
-        <Typography align="center" color="textSecondary">
+    <Card className={classes.LinkBattleLobby}>
+      <CardHeader className="tw-text-center">
+        <CardTitle>Pokémon Link Battle</CardTitle>
+        <CardDescription>
           Challenge your friends in a Pokémon chain battle!
-        </Typography>
+        </CardDescription>
+      </CardHeader>
 
+      <CardContent className={classes.LinkBattleLobby__Contents}>
         <Tabs
           value={tabValue}
           onChange={(_, value) => setTabValue(value)}
