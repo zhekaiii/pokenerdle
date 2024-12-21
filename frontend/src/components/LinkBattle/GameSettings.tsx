@@ -1,6 +1,7 @@
 import {
   AccessTimeOutlined,
   SettingsOutlined,
+  VisibilityOffOutlined,
   VisibilityOutlined,
 } from "@mui/icons-material";
 import {
@@ -66,8 +67,12 @@ const GameSettings: React.FC<Props> = ({
         label={
           <div>
             <Typography variant="subtitle2">
-              <VisibilityOutlined className="tw-mr-2" fontSize="small" /> Show
-              abilities
+              {settings.showAbility ? (
+                <VisibilityOutlined className="tw-mr-2" fontSize="small" />
+              ) : (
+                <VisibilityOffOutlined className="tw-mr-2" fontSize="small" />
+              )}
+              Show abilities
             </Typography>
             <Typography variant="caption" color="textSecondary">
               Show the abilities of Pokémon during the battle

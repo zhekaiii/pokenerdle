@@ -39,6 +39,7 @@ type Props = {
   isGoingFirst: boolean;
   starterPokemon: PokemonGuess;
   goBackToPreparation: () => void;
+  exitRoom: () => void;
 };
 
 const BattleScreen: React.FC<Props> = ({
@@ -47,6 +48,7 @@ const BattleScreen: React.FC<Props> = ({
   isGoingFirst,
   starterPokemon,
   goBackToPreparation,
+  exitRoom,
 }) => {
   const socket = useSocket();
   const [input, setInput] = useState("");
@@ -154,10 +156,6 @@ const BattleScreen: React.FC<Props> = ({
       setRematchTimer(rematchTimer - 1);
     }, 1000);
   }, [opponentRematch, rematchTimer, socket]);
-
-  const onClose = useCallback(() => {
-    socket.disconnect();
-  }, [socket]);
 
   const closePopover = useCallback(
     debounce(() => {
@@ -375,7 +373,7 @@ const BattleScreen: React.FC<Props> = ({
           <Button
             startIcon={<ExitToApp />}
             variant="outlined"
-            onClick={onClose}
+            onClick={exitRoom}
             color="error"
           >
             Exit

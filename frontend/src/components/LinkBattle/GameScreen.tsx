@@ -49,6 +49,7 @@ const GameScreen: React.FC<Props> = ({ roomCode, settings, exitRoom }) => {
       isGoingFirst={isGoingFirst}
       starterPokemon={starterPokemon}
       goBackToPreparation={goBackToPreparation}
+      exitRoom={exitRoom}
     />
   );
 };
