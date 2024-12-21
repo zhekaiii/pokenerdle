@@ -6,12 +6,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/Card";
-import { Add, GroupOutlined } from "@mui/icons-material";
-import { OutlinedInput } from "@mui/material";
+import { Plus, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import api from "../../api";
 import { useSocket } from "../../hooks/useSocket";
 import LoadingDialog from "../recyclables/LoadingDialog";
+import { Input } from "../ui/Input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/Tabs";
 import GameSettings from "./GameSettings";
 import classes from "./LinkBattleLobby.module.scss";
@@ -66,9 +66,8 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
           onClickJoin();
         }}
       >
-        <OutlinedInput
-          className="tw-my-2"
-          fullWidth
+        <Input
+          className="tw-my-4 tw-w-full"
           placeholder="Room Code"
           disabled={isConnecting}
           value={roomCodeInput}
@@ -117,14 +116,14 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className={classes.LinkBattleLobby__Contents}>
+      <CardContent>
         <Tabs defaultValue={TabValue.JOIN}>
           <TabsList className="tw-w-full">
             <TabsTrigger value={TabValue.JOIN} className="tw-flex-1">
-              <GroupOutlined /> Join Room
+              <Users className="tw-mr-2" /> Join Room
             </TabsTrigger>
             <TabsTrigger value={TabValue.CREATE} className="tw-flex-1">
-              <Add /> Create Room
+              <Plus className="tw-mr-2" /> Create Room
             </TabsTrigger>
           </TabsList>
           <TabsContent value={TabValue.JOIN}>{joinRoomSection}</TabsContent>
