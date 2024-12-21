@@ -149,7 +149,13 @@ export const validatePokemon = async (
 
   io.of(RouteNames.BATTLES_WS)
     .to(roomId)
-    .emit("pushPokemon", result.pokemon, socket.id, result.sameSpecies);
+    .emit(
+      "pushPokemon",
+      result.pokemon,
+      socket.id,
+      result.sameSpecies,
+      result.isSameEvoline
+    );
 
   nextTurn(roomId);
 };
