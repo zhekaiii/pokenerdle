@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/Button";
-import { Stack, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { BattleRoomSettings } from "../../api/battles/types";
 import { useSocket } from "../../hooks/useSocket";
@@ -62,7 +61,7 @@ const GamePreparation: React.FC<Props> = ({
 
       <GameSettings settings={settings} />
 
-      <Stack direction="row" spacing={2} alignItems="self-start">
+      <div className="tw-flex tw-flex-row tw-space-x-2 tw-items-start">
         <Button
           className={classes.GamePreparation__Buttons}
           onClick={exitRoom}
@@ -70,7 +69,7 @@ const GamePreparation: React.FC<Props> = ({
         >
           Close
         </Button>
-        <Stack textAlign="center">
+        <div className="text-center">
           <Button
             className={classes.GamePreparation__Buttons}
             onClick={onReady}
@@ -78,11 +77,9 @@ const GamePreparation: React.FC<Props> = ({
           >
             Ready ({secondsLeft})
           </Button>
-          {isOpponentReady && (
-            <Typography variant="caption">Opponent is ready</Typography>
-          )}
-        </Stack>
-      </Stack>
+          {isOpponentReady && <small>Opponent is ready</small>}
+        </div>
+      </div>
     </div>
   );
 };
