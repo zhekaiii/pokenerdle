@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
-import CloseIcon from "@mui/icons-material/Close";
-import { debounce, IconButton } from "@mui/material";
+import { debounce } from "@mui/material";
+import { X } from "lucide-react";
 import React, { useCallback, useMemo, useState } from "react";
 import classes from "./WaitingLobby.module.scss";
 
@@ -32,17 +32,17 @@ const WaitingLobby: React.FC<Props> = ({ roomCode, exitRoom }) => {
 
   return (
     <div className={classes["WaitingLobby__Card"]}>
-      <IconButton
-        sx={{
+      <Button
+        style={{
           position: "absolute",
           top: 0,
           right: 0,
         }}
         onClick={exitRoom}
-        color="inherit"
+        variant="transparent"
       >
-        <CloseIcon />
-      </IconButton>
+        <X />
+      </Button>
       <span className={classes["WaitingLobby__CardTitle"]}>
         Waiting for opponent to join room {"\n"}
         {roomCode}

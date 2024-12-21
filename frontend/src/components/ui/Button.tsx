@@ -19,6 +19,7 @@ const buttonVariants = cva(
           "tw-bg-secondary tw-text-secondary-foreground tw-shadow-sm hover:tw-bg-secondary/80",
         ghost: "hover:tw-bg-accent hover:tw-text-accent-foreground",
         link: "tw-text-primary tw-underline-offset-4 hover:tw-underline",
+        transparent: "tw-bg-transparent tw-text-primary",
       },
       size: {
         default: "tw-h-9 tw-px-4 tw-py-2",
