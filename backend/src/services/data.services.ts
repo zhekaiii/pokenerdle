@@ -7,7 +7,10 @@ import {
 import * as pokemonRepository from "../repositories/pokemon.repository.js";
 import { isTruthy } from "../utils/types.js";
 
-export { getPokemonNames } from "../repositories/pokemon.repository.js";
+export {
+  getPokemonIcons,
+  getPokemonNames,
+} from "../repositories/pokemon.repository.js";
 
 export const getStarterPokemon = async (): Promise<PokemonWithAbilities> => {
   const pokemonId =

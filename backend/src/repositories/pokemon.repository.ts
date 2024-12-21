@@ -84,3 +84,13 @@ export const getPokemonWithAbilities = async (id: number) => {
   });
   return pokemon && prettifyQueriedPokemon(pokemon);
 };
+
+export const getPokemonIcons = async (): Promise<Record<number, string>> => {
+  const sprites = await prisma.pokemon_v2_pokemonsprites.findMany();
+  return Object.fromEntries(
+    sprites.map(({ pokemon_id, sprites }) => [
+      pokemon_id,
+      JSON.parse(sprites).versions["generation-viii"].icons.front_default,
+    ])
+  );
+};
