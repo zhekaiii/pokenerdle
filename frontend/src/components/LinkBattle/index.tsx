@@ -1,4 +1,5 @@
-import { Alert, Snackbar } from "@mui/material";
+import { useToast } from "@/hooks/useToast";
+import { TriangleAlert } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { BattleRoomSettings } from "../../api/battles/types";
@@ -10,6 +11,7 @@ import WaitingLobby from "./WaitingLobby";
 
 const LinkBattle: React.FC = () => {
   const socket = useSocket();
+  const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const [roomCode, setRoomCode] = useState<string | null>(null);
 
@@ -19,16 +21,11 @@ const LinkBattle: React.FC = () => {
     showAbility: true,
   });
 
-  const [error, setError] = useState<string | null>(null);
-  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
-
   const exitRoom = () => {
     socket.emit("leave", roomCode, () => {
       setRoomCode(null);
       setIsOpponentConnected(false);
       setSettings({ timer: 20, showAbility: true });
-      setError(null);
-      setIsSnackbarOpen(false);
       setSearchParams();
     });
   };
@@ -48,8 +45,14 @@ const LinkBattle: React.FC = () => {
     socket.on("roomError", (error: string) => {
       console.error(error);
       setRoomCode("");
-      setError(error);
-      setIsSnackbarOpen(true);
+      toast({
+        variant: "destructive",
+        description: (
+          <>
+            <TriangleAlert className="tw-inline tw-mr-2" /> {error}
+          </>
+        ),
+      });
       setSearchParams();
     });
     socket.on("opponentJoined", () => {
@@ -91,16 +94,6 @@ const LinkBattle: React.FC = () => {
       ) : (
         <LinkBattleLobby setIsOpponentConnected={setIsOpponentConnected} />
       )}
-
-      <Snackbar
-        open={isSnackbarOpen}
-        onClose={() => setIsSnackbarOpen(false)}
-        autoHideDuration={3000}
-      >
-        <Alert severity="error" variant="filled">
-          {error}
-        </Alert>
-      </Snackbar>
     </PageContainer>
   );
 };
