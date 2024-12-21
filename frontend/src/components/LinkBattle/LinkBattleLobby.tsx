@@ -1,10 +1,24 @@
-import { Button, Divider, OutlinedInput } from "@mui/material";
+import { Add, GroupOutlined } from "@mui/icons-material";
+import {
+  Button,
+  Card,
+  CardContent,
+  OutlinedInput,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import api from "../../api";
 import { useSocket } from "../../hooks/useSocket";
 import LoadingDialog from "../recyclables/LoadingDialog";
 import GameSettings from "./GameSettings";
 import classes from "./LinkBattleLobby.module.scss";
+
+enum TabValue {
+  JOIN = "join",
+  CREATE = "create",
+}
 
 type Props = {
   setIsOpponentConnected: (isConnected: boolean) => void;
@@ -17,6 +31,7 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [showAbility, setShowAbility] = useState(true);
   const [timer, setTimer] = useState(20);
+  const [tabValue, setTabValue] = useState(TabValue.JOIN);
 
   useEffect(() => {
     const hideLoadingDialog = () => {
@@ -42,8 +57,8 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
     api.battles.joinRoom(socket!, roomCodeInput);
   };
 
-  return (
-    <div className={classes.LinkBattleLobby}>
+  const joinRoomSection = (
+    <>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -51,6 +66,7 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
         }}
       >
         <OutlinedInput
+          className="tw-my-2"
           fullWidth
           placeholder="Room Code"
           disabled={isConnecting}
@@ -67,23 +83,56 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
       <Button variant="contained" disabled={isConnecting} onClick={onClickJoin}>
         Join Room
       </Button>
-      <Divider>Or</Divider>
+    </>
+  );
+
+  const createRoomSection = (
+    <>
+      <GameSettings
+        settings={{ showAbility, timer }}
+        setTimer={setTimer}
+        setShowAbility={setShowAbility}
+      />
       <Button
+        className="!tw-mt-2"
         variant="contained"
         disabled={isConnecting}
         onClick={onClickCreate}
       >
         Create Room
       </Button>
+    </>
+  );
 
-      <GameSettings
-        settings={{ showAbility, timer }}
-        setTimer={setTimer}
-        setShowAbility={setShowAbility}
-      />
+  return (
+    <Card className={classes.LinkBattleLobby} variant="outlined">
+      <CardContent className={classes.LinkBattleLobby__Contents}>
+        <Typography align="center" variant="h4">
+          Pokémon Link Battle
+        </Typography>
+        <Typography align="center" color="textSecondary">
+          Challenge your friends in a Pokémon chain battle!
+        </Typography>
 
-      <LoadingDialog open={isConnecting} />
-    </div>
+        <Tabs
+          value={tabValue}
+          onChange={(_, value) => setTabValue(value)}
+          variant="fullWidth"
+          centered
+        >
+          <Tab
+            value={TabValue.JOIN}
+            icon={<GroupOutlined />}
+            label="Join Room"
+          ></Tab>
+          <Tab value={TabValue.CREATE} icon={<Add />} label="Create Room"></Tab>
+        </Tabs>
+
+        {tabValue === TabValue.JOIN ? joinRoomSection : createRoomSection}
+
+        <LoadingDialog open={isConnecting} />
+      </CardContent>
+    </Card>
   );
 };
 

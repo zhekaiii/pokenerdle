@@ -1,9 +1,15 @@
 import {
+  AccessTimeOutlined,
+  SettingsOutlined,
+  VisibilityOutlined,
+} from "@mui/icons-material";
+import {
   FormControlLabel,
   FormGroup,
   Slider,
   Stack,
   Switch,
+  Typography,
 } from "@mui/material";
 import React from "react";
 import { BattleRoomSettings } from "../../api/battles/types";
@@ -25,8 +31,16 @@ const GameSettings: React.FC<Props> = ({
 }) => {
   return (
     <FormGroup className={classes.GameSettings}>
+      <Typography>
+        <SettingsOutlined className="tw-mr-2" fontSize="small" />
+        <b>Game Settings</b>
+      </Typography>
+
       <div>
-        Time per turn
+        <Typography variant="subtitle2">
+          <AccessTimeOutlined className="tw-mr-2" fontSize="small" />
+          Time per turn: {settings.timer} seconds
+        </Typography>
         <Stack direction="row" spacing={2}>
           <Slider
             value={settings.timer}
@@ -34,11 +48,13 @@ const GameSettings: React.FC<Props> = ({
             min={MIN_TIMER}
             onChange={setTimer && ((_, value) => setTimer(value as number))}
             disabled={!setTimer}
+            size="small"
           />
-          <span>{settings.timer} seconds</span>
         </Stack>
       </div>
+
       <FormControlLabel
+        className="tw-justify-between !tw-mx-0"
         control={
           <Switch
             checked={settings.showAbility}
@@ -47,7 +63,17 @@ const GameSettings: React.FC<Props> = ({
             }
           />
         }
-        label="Show abilities"
+        label={
+          <div>
+            <Typography variant="subtitle2">
+              <VisibilityOutlined className="tw-mr-2" fontSize="small" /> Show
+              abilities
+            </Typography>
+            <Typography variant="caption" color="textSecondary">
+              Show the abilities of Pokémon during the battle
+            </Typography>
+          </div>
+        }
         labelPlacement="start"
         disabled={!setShowAbility}
       ></FormControlLabel>
