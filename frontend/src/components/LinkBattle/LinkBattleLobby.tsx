@@ -7,11 +7,12 @@ import {
   CardTitle,
 } from "@/components/ui/Card";
 import { Add, GroupOutlined } from "@mui/icons-material";
-import { OutlinedInput, Tab, Tabs } from "@mui/material";
+import { OutlinedInput } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import api from "../../api";
 import { useSocket } from "../../hooks/useSocket";
 import LoadingDialog from "../recyclables/LoadingDialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/Tabs";
 import GameSettings from "./GameSettings";
 import classes from "./LinkBattleLobby.module.scss";
 
@@ -80,7 +81,11 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
           autoComplete="off"
         />
       </form>
-      <Button disabled={isConnecting} onClick={onClickJoin}>
+      <Button
+        disabled={isConnecting}
+        onClick={onClickJoin}
+        className="tw-w-full"
+      >
         Join Room
       </Button>
     </>
@@ -94,7 +99,7 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
         setShowAbility={setShowAbility}
       />
       <Button
-        className="tw-mt-2"
+        className="tw-mt-2 tw-w-full"
         disabled={isConnecting}
         onClick={onClickCreate}
       >
@@ -113,21 +118,18 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
       </CardHeader>
 
       <CardContent className={classes.LinkBattleLobby__Contents}>
-        <Tabs
-          value={tabValue}
-          onChange={(_, value) => setTabValue(value)}
-          variant="fullWidth"
-          centered
-        >
-          <Tab
-            value={TabValue.JOIN}
-            icon={<GroupOutlined />}
-            label="Join Room"
-          ></Tab>
-          <Tab value={TabValue.CREATE} icon={<Add />} label="Create Room"></Tab>
+        <Tabs defaultValue={TabValue.JOIN}>
+          <TabsList className="tw-w-full">
+            <TabsTrigger value={TabValue.JOIN} className="tw-flex-1">
+              <GroupOutlined /> Join Room
+            </TabsTrigger>
+            <TabsTrigger value={TabValue.CREATE} className="tw-flex-1">
+              <Add /> Create Room
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value={TabValue.JOIN}>{joinRoomSection}</TabsContent>
+          <TabsContent value={TabValue.CREATE}>{createRoomSection}</TabsContent>
         </Tabs>
-
-        {tabValue === TabValue.JOIN ? joinRoomSection : createRoomSection}
 
         <LoadingDialog open={isConnecting} />
       </CardContent>
