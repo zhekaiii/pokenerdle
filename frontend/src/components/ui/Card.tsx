@@ -36,7 +36,10 @@ const CardTitle: React.FC<
 > = ({ className, ref, ...props }) => (
   <div
     ref={ref}
-    className={cn("font-semibold leading-none tracking-tight", className)}
+    className={cn(
+      "tw-font-semibold tw-leading-none tw-tracking-tight",
+      className
+    )}
     {...props}
   />
 );

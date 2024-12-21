@@ -1,51 +1,51 @@
 h1 {
-  @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+  @apply tw-scroll-m-20 tw-text-4xl tw-font-extrabold tw-tracking-tight lg:tw-text-5xl;
 }
 
 h2 {
-  @apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0;
+  @apply tw-scroll-m-20 tw-border-b tw-pb-2 tw-text-3xl tw-font-semibold tw-tracking-tight first:tw-mt-0;
 }
 
 h3 {
-  @apply scroll-m-20 text-2xl font-semibold tracking-tight;
+  @apply tw-scroll-m-20 tw-text-2xl tw-font-semibold tw-tracking-tight;
 }
 
 h4 {
-  @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  @apply tw-scroll-m-20 tw-text-xl tw-font-semibold tw-tracking-tight;
 }
 
 h5 {
-  @apply scroll-m-20 text-lg font-semibold tracking-tight;
+  @apply tw-scroll-m-20 tw-text-lg tw-font-semibold tw-tracking-tight;
 }
 
 h6 {
-  @apply scroll-m-20 font-semibold tracking-tight;
+  @apply tw-scroll-m-20 tw-font-semibold tw-tracking-tight;
 }
 
 p {
-  @apply leading-7 [&:not(:first-child)]:mt-6;
+  @apply tw-leading-7 [&:not(:first-child)]:tw-mt-6;
 }
 
 blockquote {
-  @apply mt-6 border-l-2 pl-6 italic;
+  @apply tw-mt-6 tw-border-l-2 tw-pl-6 tw-italic;
 }
 
 tr {
-  @apply m-0 border-t p-0 even:bg-muted;
+  @apply tw-m-0 tw-border-t tw-p-0 even:tw-bg-muted;
 }
 
 th {
-  @apply border px-4 py-2 text-left font-bold [&[align=center]]:text-center [&[align=right]]:text-right;
+  @apply tw-border tw-px-4 tw-py-2 tw-text-left tw-font-bold [&[align=center]]:tw-text-center [&[align=right]]:tw-text-right;
 }
 
 td {
-  @apply border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right;
+  @apply tw-border tw-px-4 tw-py-2 tw-text-left [&[align=center]]:tw-text-center [&[align=right]]:tw-text-right;
 }
 
 code {
-  @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+  @apply tw-relative tw-rounded tw-bg-muted tw-px-[0.3rem] tw-py-[0.2rem] tw-font-mono tw-text-sm tw-font-semibold;
 }
 
 small {
-  @apply text-sm font-medium leading-none;
+  @apply tw-text-sm tw-font-medium tw-leading-none;
 }

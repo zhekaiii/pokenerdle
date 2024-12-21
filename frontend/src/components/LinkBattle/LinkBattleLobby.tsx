@@ -32,7 +32,6 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [showAbility, setShowAbility] = useState(true);
   const [timer, setTimer] = useState(20);
-  const [tabValue, setTabValue] = useState(TabValue.JOIN);
 
   useEffect(() => {
     const hideLoadingDialog = () => {
