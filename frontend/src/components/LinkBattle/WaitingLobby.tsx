@@ -1,5 +1,6 @@
+import { Button } from "@/components/ui/Button";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, debounce, IconButton } from "@mui/material";
+import { debounce, IconButton } from "@mui/material";
 import React, { useCallback, useMemo, useState } from "react";
 import classes from "./WaitingLobby.module.scss";
 
@@ -46,7 +47,7 @@ const WaitingLobby: React.FC<Props> = ({ roomCode, exitRoom }) => {
         Waiting for opponent to join room {"\n"}
         {roomCode}
       </span>
-      <Button onClick={onClickButton} variant="outlined" color="inherit">
+      <Button onClick={onClickButton} variant="outline">
         {buttonLabel}
       </Button>
     </div>

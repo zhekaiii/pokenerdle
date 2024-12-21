@@ -1,10 +1,10 @@
+import { Button } from "@/components/ui/Button";
 import { Autorenew, ExitToApp } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Alert,
   Autocomplete,
   Box,
-  Button,
   debounce,
   LinearProgress,
   Paper,
@@ -370,23 +370,16 @@ const BattleScreen: React.FC<Props> = ({
           spacing={2}
           marginBottom={1}
         >
-          <Button
-            startIcon={<ExitToApp />}
-            variant="outlined"
-            onClick={exitRoom}
-            color="error"
-          >
-            Exit
+          <Button variant="destructive" onClick={exitRoom}>
+            <ExitToApp /> Exit
           </Button>
           <Stack spacing={1} textAlign="center" flexGrow={1}>
             <Button
-              startIcon={<Autorenew />}
-              fullWidth
-              variant="contained"
+              className="tw-w-full"
               onClick={onRematch}
               disabled={rematch}
             >
-              Rematch {rematchTimer > 0 && `(${rematchTimer})`}
+              <Autorenew /> Rematch {rematchTimer > 0 && `(${rematchTimer})`}
             </Button>
             {opponentRematch && (
               <Typography variant="caption">

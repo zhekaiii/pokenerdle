@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/Button";
 import {
   Card,
   CardContent,
@@ -6,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/Card";
 import { Add, GroupOutlined } from "@mui/icons-material";
-import { Button, OutlinedInput, Tab, Tabs } from "@mui/material";
+import { OutlinedInput, Tab, Tabs } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import api from "../../api";
 import { useSocket } from "../../hooks/useSocket";
@@ -79,7 +80,7 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
           autoComplete="off"
         />
       </form>
-      <Button variant="contained" disabled={isConnecting} onClick={onClickJoin}>
+      <Button disabled={isConnecting} onClick={onClickJoin}>
         Join Room
       </Button>
     </>
@@ -93,8 +94,7 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
         setShowAbility={setShowAbility}
       />
       <Button
-        className="!tw-mt-2"
-        variant="contained"
+        className="tw-mt-2"
         disabled={isConnecting}
         onClick={onClickCreate}
       >

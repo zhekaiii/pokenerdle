@@ -1,4 +1,5 @@
-import { Button, Stack, Typography } from "@mui/material";
+import { Button } from "@/components/ui/Button";
+import { Stack, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { BattleRoomSettings } from "../../api/battles/types";
 import { useSocket } from "../../hooks/useSocket";
@@ -64,16 +65,14 @@ const GamePreparation: React.FC<Props> = ({
       <Stack direction="row" spacing={2} alignItems="self-start">
         <Button
           className={classes.GamePreparation__Buttons}
-          variant="contained"
           onClick={exitRoom}
-          color="secondary"
+          variant="secondary"
         >
           Close
         </Button>
         <Stack textAlign="center">
           <Button
             className={classes.GamePreparation__Buttons}
-            variant="contained"
             onClick={onReady}
             disabled={isReady}
           >
