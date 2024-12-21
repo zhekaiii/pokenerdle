@@ -2,6 +2,7 @@ import { Clock4, Settings } from "lucide-react";
 import React from "react";
 import { BattleRoomSettings } from "../../api/battles/types";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
+import { Label } from "../ui/Label";
 import { Slider } from "../ui/Slider";
 import { Switch } from "../ui/Switch";
 import classes from "./GameSettings.module.scss";
@@ -30,10 +31,10 @@ const GameSettings: React.FC<Props> = ({
       </CardHeader>
       <CardContent className={classes.GameSettings__Content}>
         <div>
-          <span>
+          <Label>
             <Clock4 className="tw-mr-2  tw-inline" />
             Time per turn: {settings.timer} seconds
-          </span>
+          </Label>
           <Slider
             className="tw-mt-2"
             value={[settings.timer]}
@@ -45,12 +46,12 @@ const GameSettings: React.FC<Props> = ({
         </div>
 
         <div className="tw-flex tw-items-center tw-justify-between">
-          <label htmlFor="showAbility">
+          <Label htmlFor="showAbility">
             <div>Show Pokémon abilities</div>
             <small className="tw-text-muted-foreground">
               Show the abilities of Pokémon during the battle
             </small>
-          </label>
+          </Label>
           <Switch
             id="showAbility"
             checked={settings.showAbility}
