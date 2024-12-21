@@ -1,19 +1,9 @@
-import {
-  AccessTimeOutlined,
-  SettingsOutlined,
-  VisibilityOffOutlined,
-  VisibilityOutlined,
-} from "@mui/icons-material";
-import {
-  FormControlLabel,
-  FormGroup,
-  Slider,
-  Stack,
-  Switch,
-  Typography,
-} from "@mui/material";
+import { Clock4, Settings } from "lucide-react";
 import React from "react";
 import { BattleRoomSettings } from "../../api/battles/types";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
+import { Slider } from "../ui/Slider";
+import { Switch } from "../ui/Switch";
 import classes from "./GameSettings.module.scss";
 
 type Props = {
@@ -31,58 +21,47 @@ const GameSettings: React.FC<Props> = ({
   setShowAbility,
 }) => {
   return (
-    <FormGroup className={classes.GameSettings}>
-      <Typography>
-        <SettingsOutlined className="tw-mr-2" fontSize="small" />
-        <b>Game Settings</b>
-      </Typography>
-
-      <div>
-        <Typography variant="subtitle2">
-          <AccessTimeOutlined className="tw-mr-2" fontSize="small" />
-          Time per turn: {settings.timer} seconds
-        </Typography>
-        <Stack direction="row" spacing={2}>
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <Settings className="tw-mr-2 tw-inline" />
+          Game Settings
+        </CardTitle>
+      </CardHeader>
+      <CardContent className={classes.GameSettings__Content}>
+        <div>
+          <span>
+            <Clock4 className="tw-mr-2  tw-inline" />
+            Time per turn: {settings.timer} seconds
+          </span>
           <Slider
-            value={settings.timer}
+            className="tw-mt-2"
+            value={[settings.timer]}
             max={MAX_TIMER}
             min={MIN_TIMER}
-            onChange={setTimer && ((_, value) => setTimer(value as number))}
+            onValueChange={setTimer && (([value]) => setTimer(value))}
             disabled={!setTimer}
-            size="small"
           />
-        </Stack>
-      </div>
+        </div>
 
-      <FormControlLabel
-        className="tw-justify-between !tw-mx-0"
-        control={
-          <Switch
-            checked={settings.showAbility}
-            onChange={
-              setShowAbility && ((_, checked) => setShowAbility(checked))
-            }
-          />
-        }
-        label={
-          <div>
-            <Typography variant="subtitle2">
-              {settings.showAbility ? (
-                <VisibilityOutlined className="tw-mr-2" fontSize="small" />
-              ) : (
-                <VisibilityOffOutlined className="tw-mr-2" fontSize="small" />
-              )}
-              Show abilities
-            </Typography>
-            <Typography variant="caption" color="textSecondary">
+        <div className="tw-flex tw-items-center tw-justify-between">
+          <label htmlFor="showAbility">
+            <div>Show Pokémon abilities</div>
+            <small className="tw-text-muted-foreground">
               Show the abilities of Pokémon during the battle
-            </Typography>
-          </div>
-        }
-        labelPlacement="start"
-        disabled={!setShowAbility}
-      ></FormControlLabel>
-    </FormGroup>
+            </small>
+          </label>
+          <Switch
+            id="showAbility"
+            checked={settings.showAbility}
+            onCheckedChange={
+              setShowAbility && ((checked) => setShowAbility(checked))
+            }
+            disabled={!setShowAbility}
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
