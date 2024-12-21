@@ -3,8 +3,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   Alert,
   Autocomplete,
+  Box,
   Button,
-  createFilterOptions,
   debounce,
   LinearProgress,
   Paper,
@@ -27,6 +27,7 @@ import { useLocalStorage } from "react-use";
 import { useImmer } from "use-immer";
 import api from "../../api";
 import { BattleRoomSettings } from "../../api/battles/types";
+import iconPlaceholder from "../../assets/question_mark.png";
 import { useSocket } from "../../hooks/useSocket";
 import { updateSharedLinks } from "../../utils/linkBattleUtils";
 import BattleBoard from "./BattleBoard";
@@ -52,6 +53,9 @@ const BattleScreen: React.FC<Props> = ({
   const [pokemonNames, setPokemonNames] = useLocalStorage<
     PokemonNamesResponse[]
   >("pokemonNames", []);
+  const [pokemonIcons, setPokemonIcons] = useLocalStorage<
+    Record<number, string | null>
+  >("pokemonIcons", {});
   const [pokemons, setPokemons] = useState<PokemonWithAbilities[]>([
     starterPokemon,
   ]);
@@ -216,6 +220,9 @@ const BattleScreen: React.FC<Props> = ({
         }
       });
     });
+    if (!pokemonNames?.length) api.data.getPokemonNames().then(setPokemonNames);
+    if (!pokemonIcons || !pokemonIcons[1])
+      api.data.getPokemonIcons().then(setPokemonIcons);
     (async () => {
       const pokemonNames = await api.data.getPokemonNames();
       setPokemonNames(pokemonNames);
@@ -248,7 +255,7 @@ const BattleScreen: React.FC<Props> = ({
         fullWidth
         noOptionsText={null}
         popupIcon={null}
-        filterOptions={createFilterOptions({ limit: 5, matchFrom: "start" })}
+        filterOptions={(options) => options}
         disabled={isSubmittingAnswer || !canMove}
         onChange={(_, pokemon, r) => {
           if (!pokemon) {
@@ -272,7 +279,20 @@ const BattleScreen: React.FC<Props> = ({
           },
         }}
         getOptionKey={(option) => option.id}
-        getOptionLabel={(option) => option.name}
+        renderOption={(props, option) => {
+          const { key, ...optionProps } = props;
+          return (
+            <Box key={key} {...optionProps} component="li">
+              {
+                <img
+                  className={battleScreenClasses.BattleScreen__PokemonIcon}
+                  src={pokemonIcons?.[option.id] ?? iconPlaceholder}
+                />
+              }
+              {option.name}
+            </Box>
+          );
+        }}
       />
     ),
     [canMove, enterPokemon, input, isSubmittingAnswer, suggestions]

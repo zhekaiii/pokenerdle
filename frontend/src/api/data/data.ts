@@ -8,4 +8,10 @@ export default {
     );
     return data;
   },
+  getPokemonIcons: async () => {
+    const { data } = await axios.get<Record<number, string | null>>(
+      "/v1/data/pokemon-icons"
+    );
+    return data;
+  },
 };
