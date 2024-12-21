@@ -1,15 +1,16 @@
-import { PokemonWithAbilities } from "@pokenerdle/shared";
 import React from "react";
+import { PokemonGuess } from "../../api/battles/types";
 import { getSharedAbilities } from "../../utils/linkBattleUtils";
 import AbilityChip from "./AbilityChip";
 import battleBoardClasses from "./BattleBoard.module.scss";
 import PokemonCard from "./PokemonCard";
 
 type Props = {
-  pokemons: PokemonWithAbilities[];
+  pokemons: PokemonGuess[];
   showAbility: boolean;
   isGameEnded: boolean;
   sharedLinks: Record<string, number>;
+  evolutionLinkCount: Record<string, number>;
 };
 
 const BattleBoard: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const BattleBoard: React.FC<Props> = ({
   showAbility,
   isGameEnded,
   sharedLinks,
+  evolutionLinkCount,
 }) => {
   return (
     <div className={battleBoardClasses.BattleBoard}>
@@ -26,6 +28,14 @@ const BattleBoard: React.FC<Props> = ({
           {(!isGameEnded || pkmnIndex < pokemons.length - 1) && (
             <div className={battleBoardClasses["BattleBoard__Separator"]} />
           )}
+          {pkmnIndex < pokemons.length - 1 &&
+            pokemons[pkmnIndex + 1].isSameEvoline &&
+            pokemons[pkmnIndex + 1].guessedBy && (
+              <AbilityChip
+                abilityName="Same evolution line"
+                count={evolutionLinkCount[pokemons[pkmnIndex + 1].guessedBy!]}
+              />
+            )}
           {pkmnIndex < pokemons.length - 1 &&
             getSharedAbilities(pokemon, pokemons[pkmnIndex + 1]).map(
               (ability) => (

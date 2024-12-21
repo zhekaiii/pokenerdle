@@ -14,7 +14,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
+import { PokemonNamesResponse } from "@pokenerdle/shared";
 import Fuse from "fuse.js";
 import React, {
   useCallback,
@@ -26,7 +26,7 @@ import React, {
 import { useLocalStorage } from "react-use";
 import { useImmer } from "use-immer";
 import api from "../../api";
-import { BattleRoomSettings } from "../../api/battles/types";
+import { BattleRoomSettings, PokemonGuess } from "../../api/battles/types";
 import iconPlaceholder from "../../assets/question_mark.png";
 import { useSocket } from "../../hooks/useSocket";
 import { updateSharedLinks } from "../../utils/linkBattleUtils";
@@ -37,7 +37,7 @@ type Props = {
   roomCode: string;
   settings: BattleRoomSettings;
   isGoingFirst: boolean;
-  starterPokemon: PokemonWithAbilities;
+  starterPokemon: PokemonGuess;
   goBackToPreparation: () => void;
 };
 
@@ -56,9 +56,7 @@ const BattleScreen: React.FC<Props> = ({
   const [pokemonIcons, setPokemonIcons] = useLocalStorage<
     Record<number, string | null>
   >("pokemonIcons", {});
-  const [pokemons, setPokemons] = useState<PokemonWithAbilities[]>([
-    starterPokemon,
-  ]);
+  const [pokemons, setPokemons] = useState<PokemonGuess[]>([starterPokemon]);
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [canMove, setCanMove] = useState(isGoingFirst);
@@ -72,8 +70,13 @@ const BattleScreen: React.FC<Props> = ({
   const [isErrorOpen, setIsErrorOpen] = useState(false);
 
   const [previousGuess, setPreviousGuess] = useState<string | null>(null);
-  const [disallowedPokemon, setDisallowedPokemon] = useState<number[]>([]);
+  const [disallowedPokemon, setDisallowedPokemon] = useState<number[]>([
+    starterPokemon.id,
+  ]);
   const [sharedLinks, setSharedLinks] = useImmer<Record<string, number>>({});
+  const [evolutionLinkCount, setEvolutionLinkCount] = useState<
+    Record<string, number>
+  >({});
 
   const [rematch, setRematch] = useState(false);
   const [opponentRematch, setOpponentRematch] = useState(false);
@@ -180,12 +183,21 @@ const BattleScreen: React.FC<Props> = ({
     socket.on(
       "pushPokemon",
       (
-        pokemon: PokemonWithAbilities,
+        pokemon: PokemonGuess,
         socketId: string,
-        sameSpecies: number[]
+        sameSpecies: number[],
+        isSameEvoline: boolean
       ) => {
         if (pokemons.some((p) => p.id === pokemon.id)) {
           return;
+        }
+        pokemon.guessedBy = socketId;
+        if (isSameEvoline) {
+          pokemon.isSameEvoline = true;
+          setEvolutionLinkCount((draft) => {
+            draft[socketId] = (draft[socketId] || 0) + 1;
+            return draft;
+          });
         }
         setSharedLinks((draft) => {
           updateSharedLinks(pokemons[pokemons.length - 1], pokemon, draft);
@@ -279,6 +291,7 @@ const BattleScreen: React.FC<Props> = ({
           },
         }}
         getOptionKey={(option) => option.id}
+        getOptionLabel={(option) => option.name}
         renderOption={(props, option) => {
           const { key, ...optionProps } = props;
           return (
@@ -390,6 +403,7 @@ const BattleScreen: React.FC<Props> = ({
         showAbility={settings.showAbility}
         isGameEnded={isGameEnded}
         sharedLinks={sharedLinks}
+        evolutionLinkCount={evolutionLinkCount}
       />
     </div>
   );
