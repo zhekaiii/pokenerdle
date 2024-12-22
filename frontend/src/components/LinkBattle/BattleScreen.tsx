@@ -4,7 +4,6 @@ import { Autorenew, ExitToApp } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
-  LinearProgress,
   Paper,
   Stack,
   TextField,
@@ -28,6 +27,7 @@ import iconPlaceholder from "../../assets/question_mark.png";
 import { useSocket } from "../../hooks/useSocket";
 import { updateSharedLinks } from "../../utils/linkBattleUtils";
 import { Alert } from "../ui/Alert";
+import { Progress } from "../ui/Progress";
 import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
 
@@ -324,10 +324,9 @@ const BattleScreen: React.FC<Props> = ({
         </span>
         {!isGameEnded && (
           <div className="tw-absolute tw-bottom-0 tw-left-0 tw-right-0">
-            <LinearProgress
-              color={isPlayersTurn ? "success" : "error"}
+            <Progress
+              color={isPlayersTurn ? "positive" : "destructive"}
               value={(secondsLeft / settings.timer) * 100}
-              variant="determinate"
             />
           </div>
         )}

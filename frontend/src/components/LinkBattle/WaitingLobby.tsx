@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/Button";
-import { debounce } from "@mui/material";
+import { debounce } from "es-toolkit";
 import { X } from "lucide-react";
 import React, { useCallback, useMemo, useState } from "react";
 import classes from "./WaitingLobby.module.scss";
