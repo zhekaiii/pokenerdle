@@ -1,14 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/hooks/useToast";
 import { Autorenew, ExitToApp } from "@mui/icons-material";
-import {
-  Autocomplete,
-  Box,
-  Paper,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Autocomplete, Box, Paper, Stack, TextField } from "@mui/material";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import Fuse from "fuse.js";
 import { X } from "lucide-react";
@@ -358,11 +351,7 @@ const BattleScreen: React.FC<Props> = ({
             >
               <Autorenew /> Rematch {rematchTimer > 0 && `(${rematchTimer})`}
             </Button>
-            {opponentRematch && (
-              <Typography variant="caption">
-                Opponent wants a rematch
-              </Typography>
-            )}
+            {opponentRematch && <small>Opponent wants a rematch</small>}
           </Stack>
         </Stack>
       )}
