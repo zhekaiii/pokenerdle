@@ -1,13 +1,11 @@
 import { Button } from "@/components/ui/Button";
+import { useToast } from "@/hooks/useToast";
 import { Autorenew, ExitToApp } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
-  debounce,
   LinearProgress,
   Paper,
-  Popper,
-  Slide,
   Stack,
   TextField,
   Typography,
@@ -51,6 +49,7 @@ const BattleScreen: React.FC<Props> = ({
   exitRoom,
 }) => {
   const socket = useSocket();
+  const { toast } = useToast();
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useLocalStorage<
     PokemonNamesResponse[]
@@ -61,7 +60,7 @@ const BattleScreen: React.FC<Props> = ({
   const [pokemons, setPokemons] = useState<PokemonGuess[]>([starterPokemon]);
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [canMove, setCanMove] = useState(isGoingFirst);
+  const [isPlayersTurn, setIsPlayersTurn] = useState(isGoingFirst);
   const [isGameEnded, setIsGameEnded] = useState(false);
 
   const [timerEndsAt, setTimerEndsAt] = useState(
@@ -69,9 +68,7 @@ const BattleScreen: React.FC<Props> = ({
   );
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [guesses, setGuesses] = useState<number[]>([]);
-  const [isErrorOpen, setIsErrorOpen] = useState(false);
 
-  const [previousGuess, setPreviousGuess] = useState<string | null>(null);
   const [disallowedPokemon, setDisallowedPokemon] = useState<number[]>([
     starterPokemon.id,
   ]);
@@ -102,7 +99,10 @@ const BattleScreen: React.FC<Props> = ({
     [filteredPokemon, input]
   );
 
-  const hasWon = useMemo(() => isGameEnded && !canMove, [canMove, isGameEnded]);
+  const hasWon = useMemo(
+    () => isGameEnded && !isPlayersTurn,
+    [isPlayersTurn, isGameEnded]
+  );
 
   useEffect(() => {
     if (isGameEnded) {
@@ -116,7 +116,7 @@ const BattleScreen: React.FC<Props> = ({
       setSecondsLeft(secondsLeft);
       if (secondsLeft == 0) {
         clearInterval(interval);
-        if (canMove) {
+        if (isPlayersTurn) {
           setIsSubmittingAnswer(true);
         }
       }
@@ -157,13 +157,6 @@ const BattleScreen: React.FC<Props> = ({
     }, 1000);
   }, [opponentRematch, rematchTimer, socket]);
 
-  const closePopover = useCallback(
-    debounce(() => {
-      setIsErrorOpen(false);
-    }, 4000),
-    []
-  );
-
   useEffect(() => {
     if (!isSubmittingAnswer) {
       inputRef.current?.focus();
@@ -172,11 +165,10 @@ const BattleScreen: React.FC<Props> = ({
 
   useEffect(() => {
     socket.on("canMove", (socketId: string, timerEndsAt: number) => {
-      setCanMove(socketId === socket.id);
+      setIsPlayersTurn(socketId === socket.id);
       setTimerEndsAt(timerEndsAt);
       setIsSubmittingAnswer(false);
       setInput("");
-      setIsErrorOpen(false);
     });
     socket.on(
       "pushPokemon",
@@ -208,15 +200,21 @@ const BattleScreen: React.FC<Props> = ({
         setGuesses([]);
         setIsSubmittingAnswer(false);
         setInput("");
-        setIsErrorOpen(false);
       }
     );
     socket.on("wrongAnswer", (guess: string) => {
-      setIsErrorOpen(true);
-      setPreviousGuess(guess);
+      toast({
+        variant: "destructive",
+        description: (
+          <>
+            <X className="tw-inline tw-mr-2" />{" "}
+            {isPlayersTurn ? "You" : "Your opponent"} guessed{" "}
+            <span className="tw-capitalize">{guess}</span>
+          </>
+        ),
+      });
       setIsSubmittingAnswer(false);
       setInput("");
-      closePopover();
     });
     socket.on("gameEnd", () => {
       setIsGameEnded(true);
@@ -243,7 +241,7 @@ const BattleScreen: React.FC<Props> = ({
       socket.off("canMove");
       socket.off("gameEnd");
     };
-  }, [socket, goBackToPreparation, closePopover, pokemons]);
+  }, [socket, goBackToPreparation, pokemons]);
 
   const textField = useMemo(
     () => (
@@ -266,7 +264,7 @@ const BattleScreen: React.FC<Props> = ({
         noOptionsText={null}
         popupIcon={null}
         filterOptions={(options) => options}
-        disabled={isSubmittingAnswer || !canMove}
+        disabled={isSubmittingAnswer || !isPlayersTurn}
         onChange={(_, pokemon, r) => {
           if (!pokemon) {
             return;
@@ -306,26 +304,28 @@ const BattleScreen: React.FC<Props> = ({
         }}
       />
     ),
-    [canMove, enterPokemon, input, isSubmittingAnswer, suggestions]
+    [isPlayersTurn, enterPokemon, input, isSubmittingAnswer, suggestions]
   );
 
   return (
     <div className={battleScreenClasses["BattleScreen__Contents"]}>
       <Alert
         className="tw-mb-2 tw-justify-center tw-relative tw-overflow-hidden"
-        variant={hasWon || canMove ? "positive" : "destructive"}
+        variant={
+          hasWon || (!isGameEnded && isPlayersTurn) ? "positive" : "destructive"
+        }
       >
         <span>
           {isGameEnded
             ? `${hasWon ? "You" : "Your opponent"} won!`
-            : canMove
+            : isPlayersTurn
             ? "Your turn"
             : "Opponent's turn"}
         </span>
         {!isGameEnded && (
           <div className="tw-absolute tw-bottom-0 tw-left-0 tw-right-0">
             <LinearProgress
-              color={canMove ? "success" : "error"}
+              color={isPlayersTurn ? "success" : "error"}
               value={(secondsLeft / settings.timer) * 100}
               variant="determinate"
             />
@@ -339,26 +339,6 @@ const BattleScreen: React.FC<Props> = ({
           }}
         >
           {textField}
-          <Popper
-            open={isErrorOpen}
-            anchorEl={inputRef.current}
-            placement="bottom"
-            modifiers={[{ name: "offset", options: { offset: [0, 16] } }]}
-            transition
-          >
-            {({ TransitionProps }) => (
-              <Slide {...TransitionProps} timeout={350}>
-                <Alert
-                  className="tw-items-center tw-flex"
-                  variant="destructive"
-                >
-                  <X className="tw-inline tw-mr-2" />
-                  {canMove ? "You" : "Your opponent"} guessed{" "}
-                  <span className="tw-capitalize">{previousGuess}</span>
-                </Alert>
-              </Slide>
-            )}
-          </Popper>
         </form>
       )}
       {isGameEnded && (

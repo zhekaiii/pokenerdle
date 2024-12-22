@@ -1,4 +1,3 @@
-import { Paper } from "@mui/material";
 import { PokemonWithAbilities } from "@pokenerdle/shared";
 import { uniqBy } from "es-toolkit";
 import React, { useMemo } from "react";
@@ -6,6 +5,7 @@ import {
   formatAbilityName,
   getFormattedPokemonName,
 } from "../../utils/formatters";
+import { Card } from "../ui/Card";
 import classes from "./PokemonCard.module.scss";
 
 type Props = {
@@ -23,7 +23,7 @@ const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
   );
   const pokemonNumber = pokemon.pokemon_species_id;
   return (
-    <Paper className={classes["PokemonCard"]} elevation={3}>
+    <Card className={classes["PokemonCard"]}>
       <img
         src={
           (isShiny && pokemon.sprites.front_shiny
@@ -40,7 +40,7 @@ const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
         abilities.map((ability) => (
           <span key={ability.name}>{formatAbilityName(ability.name)}</span>
         ))}
-    </Paper>
+    </Card>
   );
 };
 
