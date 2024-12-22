@@ -1,8 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { Autorenew, ExitToApp } from "@mui/icons-material";
-import CloseIcon from "@mui/icons-material/Close";
 import {
-  Alert,
   Autocomplete,
   Box,
   debounce,
@@ -16,6 +14,7 @@ import {
 } from "@mui/material";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import Fuse from "fuse.js";
+import { X } from "lucide-react";
 import React, {
   useCallback,
   useEffect,
@@ -30,6 +29,7 @@ import { BattleRoomSettings, PokemonGuess } from "../../api/battles/types";
 import iconPlaceholder from "../../assets/question_mark.png";
 import { useSocket } from "../../hooks/useSocket";
 import { updateSharedLinks } from "../../utils/linkBattleUtils";
+import { Alert } from "../ui/Alert";
 import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
 
@@ -313,8 +313,7 @@ const BattleScreen: React.FC<Props> = ({
     <div className={battleScreenClasses["BattleScreen__Contents"]}>
       <Alert
         className="tw-mb-2 tw-justify-center tw-relative tw-overflow-hidden"
-        icon={false}
-        color={hasWon || canMove ? "success" : "error"}
+        variant={hasWon || canMove ? "positive" : "destructive"}
       >
         <span>
           {isGameEnded
@@ -350,11 +349,10 @@ const BattleScreen: React.FC<Props> = ({
             {({ TransitionProps }) => (
               <Slide {...TransitionProps} timeout={350}>
                 <Alert
-                  className={battleScreenClasses.BattleScreen__WrongAnswerAlert}
-                  icon={<CloseIcon />}
-                  severity="error"
-                  variant="outlined"
+                  className="tw-items-center tw-flex"
+                  variant="destructive"
                 >
+                  <X className="tw-inline tw-mr-2" />
                   {canMove ? "You" : "Your opponent"} guessed{" "}
                   <span className="tw-capitalize">{previousGuess}</span>
                 </Alert>
