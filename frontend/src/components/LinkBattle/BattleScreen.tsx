@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/hooks/useToast";
 import { Autorenew, ExitToApp } from "@mui/icons-material";
-import { Autocomplete, Box, Paper, Stack, TextField } from "@mui/material";
+import { Stack } from "@mui/material";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import Fuse from "fuse.js";
 import { X } from "lucide-react";
@@ -20,6 +20,7 @@ import iconPlaceholder from "../../assets/question_mark.png";
 import { useSocket } from "../../hooks/useSocket";
 import { updateSharedLinks } from "../../utils/linkBattleUtils";
 import { Alert } from "../ui/Alert";
+import { ComboBox } from "../ui/ComboBox";
 import { Progress } from "../ui/Progress";
 import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
@@ -238,63 +239,23 @@ const BattleScreen: React.FC<Props> = ({
 
   const textField = useMemo(
     () => (
-      <Autocomplete<PokemonNamesResponse>
-        autoFocus
-        inputValue={input}
-        renderInput={(props) => (
-          <TextField
-            {...props}
-            onChange={(e) => setInput(e.target.value)}
-            inputRef={inputRef}
-            placeholder="e.g. Pikachu"
-            spellCheck={false}
-            autoComplete="off"
-          />
-        )}
+      <ComboBox
+        value={input}
+        setValue={setInput}
         options={suggestions}
-        autoComplete
-        fullWidth
-        noOptionsText={null}
-        popupIcon={null}
-        filterOptions={(options) => options}
-        disabled={isSubmittingAnswer || !isPlayersTurn}
-        onChange={(_, pokemon, r) => {
-          if (!pokemon) {
-            return;
-          }
-          setInput(pokemon.name);
-          if (r === "selectOption") enterPokemon(pokemon);
-        }}
-        slots={{
-          paper: (props) => (
-            <Paper
-              {...props}
-              elevation={3}
-              className={battleScreenClasses["BattleScreen__AutocompletePaper"]}
-            />
-          ),
-        }}
-        slotProps={{
-          popper: {
-            open: input.length > 0,
-          },
-        }}
-        getOptionKey={(option) => option.id}
+        getOptionValue={(option) => option.id}
         getOptionLabel={(option) => option.name}
-        renderOption={(props, option) => {
-          const { key, ...optionProps } = props;
-          return (
-            <Box key={key} {...optionProps} component="li">
-              {
-                <img
-                  className={battleScreenClasses.BattleScreen__PokemonIcon}
-                  src={pokemonIcons?.[option.id] ?? iconPlaceholder}
-                />
-              }
-              {option.name}
-            </Box>
-          );
-        }}
+        disabled={isSubmittingAnswer || !isPlayersTurn}
+        renderItemContent={(option) => (
+          <>
+            <img
+              className={battleScreenClasses.BattleScreen__PokemonIcon}
+              src={pokemonIcons?.[option.id] ?? iconPlaceholder}
+            />
+            {option.name}
+          </>
+        )}
+        onSelect={enterPokemon}
       />
     ),
     [isPlayersTurn, enterPokemon, input, isSubmittingAnswer, suggestions]
