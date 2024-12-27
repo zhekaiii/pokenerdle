@@ -23,7 +23,7 @@ export type BattleRoom = {
 export type TurnResult =
   | {
       validAnswer: false;
-      pokemonName: string;
+      pokemonId: number;
     }
   | {
       validAnswer: true;

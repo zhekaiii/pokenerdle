@@ -136,7 +136,7 @@ export const validatePokemon = async (
   if (!result.validAnswer) {
     io.of(RouteNames.BATTLES_WS)
       .to(roomId)
-      .emit("wrongAnswer", result.pokemonName);
+      .emit("wrongAnswer", result.pokemonId);
     return;
   }
   if (room.timer) {
