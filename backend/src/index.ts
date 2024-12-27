@@ -2,11 +2,10 @@ import dotenv from "dotenv";
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { initializeBattleWsRoutes } from "./handlers/index.js";
 import "./lib/prisma.js";
 import "./routes/battles.routes.js";
-import battlesRouter, {
-  initializeBattleWsRoutes,
-} from "./routes/battles.routes.js";
+import battlesRouter from "./routes/battles.routes.js";
 import dataRouter from "./routes/data.routes.js";
 
 dotenv.config();
