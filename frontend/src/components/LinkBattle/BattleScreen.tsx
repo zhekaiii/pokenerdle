@@ -196,14 +196,16 @@ const BattleScreen: React.FC<Props> = ({
         setInput("");
       }
     );
-    socket.on("wrongAnswer", (guess: string) => {
+    socket.on("wrongAnswer", (pokemonId: number) => {
       toast({
         variant: "destructive",
         description: (
           <>
             <X className="tw-inline tw-mr-2" />{" "}
             {isPlayersTurn ? "You" : "Your opponent"} guessed{" "}
-            <span className="tw-capitalize">{guess}</span>
+            <span className="tw-capitalize">
+              {pokemonNames?.find((pokemon) => pokemon.id == pokemonId)?.name}
+            </span>
           </>
         ),
       });

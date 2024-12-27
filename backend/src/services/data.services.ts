@@ -57,7 +57,6 @@ export const validatePokemon = async (
       },
     }),
   ]);
-  const pokemonFullName = pokemon.pokemon_v2_pokemonspecies!.name;
 
   const isSameEvolutionChain =
     pokemon.pokemon_v2_pokemonspecies!.evolution_chain_id ===
@@ -69,7 +68,7 @@ export const validatePokemon = async (
     );
     return {
       validAnswer: false,
-      pokemonName: pokemonFullName,
+      pokemonId: pokemonGuess.id,
     };
   }
 
@@ -108,6 +107,6 @@ export const validatePokemon = async (
   );
   return {
     validAnswer: false,
-    pokemonName: pokemonFullName,
+    pokemonId: pokemonGuess.id,
   };
 };
