@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "bun --watch run ./src/index.ts",
-    "build": "tsc",
+    "build": "prisma generate && tsc",
     "start": "node --es-module-specifier-resolution=node dist/index.js",
-    "build-db": "cd pokeapi && make migrate && make build-db && mv db.sqlite3 ../prisma"
+    "build-db": "cd pokeapi && source .venv/bin/activate && make migrate && make build-db && mv db.sqlite3 ../prisma"
   },
   "type": "module",
   "author": "",
