@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/hooks/useToast";
-import { Autorenew, ExitToApp } from "@mui/icons-material";
-import { Stack } from "@mui/material";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import Fuse from "fuse.js";
-import { X } from "lucide-react";
+import { LogOut, RefreshCw, X } from "lucide-react";
 import React, {
   useCallback,
   useEffect,
@@ -297,26 +295,21 @@ const BattleScreen: React.FC<Props> = ({
         </form>
       )}
       {isGameEnded && (
-        <Stack
-          direction="row"
-          alignItems="self-start"
-          spacing={2}
-          marginBottom={1}
-        >
+        <div className="tw-flex tw-items-start tw-gap-4 tw-mb-2">
           <Button variant="destructive" onClick={exitRoom}>
-            <ExitToApp /> Exit
+            <LogOut /> Exit
           </Button>
-          <Stack spacing={1} textAlign="center" flexGrow={1}>
+          <div className="tw-flex tw-flex-col tw-items-center tw-gap-2 tw-flex-grow">
             <Button
               className="tw-w-full"
               onClick={onRematch}
               disabled={rematch}
             >
-              <Autorenew /> Rematch {rematchTimer > 0 && `(${rematchTimer})`}
+              <RefreshCw /> Rematch {rematchTimer > 0 && `(${rematchTimer})`}
             </Button>
             {opponentRematch && <small>Opponent wants a rematch</small>}
-          </Stack>
-        </Stack>
+          </div>
+        </div>
       )}
       <BattleBoard
         pokemons={pokemons}
