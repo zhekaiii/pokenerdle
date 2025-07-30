@@ -1,6 +1,6 @@
 import { PokemonWithAbilities } from "@pokenerdle/shared";
 import { uniqBy } from "es-toolkit";
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import {
   formatAbilityName,
   getFormattedPokemonName,
@@ -13,10 +13,10 @@ type Props = {
   showAbility: boolean;
 };
 
-const SHINY_PROBABILITY = 1 / 2 ** 13;
+const SHINY_PROBABILITY = 1 / 2 ** 12;
 
 const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
-  const isShiny = useMemo(() => Math.random() <= SHINY_PROBABILITY, []);
+  const { current: isShiny } = useRef(Math.random() <= SHINY_PROBABILITY);
   const abilities = useMemo(
     () => uniqBy(pokemon.abilities, (ability) => ability.name),
     [pokemon]

@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { GitBranch, ShieldCheck, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import { formatAbilityName } from "../../utils/formatters";
 import { Chip } from "../ui/Chip";
 
@@ -16,7 +16,7 @@ type Props =
     };
 
 const LinkChip: React.FC<Props> = (props) => {
-  const [frozenCount] = useState(props.count ?? 0);
+  const { current: frozenCount } = useRef(props.count ?? 0);
   return (
     <Chip className="tw-capitalize tw-self-center tw-my-1 tw-whitespace-nowrap">
       <div className="tw-inline-flex tw-items-center">
