@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { GitBranch, Link, X } from "lucide-react";
+import { GitBranch, ShieldCheck, X } from "lucide-react";
 import React, { useState } from "react";
 import { formatAbilityName } from "../../utils/formatters";
 import { Chip } from "../ui/Chip";
@@ -20,7 +20,7 @@ const LinkChip: React.FC<Props> = (props) => {
   return (
     <Chip className="tw-capitalize tw-self-center tw-my-1 tw-whitespace-nowrap">
       <div className="tw-inline-flex tw-items-center">
-        {props.variant == "ability" ? <Link /> : <GitBranch />}
+        {props.variant == "ability" ? <ShieldCheck /> : <GitBranch />}
         <span className="tw-mx-1">
           {props.variant == "ability"
             ? formatAbilityName(props.abilityName)

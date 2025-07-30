@@ -77,7 +77,9 @@ const GamePreparation: React.FC<Props> = ({
           >
             Ready ({secondsLeft})
           </Button>
-          {isOpponentReady && <small>Opponent is ready</small>}
+          {isOpponentReady && (
+            <small className="tw-mt-2">Opponent is ready</small>
+          )}
         </div>
       </div>
     </div>
