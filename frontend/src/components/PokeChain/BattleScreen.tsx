@@ -16,7 +16,7 @@ import api from "../../api";
 import { BattleRoomSettings, PokemonGuess } from "../../api/battles/types";
 import iconPlaceholder from "../../assets/question_mark.png";
 import { useSocket } from "../../hooks/useSocket";
-import { updateSharedLinks } from "../../utils/linkBattleUtils";
+import { updateSharedLinks } from "../../utils/pokeChainUtils";
 import { Alert } from "../ui/Alert";
 import { ComboBox } from "../ui/ComboBox";
 import { Progress } from "../ui/Progress";

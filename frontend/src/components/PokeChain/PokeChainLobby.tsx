@@ -14,7 +14,7 @@ import LoadingDialog from "../recyclables/LoadingDialog";
 import { Input } from "../ui/Input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/Tabs";
 import GameSettings from "./GameSettings";
-import classes from "./LinkBattleLobby.module.scss";
+import classes from "./PokeChainLobby.module.scss";
 
 enum TabValue {
   JOIN = "join",
@@ -26,7 +26,7 @@ type Props = {
 };
 
 const MAX_ROOM_CODE_LENGTH = 8;
-const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
+const PokeChainLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
   const socket = useSocket();
   const [isConnecting, setIsConnecting] = useState(false);
   const [roomCodeInput, setRoomCodeInput] = useState("");
@@ -107,9 +107,9 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
   );
 
   return (
-    <Card className={classes.LinkBattleLobby}>
+    <Card className={classes.PokeChainLobby}>
       <CardHeader className="tw-text-center">
-        <CardTitle>Pokémon Link Battle</CardTitle>
+        <CardTitle className="tw-text-2xl">PokéChain</CardTitle>
         <CardDescription>
           Challenge your friends in a Pokémon chain battle!
         </CardDescription>
@@ -135,4 +135,4 @@ const LinkBattleLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
   );
 };
 
-export default LinkBattleLobby;
+export default PokeChainLobby;

@@ -1,10 +1,10 @@
 import { createBrowserRouter, RouteObject } from "react-router";
-import LinkBattle from "../components/LinkBattle";
+import PokeChain from "../components/PokeChain";
 
 const routes: RouteObject[] = [
   {
     path: "/",
-    element: <LinkBattle />,
+    element: <PokeChain />,
   },
 ];
 

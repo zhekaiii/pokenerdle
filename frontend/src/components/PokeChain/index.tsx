@@ -6,10 +6,10 @@ import { BattleRoomSettings } from "../../api/battles/types";
 import { useSocket } from "../../hooks/useSocket";
 import PageContainer from "../../layout/PageContainer";
 import GameScreen from "./GameScreen";
-import LinkBattleLobby from "./LinkBattleLobby";
+import PokeChainLobby from "./PokeChainLobby";
 import WaitingLobby from "./WaitingLobby";
 
-const LinkBattle: React.FC = () => {
+const PokeChain: React.FC = () => {
   const socket = useSocket();
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -92,10 +92,10 @@ const LinkBattle: React.FC = () => {
           <WaitingLobby roomCode={roomCode} exitRoom={exitRoom} />
         )
       ) : (
-        <LinkBattleLobby setIsOpponentConnected={setIsOpponentConnected} />
+        <PokeChainLobby setIsOpponentConnected={setIsOpponentConnected} />
       )}
     </PageContainer>
   );
 };
 
-export default LinkBattle;
+export default PokeChain;

@@ -1,6 +1,6 @@
 import React from "react";
 import { PokemonGuess } from "../../api/battles/types";
-import { getSharedAbilities } from "../../utils/linkBattleUtils";
+import { getSharedAbilities } from "../../utils/pokeChainUtils";
 import battleBoardClasses from "./BattleBoard.module.scss";
 import LinkChip from "./LinkChip";
 import PokemonCard from "./PokemonCard";
