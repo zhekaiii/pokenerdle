@@ -1,8 +1,6 @@
-import { PokemonNamesResponse } from "@pokenerdle/shared";
-import { Socket } from "socket.io";
+import { BattleRoomSettings, PokemonNamesResponse } from "@pokenerdle/shared";
 import {
   BattleRoom,
-  BattleRoomSettings,
   MAX_ABILITY_LINKS,
   TurnResult,
 } from "../controllers/types.js";
@@ -13,8 +11,9 @@ import { ongoingBattles } from "../lib/battles.js";
 import { getPoints } from "../services/battle.service.js";
 import * as dataService from "../services/data.services.js";
 import { createRandomString } from "../utils/random.js";
+import { PokeNerdleSocket } from "../utils/types.js";
 
-export const onSocketDisconnect = (socket: Socket) => {
+export const onSocketDisconnect = (socket: PokeNerdleSocket) => {
   console.log(`Socket ${socket.id} disconnected.`);
   socket.rooms.forEach((roomId) => {
     leaveRoom(socket, roomId);
@@ -58,7 +57,7 @@ const initRoom = (
 };
 
 export const createBattleRoom = async (
-  socket: Socket,
+  socket: PokeNerdleSocket,
   settings: BattleRoomSettings
 ) => {
   console.log(`Received create request from ${socket.id}`);
@@ -82,7 +81,7 @@ export const createBattleRoom = async (
   }
 };
 
-export const joinRoom = (socket: Socket, roomId: string) => {
+export const joinRoom = (socket: PokeNerdleSocket, roomId: string) => {
   console.log("Joining room", roomId);
   if (!(roomId in ongoingBattles)) {
     socket.emit("roomError", ErrorRoomNotFound);
@@ -106,7 +105,7 @@ export const joinRoom = (socket: Socket, roomId: string) => {
 };
 
 export const leaveRoom = (
-  socket: Socket,
+  socket: PokeNerdleSocket,
   roomId: string,
   callback?: () => void
 ) => {
@@ -130,7 +129,7 @@ export const leaveRoom = (
 };
 
 export const validatePokemon = async (
-  socket: Socket,
+  socket: PokeNerdleSocket,
   pokemonGuess: PokemonNamesResponse,
   roomId: string
 ) => {
@@ -157,9 +156,10 @@ export const validatePokemon = async (
   console.log(room.points);
 
   if (!result.validAnswer) {
-    io.of(RouteNames.BATTLES_WS)
-      .to(roomId)
-      .emit("wrongAnswer", result.pokemonId);
+    io.of(RouteNames.BATTLES_WS).to(roomId).emit("wrongAnswer", {
+      pokemonId: result.pokemonId,
+      points: newPoints,
+    });
     return;
   }
   if (room.timer) {
@@ -199,7 +199,7 @@ const postTurn = (room: BattleRoom, turnResult: TurnResult, turn: number) => {
 };
 
 export const checkIsUsersTurn = (
-  socket: Socket,
+  socket: PokeNerdleSocket,
   callback: (isTurn: boolean) => void
 ) => {
   const roomId = getUserRoom(socket);
@@ -211,14 +211,14 @@ export const checkIsUsersTurn = (
   );
 };
 
-export const getUserRoom = (socket: Socket) => {
+export const getUserRoom = (socket: PokeNerdleSocket) => {
   const roomId = Object.keys(ongoingBattles).find((roomId) =>
     socket.rooms.has(roomId)
   );
   return roomId;
 };
 
-export const userReady = (socket: Socket) => {
+export const userReady = (socket: PokeNerdleSocket) => {
   const roomId = getUserRoom(socket);
   if (!roomId) {
     return;
@@ -236,7 +236,7 @@ export const userReady = (socket: Socket) => {
     nextTurn(roomId, true);
   }
 };
-export const onRematch = (socket: Socket) => {
+export const onRematch = (socket: PokeNerdleSocket) => {
   console.log(`User ${socket.id} wants to rematch`);
   const roomId = getUserRoom(socket);
   if (!roomId) {

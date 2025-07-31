@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
+import { BattleRoomSettings } from "@pokenerdle/shared";
 import React, { useCallback, useEffect, useState } from "react";
-import { BattleRoomSettings } from "../../api/battles/types";
 import { useSocket } from "../../hooks/useSocket";
 import classes from "./GamePreparation.module.scss";
 import GameSettings from "./GameSettings";
@@ -26,8 +26,8 @@ const GamePreparation: React.FC<Props> = ({
   const onReady = useCallback(() => {
     if (isReady) return;
     setIsReady(true);
-    socket.emit("ready", roomCode);
-  }, [isReady, roomCode, socket]);
+    socket.emit("ready");
+  }, [isReady, socket]);
 
   useEffect(() => {
     if (secondsLeft <= 0) {
@@ -49,7 +49,7 @@ const GamePreparation: React.FC<Props> = ({
       }
     });
     return () => {
-      socket.off("opponentReady");
+      socket.off("ready");
     };
   });
 

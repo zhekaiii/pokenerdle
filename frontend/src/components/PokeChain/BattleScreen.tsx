@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/hooks/useToast";
-import { PokemonNamesResponse } from "@pokenerdle/shared";
+import { BattleRoomSettings, PokemonNamesResponse } from "@pokenerdle/shared";
 import Fuse from "fuse.js";
 import { LogOut, RefreshCw, X } from "lucide-react";
 import React, {
@@ -13,7 +13,7 @@ import React, {
 import { useLocalStorage } from "react-use";
 import { useImmer } from "use-immer";
 import api from "../../api";
-import { BattleRoomSettings, PokemonGuess } from "../../api/battles/types";
+import { PokemonGuess } from "../../api/battles/types";
 import iconPlaceholder from "../../assets/question_mark.png";
 import { useSocket } from "../../hooks/useSocket";
 import { updateSharedLinks } from "../../utils/pokeChainUtils";
@@ -203,22 +203,30 @@ const BattleScreen: React.FC<Props> = ({
         setInput("");
       }
     );
-    socket.on("wrongAnswer", (pokemonId: number) => {
-      toast({
-        variant: "destructive",
-        description: (
-          <>
-            <X className="tw-inline tw-mr-2" />{" "}
-            {isPlayersTurn ? "You" : "Your opponent"} guessed{" "}
-            <span className="tw-capitalize">
-              {pokemonNames?.find((pokemon) => pokemon.id == pokemonId)?.name}
-            </span>
-          </>
-        ),
-      });
-      setIsSubmittingAnswer(false);
-      setInput("");
-    });
+    socket.on(
+      "wrongAnswer",
+      ({ pokemonId, points }: { pokemonId: number; points: number }) => {
+        toast({
+          variant: "destructive",
+          description: (
+            <>
+              <X className="tw-inline tw-mr-2" />{" "}
+              {isPlayersTurn ? "You" : "Your opponent"} guessed{" "}
+              <span className="tw-capitalize">
+                {pokemonNames?.find((pokemon) => pokemon.id == pokemonId)?.name}
+              </span>
+            </>
+          ),
+        });
+        if (isPlayersTurn) {
+          setPlayerPoints(points);
+        } else {
+          setOpponentPoints(points);
+        }
+        setIsSubmittingAnswer(false);
+        setInput("");
+      }
+    );
     socket.on("gameEnd", () => {
       setIsGameEnded(true);
       socket.on("rematch", (socketId: string, bothOk: boolean) => {

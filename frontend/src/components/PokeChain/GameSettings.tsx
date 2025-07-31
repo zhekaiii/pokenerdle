@@ -1,6 +1,6 @@
+import { BattleRoomSettings } from "@pokenerdle/shared";
 import { Clock4, Settings } from "lucide-react";
 import React from "react";
-import { BattleRoomSettings } from "../../api/battles/types";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
 import { Label } from "../ui/Label";
 import { Slider } from "../ui/Slider";

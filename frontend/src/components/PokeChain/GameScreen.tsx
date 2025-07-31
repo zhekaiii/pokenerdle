@@ -1,7 +1,6 @@
-import { PokemonWithAbilities } from "@pokenerdle/shared";
+import { BattleRoomSettings, PokemonWithAbilities } from "@pokenerdle/shared";
 import React, { useCallback, useEffect, useState } from "react";
 import api from "../../api";
-import { BattleRoomSettings } from "../../api/battles/types";
 import { useSocket } from "../../hooks/useSocket";
 import BattleScreen from "./BattleScreen";
 import GamePreparation from "./GamePreparation";

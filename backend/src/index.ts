@@ -7,12 +7,13 @@ import "./lib/prisma.js";
 import "./routes/battles.routes.js";
 import battlesRouter from "./routes/battles.routes.js";
 import dataRouter from "./routes/data.routes.js";
+import { PokeNerdleServer } from "./utils/types.js";
 
 dotenv.config();
 
 const app = express();
 const httpServer = createServer(app);
-export const io = new Server(httpServer, {
+export const io: PokeNerdleServer = new Server(httpServer, {
   cors: {
     origin: "*",
   },

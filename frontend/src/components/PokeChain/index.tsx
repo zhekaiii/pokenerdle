@@ -1,8 +1,8 @@
 import { useToast } from "@/hooks/useToast";
+import { BattleRoomSettings } from "@pokenerdle/shared";
 import { TriangleAlert } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { BattleRoomSettings } from "../../api/battles/types";
 import { useSocket } from "../../hooks/useSocket";
 import PageContainer from "../../layout/PageContainer";
 import GameScreen from "./GameScreen";
@@ -22,6 +22,7 @@ const PokeChain: React.FC = () => {
   });
 
   const exitRoom = () => {
+    if (!roomCode) return;
     socket.emit("leave", roomCode, () => {
       setRoomCode(null);
       setIsOpponentConnected(false);
@@ -68,8 +69,9 @@ const PokeChain: React.FC = () => {
   }, [setSearchParams, socket]);
 
   useEffect(() => {
-    if (searchParams.get("roomCode")) {
-      socket.emit("join", searchParams.get("roomCode"));
+    const roomCode = searchParams.get("roomCode");
+    if (roomCode) {
+      socket.emit("join", roomCode);
       setSearchParams();
     }
   }, []);

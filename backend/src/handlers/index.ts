@@ -1,6 +1,4 @@
-import { PokemonNamesResponse } from "@pokenerdle/shared";
-import { Server } from "socket.io";
-import { BattleRoomSettings } from "../controllers/types.js";
+import { BattleRoomSettings, PokemonNamesResponse } from "@pokenerdle/shared";
 
 import { RouteNames } from "../data/const.js";
 import {
@@ -13,8 +11,9 @@ import {
   userReady,
   validatePokemon,
 } from "../handlers/battles.js";
+import { PokeNerdleServer } from "../utils/types.js";
 
-export const initializeBattleWsRoutes = (io: Server) => {
+export const initializeBattleWsRoutes = (io: PokeNerdleServer) => {
   io.of(RouteNames.BATTLES_WS).on("connection", (socket) => {
     socket.on("create", (settings: BattleRoomSettings) =>
       createBattleRoom(socket, settings)
@@ -23,7 +22,7 @@ export const initializeBattleWsRoutes = (io: Server) => {
     socket.on("answer", (pokemon: PokemonNamesResponse, roomId: string) =>
       validatePokemon(socket, pokemon, roomId)
     );
-    socket.on("leave", (roomId: string, callback: () => void) =>
+    socket.on("leave", (roomId, callback) =>
       leaveRoom(socket, roomId, callback)
     );
     socket.on("disconnecting", () => onSocketDisconnect(socket));

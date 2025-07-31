@@ -1,11 +1,14 @@
-import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
+import { PokeNerdleSocket } from "@/lib/types";
+import {
+  BattleRoomSettings,
+  PokemonNamesResponse,
+  PokemonWithAbilities,
+} from "@pokenerdle/shared";
 import axios from "axios";
-import { Socket } from "socket.io-client";
-import { BattleRoomSettings } from "./types";
 
 export default {
   init: (
-    socket: Socket,
+    socket: PokeNerdleSocket,
     onRoomReady: (roomCode: string, settings?: BattleRoomSettings) => void,
     setIsOpponentJoined: (value: boolean) => void,
     onError: (error: string | null) => void
@@ -25,14 +28,17 @@ export default {
     });
     return socket;
   },
-  createBattleRoom: (socket: Socket, settings: BattleRoomSettings) => {
+  createBattleRoom: (
+    socket: PokeNerdleSocket,
+    settings: BattleRoomSettings
+  ) => {
     socket.emit("create", settings);
   },
-  joinRoom: (socket: Socket, roomCode: string) => {
+  joinRoom: (socket: PokeNerdleSocket, roomCode: string) => {
     socket.emit("join", roomCode);
   },
   validatePokemon: (
-    socket: Socket,
+    socket: PokeNerdleSocket,
     pokemon: PokemonNamesResponse,
     roomId: string
   ) => {
