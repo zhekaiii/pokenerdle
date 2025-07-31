@@ -36,6 +36,25 @@ const nextTurn = (roomId: string, isFirstTurn?: true) => {
     console.log("Timeout");
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("gameEnd");
   }, room.settings.timer * 1000);
+  room.turnStart = Date.now();
+};
+
+const initRoom = (
+  room: Pick<BattleRoom, "players" | "pokemon" | "settings">
+): BattleRoom => {
+  return {
+    players: room.players,
+    pokemon: room.pokemon,
+    settings: room.settings,
+    timer: null,
+    turn: Math.random() < 0.5 ? 0 : 1,
+    turnStart: Date.now(),
+    readyPlayers: [],
+    wantToRematch: [],
+    usedLinks: {},
+    evolutionLinkCount: [0, 0],
+    points: [0, 0],
+  };
 };
 
 export const createBattleRoom = async (
@@ -50,18 +69,11 @@ export const createBattleRoom = async (
     }
 
     const pokemon = await dataService.getStarterPokemon();
-    ongoingBattles[roomId] = {
+    ongoingBattles[roomId] = initRoom({
       players: [socket.id],
       pokemon: [pokemon],
       settings,
-      timer: null,
-      turn: Math.random() < 0.5 ? 0 : 1,
-      readyPlayers: [],
-      wantToRematch: [],
-      usedLinks: {},
-      evolutionLinkCount: [0, 0],
-      points: [0, 0],
-    };
+    });
     socket.join(roomId);
     socket.emit("roomCode", roomId, settings);
     console.log("Room created", roomId);
@@ -139,9 +151,10 @@ export const validatePokemon = async (
     room.evolutionLinkCount[room.turn]
   );
 
-  const pointsAwarded = getPoints();
-  room.points[room.turn] += pointsAwarded;
-  console.log(room);
+  const pointsAwarded = getPoints(result, room);
+  room.points[room.turn] = Math.max(0, room.points[room.turn] + pointsAwarded);
+  const newPoints = room.points[room.turn];
+  console.log(room.points);
 
   if (!result.validAnswer) {
     io.of(RouteNames.BATTLES_WS)
@@ -163,7 +176,7 @@ export const validatePokemon = async (
       socket.id,
       result.sameSpecies,
       result.isSameEvoline,
-      pointsAwarded
+      newPoints
     );
 
   nextTurn(roomId);
@@ -238,9 +251,6 @@ export const onRematch = (socket: Socket) => {
     .to(roomId)
     .emit("rematch", socket.id, room.wantToRematch.length == 2);
   if (room.wantToRematch.length === 2) {
-    room.wantToRematch = [];
-    room.readyPlayers = [];
-    room.pokemon = [room.pokemon[0]];
-    room.usedLinks = {};
+    ongoingBattles[roomId] = initRoom(room);
   }
 };

@@ -22,9 +22,9 @@ const AnimatedNumber = (<T extends React.ElementType = "div">({
       Math.floor(((number - displayValue) * INTERVAL) / duration) || 1;
     const animation = setInterval(() => {
       setDisplayValue((prevValue) => {
-        if (prevValue === number) {
+        if (prevValue >= number) {
           clearInterval(animation);
-          return prevValue;
+          return number;
         }
         return prevValue + delta;
       });

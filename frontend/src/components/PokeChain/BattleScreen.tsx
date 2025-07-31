@@ -95,8 +95,8 @@ const BattleScreen: React.FC<Props> = ({
   );
 
   const hasWon = useMemo(
-    () => isGameEnded && !isPlayersTurn,
-    [isPlayersTurn, isGameEnded]
+    () => isGameEnded && playerPoints > opponentPoints,
+    [isGameEnded, playerPoints, opponentPoints]
   );
 
   useEffect(() => {
@@ -178,9 +178,9 @@ const BattleScreen: React.FC<Props> = ({
           return;
         }
         if (socketId === socket.id) {
-          setPlayerPoints(playerPoints + points);
+          setPlayerPoints(points);
         } else {
-          setOpponentPoints(opponentPoints + points);
+          setOpponentPoints(points);
         }
         pokemon.guessedBy = socketId;
         if (isSameEvoline) {

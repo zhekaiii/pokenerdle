@@ -90,6 +90,7 @@ export const validatePokemon = async (
     return {
       validAnswer: true,
       pokemon: pokemonRepository.prettifyQueriedPokemon(pokemon),
+      species: pokemon.pokemon_v2_pokemonspecies,
       sameSpecies:
         pokemon.pokemon_v2_pokemonspecies?.pokemon_v2_pokemon.map(
           ({ id }) => id
