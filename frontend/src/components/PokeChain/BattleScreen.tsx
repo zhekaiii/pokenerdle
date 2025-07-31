@@ -22,6 +22,7 @@ import { ComboBox } from "../ui/ComboBox";
 import { Progress } from "../ui/Progress";
 import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
+import GameHeader from "./GameHeader";
 
 type Props = {
   roomCode: string;
@@ -54,6 +55,8 @@ const BattleScreen: React.FC<Props> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [isPlayersTurn, setIsPlayersTurn] = useState(isGoingFirst);
   const [isGameEnded, setIsGameEnded] = useState(false);
+  const [playerPoints, setPlayerPoints] = useState(0);
+  const [opponentPoints, setOpponentPoints] = useState(0);
 
   const [timerEndsAt, setTimerEndsAt] = useState(
     Date.now() + settings.timer * 1000
@@ -168,10 +171,16 @@ const BattleScreen: React.FC<Props> = ({
         pokemon: PokemonGuess,
         socketId: string,
         sameSpecies: number[],
-        isSameEvoline: boolean
+        isSameEvoline: boolean,
+        points: number
       ) => {
         if (pokemons.some((p) => p.id === pokemon.id)) {
           return;
+        }
+        if (socketId === socket.id) {
+          setPlayerPoints(playerPoints + points);
+        } else {
+          setOpponentPoints(opponentPoints + points);
         }
         pokemon.guessedBy = socketId;
         if (isSameEvoline) {
@@ -263,6 +272,8 @@ const BattleScreen: React.FC<Props> = ({
 
   return (
     <div className={battleScreenClasses["BattleScreen__Contents"]}>
+      <GameHeader playerPoints={playerPoints} opponentPoints={opponentPoints} />
+      <div className="tw-mb-2"></div>
       <Alert
         className="tw-mb-2 tw-justify-center tw-relative tw-overflow-hidden"
         variant={

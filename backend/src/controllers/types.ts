@@ -18,6 +18,7 @@ export type BattleRoom = {
   wantToRematch: string[];
   usedLinks: Record<string, number>;
   evolutionLinkCount: [number, number];
+  points: [number, number];
 };
 
 export type TurnResult =

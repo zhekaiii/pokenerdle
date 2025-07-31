@@ -10,6 +10,7 @@ import { RouteNames } from "../data/const.js";
 import { ErrorRoomNotFound } from "../errors/index.js";
 import { io } from "../index.js";
 import { ongoingBattles } from "../lib/battles.js";
+import { getPoints } from "../services/battle.service.js";
 import * as dataService from "../services/data.services.js";
 import { createRandomString } from "../utils/random.js";
 
@@ -59,6 +60,7 @@ export const createBattleRoom = async (
       wantToRematch: [],
       usedLinks: {},
       evolutionLinkCount: [0, 0],
+      points: [0, 0],
     };
     socket.join(roomId);
     socket.emit("roomCode", roomId, settings);
@@ -96,6 +98,9 @@ export const leaveRoom = (
   roomId: string,
   callback?: () => void
 ) => {
+  if (socket.id === roomId) {
+    return;
+  }
   console.log(`Socket ${socket.id} is leaving room ${roomId}.`);
   const room = ongoingBattles[roomId];
   if (!room) {
@@ -133,6 +138,11 @@ export const validatePokemon = async (
     room.usedLinks,
     room.evolutionLinkCount[room.turn]
   );
+
+  const pointsAwarded = getPoints();
+  room.points[room.turn] += pointsAwarded;
+  console.log(room);
+
   if (!result.validAnswer) {
     io.of(RouteNames.BATTLES_WS)
       .to(roomId)
@@ -152,7 +162,8 @@ export const validatePokemon = async (
       result.pokemon,
       socket.id,
       result.sameSpecies,
-      result.isSameEvoline
+      result.isSameEvoline,
+      pointsAwarded
     );
 
   nextTurn(roomId);
