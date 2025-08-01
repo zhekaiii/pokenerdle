@@ -57,6 +57,8 @@ const BattleScreen: React.FC<Props> = ({
   const [isGameEnded, setIsGameEnded] = useState(false);
   const [playerPoints, setPlayerPoints] = useState(0);
   const [opponentPoints, setOpponentPoints] = useState(0);
+  const [playerStreak, setPlayerStreak] = useState(0);
+  const [opponentStreak, setOpponentStreak] = useState(0);
 
   const [timerEndsAt, setTimerEndsAt] = useState(
     Date.now() + settings.timer * 1000
@@ -184,8 +186,10 @@ const BattleScreen: React.FC<Props> = ({
         }
         if (socketId === socket.id) {
           setPlayerPoints(points);
+          setPlayerStreak((playerStreak) => playerStreak + 1);
         } else {
           setOpponentPoints(points);
+          setOpponentStreak((opponentStreak) => opponentStreak + 1);
         }
         pokemon.guessedBy = socketId;
         if (isSameEvoline) {
@@ -225,8 +229,10 @@ const BattleScreen: React.FC<Props> = ({
         });
         if (isPlayersTurn) {
           setPlayerPoints(points);
+          setPlayerStreak(0);
         } else {
           setOpponentPoints(points);
+          setOpponentStreak(0);
         }
         setIsSubmittingAnswer(false);
         setInput("");
@@ -285,7 +291,12 @@ const BattleScreen: React.FC<Props> = ({
 
   return (
     <div className={battleScreenClasses["BattleScreen__Contents"]}>
-      <GameHeader playerPoints={playerPoints} opponentPoints={opponentPoints} />
+      <GameHeader
+        playerPoints={playerPoints}
+        opponentPoints={opponentPoints}
+        playerStreak={playerStreak}
+        opponentStreak={opponentStreak}
+      />
       <div className="tw:mb-4"></div>
       <Alert
         className="tw:mb-4 tw:justify-center tw:relative tw:overflow-hidden"
