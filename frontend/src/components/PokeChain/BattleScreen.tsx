@@ -286,9 +286,9 @@ const BattleScreen: React.FC<Props> = ({
   return (
     <div className={battleScreenClasses["BattleScreen__Contents"]}>
       <GameHeader playerPoints={playerPoints} opponentPoints={opponentPoints} />
-      <div className="tw-mb-2"></div>
+      <div className="tw-mb-4"></div>
       <Alert
-        className="tw-mb-2 tw-justify-center tw-relative tw-overflow-hidden"
+        className="tw-mb-4 tw-justify-center tw-relative tw-overflow-hidden"
         variant={
           hasWon || (!isGameEnded && isPlayersTurn) ? "positive" : "destructive"
         }
@@ -321,7 +321,7 @@ const BattleScreen: React.FC<Props> = ({
         </form>
       )}
       {isGameEnded && (
-        <div className="tw-flex tw-items-start tw-gap-4 tw-mb-2">
+        <div className="tw-flex tw-items-start tw-gap-4 tw-mb-4">
           <Button variant="destructive" onClick={exitRoom}>
             <LogOut /> Exit
           </Button>
