@@ -284,6 +284,9 @@ const BattleScreen: React.FC<Props> = ({
           </>
         )}
         onSelect={enterPokemon}
+        popoverContentProps={{
+          className: "tw:opacity-80",
+        }}
       />
     ),
     [isPlayersTurn, enterPokemon, input, isSubmittingAnswer, suggestions]

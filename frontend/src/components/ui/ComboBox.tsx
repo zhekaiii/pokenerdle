@@ -11,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/Popover";
+import { cn } from "@/lib/utils";
 import { Input } from "./Input";
 
 type ComboboxProps<T> = {
@@ -23,6 +24,10 @@ type ComboboxProps<T> = {
   value: string;
   setValue: (value: string) => void;
   disabled?: boolean;
+  popoverContentProps?: Exclude<
+    React.ComponentProps<typeof PopoverContent>,
+    "children" | "onCloseAutoFocus" | "onOpenAutoFocus"
+  >;
 };
 
 const ComboBox = (<T,>({
@@ -35,6 +40,7 @@ const ComboBox = (<T,>({
   value,
   setValue,
   disabled = false,
+  popoverContentProps,
 }: ComboboxProps<T>) => {
   const [open, setOpen] = React.useState(false);
 
@@ -67,7 +73,10 @@ const ComboBox = (<T,>({
         />
       </PopoverTrigger>
       <PopoverContent
-        className="tw:w-[var(--radix-popover-trigger-width)] p-0"
+        className={cn(
+          "tw:w-[var(--radix-popover-trigger-width)] tw:p-0",
+          popoverContentProps?.className
+        )}
         onCloseAutoFocus={(e) => e.preventDefault()}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
