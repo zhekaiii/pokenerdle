@@ -16,6 +16,7 @@ export type BattleRoom = {
   usedLinks: Record<string, number>;
   evolutionLinkCount: [number, number];
   points: [number, number];
+  streak: [number, number];
 };
 
 export type TurnResult = InvalidAnswer | ValidAnswer;

@@ -53,6 +53,7 @@ const initRoom = (
     usedLinks: {},
     evolutionLinkCount: [0, 0],
     points: [0, 0],
+    streak: [0, 0],
   };
 };
 
@@ -160,8 +161,12 @@ export const validatePokemon = async (
       pokemonId: result.pokemonId,
       points: newPoints,
     });
+    room.streak[room.turn] = 0;
+    console.log(room.streak);
     return;
   }
+  room.streak[room.turn] += 1;
+  console.log(room.streak);
   if (room.timer) {
     clearTimeout(room.timer);
     room.timer = null;
