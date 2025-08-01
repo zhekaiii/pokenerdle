@@ -43,7 +43,7 @@ const initRoom = (
 ): BattleRoom => {
   return {
     players: room.players,
-    pokemon: room.pokemon,
+    pokemon: [room.pokemon[0]],
     settings: room.settings,
     timer: null,
     turn: Math.random() < 0.5 ? 0 : 1,
