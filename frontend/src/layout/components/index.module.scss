@@ -1,0 +1,16 @@
+.Header {
+  display: flex;
+  align-items: center;
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  background-color: var(--card);
+  border-bottom-width: 1px;
+}
+
+.Logo {
+  height: 100%;
+}
