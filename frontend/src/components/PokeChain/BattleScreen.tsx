@@ -99,6 +99,11 @@ const BattleScreen: React.FC<Props> = ({
     [isGameEnded, playerPoints, opponentPoints]
   );
 
+  const isDraw = useMemo(
+    () => isGameEnded && playerPoints === opponentPoints,
+    [isGameEnded, playerPoints, opponentPoints]
+  );
+
   useEffect(() => {
     if (isGameEnded) {
       return;
@@ -290,7 +295,9 @@ const BattleScreen: React.FC<Props> = ({
       >
         <span>
           {isGameEnded
-            ? `${hasWon ? "You" : "Your opponent"} won!`
+            ? isDraw
+              ? "It's a draw!"
+              : `${hasWon ? "You" : "Your opponent"} won!`
             : isPlayersTurn
             ? "Your turn"
             : "Opponent's turn"}
