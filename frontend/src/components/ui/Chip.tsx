@@ -7,7 +7,7 @@ const Chip = React.forwardRef<HTMLDivElement, React.ComponentProps<"input">>(
       <div
         ref={ref}
         className={cn(
-          "tw-inline-flex tw-items-center tw-space-x-2 tw-bg-gray-800 tw-rounded-full tw-px-3 tw-py-1",
+          "tw:inline-flex tw:items-center tw:space-x-2 tw:bg-gray-800 tw:rounded-full tw:px-3 tw:py-1",
           className
         )}
         {...props}

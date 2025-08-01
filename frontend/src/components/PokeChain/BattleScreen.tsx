@@ -215,9 +215,9 @@ const BattleScreen: React.FC<Props> = ({
           variant: "destructive",
           description: (
             <>
-              <X className="tw-inline tw-mr-2" />{" "}
+              <X className="tw:inline tw:mr-2" />{" "}
               {isPlayersTurn ? "You" : "Your opponent"} guessed{" "}
-              <span className="tw-capitalize">
+              <span className="tw:capitalize">
                 {pokemonNames?.find((pokemon) => pokemon.id == pokemonId)?.name}
               </span>
             </>
@@ -286,9 +286,9 @@ const BattleScreen: React.FC<Props> = ({
   return (
     <div className={battleScreenClasses["BattleScreen__Contents"]}>
       <GameHeader playerPoints={playerPoints} opponentPoints={opponentPoints} />
-      <div className="tw-mb-4"></div>
+      <div className="tw:mb-4"></div>
       <Alert
-        className="tw-mb-4 tw-justify-center tw-relative tw-overflow-hidden"
+        className="tw:mb-4 tw:justify-center tw:relative tw:overflow-hidden"
         variant={
           hasWon || (!isGameEnded && isPlayersTurn) ? "positive" : "destructive"
         }
@@ -303,8 +303,9 @@ const BattleScreen: React.FC<Props> = ({
             : "Opponent's turn"}
         </span>
         {!isGameEnded && (
-          <div className="tw-absolute tw-bottom-0 tw-left-0 tw-right-0">
+          <div className="tw:absolute tw:bottom-0 tw:left-0 tw:right-0">
             <Progress
+              className="tw:h-1"
               color={isPlayersTurn ? "positive" : "destructive"}
               value={(secondsLeft / settings.timer) * 100}
             />
@@ -321,13 +322,13 @@ const BattleScreen: React.FC<Props> = ({
         </form>
       )}
       {isGameEnded && (
-        <div className="tw-flex tw-items-start tw-gap-4 tw-mb-4">
+        <div className="tw:flex tw:items-start tw:gap-4 tw:mb-4">
           <Button variant="destructive" onClick={exitRoom}>
             <LogOut /> Exit
           </Button>
-          <div className="tw-flex tw-flex-col tw-items-center tw-gap-2 tw-flex-grow">
+          <div className="tw:flex tw:flex-col tw:items-center tw:gap-2 tw:grow">
             <Button
-              className="tw-w-full"
+              className="tw:w-full"
               onClick={onRematch}
               disabled={rematch}
             >

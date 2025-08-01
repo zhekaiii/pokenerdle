@@ -61,7 +61,7 @@ const GamePreparation: React.FC<Props> = ({
 
       <GameSettings settings={settings} />
 
-      <div className="tw-flex tw-flex-row tw-space-x-2 tw-items-start">
+      <div className="tw:flex tw:flex-row tw:space-x-2 tw:items-start">
         <Button
           className={classes.GamePreparation__Buttons}
           onClick={exitRoom}
@@ -69,7 +69,7 @@ const GamePreparation: React.FC<Props> = ({
         >
           Close
         </Button>
-        <div className="tw-flex tw-flex-col tw-text-center">
+        <div className="tw:flex tw:flex-col tw:text-center">
           <Button
             className={classes.GamePreparation__Buttons}
             onClick={onReady}
@@ -78,7 +78,7 @@ const GamePreparation: React.FC<Props> = ({
             Ready ({secondsLeft})
           </Button>
           {isOpponentReady && (
-            <small className="tw-mt-2">Opponent is ready</small>
+            <small className="tw:mt-2">Opponent is ready</small>
           )}
         </div>
       </div>

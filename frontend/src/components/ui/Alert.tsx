@@ -4,15 +4,15 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const alertVariants = cva(
-  "tw-bg-background tw-relative tw-w-full tw-rounded-lg tw-border tw-px-4 tw-py-3 tw-text-sm [&>svg+div]:tw-translate-y-[-3px] [&>svg]:tw-absolute [&>svg]:tw-left-4 [&>svg]:tw-top-4 [&>svg]:tw-text-foreground [&>svg~*]:tw-pl-7",
+  "tw:bg-background tw:relative tw:w-full tw:rounded-lg tw:border tw:px-4 tw:py-3 tw:text-sm tw:[&>svg+div]:translate-y-[-3px] tw:[&>svg]:absolute tw:[&>svg]:left-4 tw:[&>svg]:top-4 tw:[&>svg]:text-foreground tw:[&>svg~*]:pl-7",
   {
     variants: {
       variant: {
-        default: "tw-text-foreground",
+        default: "tw:text-foreground",
         destructive:
-          "tw-border-destructive/50 tw-text-destructive dark:tw-border-destructive [&>svg]:tw-text-destructive",
+          "tw:border-destructive/50 tw:text-destructive tw:dark:border-destructive tw:[&>svg]:text-destructive",
         positive:
-          "tw-border-positive/50 tw-text-positive dark:tw-border-positive [&>svg]:tw-text-positive",
+          "tw:border-positive/50 tw:text-positive tw:dark:border-positive tw:[&>svg]:text-positive",
       },
     },
     defaultVariants: {
@@ -41,7 +41,7 @@ const AlertTitle = React.forwardRef<
   <h5
     ref={ref}
     className={cn(
-      "tw-mb-1 tw-font-medium tw-leading-none tw-tracking-tight",
+      "tw:mb-1 tw:font-medium tw:leading-none tw:tracking-tight",
       className
     )}
     {...props}
@@ -55,7 +55,7 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("tw-text-sm [&_p]:tw-leading-relaxed", className)}
+    className={cn("tw:text-sm tw:[&_p]:leading-relaxed", className)}
     {...props}
   />
 ));

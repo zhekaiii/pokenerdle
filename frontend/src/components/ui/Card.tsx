@@ -10,7 +10,7 @@ const Card: React.FC<
   <div
     ref={ref}
     className={cn(
-      "tw-rounded-xl tw-border tw-bg-card tw-text-card-foreground tw-shadow",
+      "tw:rounded-xl tw:border tw:bg-card tw:text-card-foreground tw:shadow",
       className
     )}
     {...props}
@@ -24,7 +24,7 @@ const CardHeader: React.FC<
 > = ({ className, ref, ...props }) => (
   <div
     ref={ref}
-    className={cn("tw-flex tw-flex-col tw-space-y-1.5 tw-p-6", className)}
+    className={cn("tw:flex tw:flex-col tw:space-y-1.5 tw:p-6", className)}
     {...props}
   />
 );
@@ -37,7 +37,7 @@ const CardTitle: React.FC<
   <div
     ref={ref}
     className={cn(
-      "tw-font-semibold tw-leading-none tw-tracking-tight",
+      "tw:font-semibold tw:leading-none tw:tracking-tight",
       className
     )}
     {...props}
@@ -51,7 +51,7 @@ const CardDescription: React.FC<
 > = ({ className, ref, ...props }) => (
   <div
     ref={ref}
-    className={cn("tw-text-sm tw-text-muted-foreground", className)}
+    className={cn("tw:text-sm tw:text-muted-foreground", className)}
     {...props}
   />
 );
@@ -61,7 +61,7 @@ const CardContent: React.FC<
     ref?: React.Ref<HTMLDivElement>;
   }
 > = ({ className, ref, ...props }) => (
-  <div ref={ref} className={cn("tw-p-6 tw-pt-0", className)} {...props} />
+  <div ref={ref} className={cn("tw:p-6 tw:pt-0", className)} {...props} />
 );
 
 const CardFooter: React.FC<
@@ -71,7 +71,7 @@ const CardFooter: React.FC<
 > = ({ className, ref, ...props }) => (
   <div
     ref={ref}
-    className={cn("tw-flex tw-items-center tw-p-6 tw-pt-0", className)}
+    className={cn("tw:flex tw:items-center tw:p-6 tw:pt-0", className)}
     {...props}
   />
 );

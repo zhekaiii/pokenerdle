@@ -13,15 +13,15 @@ const GameHeader: React.FC<GameHeaderProps> = ({
 }) => {
   return (
     <Card>
-      <div className="tw-flex tw-justify-between tw-items-center tw-px-4 tw-py-2">
+      <div className="tw:flex tw:justify-between tw:items-center tw:px-4 tw:py-2">
         <div>
-          <b className="tw-block">Player</b>
+          <b className="tw:block">Player</b>
           <small>
             <AnimatedNumber as="span" number={playerPoints} /> points
           </small>
         </div>
-        <div className="tw-text-end">
-          <b className="tw-block">Opponent</b>
+        <div className="tw:text-end">
+          <b className="tw:block">Opponent</b>
           <small>
             <AnimatedNumber as="span" number={opponentPoints} /> points
           </small>

@@ -67,7 +67,7 @@ const ComboBox = (<T,>({
         />
       </PopoverTrigger>
       <PopoverContent
-        className="tw-w-[var(--radix-popover-trigger-width)] p-0"
+        className="tw:w-[var(--radix-popover-trigger-width)] p-0"
         onCloseAutoFocus={(e) => e.preventDefault()}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >

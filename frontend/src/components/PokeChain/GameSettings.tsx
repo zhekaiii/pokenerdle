@@ -25,18 +25,18 @@ const GameSettings: React.FC<Props> = ({
     <Card>
       <CardHeader>
         <CardTitle>
-          <Settings className="tw-mr-2 tw-inline" />
+          <Settings className="tw:mr-2 tw:inline" />
           Game Settings
         </CardTitle>
       </CardHeader>
       <CardContent className={classes.GameSettings__Content}>
         <div>
           <Label>
-            <Clock4 className="tw-mr-2  tw-inline" />
+            <Clock4 className="tw:mr-2  tw:inline" />
             Time per turn: {settings.timer} seconds
           </Label>
           <Slider
-            className="tw-mt-2"
+            className="tw:mt-2"
             value={[settings.timer]}
             max={MAX_TIMER}
             min={MIN_TIMER}
@@ -45,10 +45,10 @@ const GameSettings: React.FC<Props> = ({
           />
         </div>
 
-        <div className="tw-flex tw-items-center tw-justify-between">
+        <div className="tw:flex tw:items-center tw:justify-between">
           <Label htmlFor="showAbility">
             <div>Show Pokémon abilities</div>
-            <small className="tw-text-muted-foreground">
+            <small className="tw:text-muted-foreground">
               Show the abilities of Pokémon during the battle
             </small>
           </Label>

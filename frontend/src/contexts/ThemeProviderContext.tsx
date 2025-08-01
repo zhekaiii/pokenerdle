@@ -22,8 +22,8 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 const setThemeClass = (theme: Exclude<Theme, "system">) => {
   const root = window.document.documentElement;
-  root.classList.remove("tw-light", "tw-dark");
-  root.classList.add(`tw-${theme}`);
+  root.classList.remove("tw:light", "tw:dark");
+  root.classList.add(`tw:${theme}`);
 };
 
 export function ThemeProvider({

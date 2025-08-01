@@ -1,51 +1,53 @@
+@reference "../index.css"
+
 h1 {
-  @apply tw-scroll-m-20 tw-text-4xl tw-font-extrabold tw-tracking-tight lg:tw-text-5xl;
+  @apply tw:scroll-m-20 tw:text-4xl tw:font-extrabold tw:tracking-tight lg:tw:text-5xl;
 }
 
 h2 {
-  @apply tw-scroll-m-20 tw-border-b tw-pb-2 tw-text-3xl tw-font-semibold tw-tracking-tight first:tw-mt-0;
+  @apply tw:scroll-m-20 tw:border-b tw:pb-2 tw:text-3xl tw:font-semibold tw:tracking-tight tw:first:mt-0;
 }
 
 h3 {
-  @apply tw-scroll-m-20 tw-text-2xl tw-font-semibold tw-tracking-tight;
+  @apply tw:scroll-m-20 tw:text-2xl tw:font-semibold tw:tracking-tight;
 }
 
 h4 {
-  @apply tw-scroll-m-20 tw-text-xl tw-font-semibold tw-tracking-tight;
+  @apply tw:scroll-m-20 tw:text-xl tw:font-semibold tw:tracking-tight;
 }
 
 h5 {
-  @apply tw-scroll-m-20 tw-text-lg tw-font-semibold tw-tracking-tight;
+  @apply tw:scroll-m-20 tw:text-lg tw:font-semibold tw:tracking-tight;
 }
 
 h6 {
-  @apply tw-scroll-m-20 tw-font-semibold tw-tracking-tight;
+  @apply tw:scroll-m-20 tw:font-semibold tw:tracking-tight;
 }
 
 p {
-  @apply tw-leading-7 [&:not(:first-child)]:tw-mt-6;
+  @apply tw:leading-7 tw:[&:not(:first-child)]:mt-6;
 }
 
 blockquote {
-  @apply tw-mt-6 tw-border-l-2 tw-pl-6 tw-italic;
+  @apply tw:mt-6 tw:border-l-2 tw:pl-6 tw:italic;
 }
 
 tr {
-  @apply tw-m-0 tw-border-t tw-p-0 even:tw-bg-muted;
+  @apply tw:m-0 tw:border-t tw:p-0 tw:even:bg-muted;
 }
 
 th {
-  @apply tw-border tw-px-4 tw-py-2 tw-text-left tw-font-bold [&[align=center]]:tw-text-center [&[align=right]]:tw-text-right;
+  @apply tw:border tw:px-4 tw:py-2 tw:text-left tw:font-bold tw:[&[align=center]]:text-center tw:[&[align=right]]:text-right;
 }
 
 td {
-  @apply tw-border tw-px-4 tw-py-2 tw-text-left [&[align=center]]:tw-text-center [&[align=right]]:tw-text-right;
+  @apply tw:border tw:px-4 tw:py-2 tw:text-left tw:[&[align=center]]:text-center tw:[&[align=right]]:text-right;
 }
 
 code {
-  @apply tw-relative tw-rounded tw-bg-muted tw-px-[0.3rem] tw-py-[0.2rem] tw-font-mono tw-text-sm tw-font-semibold;
+  @apply tw:relative tw:rounded tw:bg-muted tw:px-[0.3rem] tw:py-[0.2rem] tw:font-mono tw:text-sm tw:font-semibold;
 }
 
 small {
-  @apply tw-text-sm tw-font-medium tw-leading-none;
+  @apply tw:text-sm tw:font-medium tw:leading-none;
 }

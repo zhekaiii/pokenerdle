@@ -50,7 +50,7 @@ const PokeChain: React.FC = () => {
         variant: "destructive",
         description: (
           <>
-            <TriangleAlert className="tw-inline tw-mr-2" /> {error}
+            <TriangleAlert className="tw:inline tw:mr-2" /> {error}
           </>
         ),
       });

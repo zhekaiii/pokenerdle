@@ -66,7 +66,7 @@ const PokeChainLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
         }}
       >
         <Input
-          className="tw-my-4 tw-w-full"
+          className="tw:my-4 tw:w-full"
           placeholder="Room Code"
           disabled={isConnecting}
           value={roomCodeInput}
@@ -82,7 +82,7 @@ const PokeChainLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
       <Button
         disabled={isConnecting}
         onClick={onClickJoin}
-        className="tw-w-full"
+        className="tw:w-full"
       >
         Join Room
       </Button>
@@ -97,7 +97,7 @@ const PokeChainLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
         setShowAbility={setShowAbility}
       />
       <Button
-        className="tw-mt-2 tw-w-full"
+        className="tw:mt-2 tw:w-full"
         disabled={isConnecting}
         onClick={onClickCreate}
       >
@@ -108,8 +108,8 @@ const PokeChainLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
 
   return (
     <Card className={classes.PokeChainLobby}>
-      <CardHeader className="tw-text-center">
-        <CardTitle className="tw-text-2xl">PokéChain</CardTitle>
+      <CardHeader className="tw:text-center">
+        <CardTitle className="tw:text-2xl">PokéChain</CardTitle>
         <CardDescription>
           Challenge your friends in a Pokémon chain battle!
         </CardDescription>
@@ -117,12 +117,12 @@ const PokeChainLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
 
       <CardContent>
         <Tabs defaultValue={TabValue.JOIN}>
-          <TabsList className="tw-w-full">
-            <TabsTrigger value={TabValue.JOIN} className="tw-flex-1">
-              <Users className="tw-mr-2" /> Join Room
+          <TabsList className="tw:w-full">
+            <TabsTrigger value={TabValue.JOIN} className="tw:flex-1">
+              <Users className="tw:mr-2" /> Join Room
             </TabsTrigger>
-            <TabsTrigger value={TabValue.CREATE} className="tw-flex-1">
-              <Plus className="tw-mr-2" /> Create Room
+            <TabsTrigger value={TabValue.CREATE} className="tw:flex-1">
+              <Plus className="tw:mr-2" /> Create Room
             </TabsTrigger>
           </TabsList>
           <TabsContent value={TabValue.JOIN}>{joinRoomSection}</TabsContent>
