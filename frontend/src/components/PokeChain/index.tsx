@@ -41,7 +41,6 @@ const PokeChain: React.FC = () => {
     );
     socket.on("disconnect", () => {
       setRoomCode("");
-      socket.removeAllListeners();
     });
     socket.on("roomError", (error: string) => {
       console.error(error);
