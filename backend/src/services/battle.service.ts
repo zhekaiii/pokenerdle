@@ -1,4 +1,4 @@
-import { clamp } from "@pokenerdle/shared/utils/index.js";
+import { clamp } from "@pokenerdle/shared/utils";
 import {
   BattleRoom,
   InvalidAnswer,

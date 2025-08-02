@@ -8,6 +8,10 @@
     ".": {
       "types": "./src/index.d.ts",
       "default": "./src/index.d.ts"
+    },
+    "./utils": {
+      "types": "./src/utils/index.ts",
+      "default": "./src/utils/index.ts"
     }
   },
   "license": "MIT",
