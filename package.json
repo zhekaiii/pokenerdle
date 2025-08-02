@@ -3,12 +3,12 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "fe-dev": "cd frontend && yarn dev",
+    "fe-dev": "pnpm --filter @pokenerdle/frontend dev",
     "be-dev": "cd backend && bun run dev",
-    "dev": "concurrently \"yarn fe-dev\" \"bun run be-dev\"",
-    "fe-build": "cd frontend && yarn build",
-    "be-build": "cd backend && yarn build",
-    "build": "concurrently \"yarn fe-build\" \"yarn be-build\""
+    "dev": "concurrently \"pnpm fe-dev\" \"bun run be-dev\"",
+    "fe-build": "pnpm --filter @pokenerdle/frontend build",
+    "be-build": "pnpm --filter @pokenerdle/backend build",
+    "build": "concurrently \"pnpm fe-build\" \"pnpm be-build\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

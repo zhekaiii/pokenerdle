@@ -2,7 +2,7 @@ import { useToast } from "@/hooks/useToast";
 import { BattleRoomSettings } from "@pokenerdle/shared";
 import { TriangleAlert } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams } from "react-router-dom";
 import { useSocket } from "../../hooks/useSocket";
 import PageContainer from "../../layout/PageContainer";
 import GameScreen from "./GameScreen";
