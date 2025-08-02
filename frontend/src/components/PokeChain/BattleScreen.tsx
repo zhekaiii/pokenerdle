@@ -23,6 +23,7 @@ import { Progress } from "../ui/Progress";
 import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
 import GameHeader from "./GameHeader";
+import LinkChip from "./LinkChip";
 
 type Props = {
   roomCode: string;
@@ -359,6 +360,14 @@ const BattleScreen: React.FC<Props> = ({
         sharedLinks={sharedLinks}
         evolutionLinkCount={evolutionLinkCount}
       />
+      {socket.id && evolutionLinkCount[socket.id.toString()] && (
+        <LinkChip
+          className="tw:fixed tw:left-4 tw:bottom-4 tw:opacity-90"
+          variant="evolution"
+          count={evolutionLinkCount[socket.id.toString()]}
+          reactive
+        />
+      )}
     </div>
   );
 };
