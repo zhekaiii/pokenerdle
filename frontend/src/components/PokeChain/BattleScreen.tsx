@@ -21,6 +21,7 @@ import { PokemonGuess } from "../../api/battles/types";
 import iconPlaceholder from "../../assets/question_mark.png";
 import { useSocket } from "../../hooks/useSocket";
 import { updateSharedLinks } from "../../utils/pokeChainUtils";
+import PokemonCombobox from "../recyclables/PokemonCombobox";
 import { Alert } from "../ui/Alert";
 import {
   AlertDialog,
@@ -354,13 +355,12 @@ const BattleScreen: React.FC<Props> = ({
       </Alert>
       {!isGameEnded && (
         <>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          >
-            {textField}
-          </form>
+          <PokemonCombobox
+            input={input}
+            setInput={setInput}
+            suggestions={suggestions}
+            onSelect={enterPokemon}
+          />
           <div className="tw:mt-2 tw:flex tw:justify-end">
             <AlertDialog>
               <AlertDialogTrigger asChild>
