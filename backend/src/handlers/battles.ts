@@ -259,3 +259,24 @@ export const onRematch = (socket: PokeNerdleSocket) => {
     ongoingBattles[roomId] = initRoom(room);
   }
 };
+
+export const onForfeit = (socket: PokeNerdleSocket) => {
+  console.log(`User ${socket.id} forfeited the match`);
+  const roomId = getUserRoom(socket);
+  if (!roomId) {
+    return;
+  }
+  const room = ongoingBattles[roomId];
+  if (room.timer) {
+    clearTimeout(room.timer);
+    room.timer = null;
+  }
+
+  room.forfeitInfo = {
+    forfeit: true,
+    forfeitedBy: socket.id,
+  };
+
+  // End the game with forfeit flag
+  io.of(RouteNames.BATTLES_WS).to(roomId).emit("gameEnd", room.forfeitInfo);
+};

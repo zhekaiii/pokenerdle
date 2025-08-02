@@ -6,6 +6,7 @@ import {
   createBattleRoom,
   joinRoom,
   leaveRoom,
+  onForfeit,
   onRematch,
   onSocketDisconnect,
   userReady,
@@ -31,5 +32,6 @@ export const initializeBattleWsRoutes = (io: PokeNerdleServer) => {
     });
     socket.on("ready", () => userReady(socket));
     socket.on("rematch", () => onRematch(socket));
+    socket.on("forfeit", () => onForfeit(socket));
   });
 };

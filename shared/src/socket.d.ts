@@ -16,7 +16,7 @@ export interface ServerToClientEvents {
   ready: (socketId: string) => void;
   startGame: () => void;
   canMove: (socketId: string, timerEndsAt: number) => void;
-  gameEnd: () => void;
+  gameEnd: (data?: ForfeitInfo) => void;
   rematch: (socketId: string, bothOk: boolean) => void;
 }
 
@@ -29,4 +29,5 @@ export interface ClientToServerEvents {
   isMyTurn: (callback: (isTurn: boolean) => void) => void;
   ready: () => void;
   rematch: () => void;
+  forfeit: () => void;
 }

@@ -1,4 +1,8 @@
-import { BattleRoomSettings, PokemonWithAbilities } from "@pokenerdle/shared";
+import {
+  BattleRoomSettings,
+  ForfeitInfo,
+  PokemonWithAbilities,
+} from "@pokenerdle/shared";
 import { pokemon_v2_pokemonspecies } from "@prisma/client";
 
 export const MAX_ABILITY_LINKS = 3;
@@ -17,6 +21,7 @@ export type BattleRoom = {
   evolutionLinkCount: [number, number];
   points: [number, number];
   streak: [number, number];
+  forfeitInfo?: ForfeitInfo;
 };
 
 export type TurnResult = InvalidAnswer | ValidAnswer;

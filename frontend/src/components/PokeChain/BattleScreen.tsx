@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/hooks/useToast";
-import { BattleRoomSettings, PokemonNamesResponse } from "@pokenerdle/shared";
+import {
+  BattleRoomSettings,
+  ForfeitInfo,
+  PokemonNamesResponse,
+} from "@pokenerdle/shared";
 import Fuse from "fuse.js";
 import { LogOut, RefreshCw, X } from "lucide-react";
 import React, {
@@ -18,6 +22,15 @@ import iconPlaceholder from "../../assets/question_mark.png";
 import { useSocket } from "../../hooks/useSocket";
 import { updateSharedLinks } from "../../utils/pokeChainUtils";
 import { Alert } from "../ui/Alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+} from "../ui/AlertDialog";
 import { ComboBox } from "../ui/ComboBox";
 import { Progress } from "../ui/Progress";
 import BattleBoard from "./BattleBoard";
@@ -56,6 +69,7 @@ const BattleScreen: React.FC<Props> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [isPlayersTurn, setIsPlayersTurn] = useState(isGoingFirst);
   const [isGameEnded, setIsGameEnded] = useState(false);
+  const [forfeitInfo, setForfeitInfo] = useState<ForfeitInfo | null>(null);
   const [playerPoints, setPlayerPoints] = useState(0);
   const [opponentPoints, setOpponentPoints] = useState(0);
   const [playerStreak, setPlayerStreak] = useState(0);
@@ -98,12 +112,16 @@ const BattleScreen: React.FC<Props> = ({
   );
 
   const hasWon = useMemo(
-    () => isGameEnded && playerPoints > opponentPoints,
-    [isGameEnded, playerPoints, opponentPoints]
+    () =>
+      isGameEnded &&
+      (playerPoints > opponentPoints ||
+        (forfeitInfo?.forfeit && forfeitInfo.forfeitedBy !== socket.id)),
+    [isGameEnded, playerPoints, opponentPoints, forfeitInfo, socket]
   );
 
   const isDraw = useMemo(
-    () => isGameEnded && playerPoints === opponentPoints,
+    () =>
+      isGameEnded && !forfeitInfo?.forfeit && playerPoints === opponentPoints,
     [isGameEnded, playerPoints, opponentPoints]
   );
 
@@ -239,8 +257,11 @@ const BattleScreen: React.FC<Props> = ({
         setInput("");
       }
     );
-    socket.on("gameEnd", () => {
+    socket.on("gameEnd", (data) => {
       setIsGameEnded(true);
+      if (data) {
+        setForfeitInfo(data);
+      }
       socket.on("rematch", (socketId: string, bothOk: boolean) => {
         if (socketId !== socket.id) {
           setOpponentRematch(true);
@@ -310,7 +331,11 @@ const BattleScreen: React.FC<Props> = ({
       >
         <span>
           {isGameEnded
-            ? isDraw
+            ? forfeitInfo?.forfeit
+              ? forfeitInfo.forfeitedBy === socket.id
+                ? "You forfeited the match!"
+                : "Your opponent forfeited!"
+              : isDraw
               ? "It's a draw!"
               : `${hasWon ? "You" : "Your opponent"} won!`
             : isPlayersTurn
@@ -328,13 +353,39 @@ const BattleScreen: React.FC<Props> = ({
         )}
       </Alert>
       {!isGameEnded && (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-          }}
-        >
-          {textField}
-        </form>
+        <>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
+            {textField}
+          </form>
+          <div className="tw:mt-2 tw:flex tw:justify-end">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm">
+                  Forfeit
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  Are you sure you want to forfeit this match?
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      socket.emit("forfeit");
+                    }}
+                  >
+                    Forfeit
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </>
       )}
       {isGameEnded && (
         <div className="tw:flex tw:items-start tw:gap-4 tw:mb-4">
