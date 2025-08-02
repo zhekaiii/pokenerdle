@@ -1,4 +1,4 @@
-import { RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router";
 import "./App.scss";
 import { Toaster } from "./components/ui/Toaster";
 import { SocketProvider } from "./contexts/SocketContext";

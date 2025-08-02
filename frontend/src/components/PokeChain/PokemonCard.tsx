@@ -10,7 +10,7 @@ import classes from "./PokemonCard.module.scss";
 
 type Props = {
   pokemon: PokemonWithAbilities;
-  showAbility: boolean;
+  showAbility?: boolean;
 };
 
 const SHINY_PROBABILITY = 1 / 2 ** 12;

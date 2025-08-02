@@ -2,9 +2,8 @@ import { useToast } from "@/hooks/useToast";
 import { BattleRoomSettings } from "@pokenerdle/shared";
 import { TriangleAlert } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { useSocket } from "../../hooks/useSocket";
-import PageContainer from "../../layout/PageContainer";
 import GameScreen from "./GameScreen";
 import PokeChainLobby from "./PokeChainLobby";
 import WaitingLobby from "./WaitingLobby";
@@ -81,7 +80,7 @@ const PokeChain: React.FC = () => {
   }, [roomCode]);
 
   return (
-    <PageContainer>
+    <>
       {roomCode && socket ? (
         isOpponentConnected ? (
           <GameScreen
@@ -95,7 +94,7 @@ const PokeChain: React.FC = () => {
       ) : (
         <PokeChainLobby setIsOpponentConnected={setIsOpponentConnected} />
       )}
-    </PageContainer>
+    </>
   );
 };
 

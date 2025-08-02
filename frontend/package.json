@@ -35,7 +35,7 @@
     "lucide-react": "^0.469.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.0.2",
+    "react-router": "^7.7.1",
     "react-use": "^17.6.0",
     "sass": "^1.77.8",
     "socket.io-client": "^4.7.5",
