@@ -1,6 +1,7 @@
+import api from "@/api";
 import iconPlaceholder from "@/assets/question_mark.png";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocalStorage } from "react-use";
 import { ComboBox } from "../../ui/ComboBox";
 import classes from "./index.module.scss";
@@ -23,6 +24,10 @@ const PokemonCombobox: React.FC<Props> = ({
   const [pokemonIcons, setPokemonIcons] = useLocalStorage<
     Record<number, string | null>
   >("pokemonIcons", {});
+  useEffect(() => {
+    if (!pokemonIcons || !pokemonIcons[1])
+      api.data.getPokemonIcons().then(setPokemonIcons);
+  }, []);
   return (
     <form
       onSubmit={(e) => {

@@ -18,7 +18,6 @@ import { useLocalStorage } from "react-use";
 import { useImmer } from "use-immer";
 import api from "../../api";
 import { PokemonGuess } from "../../api/battles/types";
-import iconPlaceholder from "../../assets/question_mark.png";
 import { useSocket } from "../../hooks/useSocket";
 import { updateSharedLinks } from "../../utils/pokeChainUtils";
 import PokemonCombobox from "../recyclables/PokemonCombobox";
@@ -32,7 +31,6 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from "../ui/AlertDialog";
-import { ComboBox } from "../ui/ComboBox";
 import { Progress } from "../ui/Progress";
 import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
@@ -62,9 +60,6 @@ const BattleScreen: React.FC<Props> = ({
   const [pokemonNames, setPokemonNames] = useLocalStorage<
     PokemonNamesResponse[]
   >("pokemonNames", []);
-  const [pokemonIcons, setPokemonIcons] = useLocalStorage<
-    Record<number, string | null>
-  >("pokemonIcons", {});
   const [pokemons, setPokemons] = useState<PokemonGuess[]>([starterPokemon]);
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -274,8 +269,6 @@ const BattleScreen: React.FC<Props> = ({
       });
     });
     if (!pokemonNames?.length) api.data.getPokemonNames().then(setPokemonNames);
-    if (!pokemonIcons || !pokemonIcons[1])
-      api.data.getPokemonIcons().then(setPokemonIcons);
     (async () => {
       const pokemonNames = await api.data.getPokemonNames();
       setPokemonNames(pokemonNames);
@@ -287,33 +280,6 @@ const BattleScreen: React.FC<Props> = ({
       socket.off("gameEnd");
     };
   }, [socket, goBackToPreparation, pokemons]);
-
-  const textField = useMemo(
-    () => (
-      <ComboBox
-        value={input}
-        setValue={setInput}
-        options={suggestions}
-        getOptionValue={(option) => option.id}
-        getOptionLabel={(option) => option.name}
-        disabled={isSubmittingAnswer || !isPlayersTurn}
-        renderItemContent={(option) => (
-          <>
-            <img
-              className={battleScreenClasses.BattleScreen__PokemonIcon}
-              src={pokemonIcons?.[option.id] ?? iconPlaceholder}
-            />
-            {option.name}
-          </>
-        )}
-        onSelect={enterPokemon}
-        popoverContentProps={{
-          className: "tw:opacity-80",
-        }}
-      />
-    ),
-    [isPlayersTurn, enterPokemon, input, isSubmittingAnswer, suggestions]
-  );
 
   return (
     <div className={battleScreenClasses["BattleScreen__Contents"]}>
@@ -360,6 +326,7 @@ const BattleScreen: React.FC<Props> = ({
             setInput={setInput}
             suggestions={suggestions}
             onSelect={enterPokemon}
+            disabled={isSubmittingAnswer || !isPlayersTurn}
           />
           <div className="tw:mt-2 tw:flex tw:justify-end">
             <AlertDialog>
