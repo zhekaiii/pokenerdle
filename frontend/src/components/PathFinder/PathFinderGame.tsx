@@ -1,4 +1,5 @@
 import { useToast } from "@/hooks/useToast";
+import { QUERY_KEY } from "@/lib/query";
 import { getFormattedPokemonName } from "@/utils/formatters";
 import { getSharedAbilities } from "@/utils/pokeChainUtils";
 import {
@@ -6,6 +7,7 @@ import {
   PokemonNamesResponse,
   PokemonWithAbilities,
 } from "@pokenerdle/shared";
+import { useQueryClient } from "@tanstack/react-query";
 import Fuse from "fuse.js";
 import { CheckCircle, RefreshCw, Target, TriangleAlert } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
@@ -37,6 +39,7 @@ const PathFinderGame: React.FC = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [startTime, setStartTime] = useState(Date.now());
+  const queryClient = useQueryClient();
 
   const fetchChallenge = async () => {
     try {
@@ -109,9 +112,10 @@ const PathFinderGame: React.FC = () => {
     }
     try {
       setIsLoading(true);
-      const pokemonWithAbilities = await api.data.getPokemonWithAbilities(
-        pokemon.id
-      );
+      const pokemonWithAbilities = await queryClient.fetchQuery({
+        queryKey: [QUERY_KEY.POKEMON, pokemon.id],
+        queryFn: () => api.data.getPokemonWithAbilities(pokemon.id),
+      });
       const previousPokemon = path.length
         ? path[path.length - 1]
         : challenge.startPokemon;
