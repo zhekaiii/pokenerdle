@@ -9,5 +9,5 @@ export type PokemonNamesResponse = {
 export type PokemonWithAbilities = pokemon_v2_pokemon & {
   abilities: pokemon_v2_ability[];
   speciesName: string;
-  sprites: Record<string, string>;
+  sprites: Record<string, string | null | Record<string, any>>;
 };

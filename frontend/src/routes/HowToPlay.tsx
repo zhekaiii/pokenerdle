@@ -107,7 +107,7 @@ const HowToPlay: React.FC = () => {
   const [timer, setTimer] = useState(20);
   const [showAbility, setShowAbility] = useState(true);
   return (
-    <div className="tw:container tw:mx-auto tw:p-6 tw:max-w-4xl">
+    <div className="tw:container tw:mx-auto">
       <Card className="tw:mb-6">
         <CardHeader>
           <CardTitle className="tw:text-3xl tw:text-center">

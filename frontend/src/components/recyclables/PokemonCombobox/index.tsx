@@ -24,10 +24,18 @@ const PokemonCombobox: React.FC<Props> = ({
   const [pokemonIcons, setPokemonIcons] = useLocalStorage<
     Record<number, string | null>
   >("pokemonIcons", {});
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (!pokemonIcons || !pokemonIcons[1])
       api.data.getPokemonIcons().then(setPokemonIcons);
   }, []);
+
+  useEffect(() => {
+    if (disabled) return;
+    inputRef.current?.focus();
+  }, [disabled]);
+
   return (
     <form
       onSubmit={(e) => {
@@ -53,6 +61,9 @@ const PokemonCombobox: React.FC<Props> = ({
         onSelect={onSelect}
         popoverContentProps={{
           className: "tw:opacity-80",
+        }}
+        inputProps={{
+          ref: inputRef,
         }}
       />
     </form>

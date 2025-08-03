@@ -1,9 +1,9 @@
 .BattleBoard {
   display: flex;
   flex-direction: column-reverse;
-  width: fit-content;
+  width: 300px;
   margin-inline: auto;
-  min-width: 300px;
+  max-width: 100%;
 }
 
 .BattleBoard__Separator {

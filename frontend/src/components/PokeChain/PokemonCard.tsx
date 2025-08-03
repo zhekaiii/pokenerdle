@@ -1,3 +1,4 @@
+import questionMarkIcon from "@/assets/question_mark_big.png";
 import { PokemonWithAbilities } from "@pokenerdle/shared";
 import { uniqBy } from "es-toolkit";
 import React, { useMemo, useRef } from "react";
@@ -22,14 +23,36 @@ const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
     [pokemon]
   );
   const pokemonNumber = pokemon.pokemon_species_id;
+  const pokemonSpriteUrl = useMemo(() => {
+    if (isShiny) {
+      if (typeof pokemon.sprites.front_shiny == "string") {
+        return pokemon.sprites.front_shiny;
+      }
+      if (
+        typeof pokemon.sprites.other == "object" &&
+        pokemon.sprites.other?.home &&
+        typeof pokemon.sprites.other.home.front_shiny === "string"
+      ) {
+        return pokemon.sprites.other.home.front_shiny;
+      }
+    }
+    if (pokemon.sprites.front_default) {
+      return pokemon.sprites.front_default;
+    }
+    if (
+      typeof pokemon.sprites.other == "object" &&
+      pokemon.sprites.other?.home &&
+      typeof pokemon.sprites.other.home.front_default === "string"
+    ) {
+      return pokemon.sprites.other.home.front_default;
+    }
+    return questionMarkIcon;
+  }, [isShiny, pokemon]);
   return (
     <Card className={classes["PokemonCard"]}>
       <img
-        src={
-          (isShiny && pokemon.sprites.front_shiny
-            ? pokemon.sprites.front_shiny
-            : pokemon.sprites.front_default) ?? ""
-        }
+        className={classes["PokemonCard__Sprite"]}
+        src={pokemonSpriteUrl}
         alt={pokemon.name}
       />
 

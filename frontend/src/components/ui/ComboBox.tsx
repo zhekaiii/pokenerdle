@@ -48,6 +48,9 @@ const ComboBox = (<T,>({
   // component is used with the Command component and the keydown event would somehow propagate, but
   // in this case we are not using CommandInput here. So we need to manually dispatch the keydown event
   const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+    }
     // @ts-expect-error This still works
     commandRef.current?.dispatchEvent(new KeyboardEvent("keydown", e));
   };
@@ -69,6 +72,7 @@ const ComboBox = (<T,>({
           disabled={disabled}
           onClick={open ? (e) => e.preventDefault() : undefined}
           onKeyDown={onKeyDown}
+          autoFocus
           {...inputProps}
         />
       </PopoverTrigger>
@@ -77,7 +81,6 @@ const ComboBox = (<T,>({
           "tw:w-[var(--radix-popover-trigger-width)] tw:p-0",
           popoverContentProps?.className
         )}
-        onCloseAutoFocus={(e) => e.preventDefault()}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <Command ref={commandRef}>

@@ -336,10 +336,14 @@ const BattleScreen: React.FC<Props> = ({
             onSelect={enterPokemon}
             disabled={isSubmittingAnswer || !isPlayersTurn}
           />
-          <div className="tw:mt-2 tw:flex tw:justify-end">
+          <div className="tw:flex tw:justify-end tw:relative">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive" size="sm">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="tw:absolute tw:top-2 tw:right-0"
+                >
                   {isSinglePlayer ? "Exit" : "Forfeit"}
                 </Button>
               </AlertDialogTrigger>

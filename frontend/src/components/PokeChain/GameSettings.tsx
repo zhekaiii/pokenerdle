@@ -22,7 +22,7 @@ const GameSettings: React.FC<Props> = ({
   setShowAbility,
 }) => {
   return (
-    <Card>
+    <Card className="tw:max-w-full">
       <CardHeader>
         <CardTitle>
           <Settings className="tw:mr-2 tw:inline" />
@@ -42,6 +42,7 @@ const GameSettings: React.FC<Props> = ({
             min={MIN_TIMER}
             onValueChange={setTimer && (([value]) => setTimer(value))}
             disabled={!setTimer}
+            step={5}
           />
         </div>
 
