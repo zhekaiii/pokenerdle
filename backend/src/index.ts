@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
 import express from "express";
 import { createServer } from "http";
-import path from "path";
+import path, { dirname } from "path";
 import { Server } from "socket.io";
+import { fileURLToPath } from "url";
 import { initializeBattleWsRoutes } from "./handlers/index.js";
 import "./lib/prisma.js";
 import "./routes/battles.routes.js";
@@ -11,6 +12,8 @@ import dataRouter from "./routes/data.routes.js";
 import pathfinderRouter from "./routes/pathfinder.routes.js";
 import { PokeNerdleServer } from "./utils/types.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 dotenv.config();
 
 const app = express();
