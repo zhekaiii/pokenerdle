@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import { createServer } from "http";
+import path from "path";
 import { Server } from "socket.io";
 import { initializeBattleWsRoutes } from "./handlers/index.js";
 import "./lib/prisma.js";
@@ -43,6 +44,16 @@ router.use(battlesRouter);
 router.use(pathfinderRouter);
 
 app.use("/api", router);
+
+// Static files
+app.use(express.static(path.join(__dirname, "..", "..", "frontend", "dist")));
+
+// Fallback route for SPA
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "..", "..", "frontend", "dist", "index.html")
+  );
+});
 
 httpServer.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

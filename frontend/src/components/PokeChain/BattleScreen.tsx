@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { useToast } from "@/hooks/useToast";
 import { ForfeitInfo, PokemonNamesResponse } from "@pokenerdle/shared";
 import Fuse from "fuse.js";
@@ -10,7 +11,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useLocalStorage } from "react-use";
 import { useImmer } from "use-immer";
 import api from "../../api";
 import { PokemonGuess } from "../../api/battles/types";
@@ -52,9 +52,7 @@ const BattleScreen: React.FC<Props> = ({
     usePokeChainContext();
   const { toast } = useToast();
   const [input, setInput] = useState("");
-  const [pokemonNames, setPokemonNames] = useLocalStorage<
-    PokemonNamesResponse[]
-  >("pokemonNames", []);
+  const pokemonNames = usePokemonNames();
   const [pokemons, setPokemons] = useState<PokemonGuess[]>([starterPokemon]);
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -264,11 +262,6 @@ const BattleScreen: React.FC<Props> = ({
         }
       });
     });
-    if (!pokemonNames?.length) api.data.getPokemonNames().then(setPokemonNames);
-    (async () => {
-      const pokemonNames = await api.data.getPokemonNames();
-      setPokemonNames(pokemonNames);
-    })();
     return () => {
       socket.off("pushPokemon");
       socket.off("wrongAnswer");

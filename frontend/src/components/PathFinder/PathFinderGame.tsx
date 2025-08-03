@@ -1,3 +1,4 @@
+import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { useToast } from "@/hooks/useToast";
 import { QUERY_KEY } from "@/lib/query";
 import { getFormattedPokemonName } from "@/utils/formatters";
@@ -11,7 +12,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import Fuse from "fuse.js";
 import { CheckCircle, RefreshCw, Target, TriangleAlert } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useLocalStorage } from "react-use";
 import api from "../../api";
 import LoadingDialog from "../recyclables/LoadingDialog";
 import PokemonCombobox from "../recyclables/PokemonCombobox";
@@ -28,9 +28,7 @@ import PathBoard from "./PathBoard";
 const PathFinderGame: React.FC = () => {
   const [challenge, setChallenge] = useState<PathFinderResponse | null>(null);
   const [input, setInput] = useState("");
-  const [pokemonNames, setPokemonNames] = useLocalStorage<
-    PokemonNamesResponse[]
-  >("pokemonNames", []);
+  const pokemonNames = usePokemonNames();
   const [path, setPath] = useState<PokemonWithAbilities[]>([]);
   const fullPath = useMemo(() => {
     if (!challenge) return [];
@@ -158,10 +156,6 @@ const PathFinderGame: React.FC = () => {
 
   useEffect(() => {
     fetchChallenge();
-    // Load Pokemon names if not already cached
-    if (!pokemonNames || pokemonNames.length === 0) {
-      api.data.getPokemonNames().then(setPokemonNames);
-    }
   }, []);
 
   if (!challenge)
