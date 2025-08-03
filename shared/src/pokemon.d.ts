@@ -11,3 +11,9 @@ export type PokemonWithAbilities = pokemon_v2_pokemon & {
   speciesName: string;
   sprites: Record<string, string | null | Record<string, any>>;
 };
+
+export type PathFinderResponse = {
+  startPokemon: PokemonWithAbilities;
+  endPokemon: PokemonWithAbilities;
+  pathLength: number;
+};

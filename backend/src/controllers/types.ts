@@ -5,9 +5,6 @@ import {
 } from "@pokenerdle/shared";
 import { pokemon_v2_pokemonspecies } from "@prisma/client";
 
-export const MAX_ABILITY_LINKS = 3;
-export const MAX_EVOLUTION_LINKS = 3;
-
 export type BattleRoom = {
   players: [string] | [string, string];
   pokemon: PokemonWithAbilities[];

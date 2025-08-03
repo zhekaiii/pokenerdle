@@ -2,6 +2,7 @@ import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
 import { pokemon_v2_ability, pokemon_v2_pokemon } from "@prisma/client";
 import { readFileSync, writeFileSync } from "fs";
 import { Heap } from "heap-js";
+import { MIN_PATHFINDER_LENGTH } from "../constants/game.js";
 import { Graph } from "../lib/graph.js";
 import { randomChoice, randomChoiceWeighted } from "../utils/random.js";
 import { isTruthy } from "../utils/types.js";
@@ -151,12 +152,10 @@ export const findLargestConnectedComponent = () => {
 };
 
 export const getRandomPokemonPath = () => {
-  const MIN_PATH_LENGTH = 3;
   const component: number[] = JSON.parse(
     readFileSync("./component.json", "utf-8")
   );
   const graph = Graph.loadFromJsonString(readFileSync("./graph.json", "utf-8"));
-  let maxLength = 0;
   const paths: Record<number, number[][]> = {};
 
   const startingNode = randomChoice(component);
@@ -172,11 +171,9 @@ export const getRandomPokemonPath = () => {
     if (visited.has(node)) {
       continue;
     }
-    if (distance > maxLength) {
-      maxLength = distance;
-      paths[maxLength] = [];
+    if (distance >= MIN_PATHFINDER_LENGTH) {
+      paths[distance] = (paths[distance] || []).concat([path]);
     }
-    paths[distance].push(path);
     visited.add(node);
     for (const neighbor of graph.adjacencyList[node]) {
       if (!visited.has(neighbor)) {
@@ -185,7 +182,9 @@ export const getRandomPokemonPath = () => {
     }
   }
   return randomChoiceWeighted(
-    Object.values(paths),
-    Object.keys(paths).map((length) => (+length - (MIN_PATH_LENGTH - 1)) ** 3)
+    Object.values(paths).flat(),
+    Object.entries(paths)
+      .map(([length]) => (+length - (MIN_PATHFINDER_LENGTH - 1)) ** 2)
+      .flat()
   );
 };

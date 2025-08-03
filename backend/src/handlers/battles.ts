@@ -1,9 +1,6 @@
 import { BattleRoomSettings, PokemonNamesResponse } from "@pokenerdle/shared";
-import {
-  BattleRoom,
-  MAX_ABILITY_LINKS,
-  TurnResult,
-} from "../controllers/types.js";
+import { MAX_ABILITY_LINKS } from "../constants/game.js";
+import { BattleRoom, TurnResult } from "../controllers/types.js";
 import { RouteNames } from "../data/const.js";
 import { ErrorRoomNotFound } from "../errors/index.js";
 import { io } from "../index.js";

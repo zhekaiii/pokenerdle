@@ -7,6 +7,7 @@ import "./lib/prisma.js";
 import "./routes/battles.routes.js";
 import battlesRouter from "./routes/battles.routes.js";
 import dataRouter from "./routes/data.routes.js";
+import pathfinderRouter from "./routes/pathfinder.routes.js";
 import { PokeNerdleServer } from "./utils/types.js";
 
 dotenv.config();
@@ -39,6 +40,7 @@ app.use(express.json());
 initializeBattleWsRoutes(io);
 router.use(dataRouter);
 router.use(battlesRouter);
+router.use(pathfinderRouter);
 
 app.use("/api", router);
 
