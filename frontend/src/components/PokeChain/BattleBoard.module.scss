@@ -1,9 +1,13 @@
 .BattleBoard {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   width: 300px;
   margin-inline: auto;
   max-width: 100%;
+
+  &--col-reverse {
+    flex-direction: column-reverse;
+  }
 }
 
 .BattleBoard__Separator {

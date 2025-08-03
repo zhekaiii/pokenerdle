@@ -1,7 +1,7 @@
 import battleBoardClasses from "@/components/PokeChain/BattleBoard.module.scss";
 import GameSettings from "@/components/PokeChain/GameSettings";
 import LinkChip from "@/components/PokeChain/LinkChip";
-import PokemonCard from "@/components/PokeChain/PokemonCard";
+import PokemonCard from "@/components/recyclables/PokemonCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { PokemonWithAbilities } from "@pokenerdle/shared";
 import clsx from "clsx";

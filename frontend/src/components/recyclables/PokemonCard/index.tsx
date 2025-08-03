@@ -5,9 +5,9 @@ import React, { useMemo, useRef } from "react";
 import {
   formatAbilityName,
   getFormattedPokemonName,
-} from "../../utils/formatters";
-import { Card } from "../ui/Card";
-import classes from "./PokemonCard.module.scss";
+} from "../../../utils/formatters";
+import { Card } from "../../ui/Card";
+import classes from "./index.module.scss";
 
 type Props = {
   pokemon: PokemonWithAbilities;

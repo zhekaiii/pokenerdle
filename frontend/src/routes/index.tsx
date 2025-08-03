@@ -2,6 +2,7 @@ import Layout from "@/layout/Layout";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router";
 import PokeChain from "../components/PokeChain";
 import HowToPlay from "./HowToPlay";
+import PathFinder from "../components/PathFinder";
 
 const routes: RouteObject[] = [
   {
@@ -15,6 +16,10 @@ const routes: RouteObject[] = [
       {
         path: "pokechain",
         element: <PokeChain />,
+      },
+      {
+        path: "path-finder",
+        element: <PathFinder />,
       },
       {
         path: "how-to-play",

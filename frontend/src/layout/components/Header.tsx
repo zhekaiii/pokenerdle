@@ -18,6 +18,13 @@ const Header: React.FC = () => {
       <div className="tw:grow" />
       <Button
         asChild
+        variant={location.pathname === "/path-finder" ? "default" : "outline"}
+        className="tw:mr-2"
+      >
+        <Link to="/path-finder">Path Finder</Link>
+      </Button>
+      <Button
+        asChild
         variant={location.pathname === "/how-to-play" ? "default" : "outline"}
         className="tw:mr-2"
       >

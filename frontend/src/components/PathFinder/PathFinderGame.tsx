@@ -1,0 +1,260 @@
+import { useToast } from "@/hooks/useToast";
+import { getFormattedPokemonName } from "@/utils/formatters";
+import { getSharedAbilities } from "@/utils/pokeChainUtils";
+import {
+  PathFinderResponse,
+  PokemonNamesResponse,
+  PokemonWithAbilities,
+} from "@pokenerdle/shared";
+import Fuse from "fuse.js";
+import { CheckCircle, RefreshCw, Target, TriangleAlert } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useLocalStorage } from "react-use";
+import api from "../../api";
+import LoadingDialog from "../recyclables/LoadingDialog";
+import PokemonCombobox from "../recyclables/PokemonCombobox";
+import { Button } from "../ui/Button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/Card";
+import PathBoard from "./PathBoard";
+
+const PathFinderGame: React.FC = () => {
+  const [challenge, setChallenge] = useState<PathFinderResponse | null>(null);
+  const [input, setInput] = useState("");
+  const [pokemonNames, setPokemonNames] = useLocalStorage<
+    PokemonNamesResponse[]
+  >("pokemonNames", []);
+  const [path, setPath] = useState<PokemonWithAbilities[]>([]);
+  const fullPath = useMemo(() => {
+    if (!challenge) return [];
+    return [challenge.startPokemon, ...path, challenge.endPokemon];
+  }, [challenge]);
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [startTime, setStartTime] = useState(Date.now());
+
+  const fetchChallenge = async () => {
+    try {
+      setIsLoading(true);
+      const data = await api.pathfinder.getChallenge();
+      setChallenge(data);
+      setPath([]); // Reset path when getting new challenge
+      setInput("");
+      setStartTime(Date.now());
+    } catch (error) {
+      console.error("Error fetching Path Finder challenge:", error);
+      toast({
+        variant: "destructive",
+        description:
+          "Failed to fetch Path Finder challenge. Please try again later.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const filteredPokemon = useMemo(
+    () =>
+      new Fuse(
+        pokemonNames
+          ? pokemonNames.filter(
+              (p) => !fullPath.some((pokemon) => pokemon.id === p.id)
+            )
+          : [],
+        {
+          keys: ["name", { name: "speciesName", weight: 2 }],
+        }
+      ),
+    [pokemonNames, challenge]
+  );
+
+  const isPuzzleSolved = useMemo(() => {
+    if (!challenge || path.length == 0) return false;
+    return (
+      getSharedAbilities(challenge.endPokemon, path[path.length - 1]).length > 0
+    );
+  }, [challenge, path]);
+
+  useEffect(() => {
+    if (isPuzzleSolved) {
+      const timeTaken = Date.now() - startTime;
+      toast({
+        variant: "positive",
+        description: (
+          <div className="tw-flex">
+            <CheckCircle />
+            <span>
+              Puzzle solved! Well done! Time taken:{" "}
+              {Math.floor(timeTaken / 1000)} seconds
+            </span>
+          </div>
+        ),
+      });
+    }
+  }, [isPuzzleSolved, startTime]);
+
+  const suggestions = useMemo(
+    () => filteredPokemon.search(input, { limit: 10 }).map(({ item }) => item),
+    [filteredPokemon, input]
+  );
+
+  const handleSelect = async (pokemon: PokemonNamesResponse) => {
+    if (!challenge) {
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const pokemonWithAbilities = await api.data.getPokemonWithAbilities(
+        pokemon.id
+      );
+      const previousPokemon = path.length
+        ? path[path.length - 1]
+        : challenge.startPokemon;
+      const isAbilityShared = previousPokemon.abilities.some((ability) =>
+        pokemonWithAbilities.abilities.some((a) => a.id === ability.id)
+      );
+      if (!isAbilityShared) {
+        toast({
+          variant: "destructive",
+          description: (
+            <div className="tw-flex">
+              <TriangleAlert className="tw:inline tw:mr-2" />
+              {getFormattedPokemonName(pokemonWithAbilities)} does not share an
+              ability with {getFormattedPokemonName(previousPokemon)}
+            </div>
+          ),
+        });
+        return;
+      }
+      setPath([...path, pokemonWithAbilities]);
+    } catch (error) {
+      console.error("Error fetching Pokemon with abilities:", error);
+      toast({
+        variant: "destructive",
+        description:
+          "Failed to fetch Pokemon with abilities. Please try again later.",
+      });
+    } finally {
+      setIsLoading(false);
+      setInput("");
+    }
+  };
+
+  const isPathOptimal = challenge && path.length === challenge.pathLength;
+
+  useEffect(() => {
+    fetchChallenge();
+    // Load Pokemon names if not already cached
+    if (!pokemonNames || pokemonNames.length === 0) {
+      api.data.getPokemonNames().then(setPokemonNames);
+    }
+  }, []);
+
+  if (!challenge)
+    return (
+      <Card className="tw:max-w-lg tw:mx-auto tw:mt-8">
+        <CardContent className="tw:p-8 tw:text-center">
+          <p>Loading Path Finder Challenge...</p>
+        </CardContent>
+      </Card>
+    );
+
+  return (
+    <>
+      <LoadingDialog open={isLoading} />
+      <div className="tw:container tw:mx-auto tw:p-4">
+        <Card className="tw:max-w-4xl tw:mx-auto">
+          <CardHeader className="tw:text-center">
+            <CardTitle className="tw:text-3xl tw:flex tw:items-center tw:justify-center tw:gap-2">
+              <Target className="tw:text-primary" />
+              Path Finder
+            </CardTitle>
+            <CardDescription>
+              Find a path between these Pokémon by connecting them through
+              shared abilities!
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="tw:space-y-6">
+            {/* Path Building Section */}
+            <div className="tw:border-t tw:pt-6">
+              {/* Visual Path Display - BattleBoard Style */}
+              <div className="tw:mb-4">
+                <p className="tw:text-sm tw:text-muted-foreground tw:mb-4 tw:text-center">
+                  Your Path:
+                </p>
+                <div className="tw:flex tw:justify-center">
+                  <PathBoard
+                    startPokemon={challenge.startPokemon}
+                    endPokemon={challenge.endPokemon}
+                    pathPokemon={path}
+                  />
+                </div>
+
+                {/* Path Status */}
+                {isPuzzleSolved && (
+                  <div className="tw:text-center tw:mb-2">
+                    <div className="tw:flex tw:items-center tw:justify-center tw:gap-1 tw:text-positive">
+                      <CheckCircle size={16} />
+                      <span className="tw:text-sm">
+                        {isPathOptimal
+                          ? "Shortest possible path achieved!"
+                          : "Path is longer than optimal"}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Pokemon Search */}
+              <div className="tw:space-y-2">
+                <label className="tw:text-sm tw:font-medium">
+                  Which Pokémon shares an ability with{" "}
+                  {getFormattedPokemonName(
+                    path[path.length - 1] ?? challenge.startPokemon
+                  )}
+                  ?
+                </label>
+                <PokemonCombobox
+                  input={input}
+                  setInput={setInput}
+                  suggestions={suggestions}
+                  onSelect={handleSelect}
+                  disabled={isLoading || isPuzzleSolved}
+                />
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="tw:flex tw:gap-2 tw:justify-center tw:pt-4 tw:border-t">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setPath([]);
+                  setInput("");
+                }}
+                disabled={path.length === 0}
+              >
+                Clear Path
+              </Button>
+              <Button
+                onClick={fetchChallenge}
+                className="tw:flex tw:items-center tw:gap-2"
+              >
+                <RefreshCw size={16} />
+                New Challenge
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  );
+};
+
+export default PathFinderGame;

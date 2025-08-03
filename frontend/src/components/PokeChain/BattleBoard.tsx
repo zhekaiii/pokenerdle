@@ -1,9 +1,10 @@
+import clsx from "clsx";
 import React from "react";
 import { PokemonGuess } from "../../api/battles/types";
 import { getSharedAbilities } from "../../utils/pokeChainUtils";
+import PokemonCard from "../recyclables/PokemonCard";
 import battleBoardClasses from "./BattleBoard.module.scss";
 import LinkChip from "./LinkChip";
-import PokemonCard from "./PokemonCard";
 
 type Props = {
   pokemons: PokemonGuess[];
@@ -21,7 +22,12 @@ const BattleBoard: React.FC<Props> = ({
   evolutionLinkCount,
 }) => {
   return (
-    <div className={battleBoardClasses.BattleBoard}>
+    <div
+      className={clsx(
+        battleBoardClasses.BattleBoard,
+        battleBoardClasses["BattleBoard--col-reverse"]
+      )}
+    >
       {pokemons.map((pokemon, pkmnIndex) => (
         <React.Fragment key={pokemon.id}>
           <PokemonCard pokemon={pokemon} showAbility={showAbility} />

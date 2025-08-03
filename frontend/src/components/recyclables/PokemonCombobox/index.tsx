@@ -47,7 +47,7 @@ const PokemonCombobox: React.FC<Props> = ({
         setValue={setInput}
         options={suggestions}
         getOptionValue={(option) => option.id}
-        getOptionLabel={(option) => option.name}
+        getOptionLabel={(option) => option.name || option.speciesName}
         disabled={disabled}
         renderItemContent={(option) => (
           <>
@@ -55,7 +55,7 @@ const PokemonCombobox: React.FC<Props> = ({
               className={classes["PokemonCombobox__PokemonIcon"]}
               src={pokemonIcons?.[option.id] ?? iconPlaceholder}
             />
-            {option.name}
+            {option.name || option.speciesName}
           </>
         )}
         onSelect={onSelect}
