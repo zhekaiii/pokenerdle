@@ -156,8 +156,8 @@ const PathFinderRules: React.FC = () => {
           </div>
           <p className="tw:mt-2">
             Both Treecko and Bulbasaur share the <b>Overgrow</b> ability, and
-            both Bulbasaur and Sunflora share the <b>Chlorophyll</b>
-            ability. This is a valid 2-step path.
+            both Bulbasaur and Sunflora share the <b>Chlorophyll</b> ability.
+            This is a valid 2-step path.
           </p>
         </section>
 

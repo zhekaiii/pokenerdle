@@ -2,10 +2,12 @@ import battleBoardClasses from "@/components/PokeChain/BattleBoard.module.scss";
 import GameSettings from "@/components/PokeChain/GameSettings";
 import LinkChip from "@/components/PokeChain/LinkChip";
 import PokemonCard from "@/components/recyclables/PokemonCard";
+import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { PokemonWithAbilities } from "@pokenerdle/shared";
 import clsx from "clsx";
 import React, { useState } from "react";
+import { Link } from "react-router";
 
 const PIKACHU: PokemonWithAbilities = {
   id: 25,
@@ -234,6 +236,9 @@ const PokeChainRules: React.FC = () => {
             </li>
           </ol>
         </section>
+        <Button asChild className="tw:flex">
+          <Link to="/pokechain">Play Now</Link>
+        </Button>
       </CardContent>
     </Card>
   );
