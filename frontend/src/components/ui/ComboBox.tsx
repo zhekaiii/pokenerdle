@@ -20,7 +20,7 @@ type ComboboxProps<T> = {
   getOptionValue: (option: T) => React.Key;
   inputProps?: Omit<React.ComponentProps<typeof Input>, "value" | "onChange">;
   onSelect?: (option: T) => void;
-  renderItemContent?: (option: T) => React.ReactNode;
+  renderItemContent?: (option: T, index: number) => React.ReactNode;
   value: string;
   setValue: (value: string) => void;
   disabled?: boolean;
@@ -28,6 +28,7 @@ type ComboboxProps<T> = {
     React.ComponentProps<typeof PopoverContent>,
     "children" | "onCloseAutoFocus" | "onOpenAutoFocus"
   >;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
 };
 
 const ComboBox = (<T,>({
@@ -41,16 +42,18 @@ const ComboBox = (<T,>({
   setValue,
   disabled = false,
   popoverContentProps,
+  onKeyDown,
 }: ComboboxProps<T>) => {
   const [open, setOpen] = React.useState(false);
 
   // This is a workaround to make the ComboBox work with the keyboard. Normally the CommandInput
   // component is used with the Command component and the keydown event would somehow propagate, but
   // in this case we are not using CommandInput here. So we need to manually dispatch the keydown event
-  const onKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
     }
+    onKeyDown?.(e);
     // @ts-expect-error This still works
     commandRef.current?.dispatchEvent(new KeyboardEvent("keydown", e));
   };
@@ -71,7 +74,7 @@ const ComboBox = (<T,>({
           onChange={(e) => setValue(e.target.value)}
           disabled={disabled}
           onClick={open ? (e) => e.preventDefault() : undefined}
-          onKeyDown={onKeyDown}
+          onKeyDown={handleKeyDown}
           autoFocus
           {...inputProps}
         />
@@ -86,7 +89,7 @@ const ComboBox = (<T,>({
         <Command ref={commandRef}>
           <CommandList>
             <CommandGroup>
-              {options.map((option) => (
+              {options.map((option, index) => (
                 <CommandItem
                   key={getOptionValue(option)}
                   value={getOptionLabel(option)}
@@ -97,7 +100,7 @@ const ComboBox = (<T,>({
                   }}
                 >
                   {renderItemContent
-                    ? renderItemContent(option)
+                    ? renderItemContent(option, index)
                     : getOptionLabel(option)}
                 </CommandItem>
               ))}

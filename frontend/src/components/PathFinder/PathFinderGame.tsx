@@ -141,11 +141,10 @@ const PathFinderGame: React.FC = () => {
       }
       setPath([...path, pokemonWithAbilities]);
     } catch (error) {
-      console.error("Error fetching Pokemon with abilities:", error);
+      console.error("Error fetching Pokemon:", error);
       toast({
         variant: "destructive",
-        description:
-          "Failed to fetch Pokemon with abilities. Please try again later.",
+        description: "Failed to fetch Pokemon. Please try again later.",
       });
     } finally {
       setIsLoading(false);
