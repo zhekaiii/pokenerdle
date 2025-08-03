@@ -79,6 +79,14 @@ const PokeChain: React.FC = () => {
     setIsOpponentConnected(false);
   }, [roomCode]);
 
+  useEffect(() => {
+    return () => {
+      if (roomCode) {
+        socket.emit("leave", roomCode);
+      }
+    };
+  }, [roomCode]);
+
   return (
     <>
       {roomCode && socket ? (
