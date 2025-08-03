@@ -4,6 +4,7 @@
   align-items: center;
   border-radius: 12px !important;
   padding: 16px;
+  position: relative;
 }
 
 .PokemonCard__Sprite {
@@ -12,4 +13,10 @@
 
 .PokemonCard__PkmnName {
   font-weight: 600;
+}
+
+.PokemonCard__RemoveButton {
+  position: absolute;
+  top: 0;
+  right: 0;
 }

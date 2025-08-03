@@ -1,6 +1,8 @@
 import questionMarkIcon from "@/assets/question_mark_big.png";
+import { Button } from "@/components/ui/Button";
 import { PokemonWithAbilities } from "@pokenerdle/shared";
 import { uniqBy } from "es-toolkit";
+import { X } from "lucide-react";
 import React, { useMemo, useRef } from "react";
 import {
   formatAbilityName,
@@ -12,11 +14,18 @@ import classes from "./index.module.scss";
 type Props = {
   pokemon: PokemonWithAbilities;
   showAbility?: boolean;
+  removable?: boolean;
+  onRemove?: () => void;
 };
 
 const SHINY_PROBABILITY = 1 / 2 ** 12;
 
-const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
+const PokemonCard: React.FC<Props> = ({
+  pokemon,
+  showAbility,
+  removable,
+  onRemove,
+}) => {
   const { current: isShiny } = useRef(Math.random() <= SHINY_PROBABILITY);
   const abilities = useMemo(
     () => uniqBy(pokemon.abilities, (ability) => ability.name),
@@ -50,6 +59,15 @@ const PokemonCard: React.FC<Props> = ({ pokemon, showAbility }) => {
   }, [isShiny, pokemon]);
   return (
     <Card className={classes["PokemonCard"]}>
+      {removable && (
+        <Button
+          variant="transparent"
+          className={classes["PokemonCard__RemoveButton"]}
+          onClick={onRemove}
+        >
+          <X />
+        </Button>
+      )}
       <img
         className={classes["PokemonCard__Sprite"]}
         src={pokemonSpriteUrl}

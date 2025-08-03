@@ -9,12 +9,14 @@ type Props = {
   startPokemon: PokemonWithAbilities;
   endPokemon: PokemonWithAbilities;
   pathPokemon: PokemonWithAbilities[];
+  onRemove: (index: number) => void;
 };
 
 const PathBoard: React.FC<Props> = ({
   startPokemon,
   endPokemon,
   pathPokemon,
+  onRemove,
 }) => {
   // Build the complete path: start -> path pokemon -> end
   const completePath = [startPokemon, ...pathPokemon, endPokemon];
@@ -26,8 +28,13 @@ const PathBoard: React.FC<Props> = ({
   return (
     <div className={battleBoardClasses.BattleBoard}>
       {completePath.map((pokemon, index) => (
-        <React.Fragment key={`${pokemon.id}-${index}`}>
-          <PokemonCard pokemon={pokemon} showAbility />
+        <React.Fragment key={pokemon.id}>
+          <PokemonCard
+            pokemon={pokemon}
+            showAbility
+            removable={![0, completePath.length - 1].includes(index)}
+            onRemove={() => onRemove(index)}
+          />
 
           {/* Show separator and ability links between consecutive Pokemon */}
           {index < completePath.length - 1 && (

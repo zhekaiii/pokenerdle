@@ -10,7 +10,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import Fuse from "fuse.js";
 import { CheckCircle, RefreshCw, Target, TriangleAlert } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocalStorage } from "react-use";
 import api from "../../api";
 import LoadingDialog from "../recyclables/LoadingDialog";
@@ -60,6 +60,10 @@ const PathFinderGame: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  const handleRemove = useCallback((index: number) => {
+    setPath((prevPath) => prevPath.slice(0, index - 1));
+  }, []);
 
   const filteredPokemon = useMemo(
     () =>
@@ -197,6 +201,7 @@ const PathFinderGame: React.FC = () => {
                     startPokemon={challenge.startPokemon}
                     endPokemon={challenge.endPokemon}
                     pathPokemon={path}
+                    onRemove={handleRemove}
                   />
                 </div>
 
