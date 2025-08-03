@@ -93,8 +93,8 @@ const PathFinderGame: React.FC = () => {
       toast({
         variant: "positive",
         description: (
-          <div className="tw-flex">
-            <CheckCircle />
+          <div className="tw:flex tw:flex-nowrap">
+            <CheckCircle className="tw:mr-2" />
             <span>
               Puzzle solved! Well done! Time taken:{" "}
               {Math.floor(timeTaken / 1000)} seconds
@@ -130,10 +130,12 @@ const PathFinderGame: React.FC = () => {
         toast({
           variant: "destructive",
           description: (
-            <div className="tw-flex">
-              <TriangleAlert className="tw:inline tw:mr-2" />
-              {getFormattedPokemonName(pokemonWithAbilities)} does not share an
-              ability with {getFormattedPokemonName(previousPokemon)}
+            <div className="tw:flex tw:flex-nowrap">
+              <TriangleAlert className="tw:mr-2" />
+              <div>
+                {getFormattedPokemonName(pokemonWithAbilities)} does not share
+                an ability with {getFormattedPokemonName(previousPokemon)}
+              </div>
             </div>
           ),
         });
@@ -208,7 +210,7 @@ const PathFinderGame: React.FC = () => {
                 {isPuzzleSolved && (
                   <div className="tw:text-center tw:mb-2">
                     <div className="tw:flex tw:items-center tw:justify-center tw:gap-1 tw:text-positive">
-                      <CheckCircle size={16} />
+                      <CheckCircle size={16} className="tw:me-2" />
                       <span className="tw:text-sm">
                         {isPathOptimal
                           ? "Shortest possible path achieved!"
@@ -220,22 +222,24 @@ const PathFinderGame: React.FC = () => {
               </div>
 
               {/* Pokemon Search */}
-              <div className="tw:space-y-2">
-                <label className="tw:text-sm tw:font-medium">
-                  Which Pokémon shares an ability with{" "}
-                  {getFormattedPokemonName(
-                    path[path.length - 1] ?? challenge.startPokemon
-                  )}
-                  ?
-                </label>
-                <PokemonCombobox
-                  input={input}
-                  setInput={setInput}
-                  suggestions={suggestions}
-                  onSelect={handleSelect}
-                  disabled={isLoading || isPuzzleSolved}
-                />
-              </div>
+              {!isPuzzleSolved && (
+                <div className="tw:space-y-2">
+                  <label className="tw:text-sm tw:font-medium">
+                    Which Pokémon shares an ability with{" "}
+                    {getFormattedPokemonName(
+                      path[path.length - 1] ?? challenge.startPokemon
+                    )}
+                    ?
+                  </label>
+                  <PokemonCombobox
+                    input={input}
+                    setInput={setInput}
+                    suggestions={suggestions}
+                    onSelect={handleSelect}
+                    disabled={isLoading || isPuzzleSolved}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Actions */}
