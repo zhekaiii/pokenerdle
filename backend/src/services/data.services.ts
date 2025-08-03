@@ -7,6 +7,7 @@ import { isTruthy } from "../utils/types.js";
 export {
   getPokemonIcons,
   getPokemonNames,
+  getPokemonWithAbilities,
 } from "../repositories/pokemon.repository.js";
 
 export const getStarterPokemon = async (): Promise<PokemonWithAbilities> => {
