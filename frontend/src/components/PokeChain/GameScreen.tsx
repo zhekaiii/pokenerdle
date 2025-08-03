@@ -1,27 +1,26 @@
-import { BattleRoomSettings, PokemonWithAbilities } from "@pokenerdle/shared";
 import React, { useCallback, useEffect, useState } from "react";
 import api from "../../api";
 import { useSocket } from "../../hooks/useSocket";
 import BattleScreen from "./BattleScreen";
 import GamePreparation from "./GamePreparation";
+import { usePokeChainContext } from "./context/PokeChainContext";
 
 type Props = {
-  roomCode: string;
-  settings: BattleRoomSettings;
   exitRoom: () => void;
 };
 
-const GameScreen: React.FC<Props> = ({ roomCode, settings, exitRoom }) => {
+const GameScreen: React.FC<Props> = ({ exitRoom }) => {
   const socket = useSocket();
+  const { roomCode, starterPokemon, setStarterPokemon } = usePokeChainContext();
   const [isGoingFirst, setIsGoingFirst] = useState<boolean>();
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [starterPokemon, setStarterPokemon] = useState<PokemonWithAbilities>();
   const goBackToPreparation = useCallback(() => {
     socket.emit("isMyTurn", setIsGoingFirst);
     setIsGameStarted(false);
   }, [socket]);
 
   useEffect(() => {
+    if (!roomCode) return;
     socket.emit("isMyTurn", setIsGoingFirst);
     socket.on("startGame", () => {
       setIsGameStarted(true);
@@ -35,16 +34,9 @@ const GameScreen: React.FC<Props> = ({ roomCode, settings, exitRoom }) => {
   return !isGameStarted ||
     isGoingFirst === undefined ||
     starterPokemon == undefined ? (
-    <GamePreparation
-      roomCode={roomCode}
-      settings={settings}
-      isGoingFirst={isGoingFirst}
-      exitRoom={exitRoom}
-    />
+    <GamePreparation isGoingFirst={isGoingFirst} exitRoom={exitRoom} />
   ) : (
     <BattleScreen
-      roomCode={roomCode}
-      settings={settings}
       isGoingFirst={isGoingFirst}
       starterPokemon={starterPokemon}
       goBackToPreparation={goBackToPreparation}

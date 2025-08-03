@@ -2,7 +2,11 @@ import { BattleRoomSettings } from "@pokenerdle/shared";
 import { PokemonNamesResponse, PokemonWithAbilities } from "./pokemon";
 
 export interface ServerToClientEvents {
-  roomCode: (roomCode: string, settings?: BattleRoomSettings) => void;
+  roomCode: (
+    roomCode: string,
+    settings: BattleRoomSettings,
+    isSinglePlayer?: boolean
+  ) => void;
   roomError: (error: string) => void;
   opponentJoined: () => void;
   wrongAnswer: (data: { pokemonId: number; points: number }) => void;
@@ -17,11 +21,18 @@ export interface ServerToClientEvents {
   startGame: () => void;
   canMove: (socketId: string, timerEndsAt: number) => void;
   gameEnd: (data?: ForfeitInfo) => void;
-  rematch: (socketId: string, bothOk: boolean) => void;
+  rematch: (
+    socketId: string,
+    readyToStart: boolean,
+    starterPokemon: PokemonWithAbilities
+  ) => void;
 }
 
 export interface ClientToServerEvents {
-  create: (settings: BattleRoomSettings) => void;
+  create: (params: {
+    settings: BattleRoomSettings;
+    isSinglePlayer?: boolean;
+  }) => void;
   join: (roomId: string) => void;
   answer: (pokemon: PokemonNamesResponse, roomId: string) => void;
   leave: (roomId: string, callback?: () => void) => void;

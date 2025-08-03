@@ -23,8 +23,8 @@ export const onSocketDisconnect = (socket: PokeNerdleSocket) => {
 
 const nextTurn = (roomId: string, isFirstTurn?: true) => {
   const room = ongoingBattles[roomId];
-  // only switch turn if it is not the first turn
-  if (!isFirstTurn) {
+  // only switch turn if it is not the first turn or if is single player
+  if (!isFirstTurn && room.numPlayers === 2) {
     room.turn = Number(!room.turn);
   }
   const nextPlayer = room.players[room.turn];
@@ -39,14 +39,14 @@ const nextTurn = (roomId: string, isFirstTurn?: true) => {
 };
 
 const initRoom = (
-  room: Pick<BattleRoom, "players" | "pokemon" | "settings">
+  room: Pick<BattleRoom, "players" | "pokemon" | "settings" | "numPlayers">
 ): BattleRoom => {
   return {
     players: room.players,
     pokemon: [room.pokemon[0]],
     settings: room.settings,
     timer: null,
-    turn: Math.random() < 0.5 ? 0 : 1,
+    turn: room.numPlayers === 1 || Math.random() < 0.5 ? 0 : 1,
     turnStart: Date.now(),
     readyPlayers: [],
     wantToRematch: [],
@@ -54,12 +54,14 @@ const initRoom = (
     evolutionLinkCount: [0, 0],
     points: [0, 0],
     streak: [0, 0],
+    numPlayers: room.numPlayers,
   };
 };
 
 export const createBattleRoom = async (
   socket: PokeNerdleSocket,
-  settings: BattleRoomSettings
+  settings: BattleRoomSettings,
+  isSinglePlayer?: boolean
 ) => {
   console.log(`Received create request from ${socket.id}`);
   while (true) {
@@ -73,9 +75,10 @@ export const createBattleRoom = async (
       players: [socket.id],
       pokemon: [pokemon],
       settings,
+      numPlayers: isSinglePlayer ? 1 : 2,
     });
     socket.join(roomId);
-    socket.emit("roomCode", roomId, settings);
+    socket.emit("roomCode", roomId, settings, isSinglePlayer);
     console.log("Room created", roomId);
     console.log(ongoingBattles);
     return;
@@ -235,13 +238,13 @@ export const userReady = (socket: PokeNerdleSocket) => {
   console.log(`User ${socket.id} is ready`);
   room.readyPlayers.push(socket.id);
   io.of(RouteNames.BATTLES_WS).to(roomId).emit("ready", socket.id);
-  if (room.readyPlayers.length === 2) {
-    console.log("Both players are ready");
+  if (room.readyPlayers.length === room.numPlayers) {
+    console.log("All players are ready");
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("startGame");
     nextTurn(roomId, true);
   }
 };
-export const onRematch = (socket: PokeNerdleSocket) => {
+export const onRematch = async (socket: PokeNerdleSocket) => {
   console.log(`User ${socket.id} wants to rematch`);
   const roomId = getUserRoom(socket);
   if (!roomId) {
@@ -252,12 +255,15 @@ export const onRematch = (socket: PokeNerdleSocket) => {
     return;
   }
   room.wantToRematch.push(socket.id);
-  io.of(RouteNames.BATTLES_WS)
-    .to(roomId)
-    .emit("rematch", socket.id, room.wantToRematch.length == 2);
-  if (room.wantToRematch.length === 2) {
+  const readyToStart = room.wantToRematch.length == room.numPlayers;
+  if (readyToStart) {
+    const newStarterPokemon = await dataService.getStarterPokemon();
+    room.pokemon = [newStarterPokemon];
     ongoingBattles[roomId] = initRoom(room);
   }
+  io.of(RouteNames.BATTLES_WS)
+    .to(roomId)
+    .emit("rematch", socket.id, readyToStart, room.pokemon[0]);
 };
 
 export const onForfeit = (socket: PokeNerdleSocket) => {

@@ -1,4 +1,4 @@
-import { BattleRoomSettings, PokemonNamesResponse } from "@pokenerdle/shared";
+import { PokemonNamesResponse } from "@pokenerdle/shared";
 
 import { RouteNames } from "../data/const.js";
 import {
@@ -16,8 +16,8 @@ import { PokeNerdleServer } from "../utils/types.js";
 
 export const initializeBattleWsRoutes = (io: PokeNerdleServer) => {
   io.of(RouteNames.BATTLES_WS).on("connection", (socket) => {
-    socket.on("create", (settings: BattleRoomSettings) =>
-      createBattleRoom(socket, settings)
+    socket.on("create", ({ settings, isSinglePlayer }) =>
+      createBattleRoom(socket, settings, isSinglePlayer)
     );
     socket.on("join", (roomId: string) => joinRoom(socket, roomId));
     socket.on("answer", (pokemon: PokemonNamesResponse, roomId: string) =>

@@ -1,24 +1,18 @@
 import { Button } from "@/components/ui/Button";
-import { BattleRoomSettings } from "@pokenerdle/shared";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSocket } from "../../hooks/useSocket";
 import classes from "./GamePreparation.module.scss";
 import GameSettings from "./GameSettings";
+import { usePokeChainContext } from "./context/PokeChainContext";
 
 type Props = {
-  roomCode: string;
-  settings: BattleRoomSettings;
   isGoingFirst?: boolean;
   exitRoom: () => void;
 };
 
-const GamePreparation: React.FC<Props> = ({
-  roomCode,
-  settings,
-  isGoingFirst,
-  exitRoom,
-}) => {
+const GamePreparation: React.FC<Props> = ({ isGoingFirst, exitRoom }) => {
   const socket = useSocket();
+  const { settings, isSinglePlayer } = usePokeChainContext();
   const [secondsLeft, setSecondsLeft] = useState(15);
   const [isReady, setIsReady] = useState(false);
   const [isOpponentReady, setIsOpponentReady] = useState(false);
@@ -55,7 +49,7 @@ const GamePreparation: React.FC<Props> = ({
 
   return (
     <div className={classes.GamePreparation}>
-      {isGoingFirst !== undefined && (
+      {!isSinglePlayer && isGoingFirst !== undefined && (
         <div>{isGoingFirst ? "You" : "Your opponent"} will go first</div>
       )}
 

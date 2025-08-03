@@ -1,10 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/hooks/useToast";
-import {
-  BattleRoomSettings,
-  ForfeitInfo,
-  PokemonNamesResponse,
-} from "@pokenerdle/shared";
+import { ForfeitInfo, PokemonNamesResponse } from "@pokenerdle/shared";
 import Fuse from "fuse.js";
 import { LogOut, RefreshCw, X } from "lucide-react";
 import React, {
@@ -36,10 +32,9 @@ import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
 import GameHeader from "./GameHeader";
 import LinkChip from "./LinkChip";
+import { usePokeChainContext } from "./context/PokeChainContext";
 
 type Props = {
-  roomCode: string;
-  settings: BattleRoomSettings;
   isGoingFirst: boolean;
   starterPokemon: PokemonGuess;
   goBackToPreparation: () => void;
@@ -47,14 +42,14 @@ type Props = {
 };
 
 const BattleScreen: React.FC<Props> = ({
-  roomCode,
-  settings,
   isGoingFirst,
   starterPokemon,
   goBackToPreparation,
   exitRoom,
 }) => {
   const socket = useSocket();
+  const { roomCode, settings, isSinglePlayer, setStarterPokemon } =
+    usePokeChainContext();
   const { toast } = useToast();
   const [input, setInput] = useState("");
   const [pokemonNames, setPokemonNames] = useLocalStorage<
@@ -151,7 +146,7 @@ const BattleScreen: React.FC<Props> = ({
       }
       setIsSubmittingAnswer(true);
       setGuesses((guesses) => [...guesses, pokemon.id]);
-      api.battles.validatePokemon(socket, pokemon, roomCode);
+      api.battles.validatePokemon(socket, pokemon, roomCode!);
     },
     [isSubmittingAnswer, roomCode, socket]
   );
@@ -258,12 +253,13 @@ const BattleScreen: React.FC<Props> = ({
       if (data) {
         setForfeitInfo(data);
       }
-      socket.on("rematch", (socketId: string, bothOk: boolean) => {
+      socket.on("rematch", (socketId, ready, starterPokemon) => {
+        setStarterPokemon(starterPokemon);
         if (socketId !== socket.id) {
           setOpponentRematch(true);
           setRematchTimer(15);
         }
-        if (bothOk) {
+        if (ready) {
           goBackToPreparation();
         }
       });
@@ -281,6 +277,30 @@ const BattleScreen: React.FC<Props> = ({
     };
   }, [socket, goBackToPreparation, pokemons]);
 
+  const alertMessage = useMemo(() => {
+    if (isSinglePlayer) {
+      if (!isGameEnded) {
+        return "Guess a Pokémon!";
+      }
+      if (forfeitInfo?.forfeit) {
+        return "You ended the game!";
+      }
+      return "Game Over!";
+    }
+    if (!isGameEnded) {
+      return isPlayersTurn ? "Your turn" : "Opponent's turn";
+    }
+    if (forfeitInfo?.forfeit) {
+      return forfeitInfo.forfeitedBy === socket.id
+        ? "You forfeited the match!"
+        : "Your opponent forfeited!";
+    }
+    if (isDraw) {
+      return "It's a draw!";
+    }
+    return `${hasWon ? "You" : "Your opponent"} won!`;
+  }, [isGameEnded, forfeitInfo, socket.id, isDraw, hasWon, isPlayersTurn]);
+
   return (
     <div className={battleScreenClasses["BattleScreen__Contents"]}>
       <GameHeader
@@ -296,19 +316,7 @@ const BattleScreen: React.FC<Props> = ({
           hasWon || (!isGameEnded && isPlayersTurn) ? "positive" : "destructive"
         }
       >
-        <span>
-          {isGameEnded
-            ? forfeitInfo?.forfeit
-              ? forfeitInfo.forfeitedBy === socket.id
-                ? "You forfeited the match!"
-                : "Your opponent forfeited!"
-              : isDraw
-              ? "It's a draw!"
-              : `${hasWon ? "You" : "Your opponent"} won!`
-            : isPlayersTurn
-            ? "Your turn"
-            : "Opponent's turn"}
-        </span>
+        <span>{alertMessage}</span>
         {!isGameEnded && (
           <div className="tw:absolute tw:bottom-0 tw:left-0 tw:right-0">
             <Progress
@@ -332,12 +340,13 @@ const BattleScreen: React.FC<Props> = ({
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" size="sm">
-                  Forfeit
+                  {isSinglePlayer ? "Exit" : "Forfeit"}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  Are you sure you want to forfeit this match?
+                  Are you sure you want to {isSinglePlayer ? "exit" : "forfeit"}{" "}
+                  the {isSinglePlayer ? "game" : "match"}?
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -346,7 +355,7 @@ const BattleScreen: React.FC<Props> = ({
                       socket.emit("forfeit");
                     }}
                   >
-                    Forfeit
+                    {isSinglePlayer ? "Exit" : "Forfeit"}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -365,7 +374,8 @@ const BattleScreen: React.FC<Props> = ({
               onClick={onRematch}
               disabled={rematch}
             >
-              <RefreshCw /> Rematch {rematchTimer > 0 && `(${rematchTimer})`}
+              <RefreshCw /> {isSinglePlayer ? "Replay" : "Rematch"}{" "}
+              {rematchTimer > 0 && `(${rematchTimer})`}
             </Button>
             {opponentRematch && <small>Opponent wants a rematch</small>}
           </div>

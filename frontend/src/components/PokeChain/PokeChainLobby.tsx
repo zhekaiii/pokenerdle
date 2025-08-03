@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/Card";
-import { Plus, Users } from "lucide-react";
+import { Plus, User, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import api from "../../api";
 import { useSocket } from "../../hooks/useSocket";
@@ -15,19 +15,17 @@ import { Input } from "../ui/Input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/Tabs";
 import GameSettings from "./GameSettings";
 import classes from "./PokeChainLobby.module.scss";
+import { usePokeChainContext } from "./context/PokeChainContext";
 
 enum TabValue {
   JOIN = "join",
   CREATE = "create",
 }
 
-type Props = {
-  setIsOpponentConnected: (isConnected: boolean) => void;
-};
-
 const MAX_ROOM_CODE_LENGTH = 8;
-const PokeChainLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
+const PokeChainLobby: React.FC = () => {
   const socket = useSocket();
+  const { setIsOpponentConnected } = usePokeChainContext();
   const [isConnecting, setIsConnecting] = useState(false);
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [showAbility, setShowAbility] = useState(true);
@@ -44,10 +42,17 @@ const PokeChainLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
     };
   }, [socket]);
 
-  const onClickCreate = async () => {
+  const onClickCreate = async (isSinglePlayer?: boolean) => {
     if (isConnecting) return;
     setIsConnecting(true);
-    api.battles.createBattleRoom(socket!, { timer, showAbility });
+    api.battles.createBattleRoom(
+      socket!,
+      {
+        timer,
+        showAbility,
+      },
+      isSinglePlayer
+    );
   };
 
   const onClickJoin = async () => {
@@ -97,12 +102,26 @@ const PokeChainLobby: React.FC<Props> = ({ setIsOpponentConnected }) => {
         setShowAbility={setShowAbility}
       />
       <Button
-        className="tw:mt-2 tw:w-full"
+        className="tw:mt-4 tw:w-full"
         disabled={isConnecting}
-        onClick={onClickCreate}
+        onClick={() => onClickCreate()}
       >
         Create Room
       </Button>
+
+      <div className="tw:mt-4 tw:pt-4 tw:border-t-2">
+        <p className="tw:text-sm tw:text-center tw:mb-3 tw:text-muted-foreground">
+          Or try the single player mode:
+        </p>
+        <Button
+          variant="outline"
+          className="tw:w-full"
+          onClick={() => onClickCreate(true)}
+        >
+          <User className="tw:mr-2" />
+          Single Player Mode
+        </Button>
+      </div>
     </>
   );
 

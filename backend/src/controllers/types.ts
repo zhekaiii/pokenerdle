@@ -22,6 +22,7 @@ export type BattleRoom = {
   points: [number, number];
   streak: [number, number];
   forfeitInfo?: ForfeitInfo;
+  numPlayers: 1 | 2;
 };
 
 export type TurnResult = InvalidAnswer | ValidAnswer;

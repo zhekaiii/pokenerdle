@@ -1,24 +1,29 @@
 import { useToast } from "@/hooks/useToast";
-import { BattleRoomSettings } from "@pokenerdle/shared";
 import { TriangleAlert } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSearchParams } from "react-router";
 import { useSocket } from "../../hooks/useSocket";
 import GameScreen from "./GameScreen";
 import PokeChainLobby from "./PokeChainLobby";
 import WaitingLobby from "./WaitingLobby";
+import {
+  PokeChainContextProvider,
+  usePokeChainContext,
+} from "./context/PokeChainContext";
 
 const PokeChain: React.FC = () => {
   const socket = useSocket();
+  const {
+    roomCode,
+    isSinglePlayer,
+    isOpponentConnected,
+    setSettings,
+    setIsSinglePlayer,
+    setIsOpponentConnected,
+    setRoomCode,
+  } = usePokeChainContext();
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [roomCode, setRoomCode] = useState<string | null>(null);
-
-  const [isOpponentConnected, setIsOpponentConnected] = useState(false);
-  const [settings, setSettings] = useState<BattleRoomSettings>({
-    timer: 20,
-    showAbility: true,
-  });
 
   const exitRoom = () => {
     if (!roomCode) return;
@@ -31,13 +36,11 @@ const PokeChain: React.FC = () => {
   };
 
   useEffect(() => {
-    socket.on(
-      "roomCode",
-      (roomCode, settings = { timer: 20, showAbility: true }) => {
-        setRoomCode(roomCode);
-        setSettings(settings);
-      }
-    );
+    socket.on("roomCode", (roomCode, settings, isSinglePlayer) => {
+      setRoomCode(roomCode);
+      setSettings(settings);
+      setIsSinglePlayer(!!isSinglePlayer);
+    });
     socket.on("disconnect", () => {
       setRoomCode("");
     });
@@ -90,20 +93,20 @@ const PokeChain: React.FC = () => {
   return (
     <>
       {roomCode && socket ? (
-        isOpponentConnected ? (
-          <GameScreen
-            roomCode={roomCode}
-            settings={settings}
-            exitRoom={exitRoom}
-          />
+        isSinglePlayer || isOpponentConnected ? (
+          <GameScreen exitRoom={exitRoom} />
         ) : (
           <WaitingLobby roomCode={roomCode} exitRoom={exitRoom} />
         )
       ) : (
-        <PokeChainLobby setIsOpponentConnected={setIsOpponentConnected} />
+        <PokeChainLobby />
       )}
     </>
   );
 };
 
-export default PokeChain;
+export default () => (
+  <PokeChainContextProvider>
+    <PokeChain />
+  </PokeChainContextProvider>
+);

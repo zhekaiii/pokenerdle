@@ -16,7 +16,6 @@ export default {
     socket.on("roomCode", onRoomReady);
     socket.on("disconnect", () => {
       onRoomReady("");
-      socket.removeAllListeners();
     });
     socket.on("roomError", (error: string) => {
       console.error(error);
@@ -30,9 +29,10 @@ export default {
   },
   createBattleRoom: (
     socket: PokeNerdleSocket,
-    settings: BattleRoomSettings
+    settings: BattleRoomSettings,
+    isSinglePlayer?: boolean
   ) => {
-    socket.emit("create", settings);
+    socket.emit("create", { settings, isSinglePlayer });
   },
   joinRoom: (socket: PokeNerdleSocket, roomCode: string) => {
     socket.emit("join", roomCode);
