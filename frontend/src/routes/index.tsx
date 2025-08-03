@@ -1,8 +1,10 @@
 import Layout from "@/layout/Layout";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router";
-import PokeChain from "../components/PokeChain";
-import HowToPlay from "./HowToPlay";
 import PathFinder from "../components/PathFinder";
+import PokeChain from "../components/PokeChain";
+import HowToPlayPage from "./HowToPlay";
+import PathFinderRules from "./HowToPlay/PathFinderRules";
+import PokeChainRules from "./HowToPlay/PokeChainRules";
 
 const routes: RouteObject[] = [
   {
@@ -23,7 +25,21 @@ const routes: RouteObject[] = [
       },
       {
         path: "how-to-play",
-        element: <HowToPlay />,
+        element: <HowToPlayPage />,
+        children: [
+          {
+            path: "",
+            element: <Navigate to="pokechain" replace />,
+          },
+          {
+            path: "pokechain",
+            element: <PokeChainRules />,
+          },
+          {
+            path: "path-finder",
+            element: <PathFinderRules />,
+          },
+        ],
       },
     ],
   },
