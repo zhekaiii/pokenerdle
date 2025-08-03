@@ -4,14 +4,17 @@
   "version": "0.0.0",
   "main": "src/index.d.ts",
   "types": "src/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "exports": {
     ".": {
       "types": "./src/index.d.ts",
       "default": "./src/index.d.ts"
     },
     "./utils": {
-      "types": "./src/utils/index.ts",
-      "default": "./src/utils/index.ts"
+      "types": "./dist/utils/index.d.ts",
+      "default": "./dist/utils/index.js"
     }
   },
   "license": "MIT",

@@ -13,8 +13,8 @@ export {
 } from "../repositories/pokemon.repository.js";
 
 export const getStarterPokemon = async (): Promise<PokemonWithAbilities> => {
-  const pokemonId =
-    await pokemonRepository.getRandomPokemonIdWithMultipleAbilities();
+  const pokemonId = 69;
+  await pokemonRepository.getRandomPokemonIdWithMultipleAbilities();
   const pokemon = await pokemonRepository.getPokemonWithAbilities(pokemonId);
   if (!pokemon) {
     throw new Error("No starter Pokemon found");

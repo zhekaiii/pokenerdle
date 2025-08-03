@@ -1,5 +1,9 @@
 import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
 import { pokemon_v2_ability, pokemon_v2_pokemon } from "@prisma/client";
+import { readFileSync, writeFileSync } from "fs";
+import { Heap } from "heap-js";
+import { Graph } from "../lib/graph.js";
+import { randomChoice, randomChoiceWeighted } from "../utils/random.js";
 import { isTruthy } from "../utils/types.js";
 
 export const getPokemonNames = async () => {
@@ -92,5 +96,96 @@ export const getPokemonIcons = async (): Promise<Record<number, string>> => {
       pokemon_id,
       JSON.parse(sprites).versions["generation-viii"].icons.front_default,
     ])
+  );
+};
+
+/**
+ * Generates a graph where each Pokemon is a node and there is an edge between
+ * Pokemon that share an ability.
+ *
+ * @returns The generated graph.
+ */
+export const generatePokemonGraph = async () => {
+  const graph = new Graph();
+  const pokemonIds = await prisma.pokemon_v2_pokemon.findMany({
+    select: {
+      id: true,
+      pokemon_v2_pokemonability: {
+        select: {
+          ability_id: true,
+        },
+      },
+    },
+  });
+  const pokemonByAbilities: Record<number, number[]> = {};
+  for (const { id, pokemon_v2_pokemonability } of pokemonIds) {
+    graph.addVertex(id);
+    for (const { ability_id } of pokemon_v2_pokemonability) {
+      if (ability_id) {
+        if (!pokemonByAbilities[ability_id]) {
+          pokemonByAbilities[ability_id] = [];
+        }
+        pokemonByAbilities[ability_id].push(id);
+      }
+    }
+  }
+  for (const pokemonIds of Object.values(pokemonByAbilities)) {
+    for (let i = 0; i < pokemonIds.length - 1; i++) {
+      for (let j = i + 1; j < pokemonIds.length; j++) {
+        graph.addEdge(pokemonIds[i], pokemonIds[j]);
+      }
+    }
+  }
+  writeFileSync("./graph.json", graph.jsonify());
+  return graph;
+};
+
+export const findLargestConnectedComponent = () => {
+  const graph = Graph.loadFromJsonString(readFileSync("./graph.json", "utf-8"));
+  const components = graph.findConnectedComponents();
+  const component = components.reduce((largest, current) =>
+    current.length > largest.length ? current : largest
+  );
+  writeFileSync("./component.json", JSON.stringify(component));
+  return component;
+};
+
+export const getRandomPokemonPath = () => {
+  const MIN_PATH_LENGTH = 3;
+  const component: number[] = JSON.parse(
+    readFileSync("./component.json", "utf-8")
+  );
+  const graph = Graph.loadFromJsonString(readFileSync("./graph.json", "utf-8"));
+  let maxLength = 0;
+  const paths: Record<number, number[][]> = {};
+
+  const startingNode = randomChoice(component);
+
+  const visited = new Set<number>();
+  const queue = new Heap<[node: number, distance: number, path: number[]]>(
+    (a, b) => a[1] - b[1]
+  );
+  queue.init([[startingNode, 0, [startingNode]]]);
+
+  while (queue.length) {
+    const [node, distance, path] = queue.pop()!;
+    if (visited.has(node)) {
+      continue;
+    }
+    if (distance > maxLength) {
+      maxLength = distance;
+      paths[maxLength] = [];
+    }
+    paths[distance].push(path);
+    visited.add(node);
+    for (const neighbor of graph.adjacencyList[node]) {
+      if (!visited.has(neighbor)) {
+        queue.push([neighbor, distance + 1, path.concat(neighbor)]);
+      }
+    }
+  }
+  return randomChoiceWeighted(
+    Object.values(paths),
+    Object.keys(paths).map((length) => (+length - (MIN_PATH_LENGTH - 1)) ** 3)
   );
 };
