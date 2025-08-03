@@ -4,7 +4,8 @@ import LinkChip from "@/components/PokeChain/LinkChip";
 import PokemonCard from "@/components/PokeChain/PokemonCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { PokemonWithAbilities } from "@pokenerdle/shared";
-import React from "react";
+import clsx from "clsx";
+import React, { useState } from "react";
 
 const PIKACHU: PokemonWithAbilities = {
   id: 25,
@@ -103,6 +104,8 @@ const MAREEP: PokemonWithAbilities = {
 };
 
 const HowToPlay: React.FC = () => {
+  const [timer, setTimer] = useState(20);
+  const [showAbility, setShowAbility] = useState(true);
   return (
     <div className="tw:container tw:mx-auto tw:p-6 tw:max-w-4xl">
       <Card className="tw:mb-6">
@@ -128,18 +131,26 @@ const HowToPlay: React.FC = () => {
             </h2>
             <div className="tw:mb-2">
               When you create a new room, you can adjust the following settings
+              using the following menu:
             </div>
-            <div className="tw:my-4">
-              <GameSettings settings={{ showAbility: true, timer: 20 }} />
+            <div className="tw:my-4 tw:flex tw:flex-col tw:items-center">
+              <GameSettings
+                settings={{ showAbility, timer }}
+                setShowAbility={setShowAbility}
+                setTimer={setTimer}
+              />
+              <div className="tw:text-muted-foreground">
+                Try adjusting the settings!
+              </div>
             </div>
             <section>
               <ol className="tw:list-decimal tw:ms-4 tw:space-y-2">
                 <li>
-                  <b>Show Abilities:</b> Toggle this setting to display Pokémon
-                  abilities.
+                  <b>Timer:</b> Set the time limit for each guess.
                 </li>
                 <li>
-                  <b>Timer:</b> Set the time limit for each round in seconds.
+                  <b>Show Abilities:</b> Toggle this setting to display Pokémon
+                  abilities.
                 </li>
               </ol>
             </section>
@@ -156,14 +167,18 @@ const HowToPlay: React.FC = () => {
               </p>
               <p>
                 Each Pokémon named must share at least one ability as the one
-                previously named.
+                previously named. For example, if the first Pokémon named is
+                Pikachu, the second Pokémon must have <b>Static</b> or{" "}
+                <b>Lightning Rod</b> as one of its abilities.
               </p>
-              <div className="tw:flex-col tw:flex tw:mt-2">
-                <PokemonCard pokemon={MAREEP} showAbility></PokemonCard>
+              <div
+                className={clsx("tw:mt-2", battleBoardClasses["BattleBoard"])}
+              >
+                <PokemonCard pokemon={PIKACHU} showAbility={showAbility} />
                 <div className={battleBoardClasses["BattleBoard__Separator"]} />
                 <LinkChip variant="ability" abilityName="Static" count={1} />
                 <div className={battleBoardClasses["BattleBoard__Separator"]} />
-                <PokemonCard pokemon={PIKACHU} showAbility></PokemonCard>
+                <PokemonCard pokemon={MAREEP} showAbility={showAbility} />
               </div>
             </div>
           </section>
@@ -174,9 +189,19 @@ const HowToPlay: React.FC = () => {
             </h2>
             <ol className="tw:list-decimal tw:space-y-2 tw:ms-4">
               <li>
-                Each ability can only be used up to 3 times across all players
-                <div className="tw:flex-col tw:flex tw:mt-2">
-                  <PokemonCard pokemon={MAREEP} showAbility></PokemonCard>
+                Each ability can only be used up to 3 times across all players.{" "}
+                This chip{" "}
+                <LinkChip
+                  className="tw:align-middle"
+                  variant="ability"
+                  abilityName="Static"
+                  count={1}
+                />{" "}
+                tells you how many times an ability has been used.
+                <div
+                  className={clsx("tw:mt-2", battleBoardClasses["BattleBoard"])}
+                >
+                  <PokemonCard pokemon={PIKACHU} showAbility={showAbility} />
                   <div
                     className={battleBoardClasses["BattleBoard__Separator"]}
                   />
@@ -184,7 +209,15 @@ const HowToPlay: React.FC = () => {
                   <div
                     className={battleBoardClasses["BattleBoard__Separator"]}
                   />
-                  <PokemonCard pokemon={PIKACHU} showAbility></PokemonCard>
+                  <PokemonCard pokemon={MAREEP} showAbility={showAbility} />
+                  <div
+                    className={battleBoardClasses["BattleBoard__Separator"]}
+                  />
+                  <LinkChip variant="ability" abilityName="Static" count={2} />
+                  <div
+                    className={battleBoardClasses["BattleBoard__Separator"]}
+                  />
+                  <PokemonCard pokemon={RAICHU} showAbility={showAbility} />
                 </div>
               </li>
               <li>
@@ -194,22 +227,24 @@ const HowToPlay: React.FC = () => {
                   per player.
                 </div>
 
-                <div className="tw:flex-col tw:flex tw:mt-2">
-                  <PokemonCard pokemon={RAICHU} showAbility></PokemonCard>
+                <div
+                  className={clsx("tw:mt-2", battleBoardClasses["BattleBoard"])}
+                >
+                  <PokemonCard pokemon={PIKACHU} showAbility={showAbility} />
                   <div
                     className={battleBoardClasses["BattleBoard__Separator"]}
                   />
+                  <LinkChip variant="evolution" count={1} />
                   <LinkChip variant="ability" abilityName="Static" count={1} />
                   <LinkChip
                     variant="ability"
                     abilityName="Lightning Rod"
                     count={1}
                   />
-                  <LinkChip variant="evolution" count={1} />
                   <div
                     className={battleBoardClasses["BattleBoard__Separator"]}
                   />
-                  <PokemonCard pokemon={PIKACHU} showAbility></PokemonCard>
+                  <PokemonCard pokemon={RAICHU} showAbility={showAbility} />
                 </div>
               </li>
             </ol>
