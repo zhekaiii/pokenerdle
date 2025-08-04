@@ -1,1 +1,1 @@
-npm run start
+pnpm start
