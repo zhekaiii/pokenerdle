@@ -1,6 +1,7 @@
 import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
 import { MAX_ABILITY_LINKS, MAX_EVOLUTION_LINKS } from "../constants/game.js";
 import { TurnResult } from "../controllers/types.js";
+import { prisma } from "../lib/prisma.js";
 import * as pokemonRepository from "../repositories/pokemon.repository.js";
 import { isTruthy } from "../utils/types.js";
 

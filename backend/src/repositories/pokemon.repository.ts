@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync } from "fs";
 import { Heap } from "heap-js";
 import { MIN_PATHFINDER_LENGTH } from "../constants/game.js";
 import { Graph } from "../lib/graph.js";
+import { prisma } from "../lib/prisma.js";
 import { randomChoice, randomChoiceWeighted } from "../utils/random.js";
 import { isTruthy } from "../utils/types.js";
 
