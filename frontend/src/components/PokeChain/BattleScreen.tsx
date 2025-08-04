@@ -104,7 +104,7 @@ const BattleScreen: React.FC<Props> = ({
     () =>
       isGameEnded &&
       (playerPoints > opponentPoints ||
-        (forfeitInfo?.forfeit && forfeitInfo.forfeitedBy !== socket.id)),
+        (forfeitInfo?.forfeit && forfeitInfo.forfeitedBy != socket.id)),
     [isGameEnded, playerPoints, opponentPoints, forfeitInfo, socket]
   );
 
