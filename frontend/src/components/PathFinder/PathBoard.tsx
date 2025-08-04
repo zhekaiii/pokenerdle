@@ -32,7 +32,9 @@ const PathBoard: React.FC<Props> = ({
           <PokemonCard
             pokemon={pokemon}
             showAbility
-            removable={![0, completePath.length - 1].includes(index)}
+            removable={
+              !isPathComplete && ![0, completePath.length - 1].includes(index)
+            }
             onRemove={() => onRemove(index)}
           />
 

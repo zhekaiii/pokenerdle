@@ -164,7 +164,7 @@ export const getRandomPokemonPath = () => {
   const queue = new Heap<[node: number, distance: number, path: number[]]>(
     (a, b) => a[1] - b[1]
   );
-  queue.init([[startingNode, 0, [startingNode]]]);
+  queue.init([[startingNode, 1, [startingNode]]]);
 
   while (queue.length) {
     const [node, distance, path] = queue.pop()!;

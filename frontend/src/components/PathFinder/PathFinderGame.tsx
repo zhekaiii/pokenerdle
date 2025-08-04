@@ -33,7 +33,7 @@ const PathFinderGame: React.FC = () => {
   const fullPath = useMemo(() => {
     if (!challenge) return [];
     return [challenge.startPokemon, ...path, challenge.endPokemon];
-  }, [challenge]);
+  }, [challenge, path]);
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [startTime, setStartTime] = useState(Date.now());
@@ -152,11 +152,12 @@ const PathFinderGame: React.FC = () => {
     }
   };
 
-  const isPathOptimal = challenge && path.length === challenge.pathLength;
+  const isPathOptimal = challenge && fullPath.length === challenge.pathLength;
 
   useEffect(() => {
+    if (challenge) return;
     fetchChallenge();
-  }, []);
+  }, [challenge]);
 
   if (!challenge)
     return (
@@ -202,7 +203,7 @@ const PathFinderGame: React.FC = () => {
 
                 {/* Path Status */}
                 {isPuzzleSolved && (
-                  <div className="tw:text-center tw:mb-2">
+                  <div className="tw:text-center tw:mt-2">
                     <div className="tw:flex tw:items-center tw:justify-center tw:gap-1 tw:text-positive">
                       <CheckCircle size={16} className="tw:me-2" />
                       <span className="tw:text-sm">
@@ -244,7 +245,7 @@ const PathFinderGame: React.FC = () => {
                   setPath([]);
                   setInput("");
                 }}
-                disabled={path.length === 0}
+                disabled={isPuzzleSolved || path.length === 0}
               >
                 Clear Path
               </Button>

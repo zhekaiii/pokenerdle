@@ -2,10 +2,11 @@ import { MIN_PATHFINDER_LENGTH } from "../constants/game.js";
 import * as pokemonRepository from "../repositories/pokemon.repository.js";
 
 export const getRandomPathWithStartEndPokemon = async () => {
-  let selectedPath = pokemonRepository.getRandomPokemonPath();
-  while (selectedPath.length < MIN_PATHFINDER_LENGTH) {
+  let selectedPath;
+  do {
     selectedPath = pokemonRepository.getRandomPokemonPath();
-  }
+  } while (selectedPath.length < MIN_PATHFINDER_LENGTH);
+  console.log(selectedPath);
   const startPokemonId = selectedPath[0];
   const endPokemonId = selectedPath[selectedPath.length - 1];
   const [startPokemon, endPokemon] = await Promise.all([
