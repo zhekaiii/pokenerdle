@@ -8,9 +8,8 @@
     "dev": "concurrently \"pnpm fe-dev\" \"bun run be-dev\"",
     "fe-build": "pnpm --filter @pokenerdle/frontend build",
     "be-build": "pnpm --filter @pokenerdle/backend build",
-    "shared-build": "pnpm --filter @pokenerdle/shared build",
-    "prisma-generate": "cd backend && pnpm prisma generate",
-    "build": "pnpm prisma-generate && pnpm shared-build && pnpm be-build && pnpm fe-build",
+    "shared-build": "cd backend && pnpm prisma generate && pnpm --filter @pokenerdle/shared build",
+    "build": "pnpm shared-build && pnpm be-build && pnpm fe-build",
     "start": "pnpm --filter @pokenerdle/backend start"
   },
   "devDependencies": {
