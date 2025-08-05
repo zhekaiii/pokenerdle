@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/layout/ErrorBoundary";
 import Layout from "@/layout/Layout";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router";
 import PathFinder from "../components/PathFinder";
@@ -10,6 +11,7 @@ const routes: RouteObject[] = [
   {
     path: "/",
     element: <Layout />,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         path: "",
