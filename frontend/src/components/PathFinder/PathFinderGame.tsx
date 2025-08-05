@@ -95,9 +95,11 @@ const PathFinderGame: React.FC = () => {
         description: (
           <div className="tw:flex tw:flex-nowrap">
             <CheckCircle className="tw:mr-2" />
-            <div>Puzzle solved! Well done!</div>
-            <div>Time taken: {Math.floor(timeTaken / 1000)} seconds</div>
-            <div>Number of guesses: {numGuesses}</div>
+            <div>
+              <div>Puzzle solved! Well done!</div>
+              <div>Time taken: {Math.floor(timeTaken / 1000)} seconds</div>
+              <div>Number of guesses: {numGuesses}</div>
+            </div>
           </div>
         ),
       });
