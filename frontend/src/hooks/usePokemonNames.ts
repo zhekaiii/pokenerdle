@@ -9,11 +9,8 @@ export const usePokemonNames = () => {
   >("pokemonNames", []);
 
   useEffect(() => {
-    if (!pokemonNames?.length) api.data.getPokemonNames().then(setPokemonNames);
-    (async () => {
-      const pokemonNames = await api.data.getPokemonNames();
-      setPokemonNames(pokemonNames);
-    })();
+    if (pokemonNames?.length) return;
+    api.data.getPokemonNames().then(setPokemonNames);
   }, []);
 
   return pokemonNames;
