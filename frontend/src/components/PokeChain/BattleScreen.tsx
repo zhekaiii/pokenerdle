@@ -220,36 +220,43 @@ const BattleScreen: React.FC<Props> = ({
         setInput("");
       }
     );
-    socket.on(
-      "wrongAnswer",
-      ({ pokemonId, points }: { pokemonId: number; points: number }) => {
-        toast({
-          variant: "destructive",
-          description: (
-            <>
-              <X className="tw:inline tw:mr-2" />{" "}
-              {isPlayersTurn ? "You" : "Your opponent"} guessed{" "}
-              <span className="tw:capitalize">
-                {pokemonNames?.find((pokemon) => pokemon.id == pokemonId)?.name}
-              </span>
-            </>
-          ),
-        });
-        if (isPlayersTurn) {
-          setPlayerPoints(points);
-          setPlayerStreak(0);
-        } else {
-          setOpponentPoints(points);
-          setOpponentStreak(0);
-        }
-        setIsSubmittingAnswer(false);
-        setInput("");
+    socket.on("wrongAnswer", ({ pokemonId, points, player }) => {
+      const isPlayersTurn = player === socket.id;
+      toast({
+        variant: "destructive",
+        description: (
+          <>
+            <X className="tw:inline tw:mr-2" />{" "}
+            {isPlayersTurn ? "You" : "Your opponent"} guessed{" "}
+            <span className="tw:capitalize">
+              {pokemonNames?.find((pokemon) => pokemon.id == pokemonId)?.name}
+            </span>
+          </>
+        ),
+      });
+      if (isPlayersTurn) {
+        setPlayerPoints(points);
+        setPlayerStreak(0);
+      } else {
+        setOpponentPoints(points);
+        setOpponentStreak(0);
       }
-    );
+      setIsSubmittingAnswer(false);
+      setInput("");
+    });
     socket.on("gameEnd", (data) => {
       setIsGameEnded(true);
-      if (data) {
-        setForfeitInfo(data);
+      if (data.forfeitInfo) {
+        setForfeitInfo(data.forfeitInfo);
+      }
+      if (data.points) {
+        for (const [socketId, points] of Object.entries(data.points)) {
+          if (socketId === socket.id) {
+            setPlayerPoints(points);
+          } else {
+            setOpponentPoints(points);
+          }
+        }
       }
       socket.on("rematch", (socketId, ready, starterPokemon) => {
         setStarterPokemon(starterPokemon);

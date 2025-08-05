@@ -1,5 +1,5 @@
 import { BattleRoomSettings, PokemonNamesResponse } from "@pokenerdle/shared";
-import { MAX_ABILITY_LINKS } from "../constants/game.js";
+import { MAX_ABILITY_LINKS, TIMEOUT_PENALTY } from "../constants/game.js";
 import { BattleRoom, TurnResult } from "../controllers/types.js";
 import { RouteNames } from "../data/const.js";
 import { ErrorRoomNotFound } from "../errors/index.js";
@@ -30,7 +30,21 @@ const nextTurn = (roomId: string, isFirstTurn?: true) => {
     .emit("canMove", nextPlayer, Date.now() + room.settings.timer * 1000);
   room.timer = setTimeout(() => {
     console.log("Timeout");
-    io.of(RouteNames.BATTLES_WS).to(roomId).emit("gameEnd");
+    // Only deduct points if there are more than 1 player
+    if (room.numPlayers > 1) {
+      room.points[room.turn] = Math.max(
+        0,
+        room.points[room.turn] - TIMEOUT_PENALTY
+      );
+    }
+    io.of(RouteNames.BATTLES_WS)
+      .to(roomId)
+      .emit("gameEnd", {
+        points: room.players.reduce((acc, socketId, index) => {
+          acc[socketId] = room.points[index];
+          return acc;
+        }, {} as Record<string, number>),
+      });
   }, room.settings.timer * 1000);
   room.turnStart = Date.now();
 };
@@ -160,6 +174,7 @@ export const validatePokemon = async (
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("wrongAnswer", {
       pokemonId: result.pokemonId,
       points: newPoints,
+      player: socket.id,
     });
     room.streak[room.turn] = 0;
     console.log(room.streak);
@@ -281,5 +296,13 @@ export const onForfeit = (socket: PokeNerdleSocket) => {
   };
 
   // End the game with forfeit flag
-  io.of(RouteNames.BATTLES_WS).to(roomId).emit("gameEnd", room.forfeitInfo);
+  io.of(RouteNames.BATTLES_WS)
+    .to(roomId)
+    .emit("gameEnd", {
+      forfeitInfo: room.forfeitInfo,
+      points: room.players.reduce((acc, socketId, index) => {
+        acc[socketId] = room.points[index];
+        return acc;
+      }, {} as Record<string, number>),
+    });
 };

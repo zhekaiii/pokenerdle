@@ -9,7 +9,11 @@ export interface ServerToClientEvents {
   ) => void;
   roomError: (error: string) => void;
   opponentJoined: () => void;
-  wrongAnswer: (data: { pokemonId: number; points: number }) => void;
+  wrongAnswer: (data: {
+    pokemonId: number;
+    points: number;
+    player: string;
+  }) => void;
   pushPokemon: (
     pokemon: PokemonWithAbilities,
     socketId: string,
@@ -20,7 +24,10 @@ export interface ServerToClientEvents {
   ready: (socketId: string) => void;
   startGame: () => void;
   canMove: (socketId: string, timerEndsAt: number) => void;
-  gameEnd: (data?: ForfeitInfo) => void;
+  gameEnd: (data: {
+    forfeitInfo?: ForfeitInfo;
+    points: Record<string, number>;
+  }) => void;
   rematch: (
     socketId: string,
     readyToStart: boolean,
