@@ -11,13 +11,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import Fuse from "fuse.js";
 import { CheckCircle, RefreshCw, Target, TriangleAlert } from "lucide-react";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import api from "../../api";
 import LoadingDialog from "../recyclables/LoadingDialog";
 import PokemonCombobox from "../recyclables/PokemonCombobox";
@@ -32,7 +26,6 @@ import {
 import PathBoard from "./PathBoard";
 
 const PathFinderGame: React.FC = () => {
-  const isFirstChallenge = useRef(true);
   const [challenge, setChallenge] = useState<PathFinderResponse | null>(null);
   const [input, setInput] = useState("");
   const pokemonNames = usePokemonNames();
@@ -47,15 +40,9 @@ const PathFinderGame: React.FC = () => {
   const queryClient = useQueryClient();
 
   const fetchChallenge = async () => {
-    if (!isFirstChallenge.current) {
-      gtag("event", "pathfinder_new_challenge", {
-        time_taken_ms: Date.now() - startTime,
-      });
-    }
     try {
       setIsLoading(true);
       const data = await api.pathfinder.getChallenge();
-      isFirstChallenge.current = false;
       setChallenge(data);
       setPath([]); // Reset path when getting new challenge
       setInput("");
@@ -173,7 +160,13 @@ const PathFinderGame: React.FC = () => {
   const isPathOptimal = challenge && fullPath.length === challenge.pathLength;
 
   useEffect(() => {
-    if (challenge) return;
+    if (challenge && !isPuzzleSolved) {
+      return () => {
+        gtag("event", "pathfinder_end_attempt", {
+          time_taken_ms: Date.now() - startTime,
+        });
+      };
+    }
     fetchChallenge();
   }, [challenge]);
 
