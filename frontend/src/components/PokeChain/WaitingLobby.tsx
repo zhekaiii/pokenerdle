@@ -47,7 +47,7 @@ const WaitingLobby: React.FC<Props> = ({ roomCode, exitRoom }) => {
         Waiting for opponent to join room {"\n"}
         {roomCode}
       </span>
-      <Button onClick={onClickButton} variant="outline">
+      <Button onClick={onClickButton} variant="secondary">
         {buttonLabel}
       </Button>
     </div>
