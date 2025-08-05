@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "dark" | "light" | "system";
 
+export const THEMES: Theme[] = ["dark", "light", "system"];
+
 type ThemeProviderProps = {
   children: React.ReactNode;
   defaultTheme?: Theme;
@@ -44,15 +46,7 @@ export function ThemeProvider({
   };
 
   const toggleTheme = () => {
-    setTheme(
-      (
-        {
-          dark: "light",
-          light: "system",
-          system: "dark",
-        } as const
-      )[theme]
-    );
+    setTheme(THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length]);
   };
 
   useEffect(() => {

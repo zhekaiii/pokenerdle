@@ -1,0 +1,25 @@
+import LinkButton from "@/components/recyclables/LinkButton";
+import React from "react";
+import { useLocation } from "react-router";
+
+type Props = {
+  className?: string;
+};
+
+const RulePageButton: React.FC<Props> = ({ className }) => {
+  const location = useLocation();
+  const isRulePage = location.pathname.startsWith("/how-to-play");
+  const rulePage = isRulePage
+    ? location.pathname.replace("/how-to-play", "")
+    : location.pathname == "/path-finder"
+    ? "/how-to-play/path-finder"
+    : "/how-to-play/pokechain";
+
+  return (
+    <LinkButton to={rulePage} className={className} activeOverride={isRulePage}>
+      {isRulePage ? "Back to Game" : "How to Play"}
+    </LinkButton>
+  );
+};
+
+export default RulePageButton;

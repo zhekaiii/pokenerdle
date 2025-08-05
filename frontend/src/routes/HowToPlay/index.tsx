@@ -28,7 +28,7 @@ const HowToPlayPage: React.FC = () => {
   )!.value;
 
   return (
-    <div className="tw:max-w-3xl tw:mx-auto">
+    <div className="tw:max-w-3xl tw:mx-auto tw:w-full">
       <Select value={value} onValueChange={navigate}>
         <SelectTrigger className="tw:mb-4 tw:w-[180px]">
           <SelectValue />

@@ -9,10 +9,16 @@
   padding: 10px;
   background-color: var(--card);
   border-bottom-width: 1px;
-  z-index: 999;
-}
+  z-index: 10;
 
-.Logo {
-  height: 100%;
-  cursor: pointer;
+  .Logo {
+    height: 100%;
+    cursor: pointer;
+  }
+
+  &--small {
+    .Logo {
+      height: 80%;
+    }
+  }
 }

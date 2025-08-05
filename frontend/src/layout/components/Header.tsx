@@ -2,36 +2,51 @@ import logo from "@/assets/pokenerdle.png";
 import LinkButton from "@/components/recyclables/LinkButton";
 import { Button } from "@/components/ui/Button";
 import { useTheme } from "@/contexts/ThemeProviderContext";
-import { Monitor, Moon, Sun } from "lucide-react";
+import breakpoints from "@/utils/breakpoints";
+import clsx from "clsx";
+import { Menu, Monitor, Moon, Sun } from "lucide-react";
 import React from "react";
-import { Link, useLocation } from "react-router";
+import { Link } from "react-router";
+import { useMedia } from "react-use";
 import classes from "./index.module.scss";
+import NavDrawer from "./NavDrawer";
+import RulePageButton from "./RulePageButton";
 
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const location = useLocation();
-  const isRulePage = location.pathname.startsWith("/how-to-play");
-  const rulePage = isRulePage
-    ? location.pathname.replace("/how-to-play", "")
-    : location.pathname == "/path-finder"
-    ? "/how-to-play/path-finder"
-    : "/how-to-play/pokechain";
+  const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`);
 
   return (
-    <header className={classes.Header}>
+    <header
+      className={clsx(
+        classes.Header,
+        isSmallerThanSm && classes["Header--small"]
+      )}
+    >
+      {isSmallerThanSm && (
+        <NavDrawer
+          trigger={
+            <Button className="tw:me-2" variant="transparent" size="icon">
+              <Menu className="tw:size-6" />
+            </Button>
+          }
+        />
+      )}
       <Link className="tw:contents" to="/">
         <img className={classes.Logo} src={logo} alt="PokéNerdle Logo" />
       </Link>
       <div className="tw:grow" />
-      <LinkButton to="/pokechain" className="tw:mr-2">
-        PokéChain
-      </LinkButton>
-      <LinkButton to="/path-finder" className="tw:mr-2">
-        Path Finder
-      </LinkButton>
-      <LinkButton to={rulePage} className="tw:mr-2" activeOverride={isRulePage}>
-        {isRulePage ? "Back to Game" : "How to Play"}
-      </LinkButton>
+      {!isSmallerThanSm && (
+        <>
+          <LinkButton className="tw:mr-2" to="/pokechain">
+            PokéChain
+          </LinkButton>
+          <LinkButton className="tw:mr-2" to="/path-finder">
+            Path Finder
+          </LinkButton>
+        </>
+      )}
+      <RulePageButton className="tw:mr-2" />
       <Button variant="outline" onClick={toggleTheme} className="tw:size-10">
         {theme == "light" ? <Sun /> : theme == "dark" ? <Moon /> : <Monitor />}
       </Button>
