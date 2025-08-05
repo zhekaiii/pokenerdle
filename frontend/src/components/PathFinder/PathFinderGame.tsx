@@ -37,10 +37,12 @@ const PathFinderGame: React.FC = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [startTime, setStartTime] = useState(Date.now());
+  const [numGuesses, setNumGuesses] = useState(0);
   const queryClient = useQueryClient();
 
   const fetchChallenge = async () => {
     try {
+      setNumGuesses(0);
       setIsLoading(true);
       const data = await api.pathfinder.getChallenge();
       setChallenge(data);
@@ -93,10 +95,9 @@ const PathFinderGame: React.FC = () => {
         description: (
           <div className="tw:flex tw:flex-nowrap">
             <CheckCircle className="tw:mr-2" />
-            <span>
-              Puzzle solved! Well done! Time taken:{" "}
-              {Math.floor(timeTaken / 1000)} seconds
-            </span>
+            <div>Puzzle solved! Well done!</div>
+            <div>Time taken: {Math.floor(timeTaken / 1000)} seconds</div>
+            <div>Number of guesses: {numGuesses}</div>
           </div>
         ),
       });
@@ -104,9 +105,10 @@ const PathFinderGame: React.FC = () => {
         time_taken_ms: timeTaken,
         path_length: fullPath.length,
         optimal_length: challenge!.pathLength,
+        num_guesses: numGuesses,
       });
     }
-  }, [isPuzzleSolved, startTime]);
+  }, [isPuzzleSolved]);
 
   const suggestions = useMemo(
     () => filteredPokemon.search(input, { limit: 10 }).map(({ item }) => item),
@@ -123,6 +125,7 @@ const PathFinderGame: React.FC = () => {
         queryKey: [QUERY_KEY.POKEMON, pokemon.id],
         queryFn: () => api.data.getPokemonWithAbilities(pokemon.id),
       });
+      setNumGuesses(numGuesses + 1);
       const previousPokemon = path.length
         ? path[path.length - 1]
         : challenge.startPokemon;
