@@ -335,6 +335,7 @@ const BattleScreen: React.FC<Props> = ({
             suggestions={suggestions}
             onSelect={enterPokemon}
             disabled={isSubmittingAnswer || !isPlayersTurn}
+            side="bottom"
           />
           <div className="tw:flex tw:justify-end tw:relative">
             <AlertDialog>

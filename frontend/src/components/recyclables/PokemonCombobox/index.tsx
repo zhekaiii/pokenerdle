@@ -2,6 +2,7 @@ import api from "@/api";
 import iconPlaceholder from "@/assets/question_mark.png";
 import { isCmdOrCtrl } from "@/lib/utils";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
+import { PopoverContentProps } from "@radix-ui/react-popover";
 import React, { useEffect } from "react";
 import { BrowserView, isMacOs } from "react-device-detect";
 import { useLocalStorage } from "react-use";
@@ -14,6 +15,7 @@ type Props = {
   suggestions: PokemonNamesResponse[];
   disabled?: boolean;
   onSelect: (option: PokemonNamesResponse) => void;
+  side?: PopoverContentProps["side"];
 };
 
 const PokemonCombobox: React.FC<Props> = ({
@@ -22,6 +24,7 @@ const PokemonCombobox: React.FC<Props> = ({
   suggestions,
   disabled,
   onSelect,
+  side,
 }) => {
   const [pokemonIcons, setPokemonIcons] = useLocalStorage<
     Record<number, string | null>
@@ -55,6 +58,7 @@ const PokemonCombobox: React.FC<Props> = ({
       }}
     >
       <ComboBox
+        loop
         value={input}
         setValue={setInput}
         options={suggestions}
@@ -62,6 +66,7 @@ const PokemonCombobox: React.FC<Props> = ({
         getOptionLabel={(option) => option.name || option.speciesName}
         disabled={disabled}
         onKeyDown={onKeyDown}
+        popoverSide={side}
         renderItemContent={(option, index) => (
           <div className="tw:flex tw:justify-between tw:items-center tw:w-full">
             <div className="tw:flex tw:items-center">

@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/Popover";
 import { cn } from "@/lib/utils";
+import { PopoverContentProps } from "@radix-ui/react-popover";
 import { Input } from "./Input";
 
 type ComboboxProps<T> = {
@@ -29,6 +30,8 @@ type ComboboxProps<T> = {
     "children" | "onCloseAutoFocus" | "onOpenAutoFocus"
   >;
   onKeyDown?: (e: React.KeyboardEvent) => void;
+  loop?: boolean;
+  popoverSide?: PopoverContentProps["side"];
 };
 
 const ComboBox = (<T,>({
@@ -43,6 +46,8 @@ const ComboBox = (<T,>({
   disabled = false,
   popoverContentProps,
   onKeyDown,
+  loop = false,
+  popoverSide,
 }: ComboboxProps<T>) => {
   const [open, setOpen] = React.useState(false);
 
@@ -85,8 +90,10 @@ const ComboBox = (<T,>({
           popoverContentProps?.className
         )}
         onOpenAutoFocus={(e) => e.preventDefault()}
+        side={popoverSide}
+        avoidCollisions={!popoverSide}
       >
-        <Command ref={commandRef}>
+        <Command ref={commandRef} loop={loop} shouldFilter={false}>
           <CommandList>
             <CommandGroup>
               {options.map((option, index) => (
