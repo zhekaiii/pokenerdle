@@ -3,9 +3,9 @@ import Layout from "@/layout/Layout";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router";
 import PathFinder from "../components/PathFinder";
 import PokeChain from "../components/PokeChain";
-import HowToPlayPage from "./HowToPlay";
-import PathFinderRules from "./HowToPlay/PathFinderRules";
-import PokeChainRules from "./HowToPlay/PokeChainRules";
+import HowToPlayPage from "../pages/HowToPlay";
+import PathFinderRules from "../pages/HowToPlay/PathFinderRules";
+import PokeChainRules from "../pages/HowToPlay/PokeChainRules";
 
 const routes: RouteObject[] = [
   {

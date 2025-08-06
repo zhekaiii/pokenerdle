@@ -10,8 +10,15 @@ import {
 } from "@pokenerdle/shared";
 import { useQueryClient } from "@tanstack/react-query";
 import Fuse from "fuse.js";
-import { CheckCircle, RefreshCw, Target, TriangleAlert } from "lucide-react";
+import {
+  CheckCircle,
+  HelpCircle,
+  RefreshCw,
+  Target,
+  TriangleAlert,
+} from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router";
 import api from "../../api";
 import LoadingDialog from "../recyclables/LoadingDialog";
 import PokemonCombobox from "../recyclables/PokemonCombobox";
@@ -190,7 +197,17 @@ const PathFinderGame: React.FC = () => {
     <>
       <LoadingDialog open={isLoading} />
       <div className="tw:container tw:mx-auto tw:p-4">
-        <Card className="tw:max-w-4xl tw:mx-auto">
+        <Card className="tw:max-w-4xl tw:mx-auto tw:relative">
+          <Button
+            asChild
+            className="tw:absolute tw:top-2 tw:right-2"
+            variant="transparent"
+            size="icon"
+          >
+            <Link to="/how-to-play/path-finder">
+              <HelpCircle className="tw:size-6" />
+            </Link>
+          </Button>
           <CardHeader className="tw:text-center">
             <CardTitle className="tw:text-3xl tw:flex tw:items-center tw:justify-center tw:gap-2">
               <Target className="tw:text-primary" />

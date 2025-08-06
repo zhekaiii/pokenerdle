@@ -6,8 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/Card";
-import { Plus, User, Users } from "lucide-react";
+import { HelpCircle, Plus, User, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router";
 import api from "../../api";
 import { useSocket } from "../../hooks/useSocket";
 import LoadingDialog from "../recyclables/LoadingDialog";
@@ -127,6 +128,16 @@ const PokeChainLobby: React.FC = () => {
 
   return (
     <Card className={classes.PokeChainLobby}>
+      <Button
+        asChild
+        className="tw:absolute tw:top-2 tw:right-2"
+        variant="transparent"
+        size="icon"
+      >
+        <Link to="/how-to-play/pokechain">
+          <HelpCircle className="tw:size-6" />
+        </Link>
+      </Button>
       <CardHeader className="tw:text-center">
         <CardTitle className="tw:text-2xl">PokéChain</CardTitle>
         <CardDescription>
