@@ -1,7 +1,7 @@
 import { PokemonWithAbilities } from "@pokenerdle/shared";
 import { uniqBy } from "es-toolkit";
 
-const MAX_LINKS = 3;
+export const MAX_LINKS = 3;
 
 export const getSharedAbilities = (
   pokemon1: PokemonWithAbilities,

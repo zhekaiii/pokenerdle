@@ -30,7 +30,11 @@ const BattleBoard: React.FC<Props> = ({
     >
       {pokemons.map((pokemon, pkmnIndex) => (
         <React.Fragment key={pokemon.id}>
-          <PokemonCard pokemon={pokemon} showAbility={showAbility} />
+          <PokemonCard
+            pokemon={pokemon}
+            showAbility={showAbility}
+            sharedLinks={sharedLinks}
+          />
           {(!isGameEnded || pkmnIndex < pokemons.length - 1) && (
             <div className={battleBoardClasses["BattleBoard__Separator"]} />
           )}

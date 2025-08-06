@@ -1,5 +1,6 @@
 import questionMarkIcon from "@/assets/question_mark_big.png";
 import { Button } from "@/components/ui/Button";
+import { MAX_LINKS } from "@/utils/pokeChainUtils";
 import { PokemonWithAbilities } from "@pokenerdle/shared";
 import { uniqBy } from "es-toolkit";
 import { X } from "lucide-react";
@@ -15,6 +16,7 @@ type Props = {
   pokemon: PokemonWithAbilities;
   showAbility?: boolean;
   removable?: boolean;
+  sharedLinks?: Record<string, number>;
   onRemove?: () => void;
 };
 
@@ -24,12 +26,21 @@ const PokemonCard: React.FC<Props> = ({
   pokemon,
   showAbility,
   removable,
+  sharedLinks = {},
   onRemove,
 }) => {
   const { current: isShiny } = useRef(Math.random() <= SHINY_PROBABILITY);
   const abilities = useMemo(
     () => uniqBy(pokemon.abilities, (ability) => ability.name),
     [pokemon]
+  );
+  const { current: timesUsed } = useRef(
+    abilities.reduce((acc, ability) => {
+      return {
+        ...acc,
+        [ability.name]: sharedLinks[ability.name] ?? 0,
+      };
+    }, {} as Record<string, number>)
   );
   const pokemonNumber = pokemon.pokemon_species_id;
   const pokemonSpriteUrl = useMemo(() => {
@@ -79,7 +90,13 @@ const PokemonCard: React.FC<Props> = ({
       </span>
       {showAbility &&
         abilities.map((ability) => (
-          <span key={ability.name}>{formatAbilityName(ability.name)}</span>
+          <span key={ability.name}>
+            {formatAbilityName(ability.name)}{" "}
+            <span className="tw:text-muted-foreground tw:text-sm">
+              {timesUsed[ability.name] > 0 &&
+                `${timesUsed[ability.name]}/${MAX_LINKS}`}
+            </span>
+          </span>
         ))}
     </Card>
   );

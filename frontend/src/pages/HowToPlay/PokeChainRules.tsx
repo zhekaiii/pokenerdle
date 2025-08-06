@@ -177,7 +177,13 @@ const PokeChainRules: React.FC = () => {
               <div className={battleBoardClasses["BattleBoard__Separator"]} />
               <LinkChip variant="ability" abilityName="Static" count={1} />
               <div className={battleBoardClasses["BattleBoard__Separator"]} />
-              <PokemonCard pokemon={MAREEP} showAbility={showAbility} />
+              <PokemonCard
+                pokemon={MAREEP}
+                showAbility={showAbility}
+                sharedLinks={{
+                  static: 1,
+                }}
+              />
             </div>
           </div>
         </section>
@@ -204,11 +210,23 @@ const PokeChainRules: React.FC = () => {
                 <div className={battleBoardClasses["BattleBoard__Separator"]} />
                 <LinkChip variant="ability" abilityName="Static" count={1} />
                 <div className={battleBoardClasses["BattleBoard__Separator"]} />
-                <PokemonCard pokemon={MAREEP} showAbility={showAbility} />
+                <PokemonCard
+                  pokemon={MAREEP}
+                  showAbility={showAbility}
+                  sharedLinks={{
+                    static: 1,
+                  }}
+                />
                 <div className={battleBoardClasses["BattleBoard__Separator"]} />
                 <LinkChip variant="ability" abilityName="Static" count={2} />
                 <div className={battleBoardClasses["BattleBoard__Separator"]} />
-                <PokemonCard pokemon={RAICHU} showAbility={showAbility} />
+                <PokemonCard
+                  pokemon={RAICHU}
+                  showAbility={showAbility}
+                  sharedLinks={{
+                    static: 2,
+                  }}
+                />
               </div>
             </li>
             <li>
@@ -231,7 +249,14 @@ const PokeChainRules: React.FC = () => {
                   count={1}
                 />
                 <div className={battleBoardClasses["BattleBoard__Separator"]} />
-                <PokemonCard pokemon={RAICHU} showAbility={showAbility} />
+                <PokemonCard
+                  pokemon={RAICHU}
+                  showAbility={showAbility}
+                  sharedLinks={{
+                    static: 1,
+                    "lightning-rod": 1,
+                  }}
+                />
               </div>
             </li>
           </ol>
