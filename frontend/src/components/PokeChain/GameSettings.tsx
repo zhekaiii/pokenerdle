@@ -35,32 +35,36 @@ const GameSettings: React.FC<Props> = ({
             <Clock4 className="tw:mr-2  tw:inline" />
             Time per turn: {settings.timer} seconds
           </Label>
-          <Slider
-            className="tw:mt-2"
-            value={[settings.timer]}
-            max={MAX_TIMER}
-            min={MIN_TIMER}
-            onValueChange={setTimer && (([value]) => setTimer(value))}
-            disabled={!setTimer}
-            step={5}
-          />
+          {setTimer && (
+            <Slider
+              className="tw:mt-2"
+              value={[settings.timer]}
+              max={MAX_TIMER}
+              min={MIN_TIMER}
+              onValueChange={([value]) => setTimer(value)}
+              step={5}
+            />
+          )}
         </div>
 
         <div className="tw:flex tw:items-center tw:justify-between">
           <Label htmlFor="showAbility">
-            <div>Show Pokémon abilities</div>
+            <div>
+              {!setShowAbility && !settings.showAbility ? "Hide" : "Show"}{" "}
+              Pokémon abilities
+            </div>
             <small className="tw:text-muted-foreground">
-              Show the abilities of Pokémon during the battle
+              Abilities of Pokémon during the battle will be{" "}
+              {settings.showAbility ? "shown" : "hidden"}
             </small>
           </Label>
-          <Switch
-            id="showAbility"
-            checked={settings.showAbility}
-            onCheckedChange={
-              setShowAbility && ((checked) => setShowAbility(checked))
-            }
-            disabled={!setShowAbility}
-          />
+          {setShowAbility && (
+            <Switch
+              id="showAbility"
+              checked={settings.showAbility}
+              onCheckedChange={(checked) => setShowAbility(checked)}
+            />
+          )}
         </div>
       </CardContent>
     </Card>
