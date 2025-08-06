@@ -41,6 +41,7 @@ const PathFinderGame: React.FC = () => {
   const queryClient = useQueryClient();
 
   const fetchChallenge = async () => {
+    gtag("event", "pathfinder_new_challenge");
     try {
       setNumGuesses(0);
       setIsLoading(true);
@@ -168,6 +169,7 @@ const PathFinderGame: React.FC = () => {
     if (challenge && !isPuzzleSolved) {
       return () => {
         gtag("event", "pathfinder_end_attempt", {
+          optimal_length: challenge.pathLength,
           time_taken_ms: Date.now() - startTime,
         });
       };

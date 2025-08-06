@@ -47,9 +47,17 @@ const Header: React.FC = () => {
         </>
       )}
       <RulePageButton className="tw:mr-2" />
-      <Button variant="outline" onClick={toggleTheme} className="tw:size-10">
-        {theme == "light" ? <Sun /> : theme == "dark" ? <Moon /> : <Monitor />}
-      </Button>
+      {!isSmallerThanSm && (
+        <Button variant="outline" onClick={toggleTheme} className="tw:size-10">
+          {theme == "light" ? (
+            <Sun />
+          ) : theme == "dark" ? (
+            <Moon />
+          ) : (
+            <Monitor />
+          )}
+        </Button>
+      )}
     </header>
   );
 };

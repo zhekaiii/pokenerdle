@@ -4,7 +4,8 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/Drawer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { THEMES, useTheme } from "@/contexts/ThemeProviderContext";
 import { X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import RulePageButton from "./RulePageButton";
 
 type Props = {
@@ -14,6 +15,12 @@ type Props = {
 const NavDrawer: React.FC<Props> = ({ trigger }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const location = useLocation();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location]);
+
   return (
     <Drawer direction="left" open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger>{trigger}</DrawerTrigger>
