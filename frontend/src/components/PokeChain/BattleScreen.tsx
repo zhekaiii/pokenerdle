@@ -23,8 +23,10 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/AlertDialog";
 import { Progress } from "../ui/Progress";
@@ -350,8 +352,14 @@ const BattleScreen: React.FC<Props> = ({
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  Are you sure you want to {isSinglePlayer ? "exit" : "forfeit"}{" "}
-                  the {isSinglePlayer ? "game" : "match"}?
+                  <AlertDialogTitle>
+                    Confirm {isSinglePlayer ? "Exit" : "Forfeit"}
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to{" "}
+                    {isSinglePlayer ? "exit" : "forfeit"} the{" "}
+                    {isSinglePlayer ? "game" : "match"}?
+                  </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>

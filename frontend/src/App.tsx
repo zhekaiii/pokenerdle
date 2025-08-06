@@ -6,7 +6,6 @@ import { SocketProvider } from "./contexts/SocketContext";
 import { ThemeProvider } from "./contexts/ThemeProviderContext";
 import { queryClient } from "./lib/query";
 import { router } from "./routes";
-import "./styles/typography.scss";
 
 function App() {
   return (
