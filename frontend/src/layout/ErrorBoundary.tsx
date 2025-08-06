@@ -6,7 +6,7 @@ import PageContainer from "./PageContainer";
 const ErrorBoundary: React.FC = () => {
   return (
     <PageContainer>
-      <h1 className="tw:text-3xl tw:font-bold">Oops! Something went wrong.</h1>
+      <h1 className="tw:font-bold">Oops! Something went wrong.</h1>
       <p className="tw:mb-8">
         We're sorry for the inconvenience. Please try refreshing the page or
         going back to the home page.

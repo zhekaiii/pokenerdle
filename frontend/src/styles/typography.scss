@@ -1,7 +1,7 @@
-@reference "../index.css"
+@reference "../index.css";
 
 h1 {
-  @apply tw:scroll-m-20 tw:text-4xl tw:font-extrabold tw:tracking-tight lg:tw:text-5xl;
+  @apply tw:scroll-m-20 tw:text-4xl tw:font-extrabold tw:tracking-tight tw:lg:text-5xl;
 }
 
 h2 {
