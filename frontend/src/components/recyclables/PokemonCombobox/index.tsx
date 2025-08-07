@@ -72,7 +72,13 @@ const PokemonCombobox: React.FC<Props> = ({
             <div className="tw:flex tw:items-center">
               <img
                 className={classes["PokemonCombobox__PokemonIcon"]}
-                src={pokemonIcons?.[option.id] ?? iconPlaceholder}
+                src={
+                  pokemonIcons?.[option.id] ??
+                  `https://raw.githubusercontent.com/pokedextracker/pokesprite/refs/heads/master/images/${option.id}.png`
+                }
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = iconPlaceholder;
+                }}
               />
               {option.name || option.speciesName}
             </div>
