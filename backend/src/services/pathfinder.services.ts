@@ -6,7 +6,6 @@ export const getRandomPathWithStartEndPokemon = async () => {
   do {
     selectedPath = pokemonRepository.getRandomPokemonPath();
   } while (selectedPath.length < MIN_PATHFINDER_LENGTH);
-  console.log(selectedPath);
   const startPokemonId = selectedPath[0];
   const endPokemonId = selectedPath[selectedPath.length - 1];
   const [startPokemon, endPokemon] = await Promise.all([
