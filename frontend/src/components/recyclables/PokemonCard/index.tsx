@@ -2,6 +2,7 @@ import questionMarkIcon from "@/assets/question_mark_big.png";
 import { Button } from "@/components/ui/Button";
 import { MAX_LINKS } from "@/utils/pokeChainUtils";
 import { PokemonWithAbilities } from "@pokenerdle/shared";
+import clsx from "clsx";
 import { uniqBy } from "es-toolkit";
 import { X } from "lucide-react";
 import React, { useMemo, useRef } from "react";
@@ -89,15 +90,20 @@ const PokemonCard: React.FC<Props> = ({
         #{pokemonNumber} {getFormattedPokemonName(pokemon)} {isShiny && "✨"}
       </span>
       {showAbility &&
-        abilities.map((ability) => (
-          <span key={ability.name}>
-            {formatAbilityName(ability.name)}{" "}
-            <span className="tw:text-muted-foreground tw:text-sm">
-              {timesUsed[ability.name] > 0 &&
-                `${timesUsed[ability.name]}/${MAX_LINKS}`}
+        abilities.map((ability) => {
+          const usage = timesUsed[ability.name];
+          return (
+            <span
+              className={clsx(usage === MAX_LINKS && "tw:line-through")}
+              key={ability.name}
+            >
+              {formatAbilityName(ability.name)}{" "}
+              <span className="tw:text-muted-foreground tw:text-sm">
+                {usage > 0 && `${usage}/${MAX_LINKS}`}
+              </span>
             </span>
-          </span>
-        ))}
+          );
+        })}
     </Card>
   );
 };
