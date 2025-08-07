@@ -17,6 +17,7 @@ import {
   Target,
   TriangleAlert,
 } from "lucide-react";
+import posthog from "posthog-js";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
 import api from "../../api";
@@ -48,7 +49,7 @@ const PathFinderGame: React.FC = () => {
   const queryClient = useQueryClient();
 
   const fetchChallenge = async () => {
-    gtag("event", "pathfinder_new_challenge");
+    posthog.capture("pathfinder_new_challenge");
     try {
       setNumGuesses(0);
       setIsLoading(true);
@@ -111,7 +112,7 @@ const PathFinderGame: React.FC = () => {
           </div>
         ),
       });
-      gtag("event", "pathfinder_solved", {
+      posthog.capture("pathfinder_solved", {
         time_taken_ms: timeTaken,
         path_length: fullPath.length,
         optimal_length: challenge!.pathLength,
@@ -175,7 +176,7 @@ const PathFinderGame: React.FC = () => {
   useEffect(() => {
     if (challenge && !isPuzzleSolved) {
       return () => {
-        gtag("event", "pathfinder_end_attempt", {
+        posthog.capture("pathfinder_end_attempt", {
           optimal_length: challenge.pathLength,
           time_taken_ms: Date.now() - startTime,
         });
