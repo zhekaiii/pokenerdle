@@ -310,6 +310,7 @@ const BattleScreen: React.FC<Props> = ({
         opponentPoints={opponentPoints}
         playerStreak={playerStreak}
         opponentStreak={opponentStreak}
+        chainLength={pokemons.length}
       />
       <div className="tw:mb-4"></div>
       <Alert

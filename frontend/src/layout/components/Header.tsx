@@ -24,13 +24,7 @@ const Header: React.FC = () => {
       )}
     >
       {isSmallerThanSm && (
-        <NavDrawer
-          trigger={
-            <Button className="tw:me-2" variant="transparent" size="icon">
-              <Menu className="tw:size-6" />
-            </Button>
-          }
-        />
+        <NavDrawer trigger={<Menu className="tw:size-6" />} />
       )}
       <Link className="tw:contents" to="/">
         <img className={classes.Logo} src={logo} alt="PokéNerdle Logo" />

@@ -23,7 +23,7 @@ const NavDrawer: React.FC<Props> = ({ trigger }) => {
 
   return (
     <Drawer direction="left" open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerTrigger>{trigger}</DrawerTrigger>
+      <DrawerTrigger className="tw:me-2">{trigger}</DrawerTrigger>
       <DrawerContent>
         <Button
           className="tw:ms-auto"
