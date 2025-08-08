@@ -201,7 +201,7 @@ const PathFinderGame: React.FC = () => {
         <Card className="tw:max-w-4xl tw:mx-auto tw:relative">
           <Button
             asChild
-            className="tw:absolute tw:top-2 tw:right-2"
+            className="tw:absolute tw:top-2 tw:end-2"
             variant="transparent"
             size="icon"
           >

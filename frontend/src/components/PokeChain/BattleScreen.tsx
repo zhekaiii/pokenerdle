@@ -321,7 +321,7 @@ const BattleScreen: React.FC<Props> = ({
       >
         <span>{alertMessage}</span>
         {!isGameEnded && (
-          <div className="tw:absolute tw:bottom-0 tw:left-0 tw:right-0">
+          <div className="tw:absolute tw:bottom-0 tw:start-0 tw:end-0">
             <Progress
               className="tw:h-1"
               color={isPlayersTurn ? "positive" : "destructive"}
@@ -346,7 +346,7 @@ const BattleScreen: React.FC<Props> = ({
                 <Button
                   variant="destructive"
                   size="sm"
-                  className="tw:absolute tw:top-2 tw:right-0"
+                  className="tw:absolute tw:top-2 tw:end-0"
                 >
                   {isSinglePlayer ? "Exit" : "Forfeit"}
                 </Button>
@@ -404,7 +404,7 @@ const BattleScreen: React.FC<Props> = ({
       />
       {socket.id && evolutionLinkCount[socket.id.toString()] && (
         <LinkChip
-          className="tw:fixed tw:left-4 tw:bottom-4 tw:opacity-90"
+          className="tw:fixed tw:start-4 tw:bottom-4 tw:opacity-90"
           variant="evolution"
           count={evolutionLinkCount[socket.id.toString()]}
           reactive
