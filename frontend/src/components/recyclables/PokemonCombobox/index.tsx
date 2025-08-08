@@ -1,11 +1,10 @@
-import api from "@/api";
 import iconPlaceholder from "@/assets/question_mark.png";
+import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { isCmdOrCtrl } from "@/lib/utils";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { PopoverContentProps } from "@radix-ui/react-popover";
 import React, { useEffect } from "react";
 import { BrowserView, isMacOs } from "react-device-detect";
-import { useLocalStorage } from "react-use";
 import { ComboBox } from "../../ui/ComboBox";
 import classes from "./index.module.scss";
 
@@ -26,9 +25,7 @@ const PokemonCombobox: React.FC<Props> = ({
   onSelect,
   side,
 }) => {
-  const [pokemonIcons, setPokemonIcons] = useLocalStorage<
-    Record<number, string | null>
-  >("pokemonIcons", {});
+  const pokemonIcons = usePokemonIcons();
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -40,11 +37,6 @@ const PokemonCombobox: React.FC<Props> = ({
       onSelect(suggestions[index]);
     }
   };
-
-  useEffect(() => {
-    if (!pokemonIcons || !pokemonIcons[1])
-      api.data.getPokemonIcons().then(setPokemonIcons);
-  }, []);
 
   useEffect(() => {
     if (disabled) return;
