@@ -49,6 +49,13 @@ const PathFinderGame: React.FC = () => {
   const queryClient = useQueryClient();
 
   const fetchChallenge = async () => {
+    if (challenge && !isPuzzleSolved) {
+      posthog.capture("pathfinder_end_attempt", {
+        optimal_length: challenge.pathLength,
+        time_taken_ms: Date.now() - startTime,
+        num_guesses: numGuesses,
+      });
+    }
     posthog.capture("pathfinder_new_challenge");
     try {
       setNumGuesses(0);
@@ -174,16 +181,8 @@ const PathFinderGame: React.FC = () => {
   const isPathOptimal = challenge && fullPath.length === challenge.pathLength;
 
   useEffect(() => {
-    if (challenge && !isPuzzleSolved) {
-      return () => {
-        posthog.capture("pathfinder_end_attempt", {
-          optimal_length: challenge.pathLength,
-          time_taken_ms: Date.now() - startTime,
-        });
-      };
-    }
     fetchChallenge();
-  }, [challenge]);
+  }, []);
 
   if (!challenge)
     return (
