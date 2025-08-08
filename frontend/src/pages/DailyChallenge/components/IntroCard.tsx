@@ -15,6 +15,7 @@ import { randomInt } from "es-toolkit";
 import { HelpCircle } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router";
+import { useDailyChallengeData } from "../hooks/useData";
 
 type Props = {
   onStart: () => void;
@@ -30,6 +31,8 @@ const DailyChallengeIntroCard: React.FC<Props> = ({ onStart }) => {
     [pokemonIds]
   );
   const [pokemonSprite, setPokemonSprite] = useState<string | null>(null);
+  const { isNewDay } = useDailyChallengeData();
+
   useTriggerOnce(
     !!pokemonId,
     () => {
@@ -72,7 +75,7 @@ const DailyChallengeIntroCard: React.FC<Props> = ({ onStart }) => {
       </CardContent>
       <CardFooter>
         <Button className="tw:w-full" onClick={onStart}>
-          Start Guessing
+          {isNewDay ? "Start Guessing" : "Continue Guessing"}
         </Button>
       </CardFooter>
     </Card>

@@ -1,0 +1,20 @@
+.DailyChallengeGameplay__Grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 0.25rem;
+
+  .DailyChallengeGameplay__GridItem {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.25rem;
+    height: 4.25rem;
+    background-color: var(--tw-color-secondary);
+    padding: 0.5rem;
+    &--header {
+      height: 2rem;
+      padding: 2px;
+    }
+  }
+}
