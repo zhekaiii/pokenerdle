@@ -16,5 +16,5 @@ export const getPokemonWithAbilities = async (req: Request, res: Response) => {
     return;
   }
   const id = Number(req.query.id);
-  res.json(await dataService.getPokemonWithAbilities(id));
+  res.json(await dataService.getPokemonWithAbilities({ id }));
 };

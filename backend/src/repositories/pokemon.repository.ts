@@ -69,9 +69,31 @@ export const prettifyQueriedPokemon = <
   };
 };
 
-export const getPokemonWithAbilities = async (id: number) => {
+type GetPokemonWithAbilitiesParams =
+  | {
+      id: number;
+    }
+  | {
+      offset: number;
+    };
+
+export const getPokemonWithAbilities = async (
+  props: GetPokemonWithAbilitiesParams
+) => {
+  let pokemonId: number;
+  if ("offset" in props) {
+    const result: [{ id: number }] | [] =
+      await prisma.$queryRaw`SELECT id FROM pokemon_v2_pokemon LIMIT 1 OFFSET ${props.offset}`;
+    if (result.length == 0) {
+      throw new Error("No Pokemon found");
+    }
+    pokemonId = result[0].id;
+  } else {
+    pokemonId = props.id;
+  }
+
   const pokemon = await prisma.pokemon_v2_pokemon.findUnique({
-    where: { id },
+    where: { id: pokemonId },
     include: {
       pokemon_v2_pokemonability: {
         select: { pokemon_v2_ability: true },
@@ -188,4 +210,8 @@ export const getRandomPokemonPath = () => {
       .map(([length]) => (+length - (MIN_PATHFINDER_LENGTH - 1)) ** 2)
       .flat()
   );
+};
+
+export const getNumPokemon = async () => {
+  return await prisma.pokemon_v2_pokemon.count();
 };

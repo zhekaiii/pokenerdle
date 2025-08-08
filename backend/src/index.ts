@@ -8,6 +8,7 @@ import { initializeBattleWsRoutes } from "./handlers/index.js";
 import "./lib/prisma.js";
 import "./routes/battles.routes.js";
 import battlesRouter from "./routes/battles.routes.js";
+import dailyRouter from "./routes/daily.routes.js";
 import dataRouter from "./routes/data.routes.js";
 import pathfinderRouter from "./routes/pathfinder.routes.js";
 import { PokeNerdleServer } from "./utils/types.js";
@@ -45,6 +46,7 @@ initializeBattleWsRoutes(io);
 router.use(dataRouter);
 router.use(battlesRouter);
 router.use(pathfinderRouter);
+router.use(dailyRouter);
 
 app.use("/api", router);
 
