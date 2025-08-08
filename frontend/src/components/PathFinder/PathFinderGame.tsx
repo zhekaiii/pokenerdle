@@ -114,6 +114,7 @@ const PathFinderGame: React.FC = () => {
             <div>
               <div>Puzzle solved! Well done!</div>
               <div>Time taken: {Math.floor(timeTaken / 1000)} seconds</div>
+              <div>Chain length: {fullPath.length}</div>
               <div>Number of guesses: {numGuesses}</div>
             </div>
           </div>
