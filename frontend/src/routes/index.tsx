@@ -1,5 +1,6 @@
 import ErrorBoundary from "@/layout/ErrorBoundary";
 import Layout from "@/layout/Layout";
+import DailyChallengePage from "@/pages/DailyChallenge";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router";
 import PathFinder from "../components/PathFinder";
 import PokeChain from "../components/PokeChain";
@@ -15,7 +16,7 @@ const routes: RouteObject[] = [
     children: [
       {
         path: "",
-        element: <Navigate to="/pokechain" replace />,
+        element: <DailyChallengePage />,
       },
       {
         path: "pokechain",
