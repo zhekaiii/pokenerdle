@@ -3,29 +3,51 @@ import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { isCmdOrCtrl } from "@/lib/utils";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { PopoverContentProps } from "@radix-ui/react-popover";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { BrowserView, isMacOs } from "react-device-detect";
 import { ComboBox } from "../../ui/ComboBox";
 import classes from "./index.module.scss";
 
+import { usePokemonNames } from "@/hooks/usePokemonNames";
+import Fuse from "fuse.js";
 type Props = {
   input: string;
   setInput: (input: string) => void;
-  suggestions: PokemonNamesResponse[];
   disabled?: boolean;
   onSelect: (option: PokemonNamesResponse) => void;
   side?: PopoverContentProps["side"];
+  filter?: (pokemon: PokemonNamesResponse) => boolean;
 };
 
 const PokemonCombobox: React.FC<Props> = ({
   input,
   setInput,
-  suggestions,
   disabled,
   onSelect,
   side,
+  filter,
 }) => {
   const pokemonIcons = usePokemonIcons();
+  const pokemonNames = usePokemonNames();
+  const filteredPokemon = useMemo(
+    () =>
+      new Fuse(
+        pokemonNames
+          ? filter
+            ? pokemonNames.filter(filter)
+            : pokemonNames
+          : [],
+        {
+          keys: ["name", { name: "speciesName", weight: 2 }],
+        }
+      ),
+    [pokemonNames, filter]
+  );
+  const suggestions = useMemo(
+    () => filteredPokemon.search(input, { limit: 10 }).map(({ item }) => item),
+    [filteredPokemon, input]
+  );
+
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const onKeyDown = (e: React.KeyboardEvent) => {

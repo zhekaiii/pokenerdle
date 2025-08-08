@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/Button";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { useToast } from "@/hooks/useToast";
 import { ForfeitInfo, PokemonNamesResponse } from "@pokenerdle/shared";
-import Fuse from "fuse.js";
 import { LogOut, RefreshCw, X } from "lucide-react";
 import React, {
   useCallback,
@@ -83,24 +82,6 @@ const BattleScreen: React.FC<Props> = ({
   const [rematch, setRematch] = useState(false);
   const [opponentRematch, setOpponentRematch] = useState(false);
   const [rematchTimer, setRematchTimer] = useState(0);
-
-  const filteredPokemon = useMemo(
-    () =>
-      new Fuse(
-        pokemonNames?.filter(
-          (pokemon) =>
-            !guesses.includes(pokemon.id) &&
-            !disallowedPokemon.includes(pokemon.id)
-        ) ?? [],
-        { keys: ["name", { name: "speciesName", weight: 2 }] }
-      ),
-    [pokemonNames, disallowedPokemon, guesses]
-  );
-
-  const suggestions = useMemo(
-    () => filteredPokemon.search(input, { limit: 10 }).map(({ item }) => item),
-    [filteredPokemon, input]
-  );
 
   const hasWon = useMemo(
     () =>
@@ -335,7 +316,10 @@ const BattleScreen: React.FC<Props> = ({
           <PokemonCombobox
             input={input}
             setInput={setInput}
-            suggestions={suggestions}
+            filter={(pokemon) =>
+              !guesses.includes(pokemon.id) &&
+              !disallowedPokemon.includes(pokemon.id)
+            }
             onSelect={enterPokemon}
             disabled={isSubmittingAnswer || !isPlayersTurn}
             side="bottom"
