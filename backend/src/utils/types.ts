@@ -23,9 +23,9 @@ export type DailyPokemon = pokemon_v2_pokemon & {
   pokemon_v2_pokemonspecies: pokemon_v2_pokemonspecies | null;
   pokemon_v2_pokemontype: pokemon_v2_pokemontype[];
   pokemon_v2_pokemonform: {
-    pokemon_v2_pokemonformgeneration: {
+    pokemon_v2_versiongroup: {
       generation_id: number | null;
-    }[];
+    } | null;
   }[];
 };
 

@@ -3,7 +3,7 @@ import { pokemon_v2_pokemontype } from "@prisma/client";
 import { alea } from "seedrandom";
 import { getOverallTypeEffectiveness } from "../lib/matchups.js";
 import {
-  getNumPokemon,
+  getNumDefaultPokemon,
   getPokemonForDaily,
 } from "../repositories/pokemon.repository.js";
 import { Comp, DailyPokemon } from "../utils/types.js";
@@ -16,7 +16,7 @@ const getDailyPokemon = async (date: string) => {
     return dailyPokemon;
   }
   const rng = alea(process.env.RANDOM_SEED! + date);
-  const numPokemon = await getNumPokemon();
+  const numPokemon = await getNumDefaultPokemon();
   const randomIndex = Math.floor(rng() * numPokemon);
   const pokemon = await getPokemonForDaily({ offset: randomIndex });
   if (!pokemon) {
@@ -80,7 +80,7 @@ export const verifyGuess = async (
       : 1;
 
   const guessGen =
-    guessPokemon.pokemon_v2_pokemonform[0]?.pokemon_v2_pokemonformgeneration[0]
+    guessPokemon.pokemon_v2_pokemonform[0]?.pokemon_v2_versiongroup
       ?.generation_id;
 
   if (!guessGen) {
@@ -88,7 +88,7 @@ export const verifyGuess = async (
   }
 
   const targetGen =
-    targetPokemon.pokemon_v2_pokemonform[0]?.pokemon_v2_pokemonformgeneration[0]
+    targetPokemon.pokemon_v2_pokemonform[0]?.pokemon_v2_versiongroup
       ?.generation_id;
 
   if (!targetGen) {

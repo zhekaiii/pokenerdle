@@ -190,8 +190,12 @@ export const getRandomPokemonPath = () => {
   );
 };
 
-export const getNumPokemon = async () => {
-  return await prisma.pokemon_v2_pokemon.count();
+export const getNumDefaultPokemon = async () => {
+  return await prisma.pokemon_v2_pokemon.count({
+    where: {
+      is_default: true,
+    },
+  });
 };
 
 type GetPokemonParams =
@@ -208,7 +212,7 @@ export const getPokemonForDaily = async (
   let pokemonId: number;
   if ("offset" in props) {
     const result: [{ id: number }] | [] =
-      await prisma.$queryRaw`SELECT id FROM pokemon_v2_pokemon LIMIT 1 OFFSET ${props.offset}`;
+      await prisma.$queryRaw`SELECT id FROM pokemon_v2_pokemon WHERE is_default LIMIT 1 OFFSET ${props.offset}`;
     if (result.length == 0) {
       throw new Error("No Pokemon found");
     }
@@ -223,12 +227,9 @@ export const getPokemonForDaily = async (
       pokemon_v2_pokemontype: true,
       pokemon_v2_pokemonform: {
         select: {
-          pokemon_v2_pokemonformgeneration: {
+          pokemon_v2_versiongroup: {
             select: {
               generation_id: true,
-            },
-            orderBy: {
-              generation_id: "asc",
             },
           },
         },
