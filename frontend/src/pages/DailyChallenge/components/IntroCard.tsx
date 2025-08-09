@@ -57,7 +57,7 @@ const DailyChallengeIntroCard: React.FC<Props> = ({ onStart }) => {
   );
 
   return (
-    <Card className="tw:relative tw:w-[300px]">
+    <Card className="tw:relative tw:w-[300px] tw:my-auto">
       <CardHeader className="tw:text-center">
         <CardTitle className="tw:text-2xl">PokéNerdle Daily</CardTitle>
         <CardDescription>Daily Challenge #{challengeNumber}</CardDescription>

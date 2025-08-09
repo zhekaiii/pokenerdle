@@ -6,13 +6,12 @@ import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
 import {
-  Ban,
   Check,
   ChevronDown,
   ChevronsDown,
   ChevronsUp,
   ChevronUp,
-  Minus,
+  Equal,
   X,
 } from "lucide-react";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
@@ -21,7 +20,7 @@ import GridItem from "./components/GridItem";
 import PokeInfoPopover from "./components/PokeInfoPopover";
 import styles from "./index.module.scss";
 
-const COLUMNS = [
+export const COLUMNS = [
   { label: "Type 1", key: "type1Correctness" },
   { label: "Type 2", key: "type2Correctness" },
   { label: "Gen", key: "genCorrectness" },
@@ -97,11 +96,9 @@ const DailyChallengeGameplay: React.FC = () => {
                       icon = <ChevronsDown />;
                     } else if (value === 4) {
                       icon = <ChevronsUp />;
-                    } else if (value === 0) {
-                      icon = <Ban />;
                     } else if (value === 1) {
-                      icon = <Minus />;
-                    } else if (!value) {
+                      icon = <Equal />;
+                    } else if (value === false || value === 0) {
                       icon = <X />;
                     } else {
                       icon = <ChevronUp />;

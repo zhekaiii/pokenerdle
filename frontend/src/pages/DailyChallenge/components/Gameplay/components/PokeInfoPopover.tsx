@@ -19,7 +19,7 @@ const COLOR_MAP: Record<string, string> = {
   Green: "tw:bg-green-600",
   Pink: "tw:bg-pink-400",
   Purple: "tw:bg-purple-600",
-  Red: "tw:bg-red",
+  Red: "tw:bg-red-500",
   White: "tw:bg-white",
   Yellow: "tw:bg-yellow-400",
 };
