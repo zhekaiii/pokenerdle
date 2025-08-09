@@ -1,6 +1,6 @@
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { pokemon_v2_pokemontype } from "@prisma/client";
-import { alea } from "seedrandom";
+import seedrandom from "seedrandom";
 import { getOverallTypeEffectiveness } from "../lib/matchups.js";
 import { DailyPokemonToResponse } from "../mappers/daily.js";
 import {
@@ -16,7 +16,7 @@ const getDailyPokemon = async (date: string) => {
   if (dailyPokemon) {
     return dailyPokemon;
   }
-  const rng = alea(process.env.RANDOM_SEED! + date);
+  const rng = seedrandom.alea(process.env.RANDOM_SEED! + date);
   const numPokemon = await getNumDefaultPokemon();
   const randomIndex = Math.floor(rng() * numPokemon);
   const pokemon = await getPokemonForDaily({ offset: randomIndex });
