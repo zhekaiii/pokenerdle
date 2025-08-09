@@ -94,10 +94,20 @@ export const getPokemonWithAbilities = async (id: number) => {
 export const getPokemonIcons = async (): Promise<Record<number, string>> => {
   const sprites = await prisma.pokemon_v2_pokemonsprites.findMany();
   return Object.fromEntries(
-    sprites.map(({ pokemon_id, sprites }) => [
-      pokemon_id,
-      JSON.parse(sprites).versions["generation-viii"].icons.front_default,
-    ])
+    sprites.map(({ pokemon_id, sprites }) => {
+      const parsedSprites = JSON.parse(sprites);
+      if (
+        !parsedSprites.versions["generation-viii"].icons.front_default &&
+        parsedSprites.versions["generation-vii"].icons.front_default
+      ) {
+        console.log(pokemon_id);
+      }
+      return [
+        pokemon_id,
+        parsedSprites.versions["generation-viii"].icons.front_default ??
+          parsedSprites.versions["generation-vii"].icons.front_default,
+      ];
+    })
   );
 };
 
