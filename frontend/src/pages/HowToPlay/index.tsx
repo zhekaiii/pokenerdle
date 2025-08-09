@@ -11,12 +11,16 @@ import { Outlet, useLocation, useNavigate } from "react-router";
 
 const OPTIONS = [
   {
-    label: "Path Finder",
-    value: "/how-to-play/path-finder",
+    label: "Daily Challenge",
+    value: "/how-to-play/daily",
   },
   {
     label: "PokéChain",
     value: "/how-to-play/pokechain",
+  },
+  {
+    label: "Path Finder",
+    value: "/how-to-play/path-finder",
   },
 ];
 

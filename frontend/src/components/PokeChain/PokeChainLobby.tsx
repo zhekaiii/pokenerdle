@@ -130,7 +130,7 @@ const PokeChainLobby: React.FC = () => {
     <Card className={classes.PokeChainLobby}>
       <Button
         asChild
-        className="tw:absolute tw:top-2 tw:right-2"
+        className="tw:absolute tw:top-2 tw:end-2"
         variant="transparent"
         size="icon"
       >

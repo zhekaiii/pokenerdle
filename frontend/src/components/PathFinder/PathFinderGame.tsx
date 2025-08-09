@@ -1,4 +1,3 @@
-import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { useToast } from "@/hooks/useToast";
 import { QUERY_KEY } from "@/lib/query";
 import { getFormattedPokemonName } from "@/utils/formatters";
@@ -9,7 +8,6 @@ import {
   PokemonWithAbilities,
 } from "@pokenerdle/shared";
 import { useQueryClient } from "@tanstack/react-query";
-import Fuse from "fuse.js";
 import {
   CheckCircle,
   HelpCircle,
@@ -36,7 +34,6 @@ import PathBoard from "./PathBoard";
 const PathFinderGame: React.FC = () => {
   const [challenge, setChallenge] = useState<PathFinderResponse | null>(null);
   const [input, setInput] = useState("");
-  const pokemonNames = usePokemonNames();
   const [path, setPath] = useState<PokemonWithAbilities[]>([]);
   const fullPath = useMemo(() => {
     if (!challenge) return [];
@@ -81,21 +78,6 @@ const PathFinderGame: React.FC = () => {
     setPath((prevPath) => prevPath.slice(0, index - 1));
   }, []);
 
-  const filteredPokemon = useMemo(
-    () =>
-      new Fuse(
-        pokemonNames
-          ? pokemonNames.filter(
-              (p) => !fullPath.some((pokemon) => pokemon.id === p.id)
-            )
-          : [],
-        {
-          keys: ["name", { name: "speciesName", weight: 2 }],
-        }
-      ),
-    [pokemonNames, challenge]
-  );
-
   const isPuzzleSolved = useMemo(() => {
     if (!challenge || path.length == 0) return false;
     return (
@@ -128,11 +110,6 @@ const PathFinderGame: React.FC = () => {
       });
     }
   }, [isPuzzleSolved]);
-
-  const suggestions = useMemo(
-    () => filteredPokemon.search(input, { limit: 10 }).map(({ item }) => item),
-    [filteredPokemon, input]
-  );
 
   const handleSelect = async (pokemon: PokemonNamesResponse) => {
     if (!challenge) {
@@ -201,7 +178,7 @@ const PathFinderGame: React.FC = () => {
         <Card className="tw:max-w-4xl tw:mx-auto tw:relative">
           <Button
             asChild
-            className="tw:absolute tw:top-2 tw:right-2"
+            className="tw:absolute tw:top-2 tw:end-2"
             variant="transparent"
             size="icon"
           >
@@ -265,7 +242,9 @@ const PathFinderGame: React.FC = () => {
                   <PokemonCombobox
                     input={input}
                     setInput={setInput}
-                    suggestions={suggestions}
+                    filter={(p) =>
+                      !fullPath.some((pokemon) => pokemon.id === p.id)
+                    }
                     onSelect={handleSelect}
                     disabled={isLoading || isPuzzleSolved}
                   />

@@ -32,12 +32,9 @@ const Header: React.FC = () => {
       <div className="tw:grow" />
       {!isSmallerThanSm && (
         <>
-          <LinkButton className="tw:mr-2" to="/pokechain">
-            PokéChain
-          </LinkButton>
-          <LinkButton className="tw:mr-2" to="/path-finder">
-            Path Finder
-          </LinkButton>
+          {/* <LinkButton to="/daily">Daily</LinkButton> */}
+          <LinkButton to="/pokechain">PokéChain</LinkButton>
+          <LinkButton to="/path-finder">Path Finder</LinkButton>
         </>
       )}
       <RulePageButton className="tw:mr-2" />

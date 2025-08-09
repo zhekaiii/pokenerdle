@@ -109,7 +109,7 @@ const PokeChainRules: React.FC = () => {
   const [timer, setTimer] = useState(20);
   const [showAbility, setShowAbility] = useState(true);
   return (
-    <Card className="tw:mb-6">
+    <Card>
       <CardHeader>
         <CardTitle className="tw:text-3xl tw:text-center">
           Rules of PokéChain

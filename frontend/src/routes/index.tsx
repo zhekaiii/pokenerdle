@@ -1,5 +1,7 @@
 import ErrorBoundary from "@/layout/ErrorBoundary";
 import Layout from "@/layout/Layout";
+import DailyChallengePage from "@/pages/DailyChallenge";
+import DailyChallengeRules from "@/pages/HowToPlay/DailyChallengeRules";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router";
 import PathFinder from "../components/PathFinder";
 import PokeChain from "../components/PokeChain";
@@ -15,7 +17,12 @@ const routes: RouteObject[] = [
     children: [
       {
         path: "",
-        element: <Navigate to="/pokechain" replace />,
+        // element: <Navigate to="daily" />,
+        element: <Navigate to="pokechain" />,
+      },
+      {
+        path: "daily",
+        element: <DailyChallengePage />,
       },
       {
         path: "pokechain",
@@ -31,7 +38,12 @@ const routes: RouteObject[] = [
         children: [
           {
             path: "",
+            // element: <Navigate to="daily" replace />,
             element: <Navigate to="pokechain" replace />,
+          },
+          {
+            path: "daily",
+            element: <DailyChallengeRules />,
           },
           {
             path: "pokechain",

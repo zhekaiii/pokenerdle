@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import express from "express";
+import express, { ErrorRequestHandler } from "express";
 import { createServer } from "http";
 import path, { dirname } from "path";
 import { Server } from "socket.io";
@@ -8,6 +8,7 @@ import { initializeBattleWsRoutes } from "./handlers/index.js";
 import "./lib/prisma.js";
 import "./routes/battles.routes.js";
 import battlesRouter from "./routes/battles.routes.js";
+import dailyRouter from "./routes/daily.routes.js";
 import dataRouter from "./routes/data.routes.js";
 import pathfinderRouter from "./routes/pathfinder.routes.js";
 import { PokeNerdleServer } from "./utils/types.js";
@@ -30,6 +31,11 @@ io.on("connection", (socket) => {
 const port = process.env.PORT || 3456;
 const router = express.Router();
 
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  res.status(500);
+  res.json({ error: err.toString() });
+};
+
 // CORS
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -45,14 +51,16 @@ initializeBattleWsRoutes(io);
 router.use(dataRouter);
 router.use(battlesRouter);
 router.use(pathfinderRouter);
+router.use(dailyRouter);
 
 app.use("/api", router);
+app.use(errorHandler);
 
 // Static files
 app.use(express.static(path.join(__dirname, "..", "..", "frontend", "dist")));
 
 // Fallback route for SPA
-app.get("*", (req, res) => {
+app.get(/(.*)/, (req, res) => {
   res.sendFile(
     path.join(__dirname, "..", "..", "frontend", "dist", "index.html")
   );

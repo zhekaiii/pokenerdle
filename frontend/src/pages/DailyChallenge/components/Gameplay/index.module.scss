@@ -1,0 +1,59 @@
+@reference "../../../../index.css";
+
+.DailyChallengeGameplay__Grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 0.375rem;
+  margin-bottom: 0.375rem;
+  align-items: center;
+  position: relative;
+
+  > img {
+    position: absolute;
+    transform: translateX(100%);
+    inset-inline-end: 0;
+    @media (max-width: 640px) {
+      inset-inline-end: 1rem;
+      transform: translateX(80%);
+    }
+  }
+
+  @media (max-width: 640px) {
+    grid-gap: 0.25rem;
+    padding-inline-end: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &--header {
+    > .DailyChallengeGameplay__GridItem {
+      height: 2rem;
+      padding: 2px;
+      @media (max-width: 640px) {
+        font-size: 0.75rem;
+      }
+    }
+  }
+
+  .DailyChallengeGameplay__GridItem {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 4.25rem;
+    max-height: 4.25rem;
+    aspect-ratio: 1/1;
+    width: 100%;
+
+    @apply tw:bg-secondary;
+    border-width: 2px;
+    border-radius: 2px;
+
+    &--correct {
+      @apply tw:bg-positive;
+    }
+
+    &--incorrect {
+      @apply tw:bg-amber-500;
+    }
+  }
+}

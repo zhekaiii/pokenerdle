@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/Button";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { useToast } from "@/hooks/useToast";
 import { ForfeitInfo, PokemonNamesResponse } from "@pokenerdle/shared";
-import Fuse from "fuse.js";
 import { LogOut, RefreshCw, X } from "lucide-react";
 import React, {
   useCallback,
@@ -83,24 +82,6 @@ const BattleScreen: React.FC<Props> = ({
   const [rematch, setRematch] = useState(false);
   const [opponentRematch, setOpponentRematch] = useState(false);
   const [rematchTimer, setRematchTimer] = useState(0);
-
-  const filteredPokemon = useMemo(
-    () =>
-      new Fuse(
-        pokemonNames?.filter(
-          (pokemon) =>
-            !guesses.includes(pokemon.id) &&
-            !disallowedPokemon.includes(pokemon.id)
-        ) ?? [],
-        { keys: ["name", { name: "speciesName", weight: 2 }] }
-      ),
-    [pokemonNames, disallowedPokemon, guesses]
-  );
-
-  const suggestions = useMemo(
-    () => filteredPokemon.search(input, { limit: 10 }).map(({ item }) => item),
-    [filteredPokemon, input]
-  );
 
   const hasWon = useMemo(
     () =>
@@ -321,7 +302,7 @@ const BattleScreen: React.FC<Props> = ({
       >
         <span>{alertMessage}</span>
         {!isGameEnded && (
-          <div className="tw:absolute tw:bottom-0 tw:left-0 tw:right-0">
+          <div className="tw:absolute tw:bottom-0 tw:start-0 tw:end-0">
             <Progress
               className="tw:h-1"
               color={isPlayersTurn ? "positive" : "destructive"}
@@ -335,7 +316,10 @@ const BattleScreen: React.FC<Props> = ({
           <PokemonCombobox
             input={input}
             setInput={setInput}
-            suggestions={suggestions}
+            filter={(pokemon) =>
+              !guesses.includes(pokemon.id) &&
+              !disallowedPokemon.includes(pokemon.id)
+            }
             onSelect={enterPokemon}
             disabled={isSubmittingAnswer || !isPlayersTurn}
             side="bottom"
@@ -346,7 +330,7 @@ const BattleScreen: React.FC<Props> = ({
                 <Button
                   variant="destructive"
                   size="sm"
-                  className="tw:absolute tw:top-2 tw:right-0"
+                  className="tw:absolute tw:top-2 tw:end-0"
                 >
                   {isSinglePlayer ? "Exit" : "Forfeit"}
                 </Button>
@@ -404,7 +388,7 @@ const BattleScreen: React.FC<Props> = ({
       />
       {socket.id && evolutionLinkCount[socket.id.toString()] && (
         <LinkChip
-          className="tw:fixed tw:left-4 tw:bottom-4 tw:opacity-90"
+          className="tw:fixed tw:start-4 tw:bottom-4 tw:opacity-90"
           variant="evolution"
           count={evolutionLinkCount[socket.id.toString()]}
           reactive

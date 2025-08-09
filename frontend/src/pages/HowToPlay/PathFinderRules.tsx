@@ -106,7 +106,7 @@ const SUNFLORA: PokemonWithAbilities = {
 
 const PathFinderRules: React.FC = () => {
   return (
-    <Card className="tw:mb-6">
+    <Card>
       <CardHeader>
         <CardTitle className="tw:text-3xl tw:text-center">
           Rules of Path Finder
