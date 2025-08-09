@@ -1,13 +1,12 @@
 import { useLocalStorage } from "react-use";
 
-import { DAILY_CHALLENGE_KEY } from "../constants";
+import { DAILY_CHALLENGE_GUESS_LIMIT, DAILY_CHALLENGE_KEY } from "../constants";
 
 import api from "@/api";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { format, formatDate } from "date-fns";
-import { produce } from "immer";
-import { useCallback, useState } from "react";
+import { useMemo, useState } from "react";
 
 export type DailyChallenge = {
   date: string;
@@ -22,6 +21,18 @@ export const useDailyChallengeData = () => {
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const hasSolved = useMemo(
+    () =>
+      Boolean(
+        guesses &&
+          guesses.guesses.length &&
+          guesses.guesses[guesses.guesses.length - 1].correct
+      ),
+    [guesses]
+  );
+  const hasReachedLimit = Boolean(
+    guesses && guesses.guesses.length === DAILY_CHALLENGE_GUESS_LIMIT
+  );
 
   const isNewDay = guesses?.date !== format(now, "yyyy-MM-dd");
 
@@ -32,35 +43,37 @@ export const useDailyChallengeData = () => {
     });
   }
 
-  const onGuess = useCallback(async ({ id }: PokemonNamesResponse) => {
+  const onGuess = async ({ id }: PokemonNamesResponse) => {
     try {
       setIsLoading(true);
       const response = await api.daily.verifyGuess(id);
-      setGuesses((prev) =>
-        produce(prev, (draft) => {
-          const guess = {
-            ...response,
-            pokemonId: id,
-          };
-          if (draft) {
-            draft.guesses.push(guess);
-            return;
-          }
+      setGuesses(() => {
+        const guess = {
+          ...response,
+          pokemonId: id,
+        };
+        if (guesses) {
           return {
-            date: formatDate(new Date(), "yyyy-MM-dd"),
-            guesses: [guess],
+            ...guesses,
+            guesses: guesses.guesses.concat(guess),
           };
-        })
-      );
+        }
+        return {
+          date: formatDate(new Date(), "yyyy-MM-dd"),
+          guesses: [guess],
+        };
+      });
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  };
 
   return {
     isNewDay,
     guesses,
     onGuess,
     isLoading,
+    hasSolved,
+    hasReachedLimit,
   };
 };

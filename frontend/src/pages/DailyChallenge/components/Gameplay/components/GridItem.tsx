@@ -1,13 +1,17 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 import styles from "../index.module.scss";
 
 type Props = {
   children: React.ReactNode;
+  className?: string;
 };
 
-const GridItem: React.FC<Props> = ({ children }) => {
+const GridItem: React.FC<Props> = ({ className, children }) => {
   return (
-    <div className={styles["DailyChallengeGameplay__GridItem"]}>{children}</div>
+    <div className={cn(styles["DailyChallengeGameplay__GridItem"], className)}>
+      {children}
+    </div>
   );
 };
 
