@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import express from "express";
+import express, { ErrorRequestHandler } from "express";
 import { createServer } from "http";
 import path, { dirname } from "path";
 import { Server } from "socket.io";
@@ -31,6 +31,11 @@ io.on("connection", (socket) => {
 const port = process.env.PORT || 3456;
 const router = express.Router();
 
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  res.status(500);
+  res.json({ error: err.toString() });
+};
+
 // CORS
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -49,12 +54,13 @@ router.use(pathfinderRouter);
 router.use(dailyRouter);
 
 app.use("/api", router);
+app.use(errorHandler);
 
 // Static files
 app.use(express.static(path.join(__dirname, "..", "..", "frontend", "dist")));
 
 // Fallback route for SPA
-app.get("*", (req, res) => {
+app.get(/(.*)/, (req, res) => {
   res.sendFile(
     path.join(__dirname, "..", "..", "frontend", "dist", "index.html")
   );
