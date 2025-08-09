@@ -21,6 +21,16 @@
       "default": "./dist/daily/index.js"
     }
   },
+  "typesVersions": {
+    "*": {
+      "daily": [
+        "./dist/daily/index.d.ts"
+      ],
+      "utils": [
+        "./dist/utils/index.d.ts"
+      ]
+    }
+  },
   "license": "MIT",
   "devDependencies": {
     "@prisma/client": "^6.13.0",
