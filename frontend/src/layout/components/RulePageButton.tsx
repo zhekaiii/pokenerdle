@@ -11,9 +11,7 @@ const RulePageButton: React.FC<Props> = ({ className }) => {
   const isRulePage = location.pathname.startsWith("/how-to-play");
   const rulePage = isRulePage
     ? location.pathname.replace("/how-to-play", "")
-    : location.pathname == "/path-finder"
-    ? "/how-to-play/path-finder"
-    : "/how-to-play/pokechain";
+    : "/how-to-play" + location.pathname;
 
   return (
     <LinkButton to={rulePage} className={className} activeOverride={isRulePage}>
