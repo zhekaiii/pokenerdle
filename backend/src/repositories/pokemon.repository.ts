@@ -232,7 +232,11 @@ export const getPokemonForDaily = async (
     },
     include: {
       pokemon_v2_pokemonspecies: true,
-      pokemon_v2_pokemontype: true,
+      pokemon_v2_pokemontype: {
+        orderBy: {
+          slot: "asc",
+        },
+      },
       pokemon_v2_pokemonform: {
         select: {
           pokemon_v2_versiongroup: {

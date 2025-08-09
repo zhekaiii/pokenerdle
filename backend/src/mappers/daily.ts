@@ -1,7 +1,7 @@
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { LanguageId } from "../lib/constants.js";
 import { prisma } from "../lib/prisma.js";
-import { DailyPokemon, isTruthy } from "../utils/types.js";
+import { DailyPokemon } from "../utils/types.js";
 
 export const DailyPokemonToResponse = async (
   pokemon: DailyPokemon
@@ -14,20 +14,36 @@ export const DailyPokemonToResponse = async (
       },
     });
 
-  const types = await prisma.pokemon_v2_typename.findMany({
+  const nestedTypes = await prisma.pokemon_v2_pokemontype.findMany({
     where: {
-      type_id: {
-        in: pokemon.pokemon_v2_pokemontype
-          .map(({ type_id }) => type_id)
-          .filter(isTruthy),
+      pokemon_id: pokemon.id,
+    },
+    select: {
+      pokemon_v2_type: {
+        select: {
+          pokemon_v2_typename: {
+            select: {
+              name: true,
+            },
+            where: {
+              language_id: LanguageId.English,
+            },
+          },
+        },
       },
-      language_id: LanguageId.English,
+    },
+    orderBy: {
+      slot: "asc",
     },
   });
+  const types = nestedTypes.map(
+    ({ pokemon_v2_type }) =>
+      pokemon_v2_type?.pokemon_v2_typename[0].name ?? null
+  );
 
   return {
-    type1: types[0].name,
-    type2: types[1]?.name,
+    type1: types[0]!,
+    type2: types[1],
     color,
     height: pokemon.height,
     generationId:
