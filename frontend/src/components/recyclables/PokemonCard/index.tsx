@@ -10,7 +10,7 @@ import {
   formatAbilityName,
   getFormattedPokemonName,
 } from "../../../utils/formatters";
-import { Card } from "../../ui/Card";
+import { Card, CardContent } from "../../ui/Card";
 import classes from "./index.module.scss";
 
 type Props = {
@@ -71,39 +71,41 @@ const PokemonCard: React.FC<Props> = ({
   }, [isShiny, pokemon]);
   return (
     <Card className={classes["PokemonCard"]}>
-      {removable && (
-        <Button
-          variant="transparent"
-          className={classes["PokemonCard__RemoveButton"]}
-          onClick={onRemove}
-        >
-          <X />
-        </Button>
-      )}
-      <img
-        className={classes["PokemonCard__Sprite"]}
-        src={pokemonSpriteUrl}
-        alt={pokemon.name}
-      />
+      <CardContent className={classes["PokemonCard__Content"]}>
+        {removable && (
+          <Button
+            variant="transparent"
+            className={classes["PokemonCard__RemoveButton"]}
+            onClick={onRemove}
+          >
+            <X />
+          </Button>
+        )}
+        <img
+          className={classes["PokemonCard__Sprite"]}
+          src={pokemonSpriteUrl}
+          alt={pokemon.name}
+        />
 
-      <span className={classes["PokemonCard__PkmnName"]}>
-        #{pokemonNumber} {getFormattedPokemonName(pokemon)} {isShiny && "✨"}
-      </span>
-      {showAbility &&
-        abilities.map((ability) => {
-          const usage = timesUsed[ability.name];
-          return (
-            <span
-              className={clsx(usage === MAX_LINKS && "tw:line-through")}
-              key={ability.name}
-            >
-              {formatAbilityName(ability.name)}{" "}
-              <span className="tw:text-muted-foreground tw:text-sm">
-                {usage > 0 && `${usage}/${MAX_LINKS}`}
+        <span className={classes["PokemonCard__PkmnName"]}>
+          #{pokemonNumber} {getFormattedPokemonName(pokemon)} {isShiny && "✨"}
+        </span>
+        {showAbility &&
+          abilities.map((ability) => {
+            const usage = timesUsed[ability.name];
+            return (
+              <span
+                className={clsx(usage === MAX_LINKS && "tw:line-through")}
+                key={ability.name}
+              >
+                {formatAbilityName(ability.name)}{" "}
+                <span className="tw:text-muted-foreground tw:text-sm">
+                  {usage > 0 && `${usage}/${MAX_LINKS}`}
+                </span>
               </span>
-            </span>
-          );
-        })}
+            );
+          })}
+      </CardContent>
     </Card>
   );
 };
