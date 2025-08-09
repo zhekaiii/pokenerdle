@@ -3,6 +3,7 @@ import { pokemon_v2_ability, pokemon_v2_pokemon } from "@prisma/client";
 import { readFileSync, writeFileSync } from "fs";
 import { Heap } from "heap-js";
 import { MIN_PATHFINDER_LENGTH } from "../constants/game.js";
+import { LanguageId } from "../lib/constants.js";
 import { Graph } from "../lib/graph.js";
 import { prisma } from "../lib/prisma.js";
 import { randomChoice, randomChoiceWeighted } from "../utils/random.js";
@@ -22,11 +23,11 @@ export const getPokemonNames = async () => {
       pokemon_v2_pokemonform f
       INNER JOIN pokemon_v2_pokemon p ON p.id = f.pokemon_id
       LEFT JOIN pokemon_v2_pokemonformname fn ON f.id = fn.pokemon_form_id
-      AND fn.language_id = 9
+      AND fn.language_id = ${LanguageId.English}
       INNER JOIN pokemon_v2_pokemonspecies ps ON ps.id = p.pokemon_species_id
       INNER JOIN pokemon_v2_pokemonspeciesname psn ON psn.pokemon_species_id = ps.id
     WHERE
-      psn.language_id = 9
+      psn.language_id = ${LanguageId.English}
     GROUP BY
       p.id;
   `;

@@ -9,8 +9,18 @@ export type DailyChallengeGuessRequest = z.infer<
   typeof DailyChallengeGuessRequestSchema
 >;
 
-export type DailyChallengeGuessResponse =
-  | { correct: true }
+export type DailyChallengeGuessResponse = {
+  pokemon: {
+    type1: string;
+    type2: string | null;
+    height: number | null;
+    generationId: number;
+    color: string;
+  };
+} & (
+  | {
+      correct: true;
+    }
   | {
       correct?: never;
       type1Correctness: "=" | number;
@@ -18,4 +28,5 @@ export type DailyChallengeGuessResponse =
       genCorrectness: "=" | "<" | ">";
       heightCorrectness: "=" | "<" | ">";
       colorCorrectness: boolean;
-    };
+    }
+);

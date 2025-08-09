@@ -2,6 +2,7 @@ import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { pokemon_v2_pokemontype } from "@prisma/client";
 import { alea } from "seedrandom";
 import { getOverallTypeEffectiveness } from "../lib/matchups.js";
+import { DailyPokemonToResponse } from "../mappers/daily.js";
 import {
   getNumDefaultPokemon,
   getPokemonForDaily,
@@ -40,7 +41,10 @@ export const verifyGuess = async (
   }
 
   if (targetPokemon.id === guessPokemon.id) {
-    return { correct: true };
+    return {
+      correct: true,
+      pokemon: await DailyPokemonToResponse(targetPokemon),
+    };
   }
 
   // For this function, we want to check the following:
@@ -115,5 +119,6 @@ export const verifyGuess = async (
     genCorrectness,
     heightCorrectness,
     colorCorrectness,
+    pokemon: await DailyPokemonToResponse(guessPokemon),
   };
 };
