@@ -12,16 +12,12 @@ import {
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { useTriggerOnce } from "@/hooks/useTriggerOnce";
 import clsx from "clsx";
-import { differenceInCalendarDays } from "date-fns";
 import { randomInt } from "es-toolkit";
 import { HelpCircle } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router";
+import { challengeNumber } from "../constants";
 import { useDailyChallengeData } from "../hooks/useData";
-
-const DAY_1 = new Date(2025, 7, 9);
-console.log(DAY_1);
-const challengeNumber = differenceInCalendarDays(new Date(), DAY_1) + 1;
 
 type Props = {
   onStart: () => void;

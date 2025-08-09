@@ -3,9 +3,11 @@ import { useLocalStorage } from "react-use";
 import { DAILY_CHALLENGE_GUESS_LIMIT, DAILY_CHALLENGE_KEY } from "../constants";
 
 import api from "@/api";
+import { useToast } from "@/hooks/useToast";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { format, formatDate } from "date-fns";
+import { CheckCircle } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export type DailyChallenge = {
@@ -30,6 +32,7 @@ export const useDailyChallengeData = () => {
       ),
     [guesses]
   );
+  const { toast } = useToast();
   const hasReachedLimit = Boolean(
     guesses && guesses.guesses.length === DAILY_CHALLENGE_GUESS_LIMIT
   );
@@ -44,6 +47,7 @@ export const useDailyChallengeData = () => {
   }
 
   const onGuess = async ({ id }: PokemonNamesResponse) => {
+    const numGuesses = guesses?.guesses.length ?? 0;
     try {
       setIsLoading(true);
       const response = await api.daily.verifyGuess(id);
@@ -63,6 +67,26 @@ export const useDailyChallengeData = () => {
           guesses: [guess],
         };
       });
+      if (response.correct) {
+        toast({
+          variant: "positive",
+          description: (
+            <div className="tw:flex tw:flex-nowrap">
+              <CheckCircle className="tw:mr-2" />
+              <div>You got it! Well done!</div>
+            </div>
+          ),
+        });
+      } else if (numGuesses + 1 === DAILY_CHALLENGE_GUESS_LIMIT) {
+        toast({
+          variant: "destructive",
+          description: (
+            <div className="tw:flex tw:flex-nowrap">
+              <div>Game Over! Better luck tomorrow!</div>
+            </div>
+          ),
+        });
+      }
     } finally {
       setIsLoading(false);
     }

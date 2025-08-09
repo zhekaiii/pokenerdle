@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
+import { Button } from "@/components/ui/Button";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
@@ -12,10 +13,12 @@ import {
   ChevronsUp,
   ChevronUp,
   Equal,
+  Share2,
   X,
 } from "lucide-react";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
+import { shareResults } from "../../utils/share";
 import GridItem from "./components/GridItem";
 import PokeInfoPopover from "./components/PokeInfoPopover";
 import styles from "./index.module.scss";
@@ -120,9 +123,9 @@ const DailyChallengeGameplay: React.FC = () => {
         );
       })}
       <div className="tw:mt-auto">
-        {!hasReachedLimit && (
+        {!hasReachedLimit && !hasSolved ? (
           <PokemonCombobox
-            disabled={hasSolved || isLoading}
+            disabled={isLoading}
             input={input}
             setInput={setInput}
             onSelect={onSelectPokemon}
@@ -135,6 +138,13 @@ const DailyChallengeGameplay: React.FC = () => {
                 : undefined
             }
           />
+        ) : (
+          <Button
+            className="tw:w-full"
+            onClick={() => shareResults(guesses?.guesses ?? [])}
+          >
+            Share <Share2 />
+          </Button>
         )}
       </div>
     </div>

@@ -222,7 +222,14 @@ export const getPokemonForDaily = async (
     pokemonId = props.id;
   }
   return await prisma.pokemon_v2_pokemon.findUnique({
-    where: { id: pokemonId, is_default: true },
+    where: {
+      id: pokemonId,
+      ...("id" in props
+        ? {}
+        : {
+            is_default: true,
+          }),
+    },
     include: {
       pokemon_v2_pokemonspecies: true,
       pokemon_v2_pokemontype: true,
