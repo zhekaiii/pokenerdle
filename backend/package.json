@@ -15,12 +15,12 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^6.13.0",
-    "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "heap-js": "^2.6.0",
     "seedrandom": "^3.0.5",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "zod": "^4.0.16"
   },
   "devDependencies": {
     "@pokenerdle/shared": "workspace:*",

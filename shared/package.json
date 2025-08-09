@@ -15,6 +15,10 @@
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "default": "./dist/utils/index.js"
+    },
+    "./daily": {
+      "types": "./dist/daily/index.d.ts",
+      "default": "./dist/daily/index.js"
     }
   },
   "license": "MIT",
@@ -22,5 +26,8 @@
     "@prisma/client": "^6.13.0",
     "@types/node": "^22.1.0",
     "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "zod": "^4.0.16"
   }
 }

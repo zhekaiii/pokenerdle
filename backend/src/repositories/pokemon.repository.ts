@@ -6,7 +6,7 @@ import { MIN_PATHFINDER_LENGTH } from "../constants/game.js";
 import { Graph } from "../lib/graph.js";
 import { prisma } from "../lib/prisma.js";
 import { randomChoice, randomChoiceWeighted } from "../utils/random.js";
-import { isTruthy } from "../utils/types.js";
+import { DailyPokemon, isTruthy } from "../utils/types.js";
 
 export const getPokemonNames = async () => {
   const pokemonDetails: PokemonNamesResponse[] = await prisma.$queryRaw`
@@ -69,31 +69,9 @@ export const prettifyQueriedPokemon = <
   };
 };
 
-type GetPokemonWithAbilitiesParams =
-  | {
-      id: number;
-    }
-  | {
-      offset: number;
-    };
-
-export const getPokemonWithAbilities = async (
-  props: GetPokemonWithAbilitiesParams
-) => {
-  let pokemonId: number;
-  if ("offset" in props) {
-    const result: [{ id: number }] | [] =
-      await prisma.$queryRaw`SELECT id FROM pokemon_v2_pokemon LIMIT 1 OFFSET ${props.offset}`;
-    if (result.length == 0) {
-      throw new Error("No Pokemon found");
-    }
-    pokemonId = result[0].id;
-  } else {
-    pokemonId = props.id;
-  }
-
+export const getPokemonWithAbilities = async (id: number) => {
   const pokemon = await prisma.pokemon_v2_pokemon.findUnique({
-    where: { id: pokemonId },
+    where: { id },
     include: {
       pokemon_v2_pokemonability: {
         select: { pokemon_v2_ability: true },
@@ -214,4 +192,64 @@ export const getRandomPokemonPath = () => {
 
 export const getNumPokemon = async () => {
   return await prisma.pokemon_v2_pokemon.count();
+};
+
+type GetPokemonParams =
+  | {
+      id: number;
+    }
+  | {
+      offset: number;
+    };
+
+export const getPokemonForDaily = async (
+  props: GetPokemonParams
+): Promise<DailyPokemon | null> => {
+  let pokemonId: number;
+  if ("offset" in props) {
+    const result: [{ id: number }] | [] =
+      await prisma.$queryRaw`SELECT id FROM pokemon_v2_pokemon LIMIT 1 OFFSET ${props.offset}`;
+    if (result.length == 0) {
+      throw new Error("No Pokemon found");
+    }
+    pokemonId = result[0].id;
+  } else {
+    pokemonId = props.id;
+  }
+  return await prisma.pokemon_v2_pokemon.findUnique({
+    where: { id: pokemonId, is_default: true },
+    include: {
+      pokemon_v2_pokemonspecies: true,
+      pokemon_v2_pokemontype: true,
+      pokemon_v2_pokemonform: {
+        select: {
+          pokemon_v2_pokemonformgeneration: {
+            select: {
+              generation_id: true,
+            },
+            orderBy: {
+              generation_id: "asc",
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
+/**
+ * Gets the damage factor (multiplier) when a Pokemon of attackType attacks a Pokemon of defendingType
+ * @returns 0, 0.5, 1 or 2
+ */
+export const getDamageFactor = async (
+  attackType: number,
+  defendingType: number
+) => {
+  const result = await prisma.pokemon_v2_typeefficacy.findFirstOrThrow({
+    where: {
+      damage_type_id: attackType,
+      target_type_id: defendingType,
+    },
+  });
+  return result.damage_factor / 100;
 };

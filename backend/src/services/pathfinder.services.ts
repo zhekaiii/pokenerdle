@@ -9,8 +9,8 @@ export const getRandomPathWithStartEndPokemon = async () => {
   const startPokemonId = selectedPath[0];
   const endPokemonId = selectedPath[selectedPath.length - 1];
   const [startPokemon, endPokemon] = await Promise.all([
-    pokemonRepository.getPokemonWithAbilities({ id: startPokemonId }),
-    pokemonRepository.getPokemonWithAbilities({ id: endPokemonId }),
+    pokemonRepository.getPokemonWithAbilities(startPokemonId),
+    pokemonRepository.getPokemonWithAbilities(endPokemonId),
   ]);
 
   if (!startPokemon || !endPokemon) {
