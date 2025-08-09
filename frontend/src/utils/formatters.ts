@@ -1,5 +1,3 @@
-import { PokemonWithAbilities } from "@pokenerdle/shared";
-
 export const formatAbilityName = (abilityName: string) => {
   return abilityName
     .split("-")
@@ -7,7 +5,10 @@ export const formatAbilityName = (abilityName: string) => {
     .join(" ");
 };
 
-export const getFormattedPokemonName = (pokemon: PokemonWithAbilities) => {
+export const getFormattedPokemonName = (pokemon: {
+  name: string;
+  speciesName: string;
+}) => {
   const megaMatch = pokemon.name.match(/^(.*)-mega(?:-(.+))?$/);
   if (megaMatch) {
     const [_, pokemonName, form] = megaMatch;

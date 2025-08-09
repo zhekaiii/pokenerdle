@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -11,18 +12,23 @@ import {
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { useTriggerOnce } from "@/hooks/useTriggerOnce";
 import clsx from "clsx";
+import { differenceInCalendarDays } from "date-fns";
 import { randomInt } from "es-toolkit";
 import { HelpCircle } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router";
 import { useDailyChallengeData } from "../hooks/useData";
 
+const DAY_1 = new Date(2025, 7, 9);
+console.log(DAY_1);
+const challengeNumber = differenceInCalendarDays(new Date(), DAY_1) + 1;
+
 type Props = {
   onStart: () => void;
 };
 
 const DailyChallengeIntroCard: React.FC<Props> = ({ onStart }) => {
-  const pokemonIds = Object.keys(usePokemonIcons() ?? {});
+  const pokemonIds = Object.keys(usePokemonIcons().pokemonIcons ?? {});
   const pokemonId = useMemo(
     () =>
       pokemonIds.length
@@ -53,7 +59,8 @@ const DailyChallengeIntroCard: React.FC<Props> = ({ onStart }) => {
   return (
     <Card className="tw:relative tw:w-[300px]">
       <CardHeader className="tw:text-center">
-        <CardTitle className="tw:text-2xl">Daily Challenge</CardTitle>
+        <CardTitle className="tw:text-2xl">PokéNerdle Daily</CardTitle>
+        <CardDescription>Daily Challenge #{challengeNumber}</CardDescription>
         <Button
           className="tw:absolute tw:top-2 tw:end-2"
           variant="transparent"

@@ -27,7 +27,7 @@ const PokemonCombobox: React.FC<Props> = ({
   side,
   filter,
 }) => {
-  const pokemonIcons = usePokemonIcons();
+  const { pokemonIcons } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
   const filteredPokemon = useMemo(
     () =>
@@ -110,6 +110,7 @@ const PokemonCombobox: React.FC<Props> = ({
         }}
         inputProps={{
           ref: inputRef,
+          placeholder: "Enter a Pokemon",
         }}
       />
     </form>
