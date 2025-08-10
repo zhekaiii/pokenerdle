@@ -1,4 +1,8 @@
-import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
+import {
+  PokemonNamesResponse,
+  PokemonWithAbilities,
+  WrongAnswerReason,
+} from "@pokenerdle/shared";
 import { MAX_ABILITY_LINKS, MAX_EVOLUTION_LINKS } from "../constants/game.js";
 import { TurnResult } from "../controllers/types.js";
 import { prisma } from "../lib/prisma.js";
@@ -68,6 +72,7 @@ export const validatePokemon = async (
     return {
       validAnswer: false,
       pokemonId: pokemonGuess.id,
+      reason: WrongAnswerReason.EvolutionLinkDepleted,
     };
   }
 
@@ -108,5 +113,9 @@ export const validatePokemon = async (
   return {
     validAnswer: false,
     pokemonId: pokemonGuess.id,
+    reason:
+      commonAbilities.length > 0
+        ? WrongAnswerReason.AbilityLinkDepleted
+        : WrongAnswerReason.NoSharedAbility,
   };
 };

@@ -2,6 +2,7 @@ import {
   BattleRoomSettings,
   ForfeitInfo,
   PokemonWithAbilities,
+  WrongAnswerReason,
 } from "@pokenerdle/shared";
 import { pokemon_v2_pokemonspecies } from "@prisma/client";
 
@@ -27,6 +28,7 @@ export type TurnResult = InvalidAnswer | ValidAnswer;
 export type InvalidAnswer = {
   validAnswer: false;
   pokemonId: number;
+  reason: WrongAnswerReason;
 };
 export type ValidAnswer = {
   validAnswer: true;

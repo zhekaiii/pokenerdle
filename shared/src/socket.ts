@@ -1,5 +1,6 @@
-import { BattleRoomSettings } from "@pokenerdle/shared";
-import { PokemonNamesResponse, PokemonWithAbilities } from "./pokemon";
+import { BattleRoomSettings, ForfeitInfo } from "./battle.js";
+import { WrongAnswerReason } from "./index.js";
+import { PokemonNamesResponse, PokemonWithAbilities } from "./pokemon.js";
 
 export interface ServerToClientEvents {
   roomCode: (
@@ -13,6 +14,7 @@ export interface ServerToClientEvents {
     pokemonId: number;
     points: number;
     player: string;
+    reason: WrongAnswerReason;
   }) => void;
   pushPokemon: (
     pokemon: PokemonWithAbilities,

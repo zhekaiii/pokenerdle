@@ -175,6 +175,7 @@ export const validatePokemon = async (
       pokemonId: result.pokemonId,
       points: newPoints,
       player: socket.id,
+      reason: result.reason,
     });
     room.streak[room.turn] = 0;
     console.log(room.streak);

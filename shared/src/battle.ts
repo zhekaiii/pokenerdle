@@ -7,3 +7,9 @@ export type ForfeitInfo = {
   forfeit: boolean;
   forfeitedBy: string;
 };
+
+export enum WrongAnswerReason {
+  EvolutionLinkDepleted,
+  AbilityLinkDepleted,
+  NoSharedAbility,
+}
