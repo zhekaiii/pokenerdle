@@ -33,7 +33,7 @@ const DailyChallengeIntroCard: React.FC<Props> = ({ onStart }) => {
     [pokemonIds]
   );
   const [pokemonSprite, setPokemonSprite] = useState<string | null>(null);
-  const { guesses } = useDailyChallengeData();
+  const { guesses, hasSolved } = useDailyChallengeData();
 
   useTriggerOnce(
     !!pokemonId,
@@ -78,7 +78,11 @@ const DailyChallengeIntroCard: React.FC<Props> = ({ onStart }) => {
       </CardContent>
       <CardFooter>
         <Button className="tw:w-full" onClick={onStart}>
-          {!guesses?.guesses.length ? "Start Guessing" : "Continue Guessing"}
+          {hasSolved
+            ? "View Stats"
+            : !guesses?.guesses.length
+            ? "Start Guessing"
+            : "Continue Guessing"}
         </Button>
       </CardFooter>
     </Card>

@@ -5,8 +5,13 @@
   justify-content: flex-start;
   padding: 100px 40px 40px;
   min-height: 100dvh;
+  overflow: hidden;
 
   @media (max-width: 768px) {
     padding: 80px 20px 20px;
+  }
+
+  @media (max-width: 640px) {
+    padding: 70px 10px 10px;
   }
 }
