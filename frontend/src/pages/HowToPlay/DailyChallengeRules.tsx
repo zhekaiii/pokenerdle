@@ -224,7 +224,7 @@ const DailyChallengeRules: React.FC = () => {
           </h2>
           <p className="tw:mb-2">
             Let's say the mystery Pokémon is Gyarados (Water/Flying, Gen 1,
-            Blue, 6.5m tall):
+            Blue, 6.5m tall), and you make the following 2 guesses:
           </p>
 
           <Card className="tw:py-2">
@@ -245,7 +245,7 @@ const DailyChallengeRules: React.FC = () => {
                 pokemon={{
                   type1: "Fire",
                   type2: "Flying",
-                  height: 1.7,
+                  height: 17,
                   color: "Red",
                   generationId: 1,
                 }}
@@ -300,7 +300,10 @@ const DailyChallengeRules: React.FC = () => {
               <hr className="tw:my-4" />
               <b>What this tells us:</b>
               <ul className="tw:list-disc tw:ps-6 tw:text-muted-foreground">
-                <li>Fire deals 0.5x damage to the target Pokémon.</li>
+                <li>
+                  Fire deals 0.5x damage to the target Pokémon (Gyarados in this
+                  example).
+                </li>
                 <li>The target's secondary type is Flying!</li>
                 <li>Target is from the same generation.</li>
                 <li>Target is not red.</li>
@@ -326,7 +329,7 @@ const DailyChallengeRules: React.FC = () => {
                 pokemon={{
                   type1: "Water",
                   type2: null,
-                  height: 0.6,
+                  height: 6,
                   color: "Blue",
                   generationId: 2,
                 }}
@@ -382,10 +385,13 @@ const DailyChallengeRules: React.FC = () => {
               <b>What this tells us:</b>
               <ul className="tw:list-disc tw:ps-6 tw:text-muted-foreground">
                 <li>Target's Type 1 matches (Water)!</li>
-                <li>No secondary type on Totodile, so normal effectiveness</li>
+                <li>
+                  Totodile has no secondary type, but it's not a match, so
+                  target is a dual-type Pokémon
+                </li>
                 <li>Target is from an older generation (Gen 1)</li>
                 <li>Both are blue in color!</li>
-                <li>Target is taller than 0.6m</li>
+                <li>Target is taller than 0.6 m</li>
               </ul>
             </CardContent>
           </Card>
