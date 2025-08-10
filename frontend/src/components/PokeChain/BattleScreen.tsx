@@ -210,14 +210,15 @@ const BattleScreen: React.FC<Props> = ({
     socket.on("wrongAnswer", ({ pokemonId, points, player, reason }) => {
       const isPlayersTurn = player === socket.id;
       const pronoun = isPlayersTurn ? "You" : "Your opponent";
+      const pokemonName = pokemonNames?.find(
+        (pokemon) => pokemon.id == pokemonId
+      )?.name;
       toast({
         variant: "destructive",
         title: (
           <>
             {pronoun} guessed{" "}
-            <span className="tw:capitalize">
-              {pokemonNames?.find((pokemon) => pokemon.id == pokemonId)?.name}
-            </span>
+            <span className="tw:capitalize">{pokemonName}</span>
           </>
         ),
         description: (
@@ -226,7 +227,7 @@ const BattleScreen: React.FC<Props> = ({
               ? `${pronoun} cannot use the same ability as a link more than ${MAX_LINKS} times.`
               : reason === WrongAnswerReason.EvolutionLinkDepleted
               ? `${pronoun} cannot guess Pokémon in the same evolution chain more than ${MAX_LINKS} times.`
-              : ""}
+              : `${pokemonName} does not share an ability with the previous Pokémon.`}
           </>
         ),
       });
