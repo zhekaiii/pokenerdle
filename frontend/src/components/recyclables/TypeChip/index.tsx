@@ -1,24 +1,24 @@
 import { cn } from "@/lib/utils";
 import React from "react";
 
-import bugIcon from "src/assets/bug.svg";
-import darkIcon from "src/assets/dark.svg";
-import dragonIcon from "src/assets/dragon.svg";
-import electricIcon from "src/assets/electric.svg";
-import fairyIcon from "src/assets/fairy.svg";
-import fightingIcon from "src/assets/fighting.svg";
-import fireIcon from "src/assets/fire.svg";
-import flyingIcon from "src/assets/flying.svg";
-import ghostIcon from "src/assets/ghost.svg";
-import grassIcon from "src/assets/grass.svg";
-import groundIcon from "src/assets/ground.svg";
-import iceIcon from "src/assets/ice.svg";
-import normalIcon from "src/assets/normal.svg";
-import poisonIcon from "src/assets/poison.svg";
-import psychicIcon from "src/assets/psychic.svg";
-import rockIcon from "src/assets/rock.svg";
-import steelIcon from "src/assets/steel.svg";
-import waterIcon from "src/assets/water.svg";
+import bugIcon from "src/assets/icons/types/bug.svg";
+import darkIcon from "src/assets/icons/types/dark.svg";
+import dragonIcon from "src/assets/icons/types/dragon.svg";
+import electricIcon from "src/assets/icons/types/electric.svg";
+import fairyIcon from "src/assets/icons/types/fairy.svg";
+import fightingIcon from "src/assets/icons/types/fighting.svg";
+import fireIcon from "src/assets/icons/types/fire.svg";
+import flyingIcon from "src/assets/icons/types/flying.svg";
+import ghostIcon from "src/assets/icons/types/ghost.svg";
+import grassIcon from "src/assets/icons/types/grass.svg";
+import groundIcon from "src/assets/icons/types/ground.svg";
+import iceIcon from "src/assets/icons/types/ice.svg";
+import normalIcon from "src/assets/icons/types/normal.svg";
+import poisonIcon from "src/assets/icons/types/poison.svg";
+import psychicIcon from "src/assets/icons/types/psychic.svg";
+import rockIcon from "src/assets/icons/types/rock.svg";
+import steelIcon from "src/assets/icons/types/steel.svg";
+import waterIcon from "src/assets/icons/types/water.svg";
 
 const TYPE_ICON_CONFIG: Record<
   string,
