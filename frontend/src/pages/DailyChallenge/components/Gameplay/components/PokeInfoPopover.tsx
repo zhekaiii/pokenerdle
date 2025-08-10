@@ -1,3 +1,4 @@
+import TypeChip from "@/components/recyclables/TypeChip";
 import {
   Popover,
   PopoverContent,
@@ -66,9 +67,9 @@ const PokeInfoPopover: React.FC<Props> = ({
         <div className="tw:mt-2">
           <div className="tw:flex tw:justify-between">
             <div>Types:</div>
-            <div>
-              {pokemon.type1}
-              {pokemon.type2 && `/${pokemon.type2}`}
+            <div className="tw:flex tw:gap-1">
+              <TypeChip type={pokemon.type1} />
+              {pokemon.type2 && <TypeChip type={pokemon.type2} />}
             </div>
           </div>
           <div className="tw:flex tw:justify-between">
@@ -80,7 +81,6 @@ const PokeInfoPopover: React.FC<Props> = ({
                   COLOR_MAP[pokemon.color]
                 )}
               />
-
               {pokemon.color}
             </div>
           </div>
