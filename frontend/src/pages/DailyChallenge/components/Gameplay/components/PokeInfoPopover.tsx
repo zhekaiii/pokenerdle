@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/Popover";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
-import { getFormattedPokemonName } from "@/utils/formatters";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import {} from "@radix-ui/react-popover";
 import clsx from "clsx";
@@ -47,7 +46,7 @@ const PokeInfoPopover: React.FC<Props> = ({
     if (!pokemonNameResponse) {
       return "";
     }
-    return getFormattedPokemonName(pokemonNameResponse);
+    return pokemonNameResponse.name || pokemonNameResponse.speciesName;
   }, [pokemon, pokemonId, pokemonNames]);
   return (
     <Popover>
@@ -56,9 +55,7 @@ const PokeInfoPopover: React.FC<Props> = ({
         <div className="tw:flex tw:items-center">
           <img src={getPokemonIcon(pokemonId)} className="tw:me-1" />
           <div>
-            <div className="tw:font-bold">
-              #{pokemonId} {pokemonName}
-            </div>
+            <div className="tw:font-bold">{pokemonName}</div>
             <div className="tw:text-muted-foreground tw:text-sm">
               Guess #{guessOrder}
             </div>

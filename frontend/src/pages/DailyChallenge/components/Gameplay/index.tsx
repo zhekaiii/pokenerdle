@@ -6,19 +6,11 @@ import { Button } from "@/components/ui/Button";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
-import {
-  Check,
-  ChevronDown,
-  ChevronsDown,
-  ChevronsUp,
-  ChevronUp,
-  Equal,
-  Share2,
-  X,
-} from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Share2, X } from "lucide-react";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
 import { shareResults } from "../../utils/share";
+import EffectivenessIcon from "../EffectivenessIcon";
 import GridItem from "./components/GridItem";
 import PokeInfoPopover from "./components/PokeInfoPopover";
 import styles from "./index.module.scss";
@@ -93,18 +85,16 @@ const DailyChallengeGameplay: React.FC = () => {
                     icon = <Check />;
                   } else {
                     const value = guesses.guesses[i][column.key];
-                    if (value === "<" || value === 0.5) {
+                    if (value === "<") {
                       icon = <ChevronDown />;
-                    } else if (value === 0.25) {
-                      icon = <ChevronsDown />;
-                    } else if (value === 4) {
-                      icon = <ChevronsUp />;
-                    } else if (value === 1) {
-                      icon = <Equal />;
-                    } else if (value === false || value === 0) {
+                    } else if (value === false) {
                       icon = <X />;
-                    } else {
+                    } else if (value === ">") {
                       icon = <ChevronUp />;
+                    } else if (value === true || value === "=") {
+                      icon = <Check />;
+                    } else {
+                      icon = <EffectivenessIcon value={value} />;
                     }
                     classNames.push(
                       styles["DailyChallengeGameplay__GridItem--incorrect"]

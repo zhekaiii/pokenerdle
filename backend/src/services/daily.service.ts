@@ -81,7 +81,7 @@ export const verifyGuess = async (
           targetType1.type_id!,
           targetType2?.type_id
         )
-      : 1;
+      : "NA";
 
   const guessGen =
     guessPokemon.pokemon_v2_pokemonform[0]?.pokemon_v2_versiongroup

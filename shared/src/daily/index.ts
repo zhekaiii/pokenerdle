@@ -24,7 +24,7 @@ export type DailyChallengeGuessResponse = {
   | {
       correct?: never;
       type1Correctness: "=" | number;
-      type2Correctness: "=" | number;
+      type2Correctness: "=" | number | "NA";
       genCorrectness: "=" | "<" | ">";
       heightCorrectness: "=" | "<" | ">";
       colorCorrectness: boolean;

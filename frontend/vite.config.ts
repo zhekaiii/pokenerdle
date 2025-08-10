@@ -4,6 +4,7 @@ import path from "path";
 import { defineConfig } from "vite";
 import checker from "vite-plugin-checker";
 import eslint from "vite-plugin-eslint2";
+import svgr from "vite-plugin-svgr";
 import viteTsconfigPaths from "vite-tsconfig-paths";
 
 // https://vitejs.dev/config/
@@ -16,6 +17,7 @@ export default defineConfig({
       typescript: true,
     }),
     tailwindcss(),
+    svgr(),
   ],
   css: {
     preprocessorOptions: {
