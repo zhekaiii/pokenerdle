@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/Button";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { useToast } from "@/hooks/useToast";
-import { ForfeitInfo, PokemonNamesResponse } from "@pokenerdle/shared";
-import { LogOut, RefreshCw, X } from "lucide-react";
+import {
+  ForfeitInfo,
+  PokemonNamesResponse,
+  WrongAnswerReason,
+} from "@pokenerdle/shared";
+import { LogOut, RefreshCw } from "lucide-react";
 import React, {
   useCallback,
   useEffect,
@@ -14,7 +18,7 @@ import { useImmer } from "use-immer";
 import api from "../../api";
 import { PokemonGuess } from "../../api/battles/types";
 import { useSocket } from "../../hooks/useSocket";
-import { updateSharedLinks } from "../../utils/pokeChainUtils";
+import { MAX_LINKS, updateSharedLinks } from "../../utils/pokeChainUtils";
 import PokemonCombobox from "../recyclables/PokemonCombobox";
 import { Alert } from "../ui/Alert";
 import {
@@ -203,17 +207,26 @@ const BattleScreen: React.FC<Props> = ({
         setInput("");
       }
     );
-    socket.on("wrongAnswer", ({ pokemonId, points, player }) => {
+    socket.on("wrongAnswer", ({ pokemonId, points, player, reason }) => {
       const isPlayersTurn = player === socket.id;
+      const pronoun = isPlayersTurn ? "You" : "Your opponent";
       toast({
         variant: "destructive",
-        description: (
+        title: (
           <>
-            <X className="tw:inline tw:mr-2" />{" "}
-            {isPlayersTurn ? "You" : "Your opponent"} guessed{" "}
+            {pronoun} guessed{" "}
             <span className="tw:capitalize">
               {pokemonNames?.find((pokemon) => pokemon.id == pokemonId)?.name}
             </span>
+          </>
+        ),
+        description: (
+          <>
+            {reason === WrongAnswerReason.AbilityLinkDepleted
+              ? `${pronoun} cannot use the same ability as a link more than ${MAX_LINKS} times.`
+              : reason === WrongAnswerReason.EvolutionLinkDepleted
+              ? `${pronoun} cannot guess Pokémon in the same evolution chain more than ${MAX_LINKS} times.`
+              : ""}
           </>
         ),
       });
