@@ -81,7 +81,7 @@ export const validatePokemon = async (
     .filter(isTruthy);
   if (
     commonAbilities.length > 0 &&
-    commonAbilities.every(
+    commonAbilities.some(
       (ability) => (usedLinks[ability.name] ?? 0) < MAX_ABILITY_LINKS
     )
   ) {
