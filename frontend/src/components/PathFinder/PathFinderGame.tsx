@@ -30,6 +30,7 @@ import {
   CardTitle,
 } from "../ui/Card";
 import PathBoard from "./PathBoard";
+import { useEventTracking } from "./hooks/useEventTracking";
 
 const PathFinderGame: React.FC = () => {
   const [challenge, setChallenge] = useState<PathFinderResponse | null>(null);
@@ -45,14 +46,22 @@ const PathFinderGame: React.FC = () => {
   const [numGuesses, setNumGuesses] = useState(0);
   const queryClient = useQueryClient();
 
+  const isPuzzleSolved = useMemo(() => {
+    if (!challenge || path.length == 0) return false;
+    return (
+      getSharedAbilities(challenge.endPokemon, path[path.length - 1]).length > 0
+    );
+  }, [challenge, path]);
+
+  const { reportAbandon } = useEventTracking({
+    challenge,
+    isPuzzleSolved,
+    startTime,
+    numGuesses,
+  });
+
   const fetchChallenge = async () => {
-    if (challenge && !isPuzzleSolved) {
-      posthog.capture("pathfinder_end_attempt", {
-        optimal_length: challenge.pathLength,
-        time_taken_ms: Date.now() - startTime,
-        num_guesses: numGuesses,
-      });
-    }
+    reportAbandon();
     posthog.capture("pathfinder_new_challenge");
     try {
       setNumGuesses(0);
@@ -77,13 +86,6 @@ const PathFinderGame: React.FC = () => {
   const handleRemove = useCallback((index: number) => {
     setPath((prevPath) => prevPath.slice(0, index - 1));
   }, []);
-
-  const isPuzzleSolved = useMemo(() => {
-    if (!challenge || path.length == 0) return false;
-    return (
-      getSharedAbilities(challenge.endPokemon, path[path.length - 1]).length > 0
-    );
-  }, [challenge, path]);
 
   useEffect(() => {
     if (isPuzzleSolved) {
