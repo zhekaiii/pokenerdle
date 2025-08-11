@@ -8,7 +8,8 @@ import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { format, formatDate } from "date-fns";
 import { CheckCircle } from "lucide-react";
-import { useMemo, useState } from "react";
+import posthog from "posthog-js";
+import { useEffect, useMemo, useState } from "react";
 
 export type DailyChallenge = {
   date: string;
@@ -39,12 +40,14 @@ export const useDailyChallengeData = () => {
 
   const isNewDay = guesses?.date !== format(now, "yyyy-MM-dd");
 
-  if (isNewDay) {
-    setGuesses({
-      date: format(now, "yyyy-MM-dd"),
-      guesses: [],
-    });
-  }
+  useEffect(() => {
+    if (isNewDay) {
+      setGuesses({
+        date: format(now, "yyyy-MM-dd"),
+        guesses: [],
+      });
+    }
+  }, [isNewDay]);
 
   const onGuess = async ({ id }: PokemonNamesResponse) => {
     const numGuesses = guesses?.guesses.length ?? 0;
@@ -77,6 +80,9 @@ export const useDailyChallengeData = () => {
             </div>
           ),
         });
+        posthog.capture("daily_challenge_solved", {
+          num_guesses: guesses?.guesses.length ?? 0,
+        });
       } else if (numGuesses + 1 === DAILY_CHALLENGE_GUESS_LIMIT) {
         toast({
           variant: "destructive",
@@ -86,6 +92,7 @@ export const useDailyChallengeData = () => {
             </div>
           ),
         });
+        posthog.capture("daily_challenge_gameover");
       }
     } finally {
       setIsLoading(false);
