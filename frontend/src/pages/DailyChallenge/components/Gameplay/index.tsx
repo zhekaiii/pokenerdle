@@ -55,15 +55,10 @@ const DailyChallengeGameplay: React.FC = () => {
         ))}
       </div>
       {Array.from({ length: DAILY_CHALLENGE_GUESS_LIMIT }).map((_, i) => {
-        const pokemonId = guesses?.guesses[i]?.pokemonId;
-        const pokemon = guesses?.guesses[i]?.pokemon;
+        const guess = guesses?.guesses[i];
         const Wrapper = ({ children }: { children: React.ReactNode }) =>
-          pokemon && pokemonId ? (
-            <PokeInfoPopover
-              pokemon={pokemon}
-              pokemonId={pokemonId}
-              guessOrder={i + 1}
-            >
+          guess ? (
+            <PokeInfoPopover guess={guess} guessOrder={i + 1}>
               {children}
             </PokeInfoPopover>
           ) : (
@@ -74,7 +69,7 @@ const DailyChallengeGameplay: React.FC = () => {
             <div
               className={clsx(
                 styles["DailyChallengeGameplay__Grid"],
-                pokemon &&
+                guess &&
                   "tw:transition-transform tw:hover:scale-105 tw:cursor-pointer"
               )}
             >
@@ -114,7 +109,7 @@ const DailyChallengeGameplay: React.FC = () => {
                   </GridItem>
                 );
               })}
-              {pokemonId && pokemon && <img src={getPokemonIcon(pokemonId)} />}
+              {guess && <img src={getPokemonIcon(guess.pokemonId)} />}
             </div>
           </Wrapper>
         );

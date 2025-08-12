@@ -1,3 +1,5 @@
+// TODO: Refactor this messy code
+
 import TypeChip from "@/components/recyclables/TypeChip";
 import {
   Popover,
@@ -7,7 +9,6 @@ import {
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
-import {} from "@radix-ui/react-popover";
 import clsx from "clsx";
 import React, { useMemo } from "react";
 
@@ -25,15 +26,13 @@ const COLOR_MAP: Record<string, string> = {
 };
 
 type Props = {
-  pokemon: DailyChallengeGuessResponse["pokemon"];
-  pokemonId: number;
+  guess: DailyChallengeGuessResponse & { pokemonId: number };
   children: React.ReactNode;
   guessOrder: number;
 };
 
 const PokeInfoPopover: React.FC<Props> = ({
-  pokemon,
-  pokemonId,
+  guess: { pokemon, ...guess },
   children,
   guessOrder,
 }) => {
@@ -41,27 +40,28 @@ const PokeInfoPopover: React.FC<Props> = ({
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonName = useMemo(() => {
     const pokemonNameResponse = pokemonNames?.find(
-      (pokemon) => pokemon.id === pokemonId
+      (pokemon) => pokemon.id === guess.pokemonId
     );
     if (!pokemonNameResponse) {
       return "";
     }
     return pokemonNameResponse.name || pokemonNameResponse.speciesName;
-  }, [pokemon, pokemonId, pokemonNames]);
+  }, [guess, pokemonNames]);
+  const pokemonHeight = ((pokemon.height ?? 0) / 10).toFixed(1);
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent>
-        <div className="tw:flex tw:items-center">
-          <img src={getPokemonIcon(pokemonId)} className="tw:me-1" />
+        <section className="tw:flex tw:items-center">
+          <img src={getPokemonIcon(guess.pokemonId)} className="tw:me-1" />
           <div>
             <div className="tw:font-bold">{pokemonName}</div>
             <div className="tw:text-muted-foreground tw:text-sm">
               Guess #{guessOrder}
             </div>
           </div>
-        </div>
-        <div className="tw:mt-2">
+        </section>
+        <section className="tw:mt-2">
           <div className="tw:flex tw:justify-between">
             <div>Types:</div>
             <div className="tw:flex tw:gap-1">
@@ -89,7 +89,95 @@ const PokeInfoPopover: React.FC<Props> = ({
             <div>Generation:</div>
             <div>{pokemon.generationId}</div>
           </div>
-        </div>
+        </section>
+        <hr className="tw:border tw:my-2" />
+        <section>
+          <ul className="tw:list-disc tw:ps-6">
+            {guess.correct ? (
+              <li>You are correct!</li>
+            ) : (
+              <>
+                <li>
+                  {guess.type1Correctness === "=" ? (
+                    <>
+                      Target is also a{" "}
+                      <TypeChip
+                        className="tw:text-foreground tw:align-middle"
+                        type={pokemon.type1}
+                      />{" "}
+                      type!
+                    </>
+                  ) : (
+                    <>
+                      <TypeChip
+                        className="tw:text-foreground tw:align-middle"
+                        type={pokemon.type1}
+                      />{" "}
+                      type moves deal {guess.type1Correctness}x damage against
+                      the target.
+                    </>
+                  )}
+                </li>
+                <li>
+                  {guess.type2Correctness === "=" ? (
+                    <>
+                      Target is also a{" "}
+                      {pokemon.type2 ? (
+                        <TypeChip
+                          className="tw:text-foreground tw:align-middle"
+                          type={pokemon.type2}
+                        />
+                      ) : (
+                        "mono"
+                      )}
+                      type!
+                    </>
+                  ) : pokemon.type2 ? (
+                    <>
+                      <TypeChip
+                        className="tw:text-foreground tw:align-middle"
+                        type={pokemon.type2}
+                      />{" "}
+                      type moves deal {guess.type2Correctness}x damage against
+                      the target.
+                    </>
+                  ) : (
+                    "Target is not a monotype"
+                  )}
+                </li>
+                <li>
+                  {guess.genCorrectness === "=" ? (
+                    <>Target is from the same generation!</>
+                  ) : (
+                    <>
+                      Target is from{" "}
+                      {guess.genCorrectness === "<" ? "an earlier" : "a later"}{" "}
+                      generation.
+                    </>
+                  )}
+                </li>
+                <li>
+                  {guess.colorCorrectness ? (
+                    <>Target is also {pokemon.color.toLowerCase()} in color!</>
+                  ) : (
+                    <>Target is not {pokemon.color.toLowerCase()} in color.</>
+                  )}
+                </li>
+                <li>
+                  {guess.heightCorrectness === "=" ? (
+                    <>Target is also {pokemonHeight} m tall!</>
+                  ) : (
+                    <>
+                      Target is{" "}
+                      {guess.heightCorrectness === "<" ? "shorter" : "taller"}{" "}
+                      than {pokemonHeight} m.
+                    </>
+                  )}
+                </li>
+              </>
+            )}
+          </ul>
+        </section>
       </PopoverContent>
     </Popover>
   );

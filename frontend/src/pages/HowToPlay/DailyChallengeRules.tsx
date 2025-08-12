@@ -242,14 +242,21 @@ const DailyChallengeRules: React.FC = () => {
             <CardContent>
               <PokeInfoPopover
                 guessOrder={1}
-                pokemon={{
-                  type1: "Fire",
-                  type2: "Flying",
-                  height: 17,
-                  color: "Red",
-                  generationId: 1,
+                guess={{
+                  pokemon: {
+                    type1: "Fire",
+                    type2: "Flying",
+                    height: 17,
+                    color: "Red",
+                    generationId: 1,
+                  },
+                  pokemonId: 6,
+                  type1Correctness: 0.5,
+                  type2Correctness: 1,
+                  genCorrectness: "=",
+                  heightCorrectness: ">",
+                  colorCorrectness: false,
                 }}
-                pokemonId={6}
               >
                 <div className="tw:grid tw:grid-cols-5 tw:gap-2 tw:mx-auto tw:max-w-md tw:transition-transform tw:hover:scale-105 tw:cursor-pointer">
                   {COLUMNS.map((col) => (
@@ -326,14 +333,21 @@ const DailyChallengeRules: React.FC = () => {
             <CardContent>
               <PokeInfoPopover
                 guessOrder={1}
-                pokemon={{
-                  type1: "Water",
-                  type2: null,
-                  height: 6,
-                  color: "Blue",
-                  generationId: 2,
+                guess={{
+                  pokemon: {
+                    type1: "Water",
+                    type2: null,
+                    height: 6,
+                    color: "Blue",
+                    generationId: 2,
+                  },
+                  pokemonId: 158,
+                  type1Correctness: "=",
+                  type2Correctness: "NA",
+                  genCorrectness: "<",
+                  heightCorrectness: ">",
+                  colorCorrectness: true,
                 }}
-                pokemonId={158}
               >
                 <div className="tw:grid tw:grid-cols-5 tw:gap-2 tw:mx-auto tw:max-w-md tw:transition-transform tw:hover:scale-105 tw:cursor-pointer">
                   {COLUMNS.map((col) => (
