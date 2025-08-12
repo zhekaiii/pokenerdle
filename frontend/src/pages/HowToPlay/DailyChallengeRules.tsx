@@ -1,3 +1,4 @@
+import TypeChip from "@/components/recyclables/TypeChip";
 import { Button } from "@/components/ui/Button";
 import {
   Card,
@@ -252,7 +253,7 @@ const DailyChallengeRules: React.FC = () => {
                   },
                   pokemonId: 6,
                   type1Correctness: 0.5,
-                  type2Correctness: 1,
+                  type2Correctness: "=",
                   genCorrectness: "=",
                   heightCorrectness: ">",
                   colorCorrectness: false,
@@ -311,7 +312,14 @@ const DailyChallengeRules: React.FC = () => {
                   Fire deals 0.5x damage to the target Pokémon (Gyarados in this
                   example).
                 </li>
-                <li>The target's secondary type is Flying!</li>
+                <li>
+                  The target is a{" "}
+                  <TypeChip
+                    className="tw:text-foreground tw:align-middle"
+                    type="Flying"
+                  />{" "}
+                  type!
+                </li>
                 <li>Target is from the same generation.</li>
                 <li>Target is not red.</li>
                 <li>Target is taller than 1.7m.</li>
