@@ -17,8 +17,7 @@ const routes: RouteObject[] = [
     children: [
       {
         path: "",
-        // element: <Navigate to="daily" />,
-        element: <Navigate to="pokechain" />,
+        element: <Navigate to="daily" />,
       },
       {
         path: "daily",

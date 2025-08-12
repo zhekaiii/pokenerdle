@@ -64,7 +64,8 @@ export const verifyGuess = async (
     targetPokemon.pokemon_v2_pokemontype[1];
 
   const type1Correctness =
-    guessType1.type_id === targetType1.type_id
+    guessType1.type_id === targetType1.type_id ||
+    guessType1.type_id === targetType2?.type_id
       ? "="
       : await getOverallTypeEffectiveness(
           guessType1.type_id!,
@@ -73,7 +74,8 @@ export const verifyGuess = async (
         );
 
   const type2Correctness =
-    guessType2?.type_id === targetType2?.type_id
+    guessType2?.type_id === targetType2?.type_id ||
+    guessType2?.type_id === targetType1.type_id
       ? "="
       : guessType2
       ? await getOverallTypeEffectiveness(

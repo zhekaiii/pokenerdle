@@ -32,6 +32,7 @@ const port = process.env.PORT || 3456;
 const router = express.Router();
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  console.trace(err);
   res.status(500);
   res.json({ error: err.toString() });
 };
