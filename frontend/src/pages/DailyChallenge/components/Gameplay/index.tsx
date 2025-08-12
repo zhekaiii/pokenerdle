@@ -54,16 +54,20 @@ const DailyChallengeGameplay: React.FC = () => {
       {Array.from({ length: DAILY_CHALLENGE_GUESS_LIMIT }).map((_, i) => {
         const pokemonId = guesses?.guesses[i]?.pokemonId;
         const pokemon = guesses?.guesses[i]?.pokemon;
-        const Comp = pokemon ? PokeInfoPopover : React.Fragment;
+        const Wrapper = ({ children }: { children: React.ReactNode }) =>
+          pokemon && pokemonId ? (
+            <PokeInfoPopover
+              pokemon={pokemon}
+              pokemonId={pokemonId}
+              guessOrder={i + 1}
+            >
+              {children}
+            </PokeInfoPopover>
+          ) : (
+            <>{children}</>
+          );
         return (
-          <Comp
-            // These non-null assertion is fine because
-            // we won't be needing them in React.Fragment
-            pokemon={pokemon!}
-            pokemonId={pokemonId!}
-            key={i}
-            guessOrder={i + 1}
-          >
+          <Wrapper key={i}>
             <div
               className={clsx(
                 styles["DailyChallengeGameplay__Grid"],
@@ -109,7 +113,7 @@ const DailyChallengeGameplay: React.FC = () => {
               })}
               {pokemonId && pokemon && <img src={getPokemonIcon(pokemonId)} />}
             </div>
-          </Comp>
+          </Wrapper>
         );
       })}
       <div className="tw:mt-auto">
