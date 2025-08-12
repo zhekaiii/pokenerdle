@@ -32,6 +32,7 @@ type ComboboxProps<T> = {
   onKeyDown?: (e: React.KeyboardEvent) => void;
   loop?: boolean;
   popoverSide?: PopoverContentProps["side"];
+  className?: string;
 };
 
 const ComboBox = (<T,>({
@@ -48,6 +49,7 @@ const ComboBox = (<T,>({
   onKeyDown,
   loop = false,
   popoverSide,
+  className,
 }: ComboboxProps<T>) => {
   const [open, setOpen] = React.useState(false);
 

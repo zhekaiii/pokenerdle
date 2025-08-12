@@ -7,7 +7,7 @@ import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
 import { Check, ChevronDown, ChevronUp, Share2, X } from "lucide-react";
-import { DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
+import { challengeNumber, DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
 import { shareResults } from "../../utils/share";
 import EffectivenessIcon from "../EffectivenessIcon";
@@ -36,6 +36,9 @@ const DailyChallengeGameplay: React.FC = () => {
   return (
     <div className="tw:flex tw:flex-col tw:flex-auto tw:max-w-[365px] tw:w-full">
       <LoadingDialog open={isLoading} />
+      <h2 className="tw:text-center tw:mb-1 tw:font-medium tw:text-lg">
+        Daily Challenge #{challengeNumber}
+      </h2>
       <div
         className={clsx(
           styles["DailyChallengeGameplay__Grid"],
@@ -116,9 +119,11 @@ const DailyChallengeGameplay: React.FC = () => {
           </Wrapper>
         );
       })}
-      <div className="tw:mt-auto">
-        {!hasReachedLimit && !hasSolved ? (
+      {!hasReachedLimit && !hasSolved ? (
+        <>
+          <div className="tw:mb-[50px]" />
           <PokemonCombobox
+            className={styles.DailyChallengeInput}
             disabled={isLoading}
             input={input}
             setInput={setInput}
@@ -132,15 +137,15 @@ const DailyChallengeGameplay: React.FC = () => {
                 : undefined
             }
           />
-        ) : (
-          <Button
-            className="tw:w-full"
-            onClick={() => shareResults(guesses?.guesses ?? [])}
-          >
-            Share <Share2 />
-          </Button>
-        )}
-      </div>
+        </>
+      ) : (
+        <Button
+          className="tw:w-full tw:mt-auto"
+          onClick={() => shareResults(guesses?.guesses ?? [])}
+        >
+          Share <Share2 />
+        </Button>
+      )}
     </div>
   );
 };

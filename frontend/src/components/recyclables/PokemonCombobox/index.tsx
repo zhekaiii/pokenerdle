@@ -17,6 +17,7 @@ type Props = {
   onSelect: (option: PokemonNamesResponse) => void;
   side?: PopoverContentProps["side"];
   filter?: (pokemon: PokemonNamesResponse) => boolean;
+  className?: string;
 };
 
 const PokemonCombobox: React.FC<Props> = ({
@@ -26,6 +27,7 @@ const PokemonCombobox: React.FC<Props> = ({
   onSelect,
   side,
   filter,
+  className,
 }) => {
   const { pokemonIcons } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
@@ -72,6 +74,7 @@ const PokemonCombobox: React.FC<Props> = ({
       }}
     >
       <ComboBox
+        className={className}
         loop
         value={input}
         setValue={setInput}
@@ -111,6 +114,7 @@ const PokemonCombobox: React.FC<Props> = ({
         inputProps={{
           ref: inputRef,
           placeholder: "Enter a Pokemon",
+          className,
         }}
       />
     </form>

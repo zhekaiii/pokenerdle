@@ -57,3 +57,13 @@
     }
   }
 }
+
+.DailyChallengeInput {
+  position: fixed;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  width: 365px;
+  bottom: var(--page-padding-y);
+  @apply tw:bg-background/60;
+  max-width: calc(100vw - 20px);
+}
