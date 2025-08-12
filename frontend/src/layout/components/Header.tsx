@@ -32,7 +32,7 @@ const Header: React.FC = () => {
       <div className="tw:grow" />
       {!isSmallerThanSm && (
         <>
-          {/* <LinkButton to="/daily">Daily</LinkButton> */}
+          <LinkButton to="/daily">Daily</LinkButton>
           <LinkButton to="/pokechain">PokéChain</LinkButton>
           <LinkButton to="/path-finder">Path Finder</LinkButton>
         </>

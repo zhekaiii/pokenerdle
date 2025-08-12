@@ -33,7 +33,7 @@ const NavDrawer: React.FC<Props> = ({ trigger }) => {
           <X className="tw:size-6" />
         </Button>
         <div className="tw:p-4 tw:flex tw:flex-col tw:gap-2">
-          {/* <LinkButton to="/daily">Daily Challenge</LinkButton> */}
+          <LinkButton to="/daily">Daily Challenge</LinkButton>
           <LinkButton to="/pokechain">PokéChain</LinkButton>
           <LinkButton to="/path-finder">Path Finder</LinkButton>
           <RulePageButton />

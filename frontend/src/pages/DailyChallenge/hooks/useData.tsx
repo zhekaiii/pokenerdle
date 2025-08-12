@@ -37,7 +37,7 @@ export const useDailyChallengeData = () => {
   const hasReachedLimit = Boolean(
     guesses && guesses.guesses.length === DAILY_CHALLENGE_GUESS_LIMIT
   );
-
+  const isGameFinished = hasReachedLimit || hasSolved;
   const isNewDay = guesses?.date !== format(now, "yyyy-MM-dd");
 
   useEffect(() => {
@@ -106,5 +106,6 @@ export const useDailyChallengeData = () => {
     isLoading,
     hasSolved,
     hasReachedLimit,
+    isGameFinished,
   };
 };
