@@ -4,6 +4,8 @@ export const RouteNames = Object.freeze({
   DATA_API: "/v1/data",
   PATHFINDER_API: "/v1/pathfinder",
   DAILY_API: "/v1/daily",
+  PORYGON: "/porygon",
+  PORYGON_STATIC: "/porygon/static",
 });
 
 export enum StatusCode {

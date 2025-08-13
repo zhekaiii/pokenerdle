@@ -6,6 +6,10 @@ import { Server } from "socket.io";
 import { fileURLToPath } from "url";
 import { initializeBattleWsRoutes } from "./handlers/index.js";
 import "./lib/prisma.js";
+import {
+  porygonMiddleware,
+  staticPorygonMiddleware,
+} from "./middlewares/porygon.js";
 import "./routes/battles.routes.js";
 import battlesRouter from "./routes/battles.routes.js";
 import dailyRouter from "./routes/daily.routes.js";
@@ -18,6 +22,7 @@ const __dirname = dirname(__filename);
 dotenv.config();
 
 const app = express();
+app.set("trust proxy", true);
 const httpServer = createServer(app);
 export const io: PokeNerdleServer = new Server(httpServer, {
   cors: {
@@ -54,6 +59,8 @@ router.use(battlesRouter);
 router.use(pathfinderRouter);
 router.use(dailyRouter);
 
+app.use("/porygon", porygonMiddleware);
+app.use("/porygon/static", staticPorygonMiddleware);
 app.use("/api", router);
 app.use(errorHandler);
 
