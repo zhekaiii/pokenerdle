@@ -119,7 +119,7 @@ const TypeChip: React.FC<Props> = ({
   return (
     <div
       className={cn(
-        "tw:rounded-full tw:pe-2 tw:inline-flex tw:items-center tw:bg-(--bug-type)",
+        "tw:rounded-full tw:pe-2 tw:inline-flex tw:items-center tw:bg-(--bug-type) tw:not-dark:text-background",
         bgClass,
         className
       )}
