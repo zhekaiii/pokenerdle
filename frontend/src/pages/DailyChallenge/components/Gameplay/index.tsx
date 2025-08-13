@@ -79,7 +79,8 @@ const DailyChallengeGameplay: React.FC = () => {
                 if (guesses?.guesses[i]) {
                   if (
                     "correct" in guesses.guesses[i] ||
-                    guesses.guesses[i][column.key] == "="
+                    guesses.guesses[i][column.key] == "=" ||
+                    guesses.guesses[i][column.key] === true
                   ) {
                     classNames.push(
                       styles["DailyChallengeGameplay__GridItem--correct"]
