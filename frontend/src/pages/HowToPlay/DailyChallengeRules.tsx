@@ -14,8 +14,7 @@ import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
 import React from "react";
 import { Link } from "react-router";
 import EffectivenessIcon from "../DailyChallenge/components/EffectivenessIcon";
-import { COLUMNS } from "../DailyChallenge/components/Gameplay";
-import PokeInfoPopover from "../DailyChallenge/components/Gameplay/components/PokeInfoPopover";
+import { COLUMNS } from "../DailyChallenge/constants";
 
 const SQUARE_CLASS_POSITIVE =
   "tw:rounded-xs tw:bg-positive tw:size-6 tw:[&_svg]:m-auto tw:flex";
@@ -241,70 +240,51 @@ const DailyChallengeRules: React.FC = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <PokeInfoPopover
-                guessOrder={1}
-                guess={{
-                  pokemon: {
-                    type1: "Fire",
-                    type2: "Flying",
-                    height: 17,
-                    color: "Red",
-                    generationId: 1,
-                  },
-                  pokemonId: 6,
-                  type1Correctness: 0.5,
-                  type2Correctness: "=",
-                  genCorrectness: "=",
-                  heightCorrectness: ">",
-                  colorCorrectness: false,
-                }}
-              >
-                <div className="tw:grid tw:grid-cols-5 tw:gap-2 tw:mx-auto tw:max-w-md tw:transition-transform tw:hover:scale-105 tw:cursor-pointer">
-                  {COLUMNS.map((col) => (
-                    <div className="tw:text-center">{col.label}</div>
-                  ))}
-                  <div
-                    className={cn(
-                      SQUARE_CLASS_AMBER,
-                      "tw:size-full tw:aspect-square"
-                    )}
-                  >
-                    <EffectivenessIcon value={0.5} />
-                  </div>
-                  <div
-                    className={cn(
-                      SQUARE_CLASS_POSITIVE,
-                      "tw:size-full tw:aspect-square"
-                    )}
-                  >
-                    <Check />
-                  </div>
-                  <div
-                    className={cn(
-                      SQUARE_CLASS_POSITIVE,
-                      "tw:size-full tw:aspect-square"
-                    )}
-                  >
-                    <Check />
-                  </div>
-                  <div
-                    className={cn(
-                      SQUARE_CLASS_AMBER,
-                      "tw:size-full tw:aspect-square"
-                    )}
-                  >
-                    <X />
-                  </div>
-                  <div
-                    className={cn(
-                      SQUARE_CLASS_AMBER,
-                      "tw:size-full tw:aspect-square"
-                    )}
-                  >
-                    <ChevronUp />
-                  </div>
+              <div className="tw:grid tw:grid-cols-5 tw:gap-2 tw:mx-auto tw:max-w-md">
+                {COLUMNS.map((col) => (
+                  <div className="tw:text-center">{col.label}</div>
+                ))}
+                <div
+                  className={cn(
+                    SQUARE_CLASS_AMBER,
+                    "tw:size-full tw:aspect-square"
+                  )}
+                >
+                  <EffectivenessIcon value={0.5} />
                 </div>
-              </PokeInfoPopover>
+                <div
+                  className={cn(
+                    SQUARE_CLASS_POSITIVE,
+                    "tw:size-full tw:aspect-square"
+                  )}
+                >
+                  <Check />
+                </div>
+                <div
+                  className={cn(
+                    SQUARE_CLASS_POSITIVE,
+                    "tw:size-full tw:aspect-square"
+                  )}
+                >
+                  <Check />
+                </div>
+                <div
+                  className={cn(
+                    SQUARE_CLASS_AMBER,
+                    "tw:size-full tw:aspect-square"
+                  )}
+                >
+                  <X />
+                </div>
+                <div
+                  className={cn(
+                    SQUARE_CLASS_AMBER,
+                    "tw:size-full tw:aspect-square"
+                  )}
+                >
+                  <ChevronUp />
+                </div>
+              </div>
               <hr className="tw:my-4" />
               <b>What this tells us:</b>
               <ul className="tw:list-disc tw:ps-6 tw:text-muted-foreground">
@@ -313,12 +293,7 @@ const DailyChallengeRules: React.FC = () => {
                   example).
                 </li>
                 <li>
-                  The target is a{" "}
-                  <TypeChip
-                    className="tw:text-foreground tw:align-middle"
-                    type="Flying"
-                  />{" "}
-                  type!
+                  The target is a <TypeChip type="Flying" /> type!
                 </li>
                 <li>Target is from the same generation.</li>
                 <li>Target is not red.</li>
@@ -339,70 +314,51 @@ const DailyChallengeRules: React.FC = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <PokeInfoPopover
-                guessOrder={1}
-                guess={{
-                  pokemon: {
-                    type1: "Water",
-                    type2: null,
-                    height: 6,
-                    color: "Blue",
-                    generationId: 2,
-                  },
-                  pokemonId: 158,
-                  type1Correctness: "=",
-                  type2Correctness: "NA",
-                  genCorrectness: "<",
-                  heightCorrectness: ">",
-                  colorCorrectness: true,
-                }}
-              >
-                <div className="tw:grid tw:grid-cols-5 tw:gap-2 tw:mx-auto tw:max-w-md tw:transition-transform tw:hover:scale-105 tw:cursor-pointer">
-                  {COLUMNS.map((col) => (
-                    <div className="tw:text-center">{col.label}</div>
-                  ))}
-                  <div
-                    className={cn(
-                      SQUARE_CLASS_POSITIVE,
-                      "tw:size-full tw:aspect-square"
-                    )}
-                  >
-                    <Check />
-                  </div>
-                  <div
-                    className={cn(
-                      SQUARE_CLASS_AMBER,
-                      "tw:size-full tw:aspect-square"
-                    )}
-                  >
-                    <EffectivenessIcon value="NA" />
-                  </div>
-                  <div
-                    className={cn(
-                      SQUARE_CLASS_AMBER,
-                      "tw:size-full tw:aspect-square"
-                    )}
-                  >
-                    <ChevronDown />
-                  </div>
-                  <div
-                    className={cn(
-                      SQUARE_CLASS_POSITIVE,
-                      "tw:size-full tw:aspect-square"
-                    )}
-                  >
-                    <Check />
-                  </div>
-                  <div
-                    className={cn(
-                      SQUARE_CLASS_AMBER,
-                      "tw:size-full tw:aspect-square"
-                    )}
-                  >
-                    <ChevronUp />
-                  </div>
+              <div className="tw:grid tw:grid-cols-5 tw:gap-2 tw:mx-auto tw:max-w-md">
+                {COLUMNS.map((col) => (
+                  <div className="tw:text-center">{col.label}</div>
+                ))}
+                <div
+                  className={cn(
+                    SQUARE_CLASS_POSITIVE,
+                    "tw:size-full tw:aspect-square"
+                  )}
+                >
+                  <Check />
                 </div>
-              </PokeInfoPopover>
+                <div
+                  className={cn(
+                    SQUARE_CLASS_AMBER,
+                    "tw:size-full tw:aspect-square"
+                  )}
+                >
+                  <EffectivenessIcon value="NA" />
+                </div>
+                <div
+                  className={cn(
+                    SQUARE_CLASS_AMBER,
+                    "tw:size-full tw:aspect-square"
+                  )}
+                >
+                  <ChevronDown />
+                </div>
+                <div
+                  className={cn(
+                    SQUARE_CLASS_POSITIVE,
+                    "tw:size-full tw:aspect-square"
+                  )}
+                >
+                  <Check />
+                </div>
+                <div
+                  className={cn(
+                    SQUARE_CLASS_AMBER,
+                    "tw:size-full tw:aspect-square"
+                  )}
+                >
+                  <ChevronUp />
+                </div>
+              </div>
               <hr className="tw:my-4" />
               <b>What this tells us:</b>
               <ul className="tw:list-disc tw:ps-6 tw:text-muted-foreground">

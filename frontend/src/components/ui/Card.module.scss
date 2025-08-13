@@ -1,0 +1,13 @@
+.Card {
+  --card-spacing: 1.5rem;
+
+  &--responsive {
+    @media screen and (max-width: 640px) {
+      --card-spacing: 1.25rem;
+    }
+
+    @media screen and (max-width: 600px) {
+      --card-spacing: 1rem;
+    }
+  }
+}

@@ -19,3 +19,6 @@ export const getFormattedPokemonName = (pokemon: {
   const speciesName = pokemon.speciesName;
   return speciesName[0].toUpperCase() + speciesName.slice(1);
 };
+
+export const formatPokemonHeight = (height: number | null) =>
+  `${((height ?? 0) / 10).toFixed(1)} m`;

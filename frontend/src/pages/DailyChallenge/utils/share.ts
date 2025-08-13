@@ -1,7 +1,10 @@
 import { toast } from "@/hooks/useToast";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
-import { COLUMNS } from "../components/Gameplay";
-import { challengeNumber, DAILY_CHALLENGE_GUESS_LIMIT } from "../constants";
+import {
+  challengeNumber,
+  COLUMNS,
+  DAILY_CHALLENGE_GUESS_LIMIT,
+} from "../constants";
 
 const generateGridEmojis = (guesses: DailyChallengeGuessResponse[]) => {
   return guesses
