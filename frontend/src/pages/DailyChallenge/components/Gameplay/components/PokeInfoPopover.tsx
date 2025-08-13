@@ -26,7 +26,7 @@ const COLOR_MAP: Record<string, string> = {
 };
 
 type Props = {
-  guess: DailyChallengeGuessResponse & { pokemonId: number };
+  guess: DailyChallengeGuessResponse;
   children: React.ReactNode;
   guessOrder: number;
 };

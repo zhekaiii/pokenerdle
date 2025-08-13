@@ -44,6 +44,7 @@ export const verifyGuess = async (
     return {
       correct: true,
       pokemon: await DailyPokemonToResponse(targetPokemon),
+      pokemonId,
     };
   }
 
@@ -122,5 +123,6 @@ export const verifyGuess = async (
     heightCorrectness,
     colorCorrectness,
     pokemon: await DailyPokemonToResponse(guessPokemon),
+    pokemonId,
   };
 };

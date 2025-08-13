@@ -17,6 +17,7 @@ export type DailyChallengeGuessResponse = {
     generationId: number;
     color: string;
   };
+  pokemonId: number;
 } & (
   | {
       correct: true;

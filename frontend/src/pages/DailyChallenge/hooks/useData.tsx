@@ -13,7 +13,7 @@ import { useEffect, useMemo, useState } from "react";
 
 export type DailyChallenge = {
   date: string;
-  guesses: (DailyChallengeGuessResponse & { pokemonId: number })[];
+  guesses: DailyChallengeGuessResponse[];
 };
 
 const now = new Date();
