@@ -1,4 +1,3 @@
-import TypeChip from "@/components/recyclables/TypeChip";
 import { Button } from "@/components/ui/Button";
 import {
   Card,
@@ -8,13 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/Card";
-import { usePokemonIcons } from "@/hooks/usePokemonIcons";
-import { cn } from "@/lib/utils";
+import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
 import React from "react";
 import { Link } from "react-router";
 import EffectivenessIcon from "../DailyChallenge/components/EffectivenessIcon";
-import { COLUMNS } from "../DailyChallenge/constants";
+import DailyChallengeGuessBox from "../DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 
 const SQUARE_CLASS_POSITIVE =
   "tw:rounded-xs tw:bg-positive tw:size-6 tw:[&_svg]:m-auto tw:flex";
@@ -23,8 +21,40 @@ const SQUARE_CLASS_AMBER =
 const ICON_EXPLANATION_TABLE_CLASS =
   "tw:grid tw:grid-cols-[max-content_max-content_auto] tw:items-start tw:mt-2 tw:gap-2";
 
+const EXAMPLE_GUESSES: DailyChallengeGuessResponse[] = [
+  {
+    pokemon: {
+      type1: "Fire",
+      type2: "Flying",
+      height: 17,
+      color: "Red",
+      generationId: 1,
+    },
+    pokemonId: 6,
+    type1Correctness: 0.5,
+    type2Correctness: "=",
+    genCorrectness: "=",
+    heightCorrectness: ">",
+    colorCorrectness: false,
+  },
+  {
+    pokemon: {
+      type1: "Water",
+      type2: null,
+      height: 6,
+      color: "Blue",
+      generationId: 2,
+    },
+    pokemonId: 158,
+    type1Correctness: "=",
+    type2Correctness: "NA",
+    genCorrectness: "<",
+    heightCorrectness: ">",
+    colorCorrectness: true,
+  },
+];
+
 const DailyChallengeRules: React.FC = () => {
-  const { getPokemonIcon } = usePokemonIcons();
   return (
     <Card>
       <CardHeader>
@@ -33,6 +63,12 @@ const DailyChallengeRules: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="tw:space-y-6">
+        <a
+          href="#example"
+          className="tw:text-muted-foreground tw:underline tw:mb-2 tw:block"
+        >
+          Jump to Examples
+        </a>
         <section>
           <h2 className="tw:text-xl tw:font-semibold tw:mb-3">🎯 Objective</h2>
           <p>
@@ -84,8 +120,7 @@ const DailyChallengeRules: React.FC = () => {
                 </div>
                 <b>1x damage:</b>{" "}
                 <span className="tw:text-muted-foreground">
-                  Normal effectiveness, or if your guessed Pokemon has no
-                  secondary typing
+                  Normal effectiveness (Normal vs Psychic)
                 </span>
                 <div className={SQUARE_CLASS_AMBER}>
                   <EffectivenessIcon value={0.5} />
@@ -107,6 +142,13 @@ const DailyChallengeRules: React.FC = () => {
                 <b>0x damage:</b>{" "}
                 <span className="tw:text-muted-foreground">
                   No effect (Normal vs Ghost)
+                </span>
+                <div className={SQUARE_CLASS_AMBER}>
+                  <EffectivenessIcon value="NA" />
+                </div>
+                <b>Not Applicable:</b>{" "}
+                <span className="tw:text-muted-foreground">
+                  Your Pokémon is a monotype, and the target is not.
                 </span>
                 <div className={SQUARE_CLASS_POSITIVE}>
                   <Check />
@@ -218,161 +260,21 @@ const DailyChallengeRules: React.FC = () => {
           </Card>
         </section>
 
-        <section>
+        <section id="example">
           <h2 className="tw:text-xl tw:font-semibold tw:mb-2">
             💡 Example Guesses
           </h2>
           <p className="tw:mb-2">
             Let's say the mystery Pokémon is Gyarados (Water/Flying, Gen 1,
-            Blue, 6.5m tall), and you make the following 2 guesses:
+            Blue, 6.5m tall), and you make the following 2 guesses. You will
+            receive the following feedback:
           </p>
 
-          <Card className="tw:py-2">
-            <CardHeader>
-              <div className="tw:flex tw:justify-center tw:items-center">
-                <img src={getPokemonIcon(6)} className="tw:me-1" />
-                <div>
-                  <div className="tw:font-bold">#6 Charizard</div>
-                  <div className="tw:text-muted-foreground tw:text-sm">
-                    Guess #1
-                  </div>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="tw:grid tw:grid-cols-5 tw:gap-2 tw:mx-auto tw:max-w-md">
-                {COLUMNS.map((col) => (
-                  <div className="tw:text-center">{col.label}</div>
-                ))}
-                <div
-                  className={cn(
-                    SQUARE_CLASS_AMBER,
-                    "tw:size-full tw:aspect-square"
-                  )}
-                >
-                  <EffectivenessIcon value={0.5} />
-                </div>
-                <div
-                  className={cn(
-                    SQUARE_CLASS_POSITIVE,
-                    "tw:size-full tw:aspect-square"
-                  )}
-                >
-                  <Check />
-                </div>
-                <div
-                  className={cn(
-                    SQUARE_CLASS_POSITIVE,
-                    "tw:size-full tw:aspect-square"
-                  )}
-                >
-                  <Check />
-                </div>
-                <div
-                  className={cn(
-                    SQUARE_CLASS_AMBER,
-                    "tw:size-full tw:aspect-square"
-                  )}
-                >
-                  <X />
-                </div>
-                <div
-                  className={cn(
-                    SQUARE_CLASS_AMBER,
-                    "tw:size-full tw:aspect-square"
-                  )}
-                >
-                  <ChevronUp />
-                </div>
-              </div>
-              <hr className="tw:my-4" />
-              <b>What this tells us:</b>
-              <ul className="tw:list-disc tw:ps-6 tw:text-muted-foreground">
-                <li>
-                  Fire deals 0.5x damage to the target Pokémon (Gyarados in this
-                  example).
-                </li>
-                <li>
-                  The target is a <TypeChip type="Flying" /> type!
-                </li>
-                <li>Target is from the same generation.</li>
-                <li>Target is not red.</li>
-                <li>Target is taller than 1.7m.</li>
-              </ul>
-            </CardContent>
-          </Card>
-          <Card className="tw:py-2 tw:mt-4">
-            <CardHeader>
-              <div className="tw:flex tw:justify-center tw:items-center">
-                <img src={getPokemonIcon(158)} className="tw:me-1" />
-                <div>
-                  <div className="tw:font-bold">#158 Totodile</div>
-                  <div className="tw:text-muted-foreground tw:text-sm">
-                    Guess #2
-                  </div>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="tw:grid tw:grid-cols-5 tw:gap-2 tw:mx-auto tw:max-w-md">
-                {COLUMNS.map((col) => (
-                  <div className="tw:text-center">{col.label}</div>
-                ))}
-                <div
-                  className={cn(
-                    SQUARE_CLASS_POSITIVE,
-                    "tw:size-full tw:aspect-square"
-                  )}
-                >
-                  <Check />
-                </div>
-                <div
-                  className={cn(
-                    SQUARE_CLASS_AMBER,
-                    "tw:size-full tw:aspect-square"
-                  )}
-                >
-                  <EffectivenessIcon value="NA" />
-                </div>
-                <div
-                  className={cn(
-                    SQUARE_CLASS_AMBER,
-                    "tw:size-full tw:aspect-square"
-                  )}
-                >
-                  <ChevronDown />
-                </div>
-                <div
-                  className={cn(
-                    SQUARE_CLASS_POSITIVE,
-                    "tw:size-full tw:aspect-square"
-                  )}
-                >
-                  <Check />
-                </div>
-                <div
-                  className={cn(
-                    SQUARE_CLASS_AMBER,
-                    "tw:size-full tw:aspect-square"
-                  )}
-                >
-                  <ChevronUp />
-                </div>
-              </div>
-              <hr className="tw:my-4" />
-              <b>What this tells us:</b>
-              <ul className="tw:list-disc tw:ps-6 tw:text-muted-foreground">
-                <li>Target's Type 1 matches (Water)!</li>
-                <li>
-                  Totodile has no secondary type, but it's not a match, so
-                  target is a dual-type Pokémon
-                </li>
-                <li>Target is from an older generation (Gen 1)</li>
-                <li>Both are blue in color!</li>
-                <li>Target is taller than 0.6 m</li>
-              </ul>
-            </CardContent>
-          </Card>
+          <div className="tw:flex tw:flex-col tw:gap-2 tw:mx-auto tw:max-w-[400px]">
+            {EXAMPLE_GUESSES.map((guess) => (
+              <DailyChallengeGuessBox guess={guess} forceOpen />
+            ))}
+          </div>
         </section>
       </CardContent>
       <CardFooter>

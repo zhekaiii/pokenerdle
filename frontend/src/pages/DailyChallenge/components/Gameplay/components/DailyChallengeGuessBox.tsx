@@ -11,20 +11,21 @@ import React, { useState } from "react";
 import { DailyChallengeGuessIcon } from "../../DailyChallengeGuessIcon";
 
 import TypeChip from "@/components/recyclables/TypeChip";
-import { cn } from "@/lib/utils";
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 import styles from "../index.module.scss";
 
 type Props = {
   guess?: DailyChallengeGuessResponse;
+  forceOpen?: boolean;
 };
 
-const DailyChallengeGuessBox: React.FC<Props> = ({ guess }) => {
+const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
   const pokemonName = pokemonNames?.find((p) => p.id === guess?.pokemonId);
   const [isExpanded, setIsExpanded] = useState(false);
+  const isOpen = isExpanded || forceOpen;
   const pokemonHeight = formatPokemonHeight(guess?.pokemon.height ?? 0);
 
   if (!guess) {
@@ -39,7 +40,11 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess }) => {
     <Card
       responsive
       onClick={() => setIsExpanded((value) => !value)}
-      className="tw:hover:bg-muted tw:transition-colors tw:cursor-pointer"
+      className={
+        forceOpen
+          ? ""
+          : "tw:hover:bg-muted tw:transition-colors tw:cursor-pointer"
+      }
     >
       <CardHeader className="tw:flex tw:items-center">
         <div className="tw:grow">
@@ -77,25 +82,25 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess }) => {
                     : styles["DailyChallengeGameplay__GridItem--incorrect"]
                 )}
               >
+                <span className={styles["DailyChallengeGameplay__GridHeader"]}>
+                  {column.label}
+                </span>
                 <DailyChallengeGuessIcon guess={guess} colKey={column.key} />
               </div>
             ))}
           </div>
         </div>
-        <ChevronDown
-          className={clsx(
-            "tw:ms-1 tw:-me-3 tw:transition-transform",
-            isExpanded && "tw:-rotate-180"
-          )}
-        />
+        {!forceOpen && (
+          <ChevronDown
+            className={clsx(
+              "tw:ms-1 tw:-me-3 tw:transition-transform",
+              isExpanded && "tw:-rotate-180"
+            )}
+          />
+        )}
       </CardHeader>
-      {isExpanded && (
-        <CardContent
-          className={cn(
-            "tw:transition-all tw:overflow-hidden tw:text-muted-foreground",
-            isExpanded ? "tw:max-h-60" : "tw:max-h-0"
-          )}
-        >
+      {isOpen && (
+        <CardContent className="tw:text-muted-foreground">
           <ul className="tw:list-disc tw:ps-6">
             {guess.correct ? (
               <li>You are correct!</li>
@@ -133,7 +138,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess }) => {
                         />
                       ) : (
                         "mono"
-                      )}
+                      )}{" "}
                       type!
                     </>
                   ) : guess.pokemon.type2 ? (

@@ -1,5 +1,5 @@
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
-import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, X } from "lucide-react";
 import { COLUMNS } from "../constants";
 import EffectivenessIcon from "./EffectivenessIcon";
 
@@ -15,10 +15,10 @@ export const DailyChallengeGuessIcon: React.FC<Props> = ({ guess, colKey }) => {
     return <Check />;
   }
   if (value === "<") {
-    return <ChevronDown />;
+    return <ArrowDown />;
   }
   if (value === ">") {
-    return <ChevronUp />;
+    return <ArrowUp />;
   }
   if (value === false) {
     return <X />;
