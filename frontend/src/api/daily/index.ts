@@ -13,4 +13,21 @@ export default {
     );
     return data;
   },
+  getAnswer: async () => {
+    const { data } = await axios.get<{
+      pokemonId: number;
+      pokemon: {
+        type1: string;
+        type2: string | null;
+        height: number | null;
+        generationId: number;
+        color: string;
+      };
+    }>("/v1/daily/challenge/answer", {
+      params: {
+        date: formatDate(new Date(), "yyyy-MM-dd"),
+      },
+    });
+    return data;
+  },
 };

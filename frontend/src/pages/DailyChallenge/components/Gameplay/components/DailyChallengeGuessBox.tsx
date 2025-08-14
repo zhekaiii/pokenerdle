@@ -2,10 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { COLUMNS } from "@/pages/DailyChallenge/constants";
-import {
-  formatPokemonHeight,
-  getFormattedPokemonName,
-} from "@/utils/formatters";
+import { formatPokemonHeight } from "@/utils/formatters";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import React, { memo, useState } from "react";
 import { DailyChallengeGuessIcon } from "../../DailyChallengeGuessIcon";
@@ -53,7 +50,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
             <div className="tw:flex tw:gap-4 tw:flex-grow">
               <div className="tw:flex tw:flex-col tw:flex-grow">
                 <h3 className="tw:font-medium tw:text-lg">
-                  {pokemonName && getFormattedPokemonName(pokemonName)}
+                  {pokemonName?.name ?? pokemonName?.speciesName}
                 </h3>
                 <div className="tw:text-muted-foreground tw:text-sm">
                   Gen {guess.pokemon.generationId} &bull; {pokemonHeight} &bull;{" "}
@@ -73,6 +70,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
           >
             {COLUMNS.map((column) => (
               <div
+                key={column.key}
                 className={clsx(
                   styles["DailyChallengeGameplay__GridItem"],
                   guess.correct ||

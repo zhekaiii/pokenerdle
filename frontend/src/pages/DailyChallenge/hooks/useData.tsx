@@ -16,14 +16,35 @@ export type DailyChallenge = {
   guesses: DailyChallengeGuessResponse[];
 };
 
+type CorrectAnswer = {
+  pokemonId: number;
+  pokemon: {
+    type1: string;
+    type2: string | null;
+    height: number | null;
+    generationId: number;
+    color: string;
+  };
+};
+
 const now = new Date();
+const DAILY_CHALLENGE_DIALOG_KEY = "daily_challenge_dialog_shown";
 
 export const useDailyChallengeData = () => {
   const [guesses, setGuesses] = useLocalStorage<DailyChallenge | null>(
     DAILY_CHALLENGE_KEY,
     null
   );
+  const [dialogShown, setDialogShown] = useLocalStorage<string | null>(
+    DAILY_CHALLENGE_DIALOG_KEY,
+    null
+  );
   const [isLoading, setIsLoading] = useState(false);
+  const [correctAnswer, setCorrectAnswer] = useState<CorrectAnswer | null>(
+    null
+  );
+  const [isLoadingAnswer, setIsLoadingAnswer] = useState(false);
+
   const hasSolved = useMemo(
     () =>
       Boolean(
@@ -39,6 +60,7 @@ export const useDailyChallengeData = () => {
   );
   const isGameFinished = hasReachedLimit || hasSolved;
   const isNewDay = guesses?.date !== format(now, "yyyy-MM-dd");
+  const hasDialogBeenShownToday = dialogShown === format(now, "yyyy-MM-dd");
 
   useEffect(() => {
     if (isNewDay) {
@@ -46,8 +68,29 @@ export const useDailyChallengeData = () => {
         date: format(now, "yyyy-MM-dd"),
         guesses: [],
       });
+      setCorrectAnswer(null);
+      setDialogShown(null);
     }
   }, [isNewDay]);
+
+  // Fetch correct answer when game is over and user hasn't solved it
+  useEffect(() => {
+    const fetchCorrectAnswer = async () => {
+      if (hasReachedLimit && !hasSolved && !correctAnswer && !isLoadingAnswer) {
+        try {
+          setIsLoadingAnswer(true);
+          const answer = await api.daily.getAnswer();
+          setCorrectAnswer(answer);
+        } catch (error) {
+          console.error("Failed to fetch correct answer:", error);
+        } finally {
+          setIsLoadingAnswer(false);
+        }
+      }
+    };
+
+    fetchCorrectAnswer();
+  }, [hasReachedLimit, hasSolved, correctAnswer, isLoadingAnswer]);
 
   const onGuess = async ({ id }: PokemonNamesResponse) => {
     const numGuesses = (guesses?.guesses.length ?? 0) + 1;
@@ -99,6 +142,10 @@ export const useDailyChallengeData = () => {
     }
   };
 
+  const markDialogAsShown = () => {
+    setDialogShown(format(now, "yyyy-MM-dd"));
+  };
+
   return {
     isNewDay,
     guesses,
@@ -107,5 +154,9 @@ export const useDailyChallengeData = () => {
     hasSolved,
     hasReachedLimit,
     isGameFinished,
+    correctAnswer,
+    isLoadingAnswer,
+    hasDialogBeenShownToday,
+    markDialogAsShown,
   };
 };

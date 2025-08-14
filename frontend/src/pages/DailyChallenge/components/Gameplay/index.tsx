@@ -3,9 +3,11 @@ import React, { useState } from "react";
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
 import { Button } from "@/components/ui/Button";
+import CompletionDialog from "@/pages/DailyChallenge/components/Gameplay/components/CompletionDialog";
 import { DailyChallengeGuessBoxMemo } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
-import { Share2 } from "lucide-react";
+import { Eye, Share2 } from "lucide-react";
+import { useEffect } from "react";
 import { challengeNumber, DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
 import { shareResults } from "../../utils/share";
@@ -19,16 +21,40 @@ const DailyChallengeGameplay: React.FC = () => {
     hasSolved,
     hasReachedLimit,
     isGameFinished,
+    correctAnswer,
+    isLoadingAnswer,
+    hasDialogBeenShownToday,
+    markDialogAsShown,
   } = useDailyChallengeData();
   const [input, setInput] = useState("");
+  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
 
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
     onGuess(pokemon).finally(() => setInput(""));
   };
 
+  // Show completion dialog when game is finished and dialog hasn't been shown today
+  useEffect(() => {
+    if (isGameFinished && !hasDialogBeenShownToday && !showCompletionDialog) {
+      setShowCompletionDialog(true);
+    }
+  }, [isGameFinished, hasDialogBeenShownToday, showCompletionDialog]);
+
+  const handleDialogOpenChange = (open: boolean) => {
+    setShowCompletionDialog(open);
+    if (!open && !hasDialogBeenShownToday) {
+      // Mark dialog as shown when it's closed for the first time
+      markDialogAsShown();
+    }
+  };
+
+  const handleReopenDialog = () => {
+    setShowCompletionDialog(true);
+  };
+
   return (
     <div className="tw:flex tw:flex-col tw:flex-auto tw:max-w-[400px] tw:w-full">
-      <LoadingDialog open={isLoading} />
+      <LoadingDialog open={isLoading || isLoadingAnswer} />
       <h2 className="tw:text-center tw:font-bold tw:text-lg">
         Daily Challenge #{challengeNumber}
       </h2>
@@ -72,13 +98,40 @@ const DailyChallengeGameplay: React.FC = () => {
           />
         </>
       ) : (
-        <Button
-          className="tw:w-full tw:mt-auto"
-          onClick={() => shareResults(guesses?.guesses ?? [])}
-        >
-          Share <Share2 />
-        </Button>
+        <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto">
+          <Button
+            className="tw:w-full tw:mt-2"
+            onClick={() => shareResults(guesses?.guesses ?? [])}
+          >
+            <Share2 /> Share
+          </Button>
+          {hasDialogBeenShownToday && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="tw:w-full"
+              onClick={handleReopenDialog}
+            >
+              <Eye />
+              View Results
+            </Button>
+          )}
+        </div>
       )}
+
+      <CompletionDialog
+        open={showCompletionDialog}
+        onOpenChange={handleDialogOpenChange}
+        guesses={guesses?.guesses ?? []}
+        hasSolved={hasSolved}
+        hasReachedLimit={hasReachedLimit}
+        correctAnswer={
+          correctAnswer ??
+          (hasSolved
+            ? guesses!.guesses[guesses!.guesses.length - 1]
+            : undefined)
+        }
+      />
     </div>
   );
 };

@@ -126,3 +126,15 @@ export const verifyGuess = async (
     pokemonId,
   };
 };
+
+export const getDailyPokemonAnswer = async (date: string) => {
+  const targetPokemon = await getDailyPokemon(date);
+  if (!targetPokemon) {
+    throw new Error("Unable to get daily pokemon");
+  }
+
+  return {
+    pokemonId: targetPokemon.id,
+    pokemon: await DailyPokemonToResponse(targetPokemon),
+  };
+};
