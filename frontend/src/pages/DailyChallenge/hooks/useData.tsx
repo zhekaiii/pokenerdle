@@ -50,7 +50,7 @@ export const useDailyChallengeData = () => {
   }, [isNewDay]);
 
   const onGuess = async ({ id }: PokemonNamesResponse) => {
-    const numGuesses = guesses?.guesses.length ?? 0;
+    const numGuesses = (guesses?.guesses.length ?? 0) + 1;
     try {
       setIsLoading(true);
       const response = await api.daily.verifyGuess(id);
@@ -81,9 +81,9 @@ export const useDailyChallengeData = () => {
           ),
         });
         posthog.capture("daily_challenge_solved", {
-          num_guesses: guesses?.guesses.length ?? 0,
+          num_guesses: numGuesses,
         });
-      } else if (numGuesses + 1 === DAILY_CHALLENGE_GUESS_LIMIT) {
+      } else if (numGuesses === DAILY_CHALLENGE_GUESS_LIMIT) {
         toast({
           variant: "destructive",
           description: (
