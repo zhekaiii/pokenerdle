@@ -25,7 +25,10 @@ const generateShareText = (guesses: DailyChallengeGuessResponse[]) => {
   const grid = generateGridEmojis(guesses);
   let text = `PokeNerdle Daily #${challengeNumber}\n\n`;
   if (solved) {
-    text += `Guessed in ${attempts} tries!\n\n`;
+    text +=
+      guesses.length == 1
+        ? "Got it on the first try! So lucky!"
+        : `Guessed in ${attempts} tries!\n\n`;
   }
   text += `${grid}\n\nCan you guess 'em all? https://pokenerdle.app`;
   return text;

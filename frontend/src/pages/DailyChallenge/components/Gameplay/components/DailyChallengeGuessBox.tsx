@@ -7,7 +7,7 @@ import {
   getFormattedPokemonName,
 } from "@/utils/formatters";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { DailyChallengeGuessIcon } from "../../DailyChallengeGuessIcon";
 
 import TypeChip from "@/components/recyclables/TypeChip";
@@ -93,7 +93,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
         {!forceOpen && (
           <ChevronDown
             className={clsx(
-              "tw:ms-1 tw:-me-3 tw:transition-transform",
+              "tw:sm:ms-1 tw:-me-3 tw:transition-transform",
               isExpanded && "tw:-rotate-180"
             )}
           />
@@ -199,3 +199,12 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
 };
 
 export default DailyChallengeGuessBox;
+
+/**
+ * Memoized version of the component. Note that we only look at the
+ * pokemonId prop!
+ */
+export const DailyChallengeGuessBoxMemo = memo(
+  DailyChallengeGuessBox,
+  (prev, next) => prev.guess?.pokemonId === next.guess?.pokemonId
+);
