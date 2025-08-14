@@ -1,13 +1,20 @@
+import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import ErrorBoundary from "@/layout/ErrorBoundary";
 import Layout from "@/layout/Layout";
 import DailyChallengePage from "@/pages/DailyChallenge";
-import DailyChallengeRules from "@/pages/HowToPlay/DailyChallengeRules";
+import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router";
-import PathFinder from "../components/PathFinder";
-import PokeChain from "../components/PokeChain";
 import HowToPlayPage from "../pages/HowToPlay";
-import PathFinderRules from "../pages/HowToPlay/PathFinderRules";
-import PokeChainRules from "../pages/HowToPlay/PokeChainRules";
+
+const DailyChallengeRules = lazy(
+  () => import("@/pages/HowToPlay/DailyChallengeRules")
+);
+const PathFinder = lazy(() => import("../components/PathFinder"));
+const PokeChain = lazy(() => import("../components/PokeChain"));
+const PathFinderRules = lazy(
+  () => import("../pages/HowToPlay/PathFinderRules")
+);
+const PokeChainRules = lazy(() => import("../pages/HowToPlay/PokeChainRules"));
 
 const routes: RouteObject[] = [
   {
@@ -21,15 +28,27 @@ const routes: RouteObject[] = [
       },
       {
         path: "daily",
-        element: <DailyChallengePage />,
+        element: (
+          <Suspense fallback={<LoadingDialog open />}>
+            <DailyChallengePage />
+          </Suspense>
+        ),
       },
       {
         path: "pokechain",
-        element: <PokeChain />,
+        element: (
+          <Suspense fallback={<LoadingDialog open />}>
+            <PokeChain />
+          </Suspense>
+        ),
       },
       {
         path: "path-finder",
-        element: <PathFinder />,
+        element: (
+          <Suspense fallback={<LoadingDialog open />}>
+            <PathFinder />
+          </Suspense>
+        ),
       },
       {
         path: "how-to-play",
@@ -42,15 +61,27 @@ const routes: RouteObject[] = [
           },
           {
             path: "daily",
-            element: <DailyChallengeRules />,
+            element: (
+              <Suspense fallback={<LoadingDialog open />}>
+                <DailyChallengeRules />
+              </Suspense>
+            ),
           },
           {
             path: "pokechain",
-            element: <PokeChainRules />,
+            element: (
+              <Suspense fallback={<LoadingDialog open />}>
+                <PokeChainRules />
+              </Suspense>
+            ),
           },
           {
             path: "path-finder",
-            element: <PathFinderRules />,
+            element: (
+              <Suspense fallback={<LoadingDialog open />}>
+                <PathFinderRules />
+              </Suspense>
+            ),
           },
         ],
       },
