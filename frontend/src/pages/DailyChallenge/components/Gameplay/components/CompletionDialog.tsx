@@ -15,6 +15,7 @@ import {
 } from "@/utils/formatters";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { CheckCircle, Share2 } from "lucide-react";
+import posthog from "posthog-js";
 import React from "react";
 import {
   challengeNumber,
@@ -45,7 +46,6 @@ const CompletionDialog: React.FC<Props> = ({
   onOpenChange,
   guesses,
   hasSolved,
-  hasReachedLimit,
   correctAnswer,
 }) => {
   const { getPokemonIcon } = usePokemonIcons();
@@ -55,6 +55,10 @@ const CompletionDialog: React.FC<Props> = ({
   );
 
   const handleShare = () => {
+    posthog.capture("daily_challenge_share_clicked", {
+      has_solved: hasSolved,
+      num_guesses: guesses.length,
+    });
     shareResults(guesses);
   };
 

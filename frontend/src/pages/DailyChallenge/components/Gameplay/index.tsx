@@ -9,6 +9,7 @@ import { DailyChallengeGuessBoxMemo } from "@/pages/DailyChallenge/components/Ga
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
 import { BookOpen, Eye, Share2 } from "lucide-react";
+import posthog from "posthog-js";
 import { useEffect } from "react";
 import { challengeNumber, DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
@@ -105,7 +106,10 @@ const DailyChallengeGameplay: React.FC = () => {
               variant="outline"
               size="icon"
               className="tw:flex-shrink-0"
-              onClick={() => setShowPokemonReference(true)}
+              onClick={() => {
+                posthog.capture("daily_challenge_pokemon_reference_opened");
+                setShowPokemonReference(true);
+              }}
             >
               <BookOpen />
             </Button>
@@ -115,7 +119,13 @@ const DailyChallengeGameplay: React.FC = () => {
         <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto">
           <Button
             className="tw:w-full tw:mt-2"
-            onClick={() => shareResults(guesses?.guesses ?? [])}
+            onClick={() => {
+              posthog.capture("daily_challenge_share_clicked", {
+                has_solved: hasSolved,
+                num_guesses: guesses?.guesses.length ?? 0,
+              });
+              shareResults(guesses?.guesses ?? []);
+            }}
           >
             <Share2 /> Share
           </Button>
