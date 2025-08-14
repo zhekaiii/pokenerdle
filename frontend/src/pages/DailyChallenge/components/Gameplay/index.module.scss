@@ -35,12 +35,18 @@
   }
 }
 
-.DailyChallengeInput {
+.DailyChallengeInputContainer {
   position: fixed;
   inset-inline-start: 50%;
   transform: translateX(-50%);
   width: 400px;
   bottom: var(--page-padding-y);
-  @apply tw:bg-background;
   max-width: calc(100vw - 20px);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  > :first-child {
+    flex: 1;
+  }
 }

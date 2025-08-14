@@ -60,7 +60,6 @@ const CompletionDialog: React.FC<Props> = ({
 
   const attempts = guesses.length;
   const isSuccess = hasSolved;
-  const isGameOver = hasReachedLimit && !hasSolved;
 
   const getTitle = () => {
     if (isSuccess) {

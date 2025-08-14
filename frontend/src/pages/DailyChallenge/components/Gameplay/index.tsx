@@ -2,11 +2,13 @@ import React, { useState } from "react";
 
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
+import PokemonReferenceDialog from "@/components/recyclables/PokemonReferenceDialog";
 import { Button } from "@/components/ui/Button";
 import CompletionDialog from "@/pages/DailyChallenge/components/Gameplay/components/CompletionDialog";
 import { DailyChallengeGuessBoxMemo } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
-import { Eye, Share2 } from "lucide-react";
+import clsx from "clsx";
+import { BookOpen, Eye, Share2 } from "lucide-react";
 import { useEffect } from "react";
 import { challengeNumber, DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
@@ -28,6 +30,7 @@ const DailyChallengeGameplay: React.FC = () => {
   } = useDailyChallengeData();
   const [input, setInput] = useState("");
   const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+  const [showPokemonReference, setShowPokemonReference] = useState(false);
 
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
     onGuess(pokemon).finally(() => setInput(""));
@@ -68,6 +71,7 @@ const DailyChallengeGameplay: React.FC = () => {
           </>
         )}
       </div>
+
       <div className="tw:grid tw:grid-flow-row tw:gap-2">
         {Array.from({
           length: isGameFinished
@@ -81,21 +85,31 @@ const DailyChallengeGameplay: React.FC = () => {
       {!hasReachedLimit && !hasSolved ? (
         <>
           <div className="tw:mb-[50px]" />
-          <PokemonCombobox
-            className={styles.DailyChallengeInput}
-            disabled={isLoading}
-            input={input}
-            setInput={setInput}
-            onSelect={onSelectPokemon}
-            filter={
-              guesses
-                ? (p) =>
-                    !guesses.guesses
-                      .map(({ pokemonId }) => pokemonId)
-                      .includes(p.id)
-                : undefined
-            }
-          />
+          <div className={clsx(styles.DailyChallengeInputContainer)}>
+            <PokemonCombobox
+              className="tw:bg-background"
+              disabled={isLoading}
+              input={input}
+              setInput={setInput}
+              onSelect={onSelectPokemon}
+              filter={
+                guesses
+                  ? (p) =>
+                      !guesses.guesses
+                        .map(({ pokemonId }) => pokemonId)
+                        .includes(p.id)
+                  : undefined
+              }
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              className="tw:flex-shrink-0"
+              onClick={() => setShowPokemonReference(true)}
+            >
+              <BookOpen />
+            </Button>
+          </div>
         </>
       ) : (
         <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto">
@@ -131,6 +145,11 @@ const DailyChallengeGameplay: React.FC = () => {
             ? guesses!.guesses[guesses!.guesses.length - 1]
             : undefined)
         }
+      />
+
+      <PokemonReferenceDialog
+        open={showPokemonReference}
+        onOpenChange={setShowPokemonReference}
       />
     </div>
   );
