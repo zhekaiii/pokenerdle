@@ -1,12 +1,13 @@
 import { RequestHandler } from "express";
 import httpProxy from "http-proxy";
+import { POSTHOG_HOST, POSTHOG_STATIC_HOST } from "../constants/posthog.js";
 
 const proxy = httpProxy.createProxyServer();
 
 export const porygonMiddleware: RequestHandler = (req, res) => {
   const realIp = (req.ip || "").replace(/^::ffff:/, "");
   proxy.web(req, res, {
-    target: "https://us.i.posthog.com",
+    target: POSTHOG_HOST,
     changeOrigin: true,
     secure: true,
     xfwd: true,
@@ -21,7 +22,7 @@ export const porygonMiddleware: RequestHandler = (req, res) => {
 export const staticPorygonMiddleware: RequestHandler = (req, res) => {
   const realIp = (req.ip || "").replace(/^::ffff:/, "");
   proxy.web(req, res, {
-    target: "https://us-assets.i.posthog.com/static",
+    target: POSTHOG_STATIC_HOST,
     changeOrigin: true,
     secure: true,
     xfwd: true,

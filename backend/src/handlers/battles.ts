@@ -5,6 +5,7 @@ import { RouteNames } from "../data/const.js";
 import { ErrorRoomNotFound } from "../errors/index.js";
 import { io } from "../index.js";
 import { ongoingBattles } from "../lib/battles.js";
+import { captureEvent } from "../lib/posthog.js";
 import { getPoints } from "../services/battle.service.js";
 import * as dataService from "../services/data.services.js";
 import { createRandomString } from "../utils/random.js";
@@ -253,6 +254,16 @@ export const userReady = (socket: PokeNerdleSocket) => {
   io.of(RouteNames.BATTLES_WS).to(roomId).emit("ready", socket.id);
   if (room.readyPlayers.length === room.numPlayers) {
     console.log("All players are ready");
+
+    // Track game start event
+    captureEvent("pokechain_game_started", {
+      room_id: roomId,
+      num_players: room.numPlayers,
+      starter_pokemon_id: room.pokemon[0].id,
+      starter_pokemon_name: room.pokemon[0].name,
+      timer_duration: room.settings.timer,
+    });
+
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("startGame");
     nextTurn(roomId, true);
   }
