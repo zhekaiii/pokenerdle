@@ -28,10 +28,20 @@ export type AbilityLinkUsedEvent = {
   ability_id: number;
 };
 
+export type RoomCreatedEvent = {
+  is_single_player: boolean;
+  timer_duration: number;
+  show_ability: boolean;
+};
+
 export const trackPokemonGuessed = (event: PokemonGuessedEvent) => {
   posthog.capture("pokechain_pokemon_guessed", event);
 };
 
 export const trackAbilityLinkUsed = (event: AbilityLinkUsedEvent) => {
   posthog.capture("pokechain_ability_link_used", event);
+};
+
+export const trackRoomCreated = (event: RoomCreatedEvent) => {
+  posthog.capture("pokechain_room_created", event);
 };

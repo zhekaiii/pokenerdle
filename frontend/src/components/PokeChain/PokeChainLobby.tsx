@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/Card";
+import { trackRoomCreated } from "@/lib/events";
 import { HelpCircle, Plus, User, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
@@ -46,6 +47,13 @@ const PokeChainLobby: React.FC = () => {
   const onClickCreate = async (isSinglePlayer?: boolean) => {
     if (isConnecting) return;
     setIsConnecting(true);
+
+    trackRoomCreated({
+      is_single_player: !!isSinglePlayer,
+      timer_duration: timer,
+      show_ability: showAbility,
+    });
+
     api.battles.createBattleRoom(
       socket!,
       {
