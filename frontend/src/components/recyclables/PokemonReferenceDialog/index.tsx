@@ -60,11 +60,11 @@ const PokemonReferenceDialog: React.FC<Props> = ({ open, onOpenChange }) => {
             <div
               key={pokemon.id}
               className={styles.PokemonItem}
-              title={pokemon.name ?? pokemon.speciesName}
+              title={pokemon.name || pokemon.speciesName}
             >
               <img
                 src={getPokemonIcon(pokemon.id)}
-                alt={pokemon.name ?? pokemon.speciesName}
+                alt={pokemon.name || pokemon.speciesName}
                 className={styles.PokemonIcon}
                 loading="lazy"
                 onError={(e) => {
@@ -72,7 +72,7 @@ const PokemonReferenceDialog: React.FC<Props> = ({ open, onOpenChange }) => {
                 }}
               />
               <span className={styles.PokemonName}>
-                {pokemon.name ?? pokemon.speciesName}
+                {pokemon.name || pokemon.speciesName}
               </span>
             </div>
           ))}

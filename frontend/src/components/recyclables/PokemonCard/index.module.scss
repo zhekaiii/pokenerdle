@@ -13,6 +13,10 @@
 
 .PokemonCard__Sprite {
   max-height: 100px;
+  &--gmax {
+    transform: scale(1.5) translateY(-12.5%);
+    filter: drop-shadow(0 0 3px rgba(255, 0, 0, 0.5));
+  }
 }
 
 .PokemonCard__PkmnName {

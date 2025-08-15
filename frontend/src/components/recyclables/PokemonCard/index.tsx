@@ -82,7 +82,10 @@ const PokemonCard: React.FC<Props> = ({
           </Button>
         )}
         <img
-          className={classes["PokemonCard__Sprite"]}
+          className={clsx(classes["PokemonCard__Sprite"], {
+            [classes["PokemonCard__Sprite--gmax"]]:
+              pokemon.name.includes("gmax"),
+          })}
           src={pokemonSpriteUrl}
           alt={pokemon.name}
         />
