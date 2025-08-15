@@ -64,6 +64,36 @@ export const verifyGuess = async (
   const targetType2: pokemon_v2_pokemontype | undefined =
     targetPokemon.pokemon_v2_pokemontype[1];
 
+  const guessGen =
+    guessPokemon.pokemon_v2_pokemonform[0]?.pokemon_v2_versiongroup
+      ?.generation_id;
+
+  if (!guessGen) {
+    throw new Error("Cannot get generation of guess pokemon");
+  }
+
+  const targetGen =
+    targetPokemon.pokemon_v2_pokemonform[0]?.pokemon_v2_versiongroup
+      ?.generation_id;
+
+  if (!targetGen) {
+    throw new Error("Cannot get generation of target pokemon");
+  }
+
+  if (
+    targetPokemon.pokemon_species_id === guessPokemon.pokemon_species_id &&
+    targetGen === guessGen &&
+    targetPokemon.height === guessPokemon.height &&
+    targetType1.type_id === guessType1.type_id &&
+    targetType2?.type_id === guessType2?.type_id
+  ) {
+    return {
+      correct: true,
+      pokemon: await DailyPokemonToResponse(targetPokemon),
+      pokemonId,
+    };
+  }
+
   const type1Correctness =
     guessType1.type_id === targetType1.type_id ||
     guessType1.type_id === targetType2?.type_id
@@ -85,22 +115,6 @@ export const verifyGuess = async (
           targetType2?.type_id
         )
       : "NA";
-
-  const guessGen =
-    guessPokemon.pokemon_v2_pokemonform[0]?.pokemon_v2_versiongroup
-      ?.generation_id;
-
-  if (!guessGen) {
-    throw new Error("Cannot get generation of guess pokemon");
-  }
-
-  const targetGen =
-    targetPokemon.pokemon_v2_pokemonform[0]?.pokemon_v2_versiongroup
-      ?.generation_id;
-
-  if (!targetGen) {
-    throw new Error("Cannot get generation of target pokemon");
-  }
 
   const genCorrectness: Comp =
     targetGen < guessGen ? "<" : guessGen == targetGen ? "=" : ">";
