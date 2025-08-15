@@ -103,9 +103,8 @@ const DailyChallengeGameplay: React.FC = () => {
               }
             />
             <Button
-              variant="outline"
               size="icon"
-              className="tw:flex-shrink-0 tw:bg-background"
+              className="tw:flex-shrink-0"
               onClick={() => {
                 posthog.capture("daily_challenge_pokemon_reference_opened");
                 setShowPokemonReference(true);
