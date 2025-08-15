@@ -12,6 +12,7 @@ export type BattleRoom = {
   settings: BattleRoomSettings;
   turn: number;
   turnStart: number;
+  gameStartTime: number;
   timer: NodeJS.Timeout | null;
   readyPlayers: string[];
   wantToRematch: string[];

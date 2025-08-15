@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/Button";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { useToast } from "@/hooks/useToast";
+import { trackPokemonGuessed } from "@/lib/events";
 import {
   ForfeitInfo,
   PokemonNamesResponse,
   WrongAnswerReason,
 } from "@pokenerdle/shared";
 import { LogOut, RefreshCw } from "lucide-react";
-import posthog from "posthog-js";
 import React, {
   useCallback,
   useEffect,
@@ -184,15 +184,13 @@ const BattleScreen: React.FC<Props> = ({
           setPlayerPoints(points);
           setPlayerStreak((playerStreak) => playerStreak + 1);
 
-          posthog.capture("pokechain_pokemon_guessed", {
+          trackPokemonGuessed({
             pokemon_id: pokemon.id,
             pokemon_name: pokemon.name,
             is_correct: true,
-            points_awarded: points,
             streak_count: playerStreak + 1,
             is_evolution_link: isSameEvoline,
             chain_position: pokemons.length + 1,
-            room_code: roomCode,
             is_single_player: isSinglePlayer,
           });
         } else {
@@ -248,13 +246,11 @@ const BattleScreen: React.FC<Props> = ({
         setPlayerPoints(points);
         setPlayerStreak(0);
 
-        posthog.capture("pokechain_pokemon_guessed", {
+        trackPokemonGuessed({
           pokemon_id: pokemonId,
-          pokemon_name: pokemonName,
+          pokemon_name: pokemonName || "",
           is_correct: false,
-          points_lost: points,
-          reason: reason,
-          room_code: roomCode,
+          reason,
           is_single_player: isSinglePlayer,
         });
       } else {

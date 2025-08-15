@@ -5,7 +5,7 @@ import { RouteNames } from "../data/const.js";
 import { ErrorRoomNotFound } from "../errors/index.js";
 import { io } from "../index.js";
 import { ongoingBattles } from "../lib/battles.js";
-import { captureEvent } from "../lib/posthog.js";
+import { trackGameEnded, trackGameStarted } from "../lib/events.js";
 import { getPoints } from "../services/battle.service.js";
 import * as dataService from "../services/data.services.js";
 import { createRandomString } from "../utils/random.js";
@@ -38,6 +38,10 @@ const nextTurn = (roomId: string, isFirstTurn?: true) => {
         room.points[room.turn] - TIMEOUT_PENALTY
       );
     }
+
+    // Track game end event (timeout)
+    trackGameEnded(room, roomId, "timeout");
+
     io.of(RouteNames.BATTLES_WS)
       .to(roomId)
       .emit("gameEnd", {
@@ -60,6 +64,7 @@ const initRoom = (
     timer: null,
     turn: room.numPlayers === 1 || Math.random() < 0.5 ? 0 : 1,
     turnStart: Date.now(),
+    gameStartTime: Date.now(),
     readyPlayers: [],
     wantToRematch: [],
     usedLinks: {},
@@ -256,14 +261,9 @@ export const userReady = (socket: PokeNerdleSocket) => {
     console.log("All players are ready");
 
     // Track game start event
-    captureEvent("pokechain_game_started", {
-      room_id: roomId,
-      num_players: room.numPlayers,
-      starter_pokemon_id: room.pokemon[0].id,
-      starter_pokemon_name: room.pokemon[0].name,
-      timer_duration: room.settings.timer,
-    });
+    trackGameStarted(room, roomId);
 
+    room.gameStartTime = Date.now();
     io.of(RouteNames.BATTLES_WS).to(roomId).emit("startGame");
     nextTurn(roomId, true);
   }
@@ -306,6 +306,9 @@ export const onForfeit = (socket: PokeNerdleSocket) => {
     forfeit: true,
     forfeitedBy: socket.id,
   };
+
+  // Track game end event (forfeit)
+  trackGameEnded(room, roomId, "forfeit");
 
   // End the game with forfeit flag
   io.of(RouteNames.BATTLES_WS)
