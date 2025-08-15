@@ -23,6 +23,15 @@ type PokemonGuessedEventIncorrect = PokemonGuessedEventBase & {
   reason: WrongAnswerReason;
 };
 
+export type AbilityLinkUsedEvent = {
+  ability_name: string;
+  ability_id: number;
+};
+
 export const trackPokemonGuessed = (event: PokemonGuessedEvent) => {
   posthog.capture("pokechain_pokemon_guessed", event);
+};
+
+export const trackAbilityLinkUsed = (event: AbilityLinkUsedEvent) => {
+  posthog.capture("pokechain_ability_link_used", event);
 };

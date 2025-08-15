@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { useToast } from "@/hooks/useToast";
-import { trackPokemonGuessed } from "@/lib/events";
+import { trackAbilityLinkUsed, trackPokemonGuessed } from "@/lib/events";
 import {
   ForfeitInfo,
   PokemonNamesResponse,
@@ -19,7 +19,11 @@ import { useImmer } from "use-immer";
 import api from "../../api";
 import { PokemonGuess } from "../../api/battles/types";
 import { useSocket } from "../../hooks/useSocket";
-import { MAX_LINKS, updateSharedLinks } from "../../utils/pokeChainUtils";
+import {
+  getSharedAbilities,
+  MAX_LINKS,
+  updateSharedLinks,
+} from "../../utils/pokeChainUtils";
 import PokemonCombobox from "../recyclables/PokemonCombobox";
 import { Alert } from "../ui/Alert";
 import {
@@ -192,6 +196,15 @@ const BattleScreen: React.FC<Props> = ({
             is_evolution_link: isSameEvoline,
             chain_position: pokemons.length + 1,
             is_single_player: isSinglePlayer,
+          });
+
+          const previousPokemon = pokemons[pokemons.length - 1];
+          const sharedAbilities = getSharedAbilities(previousPokemon, pokemon);
+          sharedAbilities.forEach((ability) => {
+            trackAbilityLinkUsed({
+              ability_name: ability.name,
+              ability_id: ability.id,
+            });
           });
         } else {
           setOpponentPoints(points);
