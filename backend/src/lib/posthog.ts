@@ -1,5 +1,5 @@
 import { PostHog } from "posthog-node";
-import { POSTHOG_HOST } from "../constants/posthog.js";
+import { DEFAULT_POSTHOG_CONFIG, POSTHOG_HOST } from "../constants/posthog.js";
 
 // Initialize PostHog client for server-side tracking
 export const posthog = new PostHog(
@@ -19,7 +19,10 @@ export const captureEvent = (
   try {
     posthog.capture({
       event: eventName,
-      properties,
+      properties: {
+        ...DEFAULT_POSTHOG_CONFIG,
+        ...properties,
+      },
       distinctId: "server", // Server-side events don't have a specific user
     });
   } catch (error) {
