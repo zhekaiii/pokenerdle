@@ -7,6 +7,7 @@ import {
   WrongAnswerReason,
 } from "@pokenerdle/shared";
 import { LogOut, RefreshCw } from "lucide-react";
+import posthog from "posthog-js";
 import React, {
   useCallback,
   useEffect,
@@ -182,6 +183,18 @@ const BattleScreen: React.FC<Props> = ({
         if (socketId === socket.id) {
           setPlayerPoints(points);
           setPlayerStreak((playerStreak) => playerStreak + 1);
+
+          posthog.capture("pokechain_pokemon_guessed", {
+            pokemon_id: pokemon.id,
+            pokemon_name: pokemon.name,
+            is_correct: true,
+            points_awarded: points,
+            streak_count: playerStreak + 1,
+            is_evolution_link: isSameEvoline,
+            chain_position: pokemons.length + 1,
+            room_code: roomCode,
+            is_single_player: isSinglePlayer,
+          });
         } else {
           setOpponentPoints(points);
           setOpponentStreak((opponentStreak) => opponentStreak + 1);
@@ -234,6 +247,16 @@ const BattleScreen: React.FC<Props> = ({
       if (isPlayersTurn) {
         setPlayerPoints(points);
         setPlayerStreak(0);
+
+        posthog.capture("pokechain_pokemon_guessed", {
+          pokemon_id: pokemonId,
+          pokemon_name: pokemonName,
+          is_correct: false,
+          points_lost: points,
+          reason: reason,
+          room_code: roomCode,
+          is_single_player: isSinglePlayer,
+        });
       } else {
         setOpponentPoints(points);
         setOpponentStreak(0);
