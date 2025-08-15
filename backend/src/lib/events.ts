@@ -13,7 +13,7 @@ export type GameEndedEvent = {
   room_id: string;
   end_reason: "timeout" | "forfeit";
   game_duration_ms: number;
-  final_scores: [number, number];
+  final_scores: number[];
   total_moves: number;
   starter_pokemon_id: number;
   starter_pokemon_name: string;
@@ -41,7 +41,7 @@ export const trackGameEnded = (
     room_id: roomId,
     end_reason: endReason,
     game_duration_ms: Date.now() - room.gameStartTime,
-    final_scores: room.points,
+    final_scores: room.players.map((_, index) => room.points[index]),
     total_moves: room.pokemon.length,
     starter_pokemon_id: room.pokemon[0].id,
     starter_pokemon_name: room.pokemon[0].name,
