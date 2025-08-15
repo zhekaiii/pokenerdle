@@ -139,6 +139,11 @@ export const leaveRoom = (
   if (!room) {
     return;
   }
+
+  if (room.pokemon.length > 1) {
+    trackGameEnded(room, roomId, "disconnect");
+  }
+
   room.timer && clearTimeout(room.timer);
   ongoingBattles[roomId].players.forEach((id) => {
     if (id !== socket.id) {

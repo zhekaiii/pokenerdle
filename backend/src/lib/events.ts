@@ -11,7 +11,7 @@ export type GameStartedEvent = {
 
 export type GameEndedEvent = {
   room_id: string;
-  end_reason: "timeout" | "forfeit";
+  end_reason: "timeout" | "forfeit" | "disconnect";
   game_duration_ms: number;
   final_scores: number[];
   streak_count: number[];
@@ -36,7 +36,7 @@ export const trackGameStarted = (room: BattleRoom, roomId: string) => {
 export const trackGameEnded = (
   room: BattleRoom,
   roomId: string,
-  endReason: "timeout" | "forfeit"
+  endReason: "timeout" | "forfeit" | "disconnect"
 ) => {
   const event: GameEndedEvent = {
     room_id: roomId,
