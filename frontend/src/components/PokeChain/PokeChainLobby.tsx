@@ -49,7 +49,7 @@ const PokeChainLobby: React.FC = () => {
     setIsConnecting(true);
 
     trackRoomCreated({
-      is_single_player: !!isSinglePlayer,
+      num_players: isSinglePlayer ? 1 : 2,
       timer_duration: timer,
       show_ability: showAbility,
     });

@@ -29,7 +29,7 @@ export type AbilityLinkUsedEvent = {
 };
 
 export type RoomCreatedEvent = {
-  is_single_player: boolean;
+  num_players: number;
   timer_duration: number;
   show_ability: boolean;
 };
