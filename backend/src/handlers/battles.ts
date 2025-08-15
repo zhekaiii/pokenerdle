@@ -71,6 +71,7 @@ const initRoom = (
     evolutionLinkCount: [0, 0],
     points: [0, 0],
     streak: [0, 0],
+    maxStreak: [0, 0],
     numPlayers: room.numPlayers,
   };
 };
@@ -188,6 +189,10 @@ export const validatePokemon = async (
     return;
   }
   room.streak[room.turn] += 1;
+  room.maxStreak[room.turn] = Math.max(
+    room.maxStreak[room.turn],
+    room.streak[room.turn]
+  );
   console.log(room.streak);
   if (room.timer) {
     clearTimeout(room.timer);

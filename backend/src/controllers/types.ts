@@ -20,6 +20,7 @@ export type BattleRoom = {
   evolutionLinkCount: [number, number];
   points: [number, number];
   streak: [number, number];
+  maxStreak: [number, number];
   forfeitInfo?: ForfeitInfo;
   numPlayers: 1 | 2;
 };

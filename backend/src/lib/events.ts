@@ -47,7 +47,7 @@ export const trackGameEnded = (
     starter_pokemon_id: room.pokemon[0].id,
     starter_pokemon_name: room.pokemon[0].name,
     num_players: room.numPlayers,
-    streak_count: room.players.map((_, index) => room.streak[index]),
+    streak_count: room.players.map((_, index) => room.maxStreak[index]),
   };
 
   captureEvent("pokechain_game_ended", event);
