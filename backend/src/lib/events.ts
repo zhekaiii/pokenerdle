@@ -14,6 +14,7 @@ export type GameEndedEvent = {
   end_reason: "timeout" | "forfeit";
   game_duration_ms: number;
   final_scores: number[];
+  streak_count: number[];
   total_moves: number;
   starter_pokemon_id: number;
   starter_pokemon_name: string;
@@ -46,6 +47,7 @@ export const trackGameEnded = (
     starter_pokemon_id: room.pokemon[0].id,
     starter_pokemon_name: room.pokemon[0].name,
     num_players: room.numPlayers,
+    streak_count: room.players.map((_, index) => room.streak[index]),
   };
 
   captureEvent("pokechain_game_ended", event);
