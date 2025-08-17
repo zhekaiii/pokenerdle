@@ -81,8 +81,8 @@ export const verifyGuess = async (
   }
 
   if (
-    targetPokemon.pokemon_species_id === guessPokemon.pokemon_species_id &&
-    targetGen === guessGen &&
+    guessPokemon.pokemon_v2_pokemonspecies?.pokemon_color_id ===
+      targetPokemon.pokemon_v2_pokemonspecies?.pokemon_color_id &&
     targetPokemon.height === guessPokemon.height &&
     targetType1.type_id === guessType1.type_id &&
     targetType2?.type_id === guessType2?.type_id
