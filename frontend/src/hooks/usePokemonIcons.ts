@@ -6,6 +6,10 @@ export const usePokemonIcons = () => {
   const [pokemonIcons, setPokemonIcons] = useLocalStorage<
     Record<number, string | null>
   >("pokemonIcons", {});
+  const [lastModified, setLastModified] = useLocalStorage<string | null>(
+    "pokemonIconsLastModified",
+    null
+  );
 
   const getPokemonIcon = useCallback(
     (pokemonId: number) =>
@@ -17,9 +21,11 @@ export const usePokemonIcons = () => {
   );
 
   useEffect(() => {
-    if (!pokemonIcons || !pokemonIcons[1])
-      api.data.getPokemonIcons().then(setPokemonIcons);
-  }, [pokemonIcons]);
+    api.data.getPokemonIcons(lastModified).then(({ data, lastModified }) => {
+      setPokemonIcons(data);
+      setLastModified(lastModified);
+    });
+  }, []);
 
   return { pokemonIcons, getPokemonIcon };
 };

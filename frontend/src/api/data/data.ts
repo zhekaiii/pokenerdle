@@ -8,11 +8,21 @@ export default {
     );
     return data;
   },
-  getPokemonIcons: async () => {
-    const { data } = await axios.get<Record<number, string | null>>(
-      "/v1/data/pokemon-icons"
+  getPokemonIcons: async (lastModified?: string | null) => {
+    const headers: Record<string, string> = {};
+    if (lastModified) {
+      headers["if-modified-since"] = lastModified;
+    }
+
+    const response = await axios.get<Record<number, string | null>>(
+      "/v1/data/pokemon-icons",
+      { headers: axios.defaults.headers.get, ...headers }
     );
-    return data;
+
+    return {
+      lastModified: response.headers["last-modified"],
+      data: response.data,
+    };
   },
   getPokemonWithAbilities: async (id: number) => {
     const { data } = await axios.get<PokemonWithAbilities>("/v1/data/pokemon", {
