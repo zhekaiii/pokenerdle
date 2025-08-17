@@ -13,14 +13,25 @@
   gap: 0.5rem;
   border-radius: 0.5rem;
   border: 1px solid hsl(var(--border));
-  background-color: hsl(var(--background));
   transition: all 0.2s ease-in-out;
-  cursor: pointer;
 
   &:hover {
-    background-color: hsl(var(--muted));
+    background-color: var(--muted);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    img {
+      animation: bobbing 0.8s infinite steps(2);
+    }
+  }
+}
+
+@keyframes bobbing {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-6px);
   }
 }
 
@@ -31,6 +42,7 @@
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
   object-fit: none;
+  overflow: visible;
 }
 
 .PokemonName {

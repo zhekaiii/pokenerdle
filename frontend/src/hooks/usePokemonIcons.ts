@@ -10,8 +10,10 @@ export const usePokemonIcons = () => {
   const getPokemonIcon = useCallback(
     (pokemonId: number) =>
       pokemonIcons?.[pokemonId] ??
-      `https://raw.githubusercontent.com/pokedextracker/pokesprite/refs/heads/master/images/${pokemonId}.png`,
-    []
+      `https://raw.githubusercontent.com/pokedextracker/pokesprite/refs/heads/master/images/${pokemonId
+        .toString()
+        .padStart(3, "0")}.png`,
+    [pokemonIcons]
   );
 
   useEffect(() => {
