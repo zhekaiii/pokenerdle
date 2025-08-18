@@ -1,9 +1,10 @@
 import logo from "@/assets/pokenerdle.png";
+import { themeAtom, toggleThemeAtom } from "@/atoms/theme";
 import LinkButton from "@/components/recyclables/LinkButton";
 import { Button } from "@/components/ui/Button";
-import { useTheme } from "@/contexts/ThemeProviderContext";
 import breakpoints from "@/utils/breakpoints";
 import clsx from "clsx";
+import { useAtom } from "jotai";
 import { Menu, Monitor, Moon, Sun } from "lucide-react";
 import React from "react";
 import { Link } from "react-router";
@@ -13,7 +14,8 @@ import NavDrawer from "./NavDrawer";
 import RulePageButton from "./RulePageButton";
 
 const Header: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
+  const [theme] = useAtom(themeAtom);
+  const [, toggleTheme] = useAtom(toggleThemeAtom);
   const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`);
 
   return (

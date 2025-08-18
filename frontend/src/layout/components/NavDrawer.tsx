@@ -1,8 +1,9 @@
+import { themeAtom, THEMES } from "@/atoms/theme";
 import LinkButton from "@/components/recyclables/LinkButton";
 import { Button } from "@/components/ui/Button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/Drawer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
-import { THEMES, useTheme } from "@/contexts/ThemeProviderContext";
+import { useAtom } from "jotai";
 import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import RulePageButton from "./RulePageButton";
@@ -13,7 +14,7 @@ type Props = {
 
 const NavDrawer: React.FC<Props> = ({ trigger }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const [theme, setTheme] = useAtom(themeAtom);
 
   useEffect(() => {
     const closeDrawer = () => {
