@@ -1,5 +1,5 @@
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
-import ErrorBoundary from "@/layout/ErrorBoundary";
+import ErrorPage from "@/layout/ErrorPage";
 import Layout from "@/layout/Layout";
 import DailyChallengePage from "@/pages/DailyChallenge";
 import { lazy, Suspense } from "react";
@@ -20,7 +20,7 @@ const routes: RouteObject[] = [
   {
     path: "/",
     element: <Layout />,
-    errorElement: <ErrorBoundary />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "",

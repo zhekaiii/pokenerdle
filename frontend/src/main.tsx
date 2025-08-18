@@ -1,8 +1,9 @@
+import { PostHogErrorBoundary, PostHogProvider } from "posthog-js/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import { PostHogProvider } from "posthog-js/react";
 import "./index.css";
+import ErrorPage from "./layout/ErrorPage";
 
 // This resolves the issue where rebuilding produces different hashes for the same file,
 // causing the browser to load the old filename (which doesn't exist).
@@ -23,7 +24,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         debug: import.meta.env.MODE === "development",
       }}
     >
-      <App />
+      <PostHogErrorBoundary fallback={<ErrorPage />}>
+        <App />
+      </PostHogErrorBoundary>
     </PostHogProvider>
   </React.StrictMode>
 );
