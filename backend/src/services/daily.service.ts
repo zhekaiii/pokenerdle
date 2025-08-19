@@ -4,6 +4,10 @@ import seedrandom from "seedrandom";
 import { getOverallTypeEffectiveness } from "../lib/matchups.js";
 import { DailyPokemonToResponse } from "../mappers/daily.js";
 import {
+  createDailyPokemon,
+  getDailyPokemonFromDb,
+} from "../repositories/daily.repository.js";
+import {
   getNumDefaultPokemon,
   getPokemonForDaily,
 } from "../repositories/pokemon.repository.js";
@@ -12,17 +16,44 @@ import { Comp, DailyPokemon } from "../utils/types.js";
 let dailyPokemons: Record<string, DailyPokemon> = {};
 
 const getDailyPokemon = async (date: string) => {
-  const dailyPokemon = dailyPokemons[date];
-  if (dailyPokemon) {
-    return dailyPokemon;
+  if (dailyPokemons[date]) {
+    return dailyPokemons[date];
   }
+
+  // First, try to get from database
+  const existingChallenge = await getDailyPokemonFromDb(date);
+
+  if (existingChallenge) {
+    // Get the pokemon data from the static database
+    const pokemon = await getPokemonForDaily({
+      id: existingChallenge.pokemonId,
+    });
+    if (!pokemon) {
+      throw new Error("unable to get daily pokemon");
+    }
+    dailyPokemons[date] = pokemon;
+    return pokemon;
+  }
+
+  // If not in database, generate new daily pokemon
   const rng = seedrandom.alea(process.env.RANDOM_SEED! + date);
   const numPokemon = await getNumDefaultPokemon();
   const randomIndex = Math.floor(rng() * numPokemon);
-  const pokemon = await getPokemonForDaily({ offset: randomIndex });
+  let pokemon = await getPokemonForDaily({ offset: randomIndex });
+
   if (!pokemon) {
     throw new Error("unable to get daily pokemon");
   }
+
+  const { pokemonId } = await createDailyPokemon(date, pokemon.id);
+  if (pokemonId != pokemon.id) {
+    pokemon = await getPokemonForDaily({ id: pokemonId });
+  }
+
+  if (!pokemon) {
+    throw new Error("unable to get daily pokemon");
+  }
+
   dailyPokemons[date] = pokemon;
   return pokemon;
 };
