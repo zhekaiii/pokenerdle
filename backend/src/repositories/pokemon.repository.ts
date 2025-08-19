@@ -16,7 +16,9 @@ export const getPokemonNames = async () => {
       CASE
         WHEN COUNT(p.id) > 1
         OR COUNT(fn.id) = 0 THEN psn.name
-        ELSE fn.pokemon_name
+        WHEN fn.pokemon_name != '' THEN fn.pokemon_name
+        WHEN fn.name != '' AND fn.name != psn.name THEN psn.name || ' (' || fn.name || ')'
+        ELSE ''
       END AS name,
       psn.name AS speciesName
     FROM

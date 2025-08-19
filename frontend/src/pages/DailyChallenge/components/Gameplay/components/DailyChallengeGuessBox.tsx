@@ -7,6 +7,8 @@ import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import React, { memo, useState } from "react";
 import { DailyChallengeGuessIcon } from "../../DailyChallengeGuessIcon";
 
+import placeholderIcon from "@/assets/question_mark.png";
+
 import TypeChip from "@/components/recyclables/TypeChip";
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
@@ -46,7 +48,14 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
       <CardHeader className="tw:flex tw:items-center">
         <div className="tw:grow">
           <div className="tw:flex tw:items-center">
-            <img src={getPokemonIcon(guess.pokemonId)} />
+            <img
+              src={getPokemonIcon(guess.pokemonId)}
+              onError={(e) => {
+                e.currentTarget.src = placeholderIcon;
+              }}
+              alt={pokemonName?.name ?? pokemonName?.speciesName}
+              className={styles.PokemonIcon}
+            />
             <div className="tw:flex tw:gap-4 tw:flex-grow">
               <div className="tw:flex tw:flex-col tw:flex-grow">
                 <h3 className="tw:font-medium tw:text-lg">

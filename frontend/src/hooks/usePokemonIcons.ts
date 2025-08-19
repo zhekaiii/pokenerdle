@@ -1,4 +1,5 @@
 import api from "@/api";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useCallback, useEffect } from "react";
@@ -16,6 +17,8 @@ export const usePokemonIcons = () => {
   const [pokemonIcons, setPokemonIcons] = useAtom(pokemonIconsAtom);
   const [lastModified, setLastModified] = useAtom(lastModifiedAtom);
 
+  const queryClient = useQueryClient();
+
   const getPokemonIcon = useCallback(
     (pokemonId: number) =>
       pokemonIcons?.[pokemonId] ??
@@ -26,10 +29,15 @@ export const usePokemonIcons = () => {
   );
 
   useEffect(() => {
-    api.data.getPokemonIcons(lastModified).then(({ data, lastModified }) => {
-      setPokemonIcons(data);
-      setLastModified(lastModified);
-    });
+    queryClient
+      .fetchQuery({
+        queryKey: ["pokemonIcons"],
+        queryFn: () => api.data.getPokemonIcons(lastModified),
+      })
+      .then(({ data, lastModified }) => {
+        setPokemonIcons(data);
+        setLastModified(lastModified);
+      });
   }, []);
 
   return { pokemonIcons, getPokemonIcon };
