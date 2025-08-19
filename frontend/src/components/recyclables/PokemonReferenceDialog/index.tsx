@@ -8,9 +8,11 @@ import {
 } from "@/components/ui/Dialog";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
+import { atom, useAtom } from "jotai";
 import React, { useEffect, useRef } from "react";
-import { useSessionStorage } from "react-use";
 import styles from "./index.module.scss";
+
+const dialogScrollPositionAtom = atom(0);
 
 type Props = {
   open: boolean;
@@ -23,8 +25,9 @@ const PokemonReferenceDialog: React.FC<Props> = ({ open, onOpenChange }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Store scroll position in localStorage
-  const [savedScrollPosition, setSavedScrollPosition] =
-    useSessionStorage<number>("pokemon-reference-scroll-position", 0);
+  const [savedScrollPosition, setSavedScrollPosition] = useAtom(
+    dialogScrollPositionAtom
+  );
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
