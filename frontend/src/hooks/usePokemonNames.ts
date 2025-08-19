@@ -1,12 +1,16 @@
 import api from "@/api";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
-import { useLocalStorage } from "react-use";
+
+const pokemonNamesAtom = atomWithStorage<PokemonNamesResponse[]>(
+  "pokemonNames",
+  []
+);
 
 export const usePokemonNames = () => {
-  const [pokemonNames, setPokemonNames] = useLocalStorage<
-    PokemonNamesResponse[]
-  >("pokemonNames", []);
+  const [pokemonNames, setPokemonNames] = useAtom(pokemonNamesAtom);
 
   useEffect(() => {
     if (pokemonNames?.length) return;
