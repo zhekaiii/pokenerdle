@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { useAtom } from "jotai";
 import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import RulePageButton from "./RulePageButton";
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
 const NavDrawer: React.FC<Props> = ({ trigger }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useAtom(themeAtom);
+  const location = useLocation();
 
   useEffect(() => {
     const closeDrawer = () => {
@@ -27,6 +29,10 @@ const NavDrawer: React.FC<Props> = ({ trigger }) => {
       window.removeEventListener("pushstate", closeDrawer);
     };
   }, []);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location]);
 
   return (
     <Drawer direction="left" open={isOpen} onOpenChange={setIsOpen}>
