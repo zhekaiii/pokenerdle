@@ -1,15 +1,20 @@
 import api from "@/api";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { useCallback, useEffect } from "react";
-import { useLocalStorage } from "react-use";
+
+const pokemonIconsAtom = atomWithStorage<Record<number, string | null>>(
+  "pokemonIcons",
+  {}
+);
+const lastModifiedAtom = atomWithStorage<string | null>(
+  "pokemonIconsLastModified",
+  null
+);
 
 export const usePokemonIcons = () => {
-  const [pokemonIcons, setPokemonIcons] = useLocalStorage<
-    Record<number, string | null>
-  >("pokemonIcons", {});
-  const [lastModified, setLastModified] = useLocalStorage<string | null>(
-    "pokemonIconsLastModified",
-    null
-  );
+  const [pokemonIcons, setPokemonIcons] = useAtom(pokemonIconsAtom);
+  const [lastModified, setLastModified] = useAtom(lastModifiedAtom);
 
   const getPokemonIcon = useCallback(
     (pokemonId: number) =>
