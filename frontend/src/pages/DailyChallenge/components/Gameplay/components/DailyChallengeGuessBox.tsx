@@ -53,13 +53,13 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
               onError={(e) => {
                 e.currentTarget.src = placeholderIcon;
               }}
-              alt={pokemonName?.name ?? pokemonName?.speciesName}
+              alt={pokemonName?.name || pokemonName?.speciesName}
               className={styles.PokemonIcon}
             />
             <div className="tw:flex tw:gap-4 tw:flex-grow">
               <div className="tw:flex tw:flex-col tw:flex-grow">
                 <h3 className="tw:font-medium tw:text-lg">
-                  {pokemonName?.name ?? pokemonName?.speciesName}
+                  {pokemonName?.name || pokemonName?.speciesName}
                 </h3>
                 <div className="tw:text-muted-foreground tw:text-sm">
                   Gen {guess.pokemon.generationId} &bull; {pokemonHeight} &bull;{" "}
