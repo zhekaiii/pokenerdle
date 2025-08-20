@@ -7,6 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/Dialog";
+import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
+import { useAuth } from "@/hooks/useAuth";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import {
@@ -50,6 +52,7 @@ const CompletionDialog: React.FC<Props> = ({
 }) => {
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
+  const { user, loading: authLoading } = useAuth();
   const pokemonName = pokemonNames?.find(
     (pokemon) => pokemon.id === correctAnswer?.pokemonId
   );
@@ -162,14 +165,15 @@ const CompletionDialog: React.FC<Props> = ({
             Share Results
           </Button>
 
-          {/* Close Button */}
-          <Button
-            onClick={() => onOpenChange?.(false)}
-            variant="ghost"
-            className="tw:w-full"
-          >
-            Close
-          </Button>
+          {/* Authentication Section */}
+          {!authLoading && !user && (
+            <div className="tw:flex tw:flex-col tw:items-center tw:gap-2">
+              <GoogleSignInButton className="tw:w-full" />
+              <p className="tw:text-sm tw:text-muted-foreground">
+                Sign in to save your daily challenge results!
+              </p>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
