@@ -64,19 +64,25 @@ export const getDailyPokemon = async (date: string) => {
 };
 
 export const submitGuess = async (
-  userId: string,
+  userId: string | undefined,
   pokemonId: number,
   date: string
 ): Promise<DailyChallengeGuessResponse> => {
-  // Get the current guess number for this user and date
-  const currentGuessCount = await getUserGuessCountForDate(userId, date);
-  if (currentGuessCount === DAILY_CHALLENGE_GUESS_LIMIT) {
-    throw new Error("hit limit");
+  let guessNumber: number | undefined;
+  if (userId) {
+    // Get the current guess number for this user and date
+    const currentGuessCount = await getUserGuessCountForDate(userId, date);
+    if (currentGuessCount === DAILY_CHALLENGE_GUESS_LIMIT) {
+      throw new Error("hit limit");
+    }
+    guessNumber = currentGuessCount + 1;
   }
-  const guessNumber = currentGuessCount + 1;
 
   // Verify the guess
   const result = await verifyGuess(pokemonId, date);
+  if (!userId || guessNumber === undefined) {
+    return result;
+  }
 
   if (result.correct) {
     // Save the correct guess
