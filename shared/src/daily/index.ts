@@ -5,8 +5,18 @@ export const DailyChallengeGuessRequestSchema = z.object({
   date: z.iso.date(),
 });
 
+export const DailyChallengeSubmitGuessRequestSchema = z.object({
+  pokemon_id: z.int(),
+  date: z.iso.date(),
+  user_id: z.string(),
+});
+
 export type DailyChallengeGuessRequest = z.infer<
   typeof DailyChallengeGuessRequestSchema
+>;
+
+export type DailyChallengeSubmitGuessRequest = z.infer<
+  typeof DailyChallengeSubmitGuessRequestSchema
 >;
 
 export type DailyChallengeGuessResponse = {

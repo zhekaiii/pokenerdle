@@ -13,6 +13,29 @@ export default {
     );
     return data;
   },
+  submitGuess: async (id: number, userId: string) => {
+    const { data } = await axios.post<DailyChallengeGuessResponse>(
+      "/v1/daily/challenge/submit",
+      {
+        pokemon_id: id,
+        date: formatDate(new Date(), "yyyy-MM-dd"),
+        user_id: userId,
+      }
+    );
+    return data;
+  },
+  getUserGuesses: async (userId: string, date?: string) => {
+    const { data } = await axios.get<DailyChallengeGuessResponse[]>(
+      "/v1/daily/challenge/guesses",
+      {
+        params: {
+          user_id: userId,
+          date: date || formatDate(new Date(), "yyyy-MM-dd"),
+        },
+      }
+    );
+    return data;
+  },
   getAnswer: async () => {
     const { data } = await axios.get<{
       pokemonId: number;

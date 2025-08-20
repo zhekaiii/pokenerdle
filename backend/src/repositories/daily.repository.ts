@@ -26,3 +26,67 @@ export const createDailyPokemon = async (date: string, pokemonId: number) => {
     throw error;
   }
 };
+
+export const saveUserGuess = async ({
+  userId,
+  date,
+  pokemonId,
+  guessNumber,
+  isCorrect,
+  type1Correctness,
+  type2Correctness,
+  genCorrectness,
+  heightCorrectness,
+  colorCorrectness,
+}: {
+  userId: string;
+  date: string;
+  pokemonId: number;
+  guessNumber: number;
+  isCorrect: boolean;
+  type1Correctness: string;
+  type2Correctness: string;
+  genCorrectness: string;
+  heightCorrectness: string;
+  colorCorrectness: boolean;
+}) => {
+  return await pgClient.userDailyGuess.create({
+    data: {
+      userId,
+      dailyChallengeId: date,
+      pokemonId,
+      guessNumber,
+      isCorrect,
+      type1Correctness,
+      type2Correctness,
+      genCorrectness,
+      heightCorrectness,
+      colorCorrectness,
+    },
+  });
+};
+
+export const getUserGuessesForDate = async (userId: string, date: string) => {
+  return pgClient.userDailyGuess.findMany({
+    where: {
+      userId,
+      dailyChallengeId: date,
+    },
+    orderBy: {
+      guessNumber: "asc",
+    },
+  });
+};
+
+export const getUserGuessCountForDate = async (
+  userId: string,
+  date: string
+) => {
+  const result = await pgClient.userDailyGuess.count({
+    where: {
+      userId,
+      dailyChallengeId: date,
+    },
+  });
+  return result;
+};

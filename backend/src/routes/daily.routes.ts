@@ -1,13 +1,15 @@
 import { Router } from "express";
 import {
   getDailyPokemonAnswerController,
-  verifyDailyPokemonGuessController,
+  getUserGuessesController,
+  submitDailyPokemonGuessController,
 } from "../controllers/daily.controllers.js";
 import { RouteNames } from "../data/const.js";
 
 const dailyRouter = Router();
 
-dailyRouter.post("/challenge/guess", verifyDailyPokemonGuessController);
+dailyRouter.post("/challenge/submit", submitDailyPokemonGuessController);
+dailyRouter.get("/challenge/guesses", getUserGuessesController);
 dailyRouter.get("/challenge/answer", getDailyPokemonAnswerController);
 
 export default Router().use(RouteNames.DAILY_API, dailyRouter);
