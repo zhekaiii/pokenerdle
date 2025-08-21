@@ -1,12 +1,18 @@
 import { useLocalStorage } from "react-use";
 
-import { DAILY_CHALLENGE_GUESS_LIMIT, DAILY_CHALLENGE_KEY } from "../constants";
+import {
+  DAILY_CHALLENGE_GUESS_LIMIT,
+  DAILY_CHALLENGE_KEY,
+  FROZEN_DATE,
+} from "../constants";
 
 import api from "@/api";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
-import { format, formatDate } from "date-fns";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { CheckCircle } from "lucide-react";
 import posthog from "posthog-js";
 import { useEffect, useMemo, useState } from "react";
@@ -14,6 +20,7 @@ import { useEffect, useMemo, useState } from "react";
 export type DailyChallenge = {
   date: string;
   guesses: DailyChallengeGuessResponse[];
+  synced?: boolean;
 };
 
 type CorrectAnswer = {
@@ -27,14 +34,20 @@ type CorrectAnswer = {
   };
 };
 
-const now = new Date();
 const DAILY_CHALLENGE_DIALOG_KEY = "daily_challenge_dialog_shown";
 
+export const guessesAtom = atomWithStorage<DailyChallenge | null>(
+  DAILY_CHALLENGE_KEY,
+  null,
+  undefined,
+  {
+    getOnInit: true,
+  }
+);
+
 export const useDailyChallengeData = () => {
-  const [guesses, setGuesses] = useLocalStorage<DailyChallenge | null>(
-    DAILY_CHALLENGE_KEY,
-    null
-  );
+  const { isAuthenticated } = useAuth();
+  const [guesses, setGuesses] = useAtom(guessesAtom);
   const [dialogShown, setDialogShown] = useLocalStorage<string | null>(
     DAILY_CHALLENGE_DIALOG_KEY,
     null
@@ -59,13 +72,13 @@ export const useDailyChallengeData = () => {
     guesses && guesses.guesses.length === DAILY_CHALLENGE_GUESS_LIMIT
   );
   const isGameFinished = hasReachedLimit || hasSolved;
-  const isNewDay = guesses?.date !== format(now, "yyyy-MM-dd");
-  const hasDialogBeenShownToday = dialogShown === format(now, "yyyy-MM-dd");
+  const isNewDay = guesses?.date !== FROZEN_DATE;
+  const hasDialogBeenShownToday = dialogShown === FROZEN_DATE;
 
   useEffect(() => {
     if (isNewDay) {
       setGuesses({
-        date: format(now, "yyyy-MM-dd"),
+        date: FROZEN_DATE,
         guesses: [],
       });
       setCorrectAnswer(null);
@@ -96,11 +109,12 @@ export const useDailyChallengeData = () => {
     const numGuesses = (guesses?.guesses.length ?? 0) + 1;
     try {
       setIsLoading(true);
-      const response = await api.daily.verifyGuess(id);
+      const response = await api.daily.submitGuess(id);
       setGuesses(() => {
         const guess = {
           ...response,
           pokemonId: id,
+          synced: isAuthenticated,
         };
         if (guesses) {
           return {
@@ -109,7 +123,7 @@ export const useDailyChallengeData = () => {
           };
         }
         return {
-          date: formatDate(new Date(), "yyyy-MM-dd"),
+          date: FROZEN_DATE,
           guesses: [guess],
         };
       });
@@ -143,7 +157,7 @@ export const useDailyChallengeData = () => {
   };
 
   const markDialogAsShown = () => {
-    setDialogShown(format(now, "yyyy-MM-dd"));
+    setDialogShown(FROZEN_DATE);
   };
 
   return {

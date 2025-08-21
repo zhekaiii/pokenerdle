@@ -5,9 +5,37 @@ export const DailyChallengeGuessRequestSchema = z.object({
   date: z.iso.date(),
 });
 
+export const DailyChallengeSubmitGuessRequestSchema = z.object({
+  pokemon_id: z.int(),
+  date: z.iso.date(),
+});
+
+export const DailyChallengeSyncGuessesRequestSchema = z.object({
+  guesses: z.array(
+    z.object({
+      pokemonId: z.number(),
+    })
+  ),
+  date: z.iso.date(),
+});
+
 export type DailyChallengeGuessRequest = z.infer<
   typeof DailyChallengeGuessRequestSchema
 >;
+
+export type DailyChallengeSubmitGuessRequest = z.infer<
+  typeof DailyChallengeSubmitGuessRequestSchema
+>;
+
+export type DailyChallengeSyncGuessesRequest = z.infer<
+  typeof DailyChallengeSyncGuessesRequestSchema
+>;
+
+export type DailyChallengeSyncGuessesResponse = {
+  syncedGuesses: DailyChallengeGuessResponse[];
+  existingGuesses: DailyChallengeGuessResponse[];
+  message: string;
+};
 
 export type DailyChallengeGuessResponse = {
   pokemon: {
@@ -31,3 +59,10 @@ export type DailyChallengeGuessResponse = {
       colorCorrectness: boolean;
     }
 );
+
+export type DailyChallengeStatsResponse = {
+  num_played: number;
+  win_rate: number;
+  streak: number;
+  max_streak: number;
+};

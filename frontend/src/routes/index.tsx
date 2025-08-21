@@ -11,7 +11,16 @@ const routes: RouteObject[] = [
     children: [
       {
         path: "",
-        element: <Navigate to="daily" />,
+        element: (
+          <Navigate
+            to={{
+              pathname: "daily",
+              hash: location.hash,
+              search: location.search,
+            }}
+            replace
+          />
+        ),
       },
       {
         path: "daily",

@@ -1,30 +1,161 @@
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { pokemon_v2_pokemontype } from "@prisma/client";
 import seedrandom from "seedrandom";
+import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
 import { getOverallTypeEffectiveness } from "../lib/matchups.js";
 import { DailyPokemonToResponse } from "../mappers/daily.js";
+import {
+  createDailyPokemon,
+  getDailyPokemonFromDb,
+  getUserDailyStatsData,
+  getUserGuessCountForDate,
+  getUserGuessesForDate,
+  saveUserGuess,
+} from "../repositories/daily.repository.js";
 import {
   getNumDefaultPokemon,
   getPokemonForDaily,
 } from "../repositories/pokemon.repository.js";
+import { tryParseNum } from "../utils/parse.js";
 import { Comp, DailyPokemon } from "../utils/types.js";
 
 let dailyPokemons: Record<string, DailyPokemon> = {};
 
-const getDailyPokemon = async (date: string) => {
-  const dailyPokemon = dailyPokemons[date];
-  if (dailyPokemon) {
-    return dailyPokemon;
+export const getDailyPokemon = async (date: string) => {
+  if (dailyPokemons[date]) {
+    return dailyPokemons[date];
   }
+
+  // First, try to get from database
+  const existingChallenge = await getDailyPokemonFromDb(date);
+
+  if (existingChallenge) {
+    // Get the pokemon data from the static database
+    const pokemon = await getPokemonForDaily({
+      id: existingChallenge.pokemonId,
+    });
+    if (!pokemon) {
+      throw new Error("unable to get daily pokemon");
+    }
+    dailyPokemons[date] = pokemon;
+    return pokemon;
+  }
+
+  // If not in database, generate new daily pokemon
   const rng = seedrandom.alea(process.env.RANDOM_SEED! + date);
   const numPokemon = await getNumDefaultPokemon();
   const randomIndex = Math.floor(rng() * numPokemon);
-  const pokemon = await getPokemonForDaily({ offset: randomIndex });
+  let pokemon = await getPokemonForDaily({ offset: randomIndex });
+
   if (!pokemon) {
     throw new Error("unable to get daily pokemon");
   }
+
+  const { pokemonId } = await createDailyPokemon(date, pokemon.id);
+  if (pokemonId != pokemon.id) {
+    pokemon = await getPokemonForDaily({ id: pokemonId });
+  }
+
+  if (!pokemon) {
+    throw new Error("unable to get daily pokemon");
+  }
+
   dailyPokemons[date] = pokemon;
   return pokemon;
+};
+
+export const submitGuess = async (
+  userId: string | undefined,
+  pokemonId: number,
+  date: string
+): Promise<DailyChallengeGuessResponse> => {
+  let guessNumber: number | undefined;
+  if (userId) {
+    // Get the current guess number for this user and date
+    const currentGuessCount = await getUserGuessCountForDate(userId, date);
+    if (currentGuessCount === DAILY_CHALLENGE_GUESS_LIMIT) {
+      throw new Error("hit limit");
+    }
+    guessNumber = currentGuessCount + 1;
+  }
+
+  // Verify the guess
+  const result = await verifyGuess(pokemonId, date);
+  if (!userId || guessNumber === undefined) {
+    return result;
+  }
+
+  if (result.correct) {
+    // Save the correct guess
+    await saveUserGuess({
+      userId,
+      date,
+      pokemonId,
+      guessNumber,
+      isCorrect: true,
+      type1Correctness: "=",
+      type2Correctness: "=",
+      genCorrectness: "=",
+      heightCorrectness: "=",
+      colorCorrectness: true,
+    });
+
+    return result;
+  }
+
+  // Save the incorrect guess
+  await saveUserGuess({
+    userId,
+    date,
+    pokemonId,
+    guessNumber,
+    isCorrect: false,
+    type1Correctness: result.type1Correctness.toString(),
+    type2Correctness: result.type2Correctness.toString(),
+    genCorrectness: result.genCorrectness,
+    heightCorrectness: result.heightCorrectness,
+    colorCorrectness: result.colorCorrectness,
+  });
+
+  return result;
+};
+
+export const getUserGuessesForDateService = async (
+  userId: string,
+  date: string
+) => {
+  const guesses = await getUserGuessesForDate(userId, date);
+
+  // Convert database records to response format
+  const results: DailyChallengeGuessResponse[] = [];
+
+  for (const guess of guesses) {
+    const pokemon = await getPokemonForDaily({ id: guess.pokemonId });
+    if (!pokemon) continue;
+
+    if (guess.isCorrect) {
+      results.push({
+        correct: true,
+        pokemon: await DailyPokemonToResponse(pokemon),
+        pokemonId: guess.pokemonId,
+      });
+    } else {
+      results.push({
+        type1Correctness: tryParseNum(guess.type1Correctness) as number | "=",
+        type2Correctness: tryParseNum(guess.type2Correctness) as
+          | number
+          | "="
+          | "NA",
+        genCorrectness: tryParseNum(guess.genCorrectness) as "=" | "<" | ">",
+        heightCorrectness: guess.heightCorrectness as "=" | "<" | ">",
+        colorCorrectness: guess.colorCorrectness,
+        pokemon: await DailyPokemonToResponse(pokemon),
+        pokemonId: guess.pokemonId,
+      });
+    }
+  }
+
+  return results;
 };
 
 export const verifyGuess = async (
@@ -150,5 +281,96 @@ export const getDailyPokemonAnswer = async (date: string) => {
   return {
     pokemonId: targetPokemon.id,
     pokemon: await DailyPokemonToResponse(targetPokemon),
+  };
+};
+
+export const syncUserGuesses = async (
+  userId: string,
+  guesses: { pokemonId: number }[],
+  date: string
+) => {
+  // First, get existing guesses for this user and date
+  const existingGuesses = await getUserGuessesForDateService(userId, date);
+
+  if (existingGuesses.length > 0) {
+    // User already has data for this day
+    return {
+      syncedGuesses: [],
+      existingGuesses,
+      message: `User already has ${existingGuesses.length} guesses for this date`,
+    };
+  }
+
+  // User has no existing data, proceed with syncing
+  const syncedGuesses: DailyChallengeGuessResponse[] = [];
+
+  for (const guess of guesses) {
+    try {
+      const result = await submitGuess(userId, guess.pokemonId, date);
+      syncedGuesses.push(result);
+    } catch (error) {
+      console.error(
+        `Failed to sync guess for pokemon ${guess.pokemonId}:`,
+        error
+      );
+    }
+  }
+
+  return {
+    syncedGuesses,
+    existingGuesses: [],
+    message: `Successfully synced ${syncedGuesses.length} guesses`,
+  };
+};
+
+export const getUserStats = async (userId: string) => {
+  const statsData = await getUserDailyStatsData(userId);
+
+  if (statsData.length === 0) {
+    return {
+      num_played: 0,
+      win_rate: 0,
+      streak: 0,
+      max_streak: 0,
+    };
+  }
+
+  // Calculate number of games played (unique days with guesses)
+  const num_played = statsData.length;
+
+  // Calculate wins (days where max isCorrect is true)
+  const wins = statsData.filter((day) => day.correct).length;
+
+  // Calculate win rate as percentage
+  const win_rate = Math.round((wins / num_played) * 100);
+
+  // Calculate streaks
+  let maxStreak = 0;
+
+  // Convert date strings to Date objects for comparison
+  const formattedDays = statsData.map((day) => ({
+    date: new Date(day.dailyChallengeId),
+    isWin: day.correct,
+  }));
+
+  let streak = 0;
+
+  for (let i = 0; i < formattedDays.length; i++) {
+    const day = formattedDays[i];
+
+    if (day.isWin) {
+      streak++;
+      maxStreak = Math.max(maxStreak, streak);
+    } else {
+      // Loss, reset temporary streak but keep max streak
+      streak = 0;
+    }
+  }
+
+  return {
+    num_played,
+    win_rate,
+    streak,
+    max_streak: maxStreak,
   };
 };

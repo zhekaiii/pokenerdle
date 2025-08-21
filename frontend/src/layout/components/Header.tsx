@@ -1,11 +1,10 @@
 import logo from "@/assets/pokenerdle.png";
 import { themeAtom, toggleThemeAtom } from "@/atoms/theme";
 import LinkButton from "@/components/recyclables/LinkButton";
-import { Button } from "@/components/ui/Button";
 import breakpoints from "@/utils/breakpoints";
 import clsx from "clsx";
 import { useAtom } from "jotai";
-import { Menu, Monitor, Moon, Sun } from "lucide-react";
+import { Menu } from "lucide-react";
 import React from "react";
 import { Link } from "react-router";
 import { useMedia } from "react-use";
@@ -25,9 +24,7 @@ const Header: React.FC = () => {
         isSmallerThanSm && classes["Header--small"]
       )}
     >
-      {isSmallerThanSm && (
-        <NavDrawer trigger={<Menu className="tw:size-6" />} />
-      )}
+      <NavDrawer trigger={<Menu className="tw:size-6" />} />
       <Link className="tw:contents" to="/">
         <img className={classes.Logo} src={logo} alt="PokéNerdle Logo" />
       </Link>
@@ -40,17 +37,6 @@ const Header: React.FC = () => {
         </>
       )}
       <RulePageButton className="tw:mr-2" />
-      {!isSmallerThanSm && (
-        <Button variant="outline" onClick={toggleTheme} className="tw:size-10">
-          {theme == "light" ? (
-            <Sun />
-          ) : theme == "dark" ? (
-            <Moon />
-          ) : (
-            <Monitor />
-          )}
-        </Button>
-      )}
     </header>
   );
 };

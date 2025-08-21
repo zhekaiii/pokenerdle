@@ -4,19 +4,22 @@ import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
 import PokemonReferenceDialog from "@/components/recyclables/PokemonReferenceDialog";
 import { Button } from "@/components/ui/Button";
+import { useAuth } from "@/hooks/useAuth";
 import CompletionDialog from "@/pages/DailyChallenge/components/Gameplay/components/CompletionDialog";
 import { DailyChallengeGuessBoxMemo } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
-import { BookOpen, Eye, Share2 } from "lucide-react";
+import { BarChart, BookOpen, Share2 } from "lucide-react";
 import posthog from "posthog-js";
 import { useEffect } from "react";
 import { challengeNumber, DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
 import { shareResults } from "../../utils/share";
+import StatsDialog from "./components/StatsDialog";
 import styles from "./index.module.scss";
 
 const DailyChallengeGameplay: React.FC = () => {
+  const { isAuthenticated } = useAuth();
   const {
     onGuess,
     guesses,
@@ -32,6 +35,7 @@ const DailyChallengeGameplay: React.FC = () => {
   const [input, setInput] = useState("");
   const [showCompletionDialog, setShowCompletionDialog] = useState(false);
   const [showPokemonReference, setShowPokemonReference] = useState(false);
+  const [showStatsDialog, setShowStatsDialog] = useState(false);
 
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
     onGuess(pokemon).finally(() => setInput(""));
@@ -53,7 +57,7 @@ const DailyChallengeGameplay: React.FC = () => {
   };
 
   const handleReopenDialog = () => {
-    setShowCompletionDialog(true);
+    setShowStatsDialog(true);
   };
 
   return (
@@ -126,17 +130,17 @@ const DailyChallengeGameplay: React.FC = () => {
               shareResults(guesses?.guesses ?? []);
             }}
           >
-            <Share2 /> Share
+            <Share2 /> Share Results
           </Button>
-          {hasDialogBeenShownToday && (
+          {isAuthenticated && (
             <Button
               variant="outline"
               size="sm"
               className="tw:w-full"
               onClick={handleReopenDialog}
             >
-              <Eye />
-              View Results
+              <BarChart />
+              View Stats
             </Button>
           )}
         </div>
@@ -154,7 +158,13 @@ const DailyChallengeGameplay: React.FC = () => {
             ? guesses!.guesses[guesses!.guesses.length - 1]
             : undefined)
         }
+        onShowStatsDialog={() => {
+          handleDialogOpenChange(false);
+          setShowStatsDialog(true);
+        }}
       />
+
+      <StatsDialog open={showStatsDialog} onOpenChange={setShowStatsDialog} />
 
       <PokemonReferenceDialog
         open={showPokemonReference}

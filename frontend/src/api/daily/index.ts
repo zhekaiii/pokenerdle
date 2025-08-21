@@ -1,17 +1,47 @@
-import { type DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
+import { FROZEN_DATE } from "@/pages/DailyChallenge/constants";
+import {
+  type DailyChallengeGuessResponse,
+  type DailyChallengeStatsResponse,
+  type DailyChallengeSyncGuessesResponse,
+} from "@pokenerdle/shared/daily";
 import axios from "axios";
-import { formatDate } from "date-fns";
 
 export default {
-  verifyGuess: async (id: number) => {
+  submitGuess: async (id: number) => {
     const { data } = await axios.post<DailyChallengeGuessResponse>(
-      "/v1/daily/challenge/guess",
+      "/v1/daily/challenge/submit",
       {
         pokemon_id: id,
-        date: formatDate(new Date(), "yyyy-MM-dd"),
+        date: FROZEN_DATE,
       }
     );
     return data;
+  },
+  getUserGuesses: async (date?: string) => {
+    const { data } = await axios.get<DailyChallengeGuessResponse[]>(
+      "/v1/daily/challenge/guesses",
+      {
+        params: {
+          date: date || FROZEN_DATE,
+        },
+      }
+    );
+    return data;
+  },
+  syncGuesses: async (guesses: DailyChallengeGuessResponse[], date: string) => {
+    try {
+      const { data } = await axios.post<DailyChallengeSyncGuessesResponse>(
+        "/v1/daily/challenge/sync",
+        {
+          guesses: guesses.map((guess) => ({ pokemonId: guess.pokemonId })),
+          date,
+        }
+      );
+      return data;
+    } catch (error) {
+      console.error("Failed to sync guesses:", error);
+      throw error;
+    }
   },
   getAnswer: async () => {
     const { data } = await axios.get<{
@@ -25,9 +55,15 @@ export default {
       };
     }>("/v1/daily/challenge/answer", {
       params: {
-        date: formatDate(new Date(), "yyyy-MM-dd"),
+        date: FROZEN_DATE,
       },
     });
+    return data;
+  },
+  getStats: async () => {
+    const { data } = await axios.get<DailyChallengeStatsResponse>(
+      "/v1/daily/challenge/stats"
+    );
     return data;
   },
 };
