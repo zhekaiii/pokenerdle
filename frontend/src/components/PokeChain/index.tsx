@@ -105,8 +105,12 @@ const PokeChain: React.FC = () => {
   );
 };
 
-export default () => (
+export const Component = () => (
   <PokeChainContextProvider>
     <PokeChain />
   </PokeChainContextProvider>
 );
+
+Component.displayName = "PokeChain";
+
+export default Component;

@@ -5,4 +5,8 @@ const PathFinder: React.FC = () => {
   return <PathFinderGame />;
 };
 
-export default PathFinder;
+export const Component = PathFinder;
+
+Component.displayName = "PathFinder";
+
+export default Component;

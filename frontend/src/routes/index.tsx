@@ -1,20 +1,7 @@
-import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import ErrorPage from "@/layout/ErrorPage";
 import Layout from "@/layout/Layout";
-import DailyChallengePage from "@/pages/DailyChallenge";
-import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router";
 import HowToPlayPage from "../pages/HowToPlay";
-
-const DailyChallengeRules = lazy(
-  () => import("@/pages/HowToPlay/DailyChallengeRules")
-);
-const PathFinder = lazy(() => import("../components/PathFinder"));
-const PokeChain = lazy(() => import("../components/PokeChain"));
-const PathFinderRules = lazy(
-  () => import("../pages/HowToPlay/PathFinderRules")
-);
-const PokeChainRules = lazy(() => import("../pages/HowToPlay/PokeChainRules"));
 
 const routes: RouteObject[] = [
   {
@@ -28,27 +15,15 @@ const routes: RouteObject[] = [
       },
       {
         path: "daily",
-        element: (
-          <Suspense fallback={<LoadingDialog open />}>
-            <DailyChallengePage />
-          </Suspense>
-        ),
+        lazy: () => import("@/pages/DailyChallenge"),
       },
       {
         path: "pokechain",
-        element: (
-          <Suspense fallback={<LoadingDialog open />}>
-            <PokeChain />
-          </Suspense>
-        ),
+        lazy: () => import("@/components/PokeChain"),
       },
       {
         path: "path-finder",
-        element: (
-          <Suspense fallback={<LoadingDialog open />}>
-            <PathFinder />
-          </Suspense>
-        ),
+        lazy: () => import("@/components/PathFinder"),
       },
       {
         path: "how-to-play",
@@ -61,27 +36,15 @@ const routes: RouteObject[] = [
           },
           {
             path: "daily",
-            element: (
-              <Suspense fallback={<LoadingDialog open />}>
-                <DailyChallengeRules />
-              </Suspense>
-            ),
+            lazy: () => import("@/pages/HowToPlay/DailyChallengeRules"),
           },
           {
             path: "pokechain",
-            element: (
-              <Suspense fallback={<LoadingDialog open />}>
-                <PokeChainRules />
-              </Suspense>
-            ),
+            lazy: () => import("@/pages/HowToPlay/PokeChainRules"),
           },
           {
             path: "path-finder",
-            element: (
-              <Suspense fallback={<LoadingDialog open />}>
-                <PathFinderRules />
-              </Suspense>
-            ),
+            lazy: () => import("@/pages/HowToPlay/PathFinderRules"),
           },
         ],
       },

@@ -286,4 +286,8 @@ const DailyChallengeRules: React.FC = () => {
   );
 };
 
-export default DailyChallengeRules;
+export const Component = DailyChallengeRules;
+
+Component.displayName = "DailyChallengeRules";
+
+export default Component;

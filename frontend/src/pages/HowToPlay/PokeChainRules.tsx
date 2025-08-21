@@ -269,4 +269,8 @@ const PokeChainRules: React.FC = () => {
   );
 };
 
-export default PokeChainRules;
+export const Component = PokeChainRules;
+
+Component.displayName = "PokeChainRules";
+
+export default Component;

@@ -169,4 +169,8 @@ const PathFinderRules: React.FC = () => {
   );
 };
 
-export default PathFinderRules;
+export const Component = PathFinderRules;
+
+Component.displayName = "PathFinderRules";
+
+export default Component;

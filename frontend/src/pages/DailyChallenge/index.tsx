@@ -23,4 +23,8 @@ const DailyChallengePage: React.FC = () => {
   );
 };
 
-export default DailyChallengePage;
+export const Component = DailyChallengePage;
+
+Component.displayName = "DailyChallenge";
+
+export default Component;

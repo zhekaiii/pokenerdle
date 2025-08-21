@@ -1,12 +1,13 @@
 import { themeAtom, THEMES } from "@/atoms/theme";
 import LinkButton from "@/components/recyclables/LinkButton";
+import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import { Button } from "@/components/ui/Button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/Drawer";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { useAtom } from "jotai";
 import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigation } from "react-router";
 import RulePageButton from "./RulePageButton";
 
 type Props = {
@@ -16,26 +17,16 @@ type Props = {
 const NavDrawer: React.FC<Props> = ({ trigger }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [theme, setTheme] = useAtom(themeAtom);
+  const navigation = useNavigation();
   const location = useLocation();
 
   useEffect(() => {
-    const closeDrawer = () => {
-      setIsOpen(false);
-    };
-    window.addEventListener("popstate", closeDrawer);
-    window.addEventListener("pushstate", closeDrawer);
-    return () => {
-      window.removeEventListener("popstate", closeDrawer);
-      window.removeEventListener("pushstate", closeDrawer);
-    };
-  }, []);
-
-  useEffect(() => {
     setIsOpen(false);
-  }, [location]);
+  }, [navigation.state, location]);
 
   return (
     <Drawer direction="left" open={isOpen} onOpenChange={setIsOpen}>
+      <LoadingDialog open={navigation.state === "loading"} />
       <DrawerTrigger className="tw:me-2">{trigger}</DrawerTrigger>
       <DrawerContent>
         <Button
