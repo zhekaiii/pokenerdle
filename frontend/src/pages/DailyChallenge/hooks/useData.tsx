@@ -100,7 +100,7 @@ export const useDailyChallengeData = () => {
     const numGuesses = (guesses?.guesses.length ?? 0) + 1;
     try {
       setIsLoading(true);
-      const response = await api.daily.verifyGuess(id);
+      const response = await api.daily.submitGuess(id);
       setGuesses(() => {
         const guess = {
           ...response,

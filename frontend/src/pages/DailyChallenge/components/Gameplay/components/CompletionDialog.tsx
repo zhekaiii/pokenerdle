@@ -85,8 +85,10 @@ const CompletionDialog: React.FC<Props> = ({
 
     try {
       setIsSyncing(true);
-      const { syncedGuesses, existingGuesses, message } =
-        await api.daily.syncGuesses(guesses, user.id, date);
+      const { syncedGuesses, existingGuesses } = await api.daily.syncGuesses(
+        guesses,
+        date
+      );
       setHasSynced(true);
 
       if (existingGuesses.length > 0) {

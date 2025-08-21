@@ -1,3 +1,5 @@
+import { sessionAtom } from "@/atoms/auth";
+import { store } from "@/atoms/store";
 import axios from "axios";
 import battles from "./battles";
 import daily from "./daily";
@@ -9,6 +11,14 @@ export const BACKEND_URL = import.meta.env.PROD
   : `${import.meta.env.VITE_BACKEND_URL}`;
 
 axios.defaults.baseURL = `${BACKEND_URL}/api`;
+
+axios.interceptors.request.use(async (config) => {
+  const session = store.get(sessionAtom);
+  if (session?.access_token) {
+    config.headers.Authorization = `Bearer ${session.access_token}`;
+  }
+  return config;
+});
 
 const api = {
   daily,

@@ -8,7 +8,6 @@ export const DailyChallengeGuessRequestSchema = z.object({
 export const DailyChallengeSubmitGuessRequestSchema = z.object({
   pokemon_id: z.int(),
   date: z.iso.date(),
-  user_id: z.string().optional(),
 });
 
 export const DailyChallengeSyncGuessesRequestSchema = z.object({
@@ -17,7 +16,6 @@ export const DailyChallengeSyncGuessesRequestSchema = z.object({
       pokemonId: z.number(),
     })
   ),
-  user_id: z.string(),
   date: z.iso.date(),
 });
 

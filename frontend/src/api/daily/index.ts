@@ -6,50 +6,33 @@ import axios from "axios";
 import { formatDate } from "date-fns";
 
 export default {
-  verifyGuess: async (id: number) => {
-    const { data } = await axios.post<DailyChallengeGuessResponse>(
-      "/v1/daily/challenge/guess",
-      {
-        pokemon_id: id,
-        date: formatDate(new Date(), "yyyy-MM-dd"),
-      }
-    );
-    return data;
-  },
-  submitGuess: async (id: number, userId: string) => {
+  submitGuess: async (id: number) => {
     const { data } = await axios.post<DailyChallengeGuessResponse>(
       "/v1/daily/challenge/submit",
       {
         pokemon_id: id,
         date: formatDate(new Date(), "yyyy-MM-dd"),
-        user_id: userId,
       }
     );
     return data;
   },
-  getUserGuesses: async (userId: string, date?: string) => {
+  getUserGuesses: async (date?: string) => {
     const { data } = await axios.get<DailyChallengeGuessResponse[]>(
       "/v1/daily/challenge/guesses",
       {
         params: {
-          user_id: userId,
           date: date || formatDate(new Date(), "yyyy-MM-dd"),
         },
       }
     );
     return data;
   },
-  syncGuesses: async (
-    guesses: DailyChallengeGuessResponse[],
-    userId: string,
-    date: string
-  ) => {
+  syncGuesses: async (guesses: DailyChallengeGuessResponse[], date: string) => {
     try {
       const { data } = await axios.post<DailyChallengeSyncGuessesResponse>(
         "/v1/daily/challenge/sync",
         {
           guesses: guesses.map((guess) => ({ pokemonId: guess.pokemonId })),
-          user_id: userId,
           date,
         }
       );

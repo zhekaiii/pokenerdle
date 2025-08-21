@@ -5,6 +5,7 @@ import {
 import { Request, Response } from "express";
 import * as z from "zod";
 import { StatusCode } from "../data/const.js";
+import { AuthenticatedRequest } from "../middlewares/auth.js";
 import {
   getDailyPokemonAnswer,
   getUserGuessesForDateService,
@@ -13,7 +14,7 @@ import {
 } from "../services/daily.service.js";
 
 export const submitDailyPokemonGuessController = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response
 ) => {
   const parsed = DailyChallengeSubmitGuessRequestSchema.safeParse(req.body);
@@ -21,10 +22,11 @@ export const submitDailyPokemonGuessController = async (
     res.status(StatusCode.BAD_REQUEST).json(z.treeifyError(parsed.error));
     return;
   }
-  const { pokemon_id, date, user_id } = parsed.data;
+  const { pokemon_id, date } = parsed.data;
+  const userId = req.user?.id;
 
   try {
-    const results = await submitGuess(user_id, pokemon_id, date);
+    const results = await submitGuess(userId, pokemon_id, date);
     res.json(results);
   } catch (error) {
     console.error("Error submitting guess:", error);
@@ -34,15 +36,12 @@ export const submitDailyPokemonGuessController = async (
   }
 };
 
-export const getUserGuessesController = async (req: Request, res: Response) => {
-  const { user_id, date } = req.query;
-
-  if (!user_id || typeof user_id !== "string") {
-    res.status(StatusCode.BAD_REQUEST).json({
-      error: "User ID parameter is required",
-    });
-    return;
-  }
+export const getUserGuessesController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  const { date } = req.query;
+  const user_id = req.user!.id; // User is guaranteed to exist due to middleware
 
   if (!date || typeof date !== "string") {
     res.status(StatusCode.BAD_REQUEST).json({
@@ -85,7 +84,7 @@ export const getDailyPokemonAnswerController = async (
 };
 
 export const syncUserGuessesController = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response
 ) => {
   const parsed = DailyChallengeSyncGuessesRequestSchema.safeParse(req.body);
@@ -94,7 +93,8 @@ export const syncUserGuessesController = async (
     return;
   }
 
-  const { guesses, user_id, date } = parsed.data;
+  const { guesses, date } = parsed.data;
+  const user_id = req.user!.id; // User is guaranteed to exist due to middleware
 
   try {
     const results = await syncUserGuesses(user_id, guesses, date);
