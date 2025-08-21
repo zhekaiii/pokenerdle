@@ -1,13 +1,16 @@
 import { useLocalStorage } from "react-use";
 
-import { DAILY_CHALLENGE_GUESS_LIMIT, DAILY_CHALLENGE_KEY } from "../constants";
+import {
+  DAILY_CHALLENGE_GUESS_LIMIT,
+  DAILY_CHALLENGE_KEY,
+  FROZEN_DATE,
+} from "../constants";
 
 import api from "@/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
-import { format, formatDate } from "date-fns";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { CheckCircle } from "lucide-react";
@@ -31,7 +34,6 @@ type CorrectAnswer = {
   };
 };
 
-export const FROZEN_DATE = format(new Date(), "yyyy-MM-dd");
 const DAILY_CHALLENGE_DIALOG_KEY = "daily_challenge_dialog_shown";
 
 export const guessesAtom = atomWithStorage<DailyChallenge | null>(
@@ -121,7 +123,7 @@ export const useDailyChallengeData = () => {
           };
         }
         return {
-          date: formatDate(new Date(), "yyyy-MM-dd"),
+          date: FROZEN_DATE,
           guesses: [guess],
         };
       });

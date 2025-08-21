@@ -4,7 +4,8 @@ import { useToast } from "@/hooks/useToast";
 import { useAtom } from "jotai";
 import { CloudUpload } from "lucide-react";
 import { useEffect } from "react";
-import { FROZEN_DATE, guessesAtom } from "./useData";
+import { FROZEN_DATE } from "../constants";
+import { guessesAtom } from "./useData";
 
 export const useSyncData = () => {
   const [guesses, setGuesses] = useAtom(guessesAtom);

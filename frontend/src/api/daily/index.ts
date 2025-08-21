@@ -1,9 +1,10 @@
+import { FROZEN_DATE } from "@/pages/DailyChallenge/constants";
 import {
   type DailyChallengeGuessResponse,
+  type DailyChallengeStatsResponse,
   type DailyChallengeSyncGuessesResponse,
 } from "@pokenerdle/shared/daily";
 import axios from "axios";
-import { formatDate } from "date-fns";
 
 export default {
   submitGuess: async (id: number) => {
@@ -11,7 +12,7 @@ export default {
       "/v1/daily/challenge/submit",
       {
         pokemon_id: id,
-        date: formatDate(new Date(), "yyyy-MM-dd"),
+        date: FROZEN_DATE,
       }
     );
     return data;
@@ -21,7 +22,7 @@ export default {
       "/v1/daily/challenge/guesses",
       {
         params: {
-          date: date || formatDate(new Date(), "yyyy-MM-dd"),
+          date: date || FROZEN_DATE,
         },
       }
     );
@@ -54,9 +55,15 @@ export default {
       };
     }>("/v1/daily/challenge/answer", {
       params: {
-        date: formatDate(new Date(), "yyyy-MM-dd"),
+        date: FROZEN_DATE,
       },
     });
+    return data;
+  },
+  getStats: async () => {
+    const { data } = await axios.get<DailyChallengeStatsResponse>(
+      "/v1/daily/challenge/stats"
+    );
     return data;
   },
 };

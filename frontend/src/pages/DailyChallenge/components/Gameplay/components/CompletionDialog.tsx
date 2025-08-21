@@ -16,7 +16,7 @@ import {
   getFormattedPokemonName,
 } from "@/utils/formatters";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
-import { CheckCircle, Share2 } from "lucide-react";
+import { CheckCircle, Share2, TrendingUp } from "lucide-react";
 import posthog from "posthog-js";
 import React from "react";
 import {
@@ -41,7 +41,7 @@ type Props = {
       color: string;
     };
   };
-  date: string;
+  onShowStatsDialog?: () => void;
 };
 
 const CompletionDialog: React.FC<Props> = ({
@@ -50,11 +50,12 @@ const CompletionDialog: React.FC<Props> = ({
   guesses,
   hasSolved,
   correctAnswer,
-  date,
+  onShowStatsDialog,
 }) => {
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
   const { loading: authLoading, isAuthenticated } = useAuth();
+
   const pokemonName = pokemonNames?.find(
     (pokemon) => pokemon.id === correctAnswer?.pokemonId
   );
@@ -158,23 +159,35 @@ const CompletionDialog: React.FC<Props> = ({
           )}
 
           {/* Share Button */}
-          <Button
-            onClick={handleShare}
-            className="tw:w-full"
-            variant={isSuccess ? "default" : "outline"}
-          >
-            <Share2 className="tw:w-4 tw:h-4" />
-            Share Results
-          </Button>
+          <div className="tw:flex tw:gap-2 tw:flex-col">
+            <Button
+              onClick={handleShare}
+              className="tw:flex-1"
+              variant={isSuccess ? "default" : "outline"}
+            >
+              <Share2 className="tw:w-4 tw:h-4" />
+              Share Results
+            </Button>
 
-          {!authLoading && !isAuthenticated && (
-            <div className="tw:flex tw:flex-col tw:items-center tw:gap-2">
-              <GoogleSignInButton className="tw:w-full" />
-              <p className="tw:text-sm tw:text-muted-foreground">
-                Sign in to save your daily challenge results!
-              </p>
-            </div>
-          )}
+            {isAuthenticated && onShowStatsDialog && (
+              <Button
+                onClick={onShowStatsDialog}
+                className="tw:flex-1"
+                variant="outline"
+              >
+                <TrendingUp className="tw:w-4 tw:h-4" />
+                Your Stats
+              </Button>
+            )}
+            {!authLoading && !isAuthenticated && (
+              <div className="tw:flex tw:flex-col tw:items-center tw:gap-2">
+                <GoogleSignInButton className="tw:w-full" />
+                <p className="tw:text-sm tw:text-muted-foreground">
+                  Sign in to save your daily challenge results!
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
