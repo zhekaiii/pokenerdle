@@ -3,6 +3,7 @@ import LinkButton from "@/components/recyclables/LinkButton";
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import { Button } from "@/components/ui/Button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/Drawer";
+import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { useAtom } from "jotai";
@@ -60,11 +61,13 @@ const NavDrawer: React.FC<Props> = ({ trigger }) => {
               ))}
             </TabsList>
           </Tabs>
-          {isAuthenticated && (
+          {isAuthenticated ? (
             <Button onClick={signOut}>
               <LogOut />
               Log Out
             </Button>
+          ) : (
+            !authLoading && <GoogleSignInButton />
           )}
         </div>
       </DrawerContent>

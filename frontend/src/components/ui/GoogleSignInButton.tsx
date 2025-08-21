@@ -13,9 +13,9 @@ type GoogleSignInButtonProps = {
 export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
   onSignIn,
   className,
-  variant = "outline",
+  variant,
   size,
-  redirectTo,
+  redirectTo = location.toString(),
 }) => {
   const { signInWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);

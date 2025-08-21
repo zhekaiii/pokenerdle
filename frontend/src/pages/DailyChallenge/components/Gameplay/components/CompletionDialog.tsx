@@ -181,7 +181,7 @@ const CompletionDialog: React.FC<Props> = ({
             )}
             {!authLoading && !isAuthenticated && (
               <div className="tw:flex tw:flex-col tw:items-center tw:gap-2">
-                <GoogleSignInButton className="tw:w-full" />
+                <GoogleSignInButton className="tw:w-full" variant="outline" />
                 <p className="tw:text-sm tw:text-muted-foreground">
                   Sign in to save your daily challenge results!
                 </p>
