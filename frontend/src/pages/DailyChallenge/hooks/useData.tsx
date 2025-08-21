@@ -7,6 +7,8 @@ import { useToast } from "@/hooks/useToast";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { format, formatDate } from "date-fns";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { CheckCircle } from "lucide-react";
 import posthog from "posthog-js";
 import { useEffect, useMemo, useState } from "react";
@@ -30,11 +32,13 @@ type CorrectAnswer = {
 const now = new Date();
 const DAILY_CHALLENGE_DIALOG_KEY = "daily_challenge_dialog_shown";
 
+export const guessesAtom = atomWithStorage<DailyChallenge | null>(
+  DAILY_CHALLENGE_KEY,
+  null
+);
+
 export const useDailyChallengeData = () => {
-  const [guesses, setGuesses] = useLocalStorage<DailyChallenge | null>(
-    DAILY_CHALLENGE_KEY,
-    null
-  );
+  const [guesses, setGuesses] = useAtom(guessesAtom);
   const [dialogShown, setDialogShown] = useLocalStorage<string | null>(
     DAILY_CHALLENGE_DIALOG_KEY,
     null

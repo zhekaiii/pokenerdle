@@ -1,3 +1,4 @@
+import api from "@/api";
 import TypeChip from "@/components/recyclables/TypeChip";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -11,14 +12,17 @@ import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
+import { useToast } from "@/hooks/useToast";
+import { guessesAtom } from "@/pages/DailyChallenge/hooks/useData";
 import {
   formatPokemonHeight,
   getFormattedPokemonName,
 } from "@/utils/formatters";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
-import { CheckCircle, Share2 } from "lucide-react";
+import { useSetAtom } from "jotai";
+import { CheckCircle, CloudUpload, Share2 } from "lucide-react";
 import posthog from "posthog-js";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   challengeNumber,
   DAILY_CHALLENGE_GUESS_LIMIT,
@@ -41,6 +45,7 @@ type Props = {
       color: string;
     };
   };
+  date: string;
 };
 
 const CompletionDialog: React.FC<Props> = ({
@@ -49,13 +54,23 @@ const CompletionDialog: React.FC<Props> = ({
   guesses,
   hasSolved,
   correctAnswer,
+  date,
 }) => {
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
   const { user, loading: authLoading } = useAuth();
+  const { toast } = useToast();
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [hasSynced, setHasSynced] = useState(false);
+  const setGuesses = useSetAtom(guessesAtom);
   const pokemonName = pokemonNames?.find(
     (pokemon) => pokemon.id === correctAnswer?.pokemonId
   );
+
+  // Reset sync state when user changes (e.g., signs in/out)
+  useEffect(() => {
+    setHasSynced(false);
+  }, [user?.id]);
 
   const handleShare = () => {
     posthog.capture("daily_challenge_share_clicked", {
@@ -63,6 +78,44 @@ const CompletionDialog: React.FC<Props> = ({
       num_guesses: guesses.length,
     });
     shareResults(guesses);
+  };
+
+  const handleSyncGuesses = async () => {
+    if (!user || guesses.length === 0) return;
+
+    try {
+      setIsSyncing(true);
+      const { syncedGuesses, existingGuesses, message } =
+        await api.daily.syncGuesses(guesses, user.id, date);
+      setHasSynced(true);
+
+      if (existingGuesses.length > 0) {
+        setGuesses({
+          date,
+          guesses: existingGuesses,
+        });
+      }
+
+      if (syncedGuesses.length > 0) {
+        toast({
+          variant: "positive",
+          description: (
+            <div className="tw:flex tw:flex-nowrap">
+              <CloudUpload className="tw:mr-2" />
+              <div>Your guesses have been saved to your account!</div>
+            </div>
+          ),
+        });
+      }
+    } catch (error) {
+      console.error("Failed to sync guesses:", error);
+      toast({
+        variant: "destructive",
+        description: "Something went wrong while saving your guesses.",
+      });
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const attempts = guesses.length;
@@ -144,7 +197,7 @@ const CompletionDialog: React.FC<Props> = ({
           {/* Success Stats */}
           {isSuccess && (
             <div className="tw:flex tw:items-center tw:justify-center tw:gap-2 tw:text-sm">
-              <CheckCircle className="tw:w-4 tw:h-4 tw:text-green-500" />
+              <CheckCircle className="tw:w-4 tw:h-4 tw:text-positive" />
               <span className="tw:text-muted-foreground">
                 {attempts === 1
                   ? "Perfect score!"
@@ -172,6 +225,33 @@ const CompletionDialog: React.FC<Props> = ({
               <p className="tw:text-sm tw:text-muted-foreground">
                 Sign in to save your daily challenge results!
               </p>
+            </div>
+          )}
+
+          {/* Sync Guesses Section */}
+          {user && guesses.length > 0 && !hasSynced && (
+            <div className="tw:flex tw:flex-col tw:items-center tw:gap-2">
+              <Button
+                onClick={handleSyncGuesses}
+                disabled={isSyncing}
+                variant="outline"
+                className="tw:w-full"
+              >
+                <CloudUpload className="tw:w-4 tw:h-4" />
+                {isSyncing ? "Saving..." : "Save Progress to Account"}
+              </Button>
+              <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
+                Save your {attempts} guess{attempts !== 1 ? "es" : ""} to your
+                account for future reference
+              </p>
+            </div>
+          )}
+
+          {/* Sync Success Message */}
+          {user && hasSynced && (
+            <div className="tw:flex tw:items-center tw:justify-center tw:gap-2 tw:text-sm tw:text-positive">
+              <CheckCircle className="tw:w-4 tw:h-4" />
+              <span>Progress saved to your account!</span>
             </div>
           )}
         </div>

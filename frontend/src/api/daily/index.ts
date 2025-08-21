@@ -1,4 +1,7 @@
-import { type DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
+import {
+  type DailyChallengeGuessResponse,
+  type DailyChallengeSyncGuessesResponse,
+} from "@pokenerdle/shared/daily";
 import axios from "axios";
 import { formatDate } from "date-fns";
 
@@ -35,6 +38,26 @@ export default {
       }
     );
     return data;
+  },
+  syncGuesses: async (
+    guesses: DailyChallengeGuessResponse[],
+    userId: string,
+    date: string
+  ) => {
+    try {
+      const { data } = await axios.post<DailyChallengeSyncGuessesResponse>(
+        "/v1/daily/challenge/sync",
+        {
+          guesses: guesses.map((guess) => ({ pokemonId: guess.pokemonId })),
+          user_id: userId,
+          date,
+        }
+      );
+      return data;
+    } catch (error) {
+      console.error("Failed to sync guesses:", error);
+      throw error;
+    }
   },
   getAnswer: async () => {
     const { data } = await axios.get<{

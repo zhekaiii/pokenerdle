@@ -282,3 +282,42 @@ export const getDailyPokemonAnswer = async (date: string) => {
     pokemon: await DailyPokemonToResponse(targetPokemon),
   };
 };
+
+export const syncUserGuesses = async (
+  userId: string,
+  guesses: { pokemonId: number }[],
+  date: string
+) => {
+  // First, get existing guesses for this user and date
+  const existingGuesses = await getUserGuessesForDateService(userId, date);
+
+  if (existingGuesses.length > 0) {
+    // User already has data for this day
+    return {
+      syncedGuesses: [],
+      existingGuesses,
+      message: `User already has ${existingGuesses.length} guesses for this date`,
+    };
+  }
+
+  // User has no existing data, proceed with syncing
+  const syncedGuesses: DailyChallengeGuessResponse[] = [];
+
+  for (const guess of guesses) {
+    try {
+      const result = await submitGuess(userId, guess.pokemonId, date);
+      syncedGuesses.push(result);
+    } catch (error) {
+      console.error(
+        `Failed to sync guess for pokemon ${guess.pokemonId}:`,
+        error
+      );
+    }
+  }
+
+  return {
+    syncedGuesses,
+    existingGuesses: [],
+    message: `Successfully synced ${syncedGuesses.length} guesses`,
+  };
+};

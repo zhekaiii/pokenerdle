@@ -8,6 +8,7 @@ import CompletionDialog from "@/pages/DailyChallenge/components/Gameplay/compone
 import { DailyChallengeGuessBoxMemo } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
+import { format } from "date-fns";
 import { BookOpen, Eye, Share2 } from "lucide-react";
 import posthog from "posthog-js";
 import { useEffect } from "react";
@@ -145,6 +146,7 @@ const DailyChallengeGameplay: React.FC = () => {
       <CompletionDialog
         open={showCompletionDialog}
         onOpenChange={handleDialogOpenChange}
+        date={guesses?.date ?? format(new Date(), "yyyy-MM-dd")}
         guesses={guesses?.guesses ?? []}
         hasSolved={hasSolved}
         hasReachedLimit={hasReachedLimit}

@@ -1,4 +1,7 @@
-import { DailyChallengeSubmitGuessRequestSchema } from "@pokenerdle/shared/daily";
+import {
+  DailyChallengeSubmitGuessRequestSchema,
+  DailyChallengeSyncGuessesRequestSchema,
+} from "@pokenerdle/shared/daily";
 import { Request, Response } from "express";
 import * as z from "zod";
 import { StatusCode } from "../data/const.js";
@@ -6,6 +9,7 @@ import {
   getDailyPokemonAnswer,
   getUserGuessesForDateService,
   submitGuess,
+  syncUserGuesses,
 } from "../services/daily.service.js";
 
 export const submitDailyPokemonGuessController = async (
@@ -77,5 +81,28 @@ export const getDailyPokemonAnswerController = async (
     res
       .status(StatusCode.INTERNAL_SERVER_ERROR)
       .json({ error: "Failed to get answer" });
+  }
+};
+
+export const syncUserGuessesController = async (
+  req: Request,
+  res: Response
+) => {
+  const parsed = DailyChallengeSyncGuessesRequestSchema.safeParse(req.body);
+  if (parsed.error) {
+    res.status(StatusCode.BAD_REQUEST).json(z.treeifyError(parsed.error));
+    return;
+  }
+
+  const { guesses, user_id, date } = parsed.data;
+
+  try {
+    const results = await syncUserGuesses(user_id, guesses, date);
+    res.json(results);
+  } catch (error) {
+    console.error("Error syncing user guesses:", error);
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
+      error: "Failed to sync user guesses",
+    });
   }
 };

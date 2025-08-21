@@ -11,6 +11,16 @@ export const DailyChallengeSubmitGuessRequestSchema = z.object({
   user_id: z.string().optional(),
 });
 
+export const DailyChallengeSyncGuessesRequestSchema = z.object({
+  guesses: z.array(
+    z.object({
+      pokemonId: z.number(),
+    })
+  ),
+  user_id: z.string(),
+  date: z.iso.date(),
+});
+
 export type DailyChallengeGuessRequest = z.infer<
   typeof DailyChallengeGuessRequestSchema
 >;
@@ -18,6 +28,16 @@ export type DailyChallengeGuessRequest = z.infer<
 export type DailyChallengeSubmitGuessRequest = z.infer<
   typeof DailyChallengeSubmitGuessRequestSchema
 >;
+
+export type DailyChallengeSyncGuessesRequest = z.infer<
+  typeof DailyChallengeSyncGuessesRequestSchema
+>;
+
+export type DailyChallengeSyncGuessesResponse = {
+  syncedGuesses: DailyChallengeGuessResponse[];
+  existingGuesses: DailyChallengeGuessResponse[];
+  message: string;
+};
 
 export type DailyChallengeGuessResponse = {
   pokemon: {
