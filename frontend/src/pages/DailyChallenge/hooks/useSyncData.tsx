@@ -60,13 +60,19 @@ export const useSyncData = () => {
 
   useEffect(() => {
     if (loading || !isAuthenticated) return;
-    api.daily.getUserGuesses(FROZEN_DATE).then((userGuesses) => {
-      setGuesses({
-        date: FROZEN_DATE,
-        guesses: userGuesses,
-        synced: true,
+    setIsSyncing(true);
+    api.daily
+      .getUserGuesses(FROZEN_DATE)
+      .then((userGuesses) => {
+        setGuesses({
+          date: FROZEN_DATE,
+          guesses: userGuesses,
+          synced: true,
+        });
+      })
+      .finally(() => {
+        setIsSyncing(false);
       });
-    });
   }, [loading]);
 
   useEffect(() => {
