@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   getDailyPokemonAnswerController,
   getUserGuessesController,
+  getUserStatsController,
   submitDailyPokemonGuessController,
   syncUserGuessesController,
 } from "../controllers/daily.controllers.js";
@@ -23,7 +24,12 @@ dailyRouter.post(
   authenticateUser,
   syncUserGuessesController
 );
-dailyRouter.get("/challenge/guesses", getUserGuessesController);
+dailyRouter.get(
+  "/challenge/guesses",
+  authenticateUser,
+  getUserGuessesController
+);
 dailyRouter.get("/challenge/answer", getDailyPokemonAnswerController);
+dailyRouter.get("/challenge/stats", authenticateUser, getUserStatsController);
 
 export default Router().use(RouteNames.DAILY_API, dailyRouter);

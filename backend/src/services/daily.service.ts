@@ -7,6 +7,7 @@ import { DailyPokemonToResponse } from "../mappers/daily.js";
 import {
   createDailyPokemon,
   getDailyPokemonFromDb,
+  getUserDailyStatsData,
   getUserGuessCountForDate,
   getUserGuessesForDate,
   saveUserGuess,
@@ -319,5 +320,57 @@ export const syncUserGuesses = async (
     syncedGuesses,
     existingGuesses: [],
     message: `Successfully synced ${syncedGuesses.length} guesses`,
+  };
+};
+
+export const getUserStats = async (userId: string) => {
+  const statsData = await getUserDailyStatsData(userId);
+
+  if (statsData.length === 0) {
+    return {
+      num_played: 0,
+      win_rate: 0,
+      streak: 0,
+      max_streak: 0,
+    };
+  }
+
+  // Calculate number of games played (unique days with guesses)
+  const num_played = statsData.length;
+
+  // Calculate wins (days where max isCorrect is true)
+  const wins = statsData.filter((day) => day.correct).length;
+
+  // Calculate win rate as percentage
+  const win_rate = Math.round((wins / num_played) * 100);
+
+  // Calculate streaks
+  let maxStreak = 0;
+
+  // Convert date strings to Date objects for comparison
+  const formattedDays = statsData.map((day) => ({
+    date: new Date(day.dailyChallengeId),
+    isWin: day.correct,
+  }));
+
+  let streak = 0;
+
+  for (let i = 0; i < formattedDays.length; i++) {
+    const day = formattedDays[i];
+
+    if (day.isWin) {
+      streak++;
+      maxStreak = Math.max(maxStreak, streak);
+    } else {
+      // Loss, reset temporary streak but keep max streak
+      streak = 0;
+    }
+  }
+
+  return {
+    num_played,
+    win_rate,
+    streak,
+    max_streak: maxStreak,
   };
 };

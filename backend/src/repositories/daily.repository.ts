@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma-pg/client.js";
+import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
 import { pgClient } from "../lib/pg.js";
 
 export const getDailyPokemonFromDb = async (date: string) => {
@@ -89,4 +90,28 @@ export const getUserGuessCountForDate = async (
     },
   });
   return result;
+};
+
+export const getUserDailyStatsData = async (userId: string) => {
+  return pgClient.$queryRaw<
+    {
+      dailyChallengeId: string;
+      correct: boolean;
+      count: number;
+    }[]
+  >`
+    SELECT
+      "dailyChallengeId",
+      BOOL_OR("isCorrect") AS correct,
+      count(1)
+    FROM
+      user_daily_guesses
+    WHERE
+      "userId" = ${userId}
+    GROUP BY
+      "dailyChallengeId"
+    HAVING
+      count(1) = ${DAILY_CHALLENGE_GUESS_LIMIT}
+      OR BOOL_OR("isCorrect")
+  `;
 };

@@ -59,3 +59,10 @@ export type DailyChallengeGuessResponse = {
       colorCorrectness: boolean;
     }
 );
+
+export type DailyChallengeStatsResponse = {
+  num_played: number;
+  win_rate: number;
+  streak: number;
+  max_streak: number;
+};

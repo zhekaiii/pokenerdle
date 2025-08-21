@@ -9,6 +9,7 @@ import { AuthenticatedRequest } from "../middlewares/auth.js";
 import {
   getDailyPokemonAnswer,
   getUserGuessesForDateService,
+  getUserStats,
   submitGuess,
   syncUserGuesses,
 } from "../services/daily.service.js";
@@ -103,6 +104,23 @@ export const syncUserGuessesController = async (
     console.error("Error syncing user guesses:", error);
     res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
       error: "Failed to sync user guesses",
+    });
+  }
+};
+
+export const getUserStatsController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  const userId = req.user!.id;
+
+  try {
+    const stats = await getUserStats(userId);
+    res.json(stats);
+  } catch (error) {
+    console.error("Error getting user stats:", error);
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
+      error: "Failed to get user stats",
     });
   }
 };
