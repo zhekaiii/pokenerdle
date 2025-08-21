@@ -1,5 +1,5 @@
-import { Prisma } from "@prisma-pg/client.js";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
+import { Prisma } from "../generated/prisma-pg/client.js";
 import { pgClient } from "../lib/pg.js";
 
 export const getDailyPokemonFromDb = async (date: string) => {
