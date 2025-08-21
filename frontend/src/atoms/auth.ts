@@ -11,16 +11,22 @@ export const authLoadingAtom = atom<boolean>(true);
 export const isAuthenticatedAtom = atom((get) => get(userAtom) !== null);
 
 // Action atoms
-export const signInWithGoogleAtom = atom(null, async (get, set) => {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-  });
+export const signInWithGoogleAtom = atom(
+  null,
+  async (get, set, redirectTo?: string) => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo,
+      },
+    });
 
-  if (error) {
-    console.error("Error signing in with Google:", error);
-    throw error;
+    if (error) {
+      console.error("Error signing in with Google:", error);
+      throw error;
+    }
   }
-});
+);
 
 export const signOutAtom = atom(null, async (get, set) => {
   const { error } = await supabase.auth.signOut();

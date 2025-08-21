@@ -7,21 +7,23 @@ type GoogleSignInButtonProps = {
   className?: string;
   variant?: "default" | "outline" | "ghost";
   size?: ButtonProps["size"];
+  redirectTo?: string;
 };
 
-export function GoogleSignInButton({
+export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
   onSignIn,
   className,
   variant = "outline",
   size,
-}: GoogleSignInButtonProps) {
+  redirectTo,
+}) => {
   const { signInWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
     try {
       setLoading(true);
-      await signInWithGoogle();
+      await signInWithGoogle(redirectTo);
       onSignIn?.();
     } catch (error) {
       console.error("Sign in failed:", error);
@@ -64,4 +66,4 @@ export function GoogleSignInButton({
       {loading ? "Logging in..." : "Login with Google"}
     </Button>
   );
-}
+};

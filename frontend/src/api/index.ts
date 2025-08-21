@@ -12,7 +12,7 @@ export const BACKEND_URL = import.meta.env.PROD
 
 axios.defaults.baseURL = `${BACKEND_URL}/api`;
 
-axios.interceptors.request.use(async (config) => {
+axios.interceptors.request.use((config) => {
   const session = store.get(sessionAtom);
   if (session?.access_token) {
     config.headers.Authorization = `Bearer ${session.access_token}`;

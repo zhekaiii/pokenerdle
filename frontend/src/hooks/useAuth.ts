@@ -15,12 +15,8 @@ export function useAuth() {
   const loading = useAtomValue(authLoadingAtom);
   const isAuthenticated = useAtomValue(isAuthenticatedAtom);
 
-  const [, signInWithGoogleAction] = useAtom(signInWithGoogleAtom);
+  const [, signInWithGoogle] = useAtom(signInWithGoogleAtom);
   const [, signOutAction] = useAtom(signOutAtom);
-
-  const signInWithGoogle = useCallback(async () => {
-    await signInWithGoogleAction();
-  }, [signInWithGoogleAction]);
 
   const signOut = useCallback(async () => {
     await signOutAction();

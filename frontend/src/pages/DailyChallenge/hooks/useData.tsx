@@ -3,6 +3,7 @@ import { useLocalStorage } from "react-use";
 import { DAILY_CHALLENGE_GUESS_LIMIT, DAILY_CHALLENGE_KEY } from "../constants";
 
 import api from "@/api";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
@@ -16,6 +17,7 @@ import { useEffect, useMemo, useState } from "react";
 export type DailyChallenge = {
   date: string;
   guesses: DailyChallengeGuessResponse[];
+  synced?: boolean;
 };
 
 type CorrectAnswer = {
@@ -29,15 +31,20 @@ type CorrectAnswer = {
   };
 };
 
-const now = new Date();
+export const FROZEN_DATE = format(new Date(), "yyyy-MM-dd");
 const DAILY_CHALLENGE_DIALOG_KEY = "daily_challenge_dialog_shown";
 
 export const guessesAtom = atomWithStorage<DailyChallenge | null>(
   DAILY_CHALLENGE_KEY,
-  null
+  null,
+  undefined,
+  {
+    getOnInit: true,
+  }
 );
 
 export const useDailyChallengeData = () => {
+  const { isAuthenticated } = useAuth();
   const [guesses, setGuesses] = useAtom(guessesAtom);
   const [dialogShown, setDialogShown] = useLocalStorage<string | null>(
     DAILY_CHALLENGE_DIALOG_KEY,
@@ -63,13 +70,13 @@ export const useDailyChallengeData = () => {
     guesses && guesses.guesses.length === DAILY_CHALLENGE_GUESS_LIMIT
   );
   const isGameFinished = hasReachedLimit || hasSolved;
-  const isNewDay = guesses?.date !== format(now, "yyyy-MM-dd");
-  const hasDialogBeenShownToday = dialogShown === format(now, "yyyy-MM-dd");
+  const isNewDay = guesses?.date !== FROZEN_DATE;
+  const hasDialogBeenShownToday = dialogShown === FROZEN_DATE;
 
   useEffect(() => {
     if (isNewDay) {
       setGuesses({
-        date: format(now, "yyyy-MM-dd"),
+        date: FROZEN_DATE,
         guesses: [],
       });
       setCorrectAnswer(null);
@@ -105,6 +112,7 @@ export const useDailyChallengeData = () => {
         const guess = {
           ...response,
           pokemonId: id,
+          synced: isAuthenticated,
         };
         if (guesses) {
           return {
@@ -147,7 +155,7 @@ export const useDailyChallengeData = () => {
   };
 
   const markDialogAsShown = () => {
-    setDialogShown(format(now, "yyyy-MM-dd"));
+    setDialogShown(FROZEN_DATE);
   };
 
   return {

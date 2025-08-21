@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import DailyChallengeGameplay from "./components/Gameplay";
 import DailyChallengeIntroCard from "./components/IntroCard";
 import { useDailyChallengeData } from "./hooks/useData";
+import { useSyncData } from "./hooks/useSyncData";
 
 enum DailyChallengeState {
   Intro,
@@ -16,6 +17,7 @@ const DailyChallengePage: React.FC = () => {
   const onStart = () => {
     setState(DailyChallengeState.Gameplay);
   };
+  useSyncData();
   return state === DailyChallengeState.Intro ? (
     <DailyChallengeIntroCard onStart={onStart} />
   ) : (
