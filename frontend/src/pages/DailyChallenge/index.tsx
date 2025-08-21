@@ -1,3 +1,4 @@
+import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import React, { useState } from "react";
 import DailyChallengeGameplay from "./components/Gameplay";
 import DailyChallengeIntroCard from "./components/IntroCard";
@@ -17,11 +18,16 @@ const DailyChallengePage: React.FC = () => {
   const onStart = () => {
     setState(DailyChallengeState.Gameplay);
   };
-  useSyncData();
-  return state === DailyChallengeState.Intro ? (
-    <DailyChallengeIntroCard onStart={onStart} />
-  ) : (
-    <DailyChallengeGameplay />
+  const { isSyncing } = useSyncData();
+  return (
+    <>
+      {state === DailyChallengeState.Intro ? (
+        <DailyChallengeIntroCard onStart={onStart} />
+      ) : (
+        <DailyChallengeGameplay />
+      )}
+      <LoadingDialog open={isSyncing} />
+    </>
   );
 };
 

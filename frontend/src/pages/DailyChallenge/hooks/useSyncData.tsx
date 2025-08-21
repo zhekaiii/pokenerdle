@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { useAtom } from "jotai";
 import { CloudUpload } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FROZEN_DATE } from "../constants";
 import { guessesAtom } from "./useData";
 
@@ -11,11 +11,13 @@ export const useSyncData = () => {
   const [guesses, setGuesses] = useAtom(guessesAtom);
   const { isAuthenticated, loading } = useAuth();
   const { toast } = useToast();
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const handleSyncGuesses = async () => {
     if (!isAuthenticated || !guesses || guesses.guesses.length === 0) return;
 
     try {
+      setIsSyncing(true);
       const { syncedGuesses, existingGuesses } = await api.daily.syncGuesses(
         guesses.guesses,
         guesses.date
@@ -51,6 +53,8 @@ export const useSyncData = () => {
         variant: "destructive",
         description: "Something went wrong while saving your guesses.",
       });
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -76,4 +80,6 @@ export const useSyncData = () => {
       return;
     handleSyncGuesses();
   }, [isAuthenticated, guesses, loading]);
+
+  return { isSyncing };
 };
