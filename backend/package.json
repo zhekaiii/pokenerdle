@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "bun --watch run ./src/index.ts",
-    "build": "prisma generate && tsc",
+    "prebuild": "prisma generate && prisma generate --schema=./prisma-pg/schema.prisma",
+    "build": "tsc",
     "start": "node --es-module-specifier-resolution=node dist/index.js",
     "build-db": "./build-db.sh"
   },
