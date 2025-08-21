@@ -7,12 +7,20 @@ import { useEffect } from "react";
 
 const pokemonNamesAtom = atomWithStorage<PokemonNamesResponse[]>(
   "pokemonNames",
-  []
+  [],
+  undefined,
+  {
+    getOnInit: true,
+  }
 );
 
 const lastModifiedAtom = atomWithStorage<string | null>(
   "pokemonNamesLastModified",
-  null
+  null,
+  undefined,
+  {
+    getOnInit: true,
+  }
 );
 
 export const usePokemonNames = () => {

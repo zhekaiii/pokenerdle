@@ -6,11 +6,19 @@ import { useCallback, useEffect } from "react";
 
 const pokemonIconsAtom = atomWithStorage<Record<number, string | null>>(
   "pokemonIcons",
-  {}
+  {},
+  undefined,
+  {
+    getOnInit: true,
+  }
 );
 const lastModifiedAtom = atomWithStorage<string | null>(
   "pokemonIconsLastModified",
-  null
+  null,
+  undefined,
+  {
+    getOnInit: true,
+  }
 );
 
 export const usePokemonIcons = () => {

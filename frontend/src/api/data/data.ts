@@ -3,14 +3,16 @@ import axios from "axios";
 
 export default {
   getPokemonNames: async (lastModified?: string | null) => {
-    const headers: Record<string, string> = {};
+    let headers: Record<string, string> | undefined;
     if (lastModified) {
-      headers["if-modified-since"] = lastModified;
+      headers = {
+        "if-modified-since": lastModified,
+      };
     }
 
     const response = await axios.get<PokemonNamesResponse[]>(
       "/v1/data/pokemon-names",
-      { headers: axios.defaults.headers.get, ...headers }
+      { headers }
     );
 
     return {
@@ -19,14 +21,16 @@ export default {
     };
   },
   getPokemonIcons: async (lastModified?: string | null) => {
-    const headers: Record<string, string> = {};
+    let headers: Record<string, string> | undefined;
     if (lastModified) {
-      headers["if-modified-since"] = lastModified;
+      headers = {
+        "if-modified-since": lastModified,
+      };
     }
 
     const response = await axios.get<Record<number, string | null>>(
       "/v1/data/pokemon-icons",
-      { headers: axios.defaults.headers.get, ...headers }
+      { headers }
     );
 
     return {
