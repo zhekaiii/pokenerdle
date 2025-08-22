@@ -1,12 +1,19 @@
 import api from "@/api";
 import { MAX_GENERATION, MIN_GENERATION } from "@/lib/constants";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useCallback } from "react";
 import { usePokemonNames } from "./usePokemonNames";
 
-const pokemonIdsByGenerationAtom = atom<Record<number, number[]>>({});
+const pokemonIdsByGenerationAtom = atomWithStorage<Record<number, number[]>>(
+  "pokemonIdsByGeneration",
+  {},
+  undefined,
+  {
+    getOnInit: true,
+  }
+);
 const lastModifiedByGenerationAtom = atomWithStorage<
   Record<number, string | null>
 >("pokemonIdsByGenerationLastModified", {}, undefined, {
@@ -34,9 +41,10 @@ export const usePokemonIdsByGeneration = () => {
 
       // Fetch data for this generation
       try {
-        const lastModified = lastModifiedByGeneration[generation];
+        // FIXME: Axios throws an error if 304 is returned
+        // const lastModified = lastModifiedByGeneration[generation];
         const { data, lastModified: newLastModified } =
-          await api.data.getPokemonIdsByGeneration(lastModified, generation);
+          await api.data.getPokemonIdsByGeneration(null, generation);
 
         // Update cache
         const updatedIds = { ...pokemonIdsByGeneration, [generation]: data };
