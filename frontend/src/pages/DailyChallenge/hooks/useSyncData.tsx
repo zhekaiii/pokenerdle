@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/useToast";
 import { useAtom } from "jotai";
 import { CloudUpload } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FROZEN_DATE } from "../constants";
+import { DAILY_CHALLENGE_GUESS_LIMIT, FROZEN_DATE } from "../constants";
 import { guessesAtom } from "./useData";
 
 export const useSyncData = () => {
@@ -60,6 +60,13 @@ export const useSyncData = () => {
 
   useEffect(() => {
     if (loading || !isAuthenticated) return;
+    if (
+      guesses &&
+      guesses.guesses.length > 0 &&
+      (guesses.guesses.length == DAILY_CHALLENGE_GUESS_LIMIT ||
+        guesses.guesses[guesses.guesses.length - 1].correct)
+    )
+      return;
     setIsSyncing(true);
     api.daily
       .getUserGuesses(FROZEN_DATE)
