@@ -4,6 +4,7 @@ import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
 import PokemonReferenceDialog from "@/components/recyclables/PokemonReferenceDialog";
 import { Button } from "@/components/ui/Button";
+import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 import CompletionDialog from "@/pages/DailyChallenge/components/Gameplay/components/CompletionDialog";
 import { DailyChallengeGuessBoxMemo } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
@@ -132,7 +133,7 @@ const DailyChallengeGameplay: React.FC = () => {
           >
             <Share2 /> Share Results
           </Button>
-          {isAuthenticated && (
+          {isAuthenticated ? (
             <Button
               variant="outline"
               size="sm"
@@ -142,6 +143,13 @@ const DailyChallengeGameplay: React.FC = () => {
               <BarChart />
               View Stats
             </Button>
+          ) : (
+            <>
+              <GoogleSignInButton variant="outline" />
+              <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
+                Sign in to save your daily challenge results!
+              </p>
+            </>
           )}
         </div>
       )}
