@@ -17,3 +17,5 @@ export type PathFinderResponse = {
   endPokemon: PokemonWithAbilities;
   pathLength: number;
 };
+
+export type PokemonIdsByGenerationResponse = number[];

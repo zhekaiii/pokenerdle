@@ -35,6 +35,29 @@ export const getPokemonNames = async () => {
   `;
   return pokemonDetails;
 };
+export const getPokemonIdsByGeneration = async (
+  generation: number
+): Promise<number[]> => {
+  const result = await prisma.pokemon_v2_pokemon.findMany({
+    where: {
+      pokemon_v2_pokemonform: {
+        some: {
+          pokemon_v2_versiongroup: {
+            generation_id: generation,
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+    },
+    orderBy: {
+      id: "asc",
+    },
+  });
+
+  return result.map((pokemon) => pokemon.id);
+};
 
 export const getRandomPokemonIdWithMultipleAbilities = async () => {
   const result: [{ pokemon_id: number }] | [] =

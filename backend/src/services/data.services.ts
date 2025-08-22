@@ -11,6 +11,7 @@ import { isTruthy } from "../utils/types.js";
 
 export {
   getPokemonIcons,
+  getPokemonIdsByGeneration,
   getPokemonNames,
   getPokemonWithAbilities,
 } from "../repositories/pokemon.repository.js";
