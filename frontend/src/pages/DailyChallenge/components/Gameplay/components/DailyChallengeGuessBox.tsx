@@ -116,21 +116,13 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                 <li>
                   {guess.type1Correctness === "=" ? (
                     <>
-                      Target is also a{" "}
-                      <TypeChip
-                        className="tw:text-foreground"
-                        type={guess.pokemon.type1}
-                      />{" "}
+                      Target is also a <TypeChip type={guess.pokemon.type1} />{" "}
                       type!
                     </>
                   ) : (
                     <>
-                      <TypeChip
-                        className="tw:text-foreground"
-                        type={guess.pokemon.type1}
-                      />{" "}
-                      type moves deal {guess.type1Correctness}x damage against
-                      the target.
+                      <TypeChip type={guess.pokemon.type1} /> type moves deal{" "}
+                      {guess.type1Correctness}x damage against the target.
                     </>
                   )}
                 </li>
@@ -139,10 +131,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                     <>
                       Target is also a{" "}
                       {guess.pokemon.type2 ? (
-                        <TypeChip
-                          className="tw:text-foreground"
-                          type={guess.pokemon.type2}
-                        />
+                        <TypeChip type={guess.pokemon.type2} />
                       ) : (
                         "mono"
                       )}{" "}
@@ -150,12 +139,8 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                     </>
                   ) : guess.pokemon.type2 ? (
                     <>
-                      <TypeChip
-                        className="tw:text-foreground"
-                        type={guess.pokemon.type2}
-                      />{" "}
-                      type moves deal {guess.type2Correctness}x damage against
-                      the target.
+                      <TypeChip type={guess.pokemon.type2} /> type moves deal{" "}
+                      {guess.type2Correctness}x damage against the target.
                     </>
                   ) : (
                     "Target is not a monotype"
