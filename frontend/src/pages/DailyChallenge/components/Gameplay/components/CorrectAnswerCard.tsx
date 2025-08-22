@@ -30,7 +30,7 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
   const attempts = guesses?.guesses.length ?? 0;
 
   const subtitle = useMemo(() => {
-    if (!hasSolved) {
+    if (hasSolved) {
       return attempts === 1
         ? "Incredible! You got it on your first guess!"
         : `You found the mystery Pokémon in ${attempts}/${DAILY_CHALLENGE_GUESS_LIMIT} tries!`;
