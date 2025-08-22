@@ -80,7 +80,8 @@ export const useSyncData = () => {
       .finally(() => {
         setIsSyncing(false);
       });
-  }, [loading, isAuthenticated, guesses, setGuesses]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, loading]);
 
   useEffect(() => {
     if (
