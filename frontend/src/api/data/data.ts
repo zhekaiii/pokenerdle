@@ -1,4 +1,8 @@
-import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
+import {
+  PokemonIdsByGenerationResponse,
+  PokemonNamesResponse,
+  PokemonWithAbilities,
+} from "@pokenerdle/shared";
 import axios from "axios";
 
 export default {
@@ -45,5 +49,29 @@ export default {
       },
     });
     return data;
+  },
+  getPokemonIdsByGeneration: async (
+    lastModified: string | null,
+    generation: number
+  ) => {
+    let headers: Record<string, string> | undefined;
+    if (lastModified) {
+      headers = {
+        "if-modified-since": lastModified,
+      };
+    }
+
+    const response = await axios.get<PokemonIdsByGenerationResponse>(
+      "/v1/data/pokemon-generations",
+      {
+        headers,
+        params: { generation },
+      }
+    );
+
+    return {
+      lastModified: response.headers["last-modified"],
+      data: response.data,
+    };
   },
 };
