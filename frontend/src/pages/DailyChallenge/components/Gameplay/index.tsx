@@ -20,7 +20,7 @@ import StatsDialog from "./components/StatsDialog";
 import styles from "./index.module.scss";
 
 const DailyChallengeGameplay: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const {
     onGuess,
     guesses,
@@ -144,12 +144,14 @@ const DailyChallengeGameplay: React.FC = () => {
               View Stats
             </Button>
           ) : (
-            <>
-              <GoogleSignInButton variant="outline" />
-              <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
-                Sign in to save your daily challenge results!
-              </p>
-            </>
+            !authLoading && (
+              <>
+                <GoogleSignInButton variant="outline" />
+                <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
+                  Sign in to save your daily challenge results!
+                </p>
+              </>
+            )
           )}
         </div>
       )}
