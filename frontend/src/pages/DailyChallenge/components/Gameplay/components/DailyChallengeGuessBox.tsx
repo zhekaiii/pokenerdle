@@ -122,7 +122,8 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                   ) : (
                     <>
                       <TypeChip type={guess.pokemon.type1} /> type moves deal{" "}
-                      {guess.type1Correctness}x damage against the target.
+                      {guess.type1Correctness}x damage against the target
+                      (excluding abilities).
                     </>
                   )}
                 </li>
@@ -140,7 +141,8 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                   ) : guess.pokemon.type2 ? (
                     <>
                       <TypeChip type={guess.pokemon.type2} /> type moves deal{" "}
-                      {guess.type2Correctness}x damage against the target.
+                      {guess.type2Correctness}x damage against the target
+                      (ignoring abilities).
                     </>
                   ) : (
                     "Target is not a monotype"
