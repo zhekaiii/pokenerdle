@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
@@ -6,16 +6,15 @@ import PokemonReferenceDialog from "@/components/recyclables/PokemonReferenceDia
 import { Button } from "@/components/ui/Button";
 import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
-import CompletionDialog from "@/pages/DailyChallenge/components/Gameplay/components/CompletionDialog";
 import { DailyChallengeGuessBoxMemo } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
-import { BarChart, BookOpen, Share2 } from "lucide-react";
+import { BookOpen, Share2, TrendingUp } from "lucide-react";
 import posthog from "posthog-js";
-import { useEffect } from "react";
 import { challengeNumber, DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
 import { shareResults } from "../../utils/share";
+import CorrectAnswerCard from "./components/CorrectAnswerCard";
 import StatsDialog from "./components/StatsDialog";
 import styles from "./index.module.scss";
 
@@ -30,11 +29,8 @@ const DailyChallengeGameplay: React.FC = () => {
     isGameFinished,
     correctAnswer,
     isLoadingAnswer,
-    hasDialogBeenShownToday,
-    markDialogAsShown,
   } = useDailyChallengeData();
   const [input, setInput] = useState("");
-  const [showCompletionDialog, setShowCompletionDialog] = useState(false);
   const [showPokemonReference, setShowPokemonReference] = useState(false);
   const [showStatsDialog, setShowStatsDialog] = useState(false);
 
@@ -42,24 +38,17 @@ const DailyChallengeGameplay: React.FC = () => {
     onGuess(pokemon).finally(() => setInput(""));
   };
 
-  // Show completion dialog when game is finished and dialog hasn't been shown today
   useEffect(() => {
-    if (isGameFinished && !hasDialogBeenShownToday && !showCompletionDialog) {
-      setShowCompletionDialog(true);
+    if (!isGameFinished) {
+      return;
     }
-  }, [isGameFinished, hasDialogBeenShownToday, showCompletionDialog]);
-
-  const handleDialogOpenChange = (open: boolean) => {
-    setShowCompletionDialog(open);
-    if (!open && !hasDialogBeenShownToday) {
-      // Mark dialog as shown when it's closed for the first time
-      markDialogAsShown();
-    }
-  };
-
-  const handleReopenDialog = () => {
-    setShowStatsDialog(true);
-  };
+    setTimeout(() => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }, 500);
+  }, [isGameFinished]);
 
   return (
     <div className="tw:flex tw:flex-col tw:flex-auto tw:max-w-[400px] tw:w-full">
@@ -73,7 +62,7 @@ const DailyChallengeGameplay: React.FC = () => {
         ) : (
           <>
             {DAILY_CHALLENGE_GUESS_LIMIT - (guesses?.guesses.length ?? 0)}{" "}
-            attempts left
+            attempts left to guess the mystery Pokémon!
           </>
         )}
       </div>
@@ -120,59 +109,52 @@ const DailyChallengeGameplay: React.FC = () => {
           </div>
         </>
       ) : (
-        <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto">
-          <Button
-            className="tw:w-full tw:mt-2"
-            onClick={() => {
-              posthog.capture("daily_challenge_share_clicked", {
-                has_solved: hasSolved,
-                num_guesses: guesses?.guesses.length ?? 0,
-              });
-              shareResults(guesses?.guesses ?? []);
-            }}
-          >
-            <Share2 /> Share Results
-          </Button>
-          {isAuthenticated ? (
+        <>
+          <hr className="tw:my-4" />
+          <CorrectAnswerCard
+            correctAnswer={
+              correctAnswer! ??
+              (hasSolved
+                ? guesses!.guesses[guesses!.guesses.length - 1]
+                : undefined)
+            }
+          />
+          <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto">
             <Button
-              variant="outline"
-              size="sm"
-              className="tw:w-full"
-              onClick={handleReopenDialog}
+              className="tw:w-full tw:mt-4"
+              onClick={() => {
+                posthog.capture("daily_challenge_share_clicked", {
+                  has_solved: hasSolved,
+                  num_guesses: guesses?.guesses.length ?? 0,
+                });
+                shareResults(guesses?.guesses ?? []);
+              }}
             >
-              <BarChart />
-              View Stats
+              <Share2 /> Share
             </Button>
-          ) : (
-            !authLoading && (
-              <>
-                <GoogleSignInButton variant="outline" />
-                <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
-                  Sign in to save your daily challenge results!
-                </p>
-              </>
-            )
-          )}
-        </div>
+            {isAuthenticated ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="tw:w-full"
+                onClick={() => setShowStatsDialog(true)}
+              >
+                <TrendingUp />
+                View Stats
+              </Button>
+            ) : (
+              !authLoading && (
+                <>
+                  <GoogleSignInButton variant="outline" />
+                  <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
+                    Sign in to save your daily challenge results!
+                  </p>
+                </>
+              )
+            )}
+          </div>
+        </>
       )}
-
-      <CompletionDialog
-        open={showCompletionDialog}
-        onOpenChange={handleDialogOpenChange}
-        guesses={guesses?.guesses ?? []}
-        hasSolved={hasSolved}
-        hasReachedLimit={hasReachedLimit}
-        correctAnswer={
-          correctAnswer ??
-          (hasSolved
-            ? guesses!.guesses[guesses!.guesses.length - 1]
-            : undefined)
-        }
-        onShowStatsDialog={() => {
-          handleDialogOpenChange(false);
-          setShowStatsDialog(true);
-        }}
-      />
 
       <StatsDialog open={showStatsDialog} onOpenChange={setShowStatsDialog} />
 

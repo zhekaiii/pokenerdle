@@ -1,5 +1,3 @@
-import { useLocalStorage } from "react-use";
-
 import {
   DAILY_CHALLENGE_GUESS_LIMIT,
   DAILY_CHALLENGE_KEY,
@@ -23,7 +21,7 @@ export type DailyChallenge = {
   synced?: boolean;
 };
 
-type CorrectAnswer = {
+export type CorrectAnswer = {
   pokemonId: number;
   pokemon: {
     type1: string;
@@ -33,8 +31,6 @@ type CorrectAnswer = {
     color: string;
   };
 };
-
-const DAILY_CHALLENGE_DIALOG_KEY = "daily_challenge_dialog_shown";
 
 export const guessesAtom = atomWithStorage<DailyChallenge | null>(
   DAILY_CHALLENGE_KEY,
@@ -48,10 +44,6 @@ export const guessesAtom = atomWithStorage<DailyChallenge | null>(
 export const useDailyChallengeData = () => {
   const { isAuthenticated } = useAuth();
   const [guesses, setGuesses] = useAtom(guessesAtom);
-  const [dialogShown, setDialogShown] = useLocalStorage<string | null>(
-    DAILY_CHALLENGE_DIALOG_KEY,
-    null
-  );
   const [isLoading, setIsLoading] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState<CorrectAnswer | null>(
     null
@@ -73,7 +65,6 @@ export const useDailyChallengeData = () => {
   );
   const isGameFinished = hasReachedLimit || hasSolved;
   const isNewDay = guesses?.date !== FROZEN_DATE;
-  const hasDialogBeenShownToday = dialogShown === FROZEN_DATE;
 
   useEffect(() => {
     if (isNewDay) {
@@ -82,7 +73,6 @@ export const useDailyChallengeData = () => {
         guesses: [],
       });
       setCorrectAnswer(null);
-      setDialogShown(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only want to run on new day
   }, [isNewDay]);
@@ -157,10 +147,6 @@ export const useDailyChallengeData = () => {
     }
   };
 
-  const markDialogAsShown = () => {
-    setDialogShown(FROZEN_DATE);
-  };
-
   return {
     isNewDay,
     guesses,
@@ -171,7 +157,5 @@ export const useDailyChallengeData = () => {
     isGameFinished,
     correctAnswer,
     isLoadingAnswer,
-    hasDialogBeenShownToday,
-    markDialogAsShown,
   };
 };
