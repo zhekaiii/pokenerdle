@@ -30,7 +30,7 @@ const LinkChip: React.FC<Props> = ({
   return (
     <Chip
       className={cn(
-        "tw:capitalize tw:self-center tw:my-1 tw:whitespace-nowrap",
+        "tw:capitalize tw:self-center tw:my-1 tw:whitespace-nowrap tw:text-white",
         className
       )}
     >
