@@ -19,7 +19,7 @@ const generateGridEmojis = (guesses: DailyChallengeGuessResponse[]) => {
     .join("\n");
 };
 
-const generateShareText = (guesses: DailyChallengeGuessResponse[]) => {
+export const generateShareText = (guesses: DailyChallengeGuessResponse[]) => {
   const attempts = `${guesses.length}/${DAILY_CHALLENGE_GUESS_LIMIT}`;
   const solved = guesses[guesses.length - 1].correct;
   const grid = generateGridEmojis(guesses);

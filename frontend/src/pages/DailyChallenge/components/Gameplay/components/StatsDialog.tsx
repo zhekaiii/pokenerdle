@@ -10,6 +10,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { DailyChallengeStatsResponse } from "@pokenerdle/shared/daily";
 import { TrendingUp } from "lucide-react";
+import posthog from "posthog-js";
 import React, { useEffect, useState } from "react";
 
 type Props = {
@@ -21,6 +22,10 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
   const { loading: authLoading, isAuthenticated } = useAuth();
   const [stats, setStats] = useState<DailyChallengeStatsResponse | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
+
+  useEffect(() => {
+    posthog.capture("daily_challenge_stats_dialog_opened");
+  }, [open]);
 
   // Fetch user stats when dialog opens and user is authenticated
   useEffect(() => {

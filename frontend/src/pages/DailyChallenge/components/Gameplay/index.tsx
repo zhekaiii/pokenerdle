@@ -6,14 +6,21 @@ import PokemonReferenceDialog from "@/components/recyclables/PokemonReferenceDia
 import { Button } from "@/components/ui/Button";
 import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
 import { DailyChallengeGuessBoxMemo } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
-import { BookOpen, Share2, TrendingUp } from "lucide-react";
+import {
+  BookOpen,
+  Clipboard,
+  ClipboardCheck,
+  Share2,
+  TrendingUp,
+} from "lucide-react";
 import posthog from "posthog-js";
 import { challengeNumber, DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
-import { shareResults } from "../../utils/share";
+import { generateShareText, shareResults } from "../../utils/share";
 import CorrectAnswerCard from "./components/CorrectAnswerCard";
 import StatsDialog from "./components/StatsDialog";
 import styles from "./index.module.scss";
@@ -33,7 +40,7 @@ const DailyChallengeGameplay: React.FC = () => {
   const [input, setInput] = useState("");
   const [showPokemonReference, setShowPokemonReference] = useState(false);
   const [showStatsDialog, setShowStatsDialog] = useState(false);
-
+  const { toast } = useToast();
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
     onGuess(pokemon).finally(() => setInput(""));
   };
@@ -120,18 +127,39 @@ const DailyChallengeGameplay: React.FC = () => {
             }
           />
           <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto">
-            <Button
-              className="tw:w-full tw:mt-4"
-              onClick={() => {
-                posthog.capture("daily_challenge_share_clicked", {
-                  has_solved: hasSolved,
-                  num_guesses: guesses?.guesses.length ?? 0,
-                });
-                shareResults(guesses?.guesses ?? []);
-              }}
-            >
-              <Share2 /> Share
-            </Button>
+            <div className="tw:flex tw:gap-2 tw:mt-4">
+              <Button
+                className="tw:flex-1"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    generateShareText(guesses?.guesses ?? [])
+                  );
+                  posthog.capture("daily_challenge_copy_clicked");
+                  toast({
+                    description: (
+                      <div className="tw:flex tw:flex-nowrap">
+                        <ClipboardCheck className="tw:me-2" />
+                        Results copied to clipboard!
+                      </div>
+                    ),
+                  });
+                }}
+              >
+                <Clipboard /> Copy
+              </Button>
+              <Button
+                className="tw:flex-1"
+                onClick={() => {
+                  posthog.capture("daily_challenge_share_clicked", {
+                    has_solved: hasSolved,
+                    num_guesses: guesses?.guesses.length ?? 0,
+                  });
+                  shareResults(guesses?.guesses ?? []);
+                }}
+              >
+                <Share2 /> Share
+              </Button>
+            </div>
             {isAuthenticated ? (
               <Button
                 variant="outline"
