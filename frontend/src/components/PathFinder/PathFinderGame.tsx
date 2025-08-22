@@ -111,6 +111,7 @@ const PathFinderGame: React.FC = () => {
         num_guesses: numGuesses,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only want to run on puzzle solved
   }, [isPuzzleSolved]);
 
   const handleSelect = async (pokemon: PokemonNamesResponse) => {
@@ -162,6 +163,7 @@ const PathFinderGame: React.FC = () => {
 
   useEffect(() => {
     fetchChallenge();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only want to run on mount
   }, []);
 
   if (!challenge)

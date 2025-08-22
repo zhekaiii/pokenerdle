@@ -8,8 +8,8 @@ const ErrorBoundary: React.FC = () => {
     <PageContainer>
       <h1 className="tw:font-bold">Oops! Something went wrong.</h1>
       <p className="tw:mb-8">
-        We're sorry for the inconvenience. Please try refreshing the page or
-        going back to the home page.
+        We&apos;re sorry for the inconvenience. Please try refreshing the page
+        or going back to the home page.
       </p>
       <Button asChild>
         <Link to="/" reloadDocument>

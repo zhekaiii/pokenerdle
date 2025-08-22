@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { useAtom } from "jotai";
 import { CloudUpload } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DAILY_CHALLENGE_GUESS_LIMIT, FROZEN_DATE } from "../constants";
 import { guessesAtom } from "./useData";
 
@@ -13,7 +13,7 @@ export const useSyncData = () => {
   const { toast } = useToast();
   const [isSyncing, setIsSyncing] = useState(false);
 
-  const handleSyncGuesses = async () => {
+  const handleSyncGuesses = useCallback(async () => {
     if (!isAuthenticated || !guesses || guesses.guesses.length === 0) return;
 
     try {
@@ -56,7 +56,7 @@ export const useSyncData = () => {
     } finally {
       setIsSyncing(false);
     }
-  };
+  }, [guesses, isAuthenticated, setGuesses, toast]);
 
   useEffect(() => {
     if (loading || !isAuthenticated) return;
@@ -80,7 +80,7 @@ export const useSyncData = () => {
       .finally(() => {
         setIsSyncing(false);
       });
-  }, [loading]);
+  }, [loading, isAuthenticated, guesses, setGuesses]);
 
   useEffect(() => {
     if (
@@ -92,7 +92,7 @@ export const useSyncData = () => {
     )
       return;
     handleSyncGuesses();
-  }, [isAuthenticated, guesses, loading]);
+  }, [isAuthenticated, guesses, loading, handleSyncGuesses]);
 
   return { isSyncing };
 };

@@ -33,14 +33,17 @@ export const useEventTracking = ({
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [challenge, isPuzzleSolved]);
 
   useEffect(() => {
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- currentPathRef does not contain a node reference
       if (location.pathname !== currentPathRef.current) {
         reportAbandon();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [challenge, isPuzzleSolved]);
 
   return {

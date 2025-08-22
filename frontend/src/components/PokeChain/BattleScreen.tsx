@@ -103,7 +103,7 @@ const BattleScreen: React.FC<Props> = ({
   const isDraw = useMemo(
     () =>
       isGameEnded && !forfeitInfo?.forfeit && playerPoints === opponentPoints,
-    [isGameEnded, playerPoints, opponentPoints]
+    [isGameEnded, playerPoints, opponentPoints, forfeitInfo]
   );
 
   useEffect(() => {
@@ -126,7 +126,7 @@ const BattleScreen: React.FC<Props> = ({
     return () => {
       clearInterval(interval);
     };
-  }, [timerEndsAt, isGameEnded]);
+  }, [timerEndsAt, isGameEnded, isPlayersTurn]);
 
   const enterPokemon = useCallback(
     async (pokemon: PokemonNamesResponse) => {
@@ -328,7 +328,15 @@ const BattleScreen: React.FC<Props> = ({
       return "It's a draw!";
     }
     return `${hasWon ? "You" : "Your opponent"} won!`;
-  }, [isGameEnded, forfeitInfo, socket.id, isDraw, hasWon, isPlayersTurn]);
+  }, [
+    isSinglePlayer,
+    isGameEnded,
+    forfeitInfo,
+    isDraw,
+    hasWon,
+    isPlayersTurn,
+    socket.id,
+  ]);
 
   return (
     <div className={battleScreenClasses["BattleScreen__Contents"]}>

@@ -86,19 +86,21 @@ const DailyChallengeRules: React.FC = () => {
 
         <section className="tw:flex tw:flex-col tw:gap-4">
           <h2 className="tw:text-xl tw:font-semibold">🔍 How Clues Work</h2>
-          <p>After each guess, you'll get feedback based on 5 categories:</p>
+          <p>
+            After each guess, you&apos;ll get feedback based on 5 categories:
+          </p>
 
           <Card className="tw:bg-muted tw:gap-3">
             <CardHeader>
               <CardTitle>🍃💧🔥 Type 1 & Type 2</CardTitle>
             </CardHeader>
             <CardContent>
-              How effective would your guess' types be when attacking the target
-              Pokémon?
+              How effective would your guess&apos; types be when attacking the
+              target Pokémon?
               <CardDescription>
-                If types match exactly, you'll see a checkmark! ✅ Otherwise,
-                you may see different icons depending on how effective the type
-                is!
+                If types match exactly, you&apos;ll see a checkmark! ✅
+                Otherwise, you may see different icons depending on how
+                effective the type is!
               </CardDescription>
               <div className={ICON_EXPLANATION_TABLE_CLASS}>
                 <div className={SQUARE_CLASS_AMBER}>
@@ -155,8 +157,8 @@ const DailyChallengeRules: React.FC = () => {
                 </div>
                 <b>Match:</b>{" "}
                 <span className="tw:text-muted-foreground">
-                  Your guessed Pokémon's type matches the target's. If both
-                  Pokémon are monotypes, Type 2 will be a match
+                  Your guessed Pokémon&apos;s type matches the target&apos;s. If
+                  both Pokémon are monotypes, Type 2 will be a match
                 </span>
               </div>
             </CardContent>
@@ -228,7 +230,7 @@ const DailyChallengeRules: React.FC = () => {
               <CardTitle>📏 Height</CardTitle>
             </CardHeader>
             <CardContent>
-              How effective would your guess' types be against the target
+              How effective would your guess&apos; types be against the target
               Pokémon?
               <CardDescription>
                 Measured in meters (e.g., Pikachu is 0.4m tall)
@@ -265,14 +267,18 @@ const DailyChallengeRules: React.FC = () => {
             💡 Example Guesses
           </h2>
           <p className="tw:mb-2">
-            Let's say the mystery Pokémon is Gyarados (Water/Flying, Gen 1,
-            Blue, 6.5m tall), and you make the following 2 guesses. You will
-            receive the following feedback:
+            Suppose the mystery Pokémon is Gyarados (Water/Flying, Gen 1, Blue,
+            6.5m tall), and you make the following 2 guesses. You will receive
+            the following feedback:
           </p>
 
           <div className="tw:flex tw:flex-col tw:gap-2 tw:mx-auto tw:max-w-[400px]">
             {EXAMPLE_GUESSES.map((guess) => (
-              <DailyChallengeGuessBox guess={guess} forceOpen />
+              <DailyChallengeGuessBox
+                key={guess.pokemonId}
+                guess={guess}
+                forceOpen
+              />
             ))}
           </div>
         </section>

@@ -34,6 +34,7 @@ const GamePreparation: React.FC<Props> = ({ isGoingFirst, exitRoom }) => {
     return () => {
       clearTimeout(timeout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only want to run on secondsLeft change
   }, [secondsLeft]);
 
   useEffect(() => {

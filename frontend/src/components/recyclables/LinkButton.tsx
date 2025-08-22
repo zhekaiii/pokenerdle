@@ -15,11 +15,11 @@ const LinkButton: React.FC<Props> = ({
   className,
   activeOverride,
 }) => {
-  const isActive = activeOverride ?? useMatch(to.toString());
+  const isActive = useMatch(to.toString());
   return (
     <Button
       asChild
-      variant={isActive ? "default" : "ghost"}
+      variant={activeOverride ?? isActive ? "default" : "ghost"}
       className={className}
     >
       <Link to={to}>{children}</Link>

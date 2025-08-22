@@ -84,6 +84,7 @@ export const useDailyChallengeData = () => {
       setCorrectAnswer(null);
       setDialogShown(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only want to run on new day
   }, [isNewDay]);
 
   // Fetch correct answer when game is over and user hasn't solved it

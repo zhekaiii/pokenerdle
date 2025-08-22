@@ -11,5 +11,6 @@ export function useTriggerOnce(
     if (!condition || triggered.current) return;
     triggered.current = true;
     return callback();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps are handled by caller
   }, deps);
 }
