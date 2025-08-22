@@ -1,5 +1,4 @@
 import { useAtom, useAtomValue } from "jotai";
-import { useCallback } from "react";
 import {
   authLoadingAtom,
   isAuthenticatedAtom,
@@ -16,11 +15,7 @@ export function useAuth() {
   const isAuthenticated = useAtomValue(isAuthenticatedAtom);
 
   const [, signInWithGoogle] = useAtom(signInWithGoogleAtom);
-  const [, signOutAction] = useAtom(signOutAtom);
-
-  const signOut = useCallback(async () => {
-    await signOutAction();
-  }, [signOutAction]);
+  const [, signOut] = useAtom(signOutAtom);
 
   return {
     user,

@@ -39,7 +39,8 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
     };
 
     fetchStats();
-  }, [open, isAuthenticated, authLoading, stats, statsLoading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only want to run on open change
+  }, [open, isAuthenticated, authLoading]);
 
   if (!authLoading && !isAuthenticated) {
     return null;

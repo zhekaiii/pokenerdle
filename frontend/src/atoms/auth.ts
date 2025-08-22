@@ -29,12 +29,11 @@ export const signInWithGoogleAtom = atom(
 );
 
 export const signOutAtom = atom(null, async (get, set) => {
-  const { error } = await supabase.auth.signOut();
-
-  if (error) {
+  supabase.auth.signOut().catch((error) => {
     console.error("Error signing out:", error);
-    throw error;
-  }
+  });
+  set(userAtom, null);
+  set(sessionAtom, null);
 });
 
 // Auth state management atom
