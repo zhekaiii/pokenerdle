@@ -93,7 +93,12 @@ const DailyChallengeGameplay: React.FC = () => {
               disabled={isLoading}
               input={input}
               setInput={setInput}
-              onSelect={onSelectPokemon}
+              onSelect={(pokemon) => {
+                posthog.capture("daily_challenge_guess", {
+                  from: "pokemon_combobox",
+                });
+                onSelectPokemon(pokemon);
+              }}
               filter={
                 guesses
                   ? (p) =>
@@ -189,6 +194,13 @@ const DailyChallengeGameplay: React.FC = () => {
       <PokemonReferenceDialog
         open={showPokemonReference}
         onOpenChange={setShowPokemonReference}
+        onGuess={(pokemon) => {
+          posthog.capture("daily_challenge_guess", {
+            from: "pokemon_reference",
+          });
+          onSelectPokemon(pokemon);
+          setShowPokemonReference(false);
+        }}
       />
     </div>
   );

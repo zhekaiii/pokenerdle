@@ -1,5 +1,15 @@
 import placeholderIcon from "@/assets/question_mark.png";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/AlertDialog";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -10,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonByGeneration } from "@/hooks/usePokemonIdsByGeneration";
 import { MAX_GENERATION, MIN_GENERATION } from "@/lib/constants";
+import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { atom, useAtom } from "jotai";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
@@ -18,14 +29,47 @@ import styles from "./index.module.scss";
 const dialogScrollPositionsAtom = atom<Record<string, number>>({});
 const tabAtom = atom(MIN_GENERATION);
 
+const generations = Array.from(
+  { length: MAX_GENERATION },
+  (_, i) => MIN_GENERATION + i
+);
+
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onGuess?: (pokemon: PokemonNamesResponse) => void;
 };
 
-const PokemonReferenceDialog: React.FC<Props> = ({ open, onOpenChange }) => {
+const PokemonReferenceDialog: React.FC<Props> = ({
+  open,
+  onOpenChange,
+  onGuess,
+}) => {
   const { getPokemonIcon } = usePokemonIcons();
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<Record<number, HTMLDivElement | null>>(
+    Object.fromEntries(generations.map((gen) => [gen, null]))
+  );
+  const [confirmGuessOpen, setConfirmGuessOpen] = React.useState(false);
+  const [selectedPokemon, setSelectedPokemon] =
+    React.useState<PokemonNamesResponse | null>(null);
+
+  const handlePokemonClick = (pokemon: PokemonNamesResponse) => {
+    setSelectedPokemon(pokemon);
+    setConfirmGuessOpen(true);
+  };
+
+  const handleConfirmGuess = () => {
+    if (selectedPokemon && onGuess) {
+      onGuess(selectedPokemon);
+    }
+    setConfirmGuessOpen(false);
+    setSelectedPokemon(null);
+  };
+
+  const handleCancelGuess = () => {
+    setConfirmGuessOpen(false);
+    setSelectedPokemon(null);
+  };
 
   const [savedScrollPositions, setSavedScrollPositions] = useAtom(
     dialogScrollPositionsAtom
@@ -39,14 +83,9 @@ const PokemonReferenceDialog: React.FC<Props> = ({ open, onOpenChange }) => {
     fetch();
   }, [activeGeneration, fetch]);
 
-  // Create generation tabs
-  const generations = Array.from({ length: MAX_GENERATION }, (_, i) =>
-    (MIN_GENERATION + i).toString()
-  );
-
   // Save scroll position when dialog closes
   useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
+    const scrollContainer = scrollContainerRef.current[activeGeneration];
     if (!scrollContainer || open) return;
 
     setSavedScrollPositions((prev) => ({
@@ -61,8 +100,8 @@ const PokemonReferenceDialog: React.FC<Props> = ({ open, onOpenChange }) => {
 
     const timer = setTimeout(() => {
       const savedPosition = savedScrollPositions[activeGeneration];
-      if (scrollContainerRef.current && savedPosition) {
-        scrollContainerRef.current.scrollTop = savedPosition;
+      if (scrollContainerRef.current[activeGeneration] && savedPosition) {
+        scrollContainerRef.current[activeGeneration].scrollTop = savedPosition;
       }
     }, 100);
 
@@ -86,7 +125,7 @@ const PokemonReferenceDialog: React.FC<Props> = ({ open, onOpenChange }) => {
         >
           <TabsList className="tw:grid tw:w-full tw:grid-cols-9">
             {generations.map((gen) => (
-              <TabsTrigger key={gen} value={gen}>
+              <TabsTrigger key={gen} value={gen.toString()}>
                 {gen}
               </TabsTrigger>
             ))}
@@ -96,8 +135,13 @@ const PokemonReferenceDialog: React.FC<Props> = ({ open, onOpenChange }) => {
             return (
               <TabsContent
                 key={gen}
-                value={gen}
+                value={gen.toString()}
                 className="tw:flex-1 tw:mt-2 tw:overflow-auto"
+                ref={(el) => {
+                  if (el) {
+                    scrollContainerRef.current[gen] = el;
+                  }
+                }}
               >
                 {isLoading ? (
                   <Loader2 className="tw:w-10 tw:h-10 tw:m-auto tw:animate-spin tw:my-10" />
@@ -106,12 +150,13 @@ const PokemonReferenceDialog: React.FC<Props> = ({ open, onOpenChange }) => {
                     No Pokemon found for Generation {gen}
                   </div>
                 ) : (
-                  <div ref={scrollContainerRef} className={styles.PokemonGrid}>
+                  <div className={styles.PokemonGrid}>
                     {pokemon.map((pokemon) => (
                       <div
                         key={pokemon.id}
                         className={styles.PokemonItem}
                         title={pokemon.name || pokemon.speciesName}
+                        onClick={() => handlePokemonClick(pokemon)}
                       >
                         <img
                           src={getPokemonIcon(pokemon.id)}
@@ -134,6 +179,29 @@ const PokemonReferenceDialog: React.FC<Props> = ({ open, onOpenChange }) => {
           })}
         </Tabs>
       </DialogContent>
+
+      <AlertDialog open={confirmGuessOpen} onOpenChange={setConfirmGuessOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Guess</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to guess{" "}
+              <strong>
+                {selectedPokemon?.name || selectedPokemon?.speciesName}
+              </strong>
+              ?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCancelGuess}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmGuess}>
+              Guess
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 };
