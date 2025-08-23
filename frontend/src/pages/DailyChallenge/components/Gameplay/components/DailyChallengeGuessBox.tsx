@@ -123,7 +123,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                     <>
                       <TypeChip type={guess.pokemon.type1} /> type moves deal{" "}
                       {guess.type1Correctness}x damage against the target
-                      (excluding abilities).
+                      (ignoring abilities).
                     </>
                   )}
                 </li>
