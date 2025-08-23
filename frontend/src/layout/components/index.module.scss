@@ -1,7 +1,7 @@
 .Header {
   display: flex;
   align-items: center;
-  height: 60px;
+  height: var(--header-height);
   position: fixed;
   top: 0;
   left: 0;
@@ -19,6 +19,66 @@
   &--small {
     .Logo {
       height: 80%;
+    }
+  }
+}
+
+.MobileFooter {
+  display: flex;
+  align-items: center;
+  height: var(--footer-height);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--card);
+  border-top: 1px solid var(--border);
+  z-index: 10;
+
+  .MobileFooterNav {
+    display: flex;
+    width: 100%;
+    padding: 0 8px;
+
+    .NavButton {
+      flex: 1;
+      height: fit-content;
+      padding: 12px 4px;
+      border-radius: 12px;
+      border: none;
+      justify-content: center;
+      margin: 0 2px;
+      transition: all 0.2s ease;
+      color: var(--muted-foreground);
+
+      &--active {
+        color: var(--foreground);
+        .NavLabel {
+          font-weight: 700;
+        }
+        svg {
+          stroke-width: 3;
+        }
+      }
+    }
+
+    .NavItem {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .NavIcon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .NavLabel {
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1;
     }
   }
 }

@@ -1,9 +1,7 @@
 import logo from "@/assets/pokenerdle.png";
-import { themeAtom, toggleThemeAtom } from "@/atoms/theme";
 import LinkButton from "@/components/recyclables/LinkButton";
 import breakpoints from "@/utils/breakpoints";
 import clsx from "clsx";
-import { useAtom } from "jotai";
 import { Menu } from "lucide-react";
 import React from "react";
 import { Link } from "react-router";
@@ -13,8 +11,6 @@ import NavDrawer from "./NavDrawer";
 import RulePageButton from "./RulePageButton";
 
 const Header: React.FC = () => {
-  const [theme] = useAtom(themeAtom);
-  const [, toggleTheme] = useAtom(toggleThemeAtom);
   const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`);
 
   return (
@@ -24,7 +20,9 @@ const Header: React.FC = () => {
         isSmallerThanSm && classes["Header--small"]
       )}
     >
-      <NavDrawer trigger={<Menu className="tw:size-6" />} />
+      {!isSmallerThanSm && (
+        <NavDrawer trigger={<Menu className="tw:size-6" />} />
+      )}
       <Link className="tw:contents" to="/">
         <img className={classes.Logo} src={logo} alt="PokéNerdle Logo" />
       </Link>
