@@ -13,15 +13,7 @@ import {
 import { useGoogleSignIn } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 import { useAtom } from "jotai";
-import {
-  Check,
-  Loader2,
-  LogOut,
-  Monitor,
-  Moon,
-  Settings,
-  Sun,
-} from "lucide-react";
+import { Check, Loader2, LogOut, Monitor, Moon, Sun } from "lucide-react";
 
 const themeIcons = {
   dark: Moon,
@@ -50,9 +42,6 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
         {trigger}
       </DropdownMenuTrigger>
       <DropdownMenuContent collisionPadding={8}>
-        <DropdownMenuItem>
-          <Settings /> Settings
-        </DropdownMenuItem>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="tw:gap-2">
             <Icon className="tw:size-4 tw:text-muted-foreground" />
