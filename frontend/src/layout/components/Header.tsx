@@ -1,4 +1,3 @@
-import logo from "@/assets/pokenerdle.png";
 import LinkButton from "@/components/recyclables/LinkButton";
 import breakpoints from "@/utils/breakpoints";
 import clsx from "clsx";
@@ -24,7 +23,11 @@ const Header: React.FC = () => {
         <NavDrawer trigger={<Menu className="tw:size-6" />} />
       )}
       <Link className="tw:contents" to="/">
-        <img className={classes.Logo} src={logo} alt="PokéNerdle Logo" />
+        <img
+          className={classes.Logo}
+          src="/pokenerdle.png"
+          alt="PokéNerdle Logo"
+        />
       </Link>
       <div className="tw:grow" />
       {!isSmallerThanSm && (
