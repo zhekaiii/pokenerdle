@@ -114,7 +114,8 @@ const PokemonReferenceDialog: React.FC<Props> = ({
         <DialogHeader>
           <DialogTitle>Pokemon Reference</DialogTitle>
           <DialogDescription>
-            Note that some icons might be missing.
+            Note that some icons might be missing. You can click on a Pokémon to
+            make a guess.
           </DialogDescription>
         </DialogHeader>
 
