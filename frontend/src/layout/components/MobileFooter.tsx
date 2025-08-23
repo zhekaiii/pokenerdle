@@ -4,10 +4,12 @@ import clsx from "clsx";
 import { Calendar, LinkIcon, MapPin, UserCircle } from "lucide-react";
 import React from "react";
 import { Link, matchPath, useLocation } from "react-router";
+import useDetectKeyboardOpen from "use-detect-keyboard-open";
 import classes from "./index.module.scss";
 import { ProfileDropdownMenu } from "./ProfileDropdownMenu";
 
 const MobileFooter: React.FC = () => {
+  const isKeyboardOpen = useDetectKeyboardOpen();
   const { user } = useAuth();
   const location = useLocation();
   const navItems = [
@@ -27,6 +29,10 @@ const MobileFooter: React.FC = () => {
       label: "Path Finder",
     },
   ];
+
+  if (isKeyboardOpen) {
+    return null;
+  }
 
   return (
     <footer className={classes.MobileFooter}>

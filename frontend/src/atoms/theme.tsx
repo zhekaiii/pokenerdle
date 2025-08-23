@@ -16,6 +16,19 @@ const setThemeClass = (theme: Exclude<Theme, "system">) => {
   const root = window.document.documentElement;
   root.classList.remove("tw:light", "tw:dark");
   root.classList.add(`tw:${theme}`);
+  updatePwaThemeColour(theme);
+};
+
+const updatePwaThemeColour = (theme: Exclude<Theme, "system">) => {
+  const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+  if (!themeColorMeta) return;
+
+  const colors = {
+    light: "#ffffff", // --card in light mode: oklch(1 0 0)
+    dark: "#171717", // --card in dark mode: oklch(0.205 0 0) converted to hex
+  };
+
+  themeColorMeta.setAttribute("content", colors[theme]);
 };
 
 export function useThemeListener() {

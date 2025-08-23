@@ -34,6 +34,9 @@
   background-color: var(--card);
   border-top: 1px solid var(--border);
   z-index: 10;
+  @supports (padding: max(0px)) {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 
   .MobileFooterNav {
     display: flex;

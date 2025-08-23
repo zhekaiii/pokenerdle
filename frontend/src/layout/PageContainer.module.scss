@@ -1,6 +1,6 @@
 .PageContainer {
   --header-height: 60px;
-  --footer-height: 0px;
+  --footer-height: env(safe-area-inset-bottom);
   --page-padding-y: 40px;
   --page-padding-x: 40px;
 
@@ -14,13 +14,17 @@
   min-height: 100dvh;
   overflow: hidden;
 
+  &.KeyboardOpen {
+    --footer-height: 0px;
+  }
+
   @media (max-width: 768px) {
     --page-padding-x: 20px;
     --page-padding-y: 20px;
   }
 
   @media (max-width: 640px) {
-    --footer-height: 54px;
+    --footer-height: calc(54px + env(safe-area-inset-bottom));
     --page-padding-x: 10px;
     --page-padding-y: 10px;
   }
