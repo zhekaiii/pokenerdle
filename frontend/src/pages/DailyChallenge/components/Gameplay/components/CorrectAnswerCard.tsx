@@ -14,7 +14,7 @@ import {
 import { useMemo } from "react";
 
 type Props = {
-  correctAnswer: CorrectAnswer;
+  correctAnswer: CorrectAnswer | null;
 };
 
 const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
@@ -23,10 +23,10 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
   const pokemonNames = usePokemonNames();
   const pokemonName = useMemo(() => {
     const pokemonName = pokemonNames.find(
-      (pokemon) => pokemon.id === correctAnswer.pokemonId
+      (pokemon) => pokemon.id === correctAnswer?.pokemonId
     );
     return pokemonName && getFormattedPokemonName(pokemonName);
-  }, [correctAnswer.pokemonId, pokemonNames]);
+  }, [correctAnswer?.pokemonId, pokemonNames]);
   const attempts = guesses?.guesses.length ?? 0;
 
   const subtitle = useMemo(() => {
@@ -37,6 +37,10 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
     }
     return `You've used all ${DAILY_CHALLENGE_GUESS_LIMIT} attempts. Better luck tomorrow!`;
   }, [hasSolved, attempts]);
+
+  if (!correctAnswer) {
+    return null;
+  }
 
   return (
     <div>

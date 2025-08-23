@@ -129,10 +129,9 @@ const DailyChallengeGameplay: React.FC = () => {
           <hr className="tw:my-4" />
           <CorrectAnswerCard
             correctAnswer={
-              correctAnswer! ??
-              (hasSolved
+              hasSolved
                 ? guesses!.guesses[guesses!.guesses.length - 1]
-                : undefined)
+                : correctAnswer
             }
           />
           <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto">
