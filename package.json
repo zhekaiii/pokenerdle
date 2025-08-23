@@ -9,7 +9,7 @@
     "fe-build": "pnpm --filter @pokenerdle/frontend build",
     "be-build": "pnpm --filter @pokenerdle/backend build",
     "shared-build": "pnpm --filter @pokenerdle/shared build",
-    "build": "pnpm shared-build && pnpm be-build && pnpm fe-build",
+    "build": "pnpm shared-build && concurrently \"pnpm be-build\" \"pnpm fe-build\"",
     "start": "pnpm --filter @pokenerdle/backend start"
   },
   "devDependencies": {

@@ -12,23 +12,14 @@ import { Link } from "react-router";
 const PIKACHU: PokemonWithAbilities = {
   id: 25,
   name: "pikachu",
-  order: 35,
-  height: 4,
-  weight: 60,
-  is_default: true,
   pokemon_species_id: 25,
-  base_experience: 112,
   abilities: [
     {
       id: 9,
-      is_main_series: true,
-      generation_id: 3,
       name: "static",
     },
     {
       id: 31,
-      is_main_series: true,
-      generation_id: 3,
       name: "lightning-rod",
     },
   ],
@@ -44,23 +35,14 @@ const PIKACHU: PokemonWithAbilities = {
 const RAICHU: PokemonWithAbilities = {
   id: 26,
   name: "raichu",
-  order: 36,
-  height: 4,
-  weight: 60,
-  is_default: true,
   pokemon_species_id: 26,
-  base_experience: 112,
   abilities: [
     {
       id: 9,
-      is_main_series: true,
-      generation_id: 3,
       name: "static",
     },
     {
       id: 31,
-      is_main_series: true,
-      generation_id: 3,
       name: "lightning-rod",
     },
   ],
@@ -76,23 +58,14 @@ const RAICHU: PokemonWithAbilities = {
 const MAREEP: PokemonWithAbilities = {
   id: 179,
   name: "mareep",
-  order: 273,
-  height: 6,
-  weight: 78,
-  is_default: true,
   pokemon_species_id: 179,
-  base_experience: 56,
   abilities: [
     {
       id: 9,
-      is_main_series: true,
-      generation_id: 3,
       name: "static",
     },
     {
       id: 57,
-      is_main_series: true,
-      generation_id: 3,
       name: "plus",
     },
   ],

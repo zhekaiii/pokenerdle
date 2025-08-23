@@ -11,23 +11,14 @@ import { Link } from "react-router";
 const BULBASAUR: PokemonWithAbilities = {
   id: 1,
   name: "bulbasaur",
-  order: 1,
-  height: 7,
-  weight: 69,
-  is_default: true,
   pokemon_species_id: 1,
-  base_experience: 64,
   abilities: [
     {
       id: 65,
-      is_main_series: true,
-      generation_id: 3,
       name: "overgrow",
     },
     {
       id: 34,
-      is_main_series: true,
-      generation_id: 3,
       name: "chlorophyll",
     },
   ],
@@ -43,23 +34,14 @@ const BULBASAUR: PokemonWithAbilities = {
 const TREECKO: PokemonWithAbilities = {
   id: 252,
   name: "treecko",
-  order: 303,
-  height: 5,
-  weight: 50,
-  is_default: true,
   pokemon_species_id: 252,
-  base_experience: 62,
   abilities: [
     {
       id: 65,
-      is_main_series: true,
-      generation_id: 3,
       name: "overgrow",
     },
     {
       id: 34,
-      is_main_series: true,
-      generation_id: 3,
       name: "unburden",
     },
   ],
@@ -75,23 +57,14 @@ const TREECKO: PokemonWithAbilities = {
 const SUNFLORA: PokemonWithAbilities = {
   id: 192,
   name: "sunflora",
-  order: 192,
-  height: 8,
-  weight: 85,
-  is_default: true,
   pokemon_species_id: 192,
-  base_experience: 149,
   abilities: [
     {
       id: 34,
-      is_main_series: true,
-      generation_id: 3,
       name: "chlorophyll",
     },
     {
       id: 180,
-      is_main_series: true,
-      generation_id: 5,
       name: "solar-power",
     },
   ],
