@@ -149,7 +149,8 @@ const PokeChainLobby: React.FC = () => {
       <CardHeader className="tw:text-center">
         <CardTitle className="tw:text-2xl">PokéChain</CardTitle>
         <CardDescription>
-          Challenge your friends in a Pokémon chain battle!
+          Take turns naming Pokémon that share abilities with the previous one -
+          can you outsmart your friends?
         </CardDescription>
       </CardHeader>
 

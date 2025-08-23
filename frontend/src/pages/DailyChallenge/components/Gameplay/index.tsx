@@ -68,8 +68,12 @@ const DailyChallengeGameplay: React.FC = () => {
           "You have found the mystery Pokémon!"
         ) : (
           <>
-            {DAILY_CHALLENGE_GUESS_LIMIT - (guesses?.guesses.length ?? 0)}{" "}
-            attempts left to guess the mystery Pokémon!
+            Can you guess the mystery Pokémon in{" "}
+            {DAILY_CHALLENGE_GUESS_LIMIT - (guesses?.guesses.length ?? 0)}
+            {DAILY_CHALLENGE_GUESS_LIMIT - (guesses?.guesses.length ?? 0) === 1
+              ? " attempt"
+              : " attempts"}
+            ?
           </>
         )}
       </div>
