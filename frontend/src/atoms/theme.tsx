@@ -1,4 +1,4 @@
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
 
@@ -7,10 +7,6 @@ export type Theme = "dark" | "light" | "system";
 export const THEMES: Theme[] = ["dark", "light", "system"];
 
 export const themeAtom = atomWithStorage<Theme>("vite-ui-theme", "system");
-
-export const toggleThemeAtom = atom(null, (get, set) => {
-  set(themeAtom, THEMES[(THEMES.indexOf(get(themeAtom)) + 1) % THEMES.length]);
-});
 
 const setThemeClass = (theme: Exclude<Theme, "system">) => {
   const root = window.document.documentElement;

@@ -1,4 +1,5 @@
 import LinkButton from "@/components/recyclables/LinkButton";
+import { useRouteHandles } from "@/hooks/useRouteHandles";
 import breakpoints from "@/utils/breakpoints";
 import clsx from "clsx";
 import { Menu } from "lucide-react";
@@ -11,6 +12,10 @@ import RulePageButton from "./RulePageButton";
 
 const Header: React.FC = () => {
   const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`);
+  const routeHandles = useRouteHandles();
+  const shouldShowRuleButton = routeHandles.some(
+    ({ shouldShowRuleButton }) => shouldShowRuleButton
+  );
 
   return (
     <header
@@ -37,7 +42,7 @@ const Header: React.FC = () => {
           <LinkButton to="/path-finder">Path Finder</LinkButton>
         </>
       )}
-      <RulePageButton className="tw:mr-2" />
+      {shouldShowRuleButton && <RulePageButton className="tw:mr-2" />}
     </header>
   );
 };

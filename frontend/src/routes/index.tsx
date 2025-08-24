@@ -3,6 +3,10 @@ import Layout from "@/layout/Layout";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router";
 import HowToPlayPage from "../pages/HowToPlay";
 
+export type RouteHandle = {
+  shouldShowRuleButton?: boolean;
+};
+
 const routes: RouteObject[] = [
   {
     path: "/",
@@ -25,23 +29,38 @@ const routes: RouteObject[] = [
       {
         path: "daily",
         lazy: () => import("@/pages/DailyChallenge"),
+        handle: {
+          shouldShowRuleButton: true,
+        },
       },
       {
         path: "pokechain",
         lazy: () => import("@/components/PokeChain"),
+        handle: {
+          shouldShowRuleButton: true,
+        },
       },
       {
         path: "path-finder",
         lazy: () => import("@/components/PathFinder"),
+        handle: {
+          shouldShowRuleButton: true,
+        },
+      },
+      {
+        path: "settings",
+        lazy: () => import("@/pages/Settings"),
       },
       {
         path: "how-to-play",
         element: <HowToPlayPage />,
+        handle: {
+          shouldShowRuleButton: true,
+        },
         children: [
           {
             path: "",
-            // element: <Navigate to="daily" replace />,
-            element: <Navigate to="pokechain" replace />,
+            element: <Navigate to="daily" replace />,
           },
           {
             path: "daily",
@@ -56,6 +75,10 @@ const routes: RouteObject[] = [
             lazy: () => import("@/pages/HowToPlay/PathFinderRules"),
           },
         ],
+      },
+      {
+        path: "/how-to-play/*",
+        element: <Navigate to="/how-to-play/daily" replace />,
       },
     ],
   },
