@@ -18,6 +18,10 @@ export const signInWithGoogleAtom = atom(
       provider: "google",
       options: {
         redirectTo,
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
       },
     });
 
