@@ -78,6 +78,7 @@ export const getDailyPokemonAnswerController = async (
     const answer = await getDailyPokemonAnswer(date);
     res.json(answer);
   } catch (error) {
+    console.error("Error getting daily pokemon answer:", error);
     res
       .status(StatusCode.INTERNAL_SERVER_ERROR)
       .json({ error: "Failed to get answer" });

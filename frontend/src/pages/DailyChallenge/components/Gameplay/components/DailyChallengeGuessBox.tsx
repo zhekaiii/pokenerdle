@@ -162,13 +162,13 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                 <li>
                   {guess.colorCorrectness ? (
                     <>
-                      Target is also {guess.pokemon.color.toLowerCase()} in
-                      color!
+                      Target&apos; base form is also{" "}
+                      {guess.pokemon.color.toLowerCase()} in color!
                     </>
                   ) : (
                     <>
-                      Target is not {guess.pokemon.color.toLowerCase()} in
-                      color.
+                      Target&apos; base form is not{" "}
+                      {guess.pokemon.color.toLowerCase()} in color.
                     </>
                   )}
                 </li>
