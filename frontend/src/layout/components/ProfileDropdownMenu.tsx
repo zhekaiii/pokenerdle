@@ -13,7 +13,16 @@ import {
 import { useGoogleSignIn } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 import { useAtom } from "jotai";
-import { Check, Loader2, LogOut, Monitor, Moon, Sun } from "lucide-react";
+import {
+  Check,
+  Loader2,
+  LogOut,
+  Monitor,
+  Moon,
+  Settings,
+  Sun,
+} from "lucide-react";
+import { Link } from "react-router";
 
 const themeIcons = {
   dark: Moon,
@@ -23,10 +32,12 @@ const themeIcons = {
 
 type ProfileDropdownMenuProps = {
   trigger: React.ReactNode;
+  triggerAsChild?: boolean;
 };
 
 export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
   trigger,
+  triggerAsChild = false,
 }) => {
   const [currentTheme, setCurrentTheme] = useAtom(themeAtom);
   const { isAuthenticated, loading: authLoading, signOut } = useAuth();
@@ -38,10 +49,18 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="tw:focus-visible:ring-0" asChild>
+      <DropdownMenuTrigger
+        className="tw:focus-visible:ring-0"
+        asChild={triggerAsChild}
+      >
         {trigger}
       </DropdownMenuTrigger>
       <DropdownMenuContent collisionPadding={8}>
+        <Link to="/settings">
+          <DropdownMenuItem>
+            <Settings /> Settings
+          </DropdownMenuItem>
+        </Link>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="tw:gap-2">
             <Icon className="tw:size-4 tw:text-muted-foreground" />

@@ -2,12 +2,12 @@ import LinkButton from "@/components/recyclables/LinkButton";
 import { useRouteHandles } from "@/hooks/useRouteHandles";
 import breakpoints from "@/utils/breakpoints";
 import clsx from "clsx";
-import { Menu } from "lucide-react";
 import React from "react";
 import { Link } from "react-router";
 import { useMedia } from "react-use";
 import classes from "./index.module.scss";
-import NavDrawer from "./NavDrawer";
+import { ProfileDropdownMenu } from "./ProfileDropdownMenu";
+import { ProfileIcon } from "./ProfileIcon";
 import RulePageButton from "./RulePageButton";
 
 const Header: React.FC = () => {
@@ -24,9 +24,6 @@ const Header: React.FC = () => {
         isSmallerThanSm && classes["Header--small"]
       )}
     >
-      {!isSmallerThanSm && (
-        <NavDrawer trigger={<Menu className="tw:size-6" />} />
-      )}
       <Link className="tw:contents" to="/">
         <img
           className={classes.Logo}
@@ -43,6 +40,11 @@ const Header: React.FC = () => {
         </>
       )}
       {shouldShowRuleButton && <RulePageButton className="tw:mr-2" />}
+      {!isSmallerThanSm && (
+        <ProfileDropdownMenu
+          trigger={<ProfileIcon sizeClassName="tw:size-7" />}
+        />
+      )}
     </header>
   );
 };

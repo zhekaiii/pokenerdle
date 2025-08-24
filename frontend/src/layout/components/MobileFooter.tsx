@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/hooks/useAuth";
 import clsx from "clsx";
-import { Calendar, LinkIcon, MapPin, UserCircle } from "lucide-react";
+import { Calendar, LinkIcon, MapPin } from "lucide-react";
 import React from "react";
 import { Link, matchPath, useLocation } from "react-router";
 import useDetectKeyboardOpen from "use-detect-keyboard-open";
 import classes from "./index.module.scss";
 import { ProfileDropdownMenu } from "./ProfileDropdownMenu";
+import { ProfileIcon } from "./ProfileIcon";
 
 const MobileFooter: React.FC = () => {
   const isKeyboardOpen = useDetectKeyboardOpen();
@@ -59,23 +60,12 @@ const MobileFooter: React.FC = () => {
           trigger={
             <Button variant="transparent" className={classes.NavButton}>
               <div className={classes.NavItem}>
-                {user && user.user_metadata.avatar_url ? (
-                  <div
-                    className={clsx(
-                      classes.NavIcon,
-                      "tw:rounded-full tw:bg-cover tw:bg-center"
-                    )}
-                    style={{
-                      backgroundImage: `url(${user.user_metadata.avatar_url})`,
-                    }}
-                  />
-                ) : (
-                  <UserCircle className={classes.NavIcon} />
-                )}
+                <ProfileIcon />
                 <span className={classes.NavLabel}>Profile</span>
               </div>
             </Button>
           }
+          triggerAsChild
         />
       </nav>
     </footer>
