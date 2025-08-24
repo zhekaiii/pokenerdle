@@ -2,7 +2,7 @@ import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
 import { pokemon_v2_ability, pokemon_v2_pokemon } from "@prisma/client";
 import { readFileSync, writeFileSync } from "fs";
 import { Heap } from "heap-js";
-import { MIN_PATHFINDER_LENGTH } from "../constants/game.js";
+import { ICON_SUFFIXES, MIN_PATHFINDER_LENGTH } from "../constants/game.js";
 import { LanguageId } from "../lib/constants.js";
 import { Graph } from "../lib/graph.js";
 import { prisma } from "../lib/prisma.js";
@@ -40,22 +40,26 @@ export const getPokemonIdsByGeneration = async (
 ): Promise<number[]> => {
   const result = await prisma.pokemon_v2_pokemon.findMany({
     where: {
-      pokemon_v2_pokemonform: {
-        some: {
-          pokemon_v2_versiongroup: {
-            generation_id: generation,
-          },
-        },
+      pokemon_v2_pokemonspecies: {
+        generation_id: generation,
       },
     },
     select: {
       id: true,
+      pokemon_species_id: true,
+      order: true,
     },
-    orderBy: {
-      id: "asc",
-    },
+    orderBy: [{ pokemon_species_id: "asc" }, { order: "asc" }],
   });
 
+  result.sort((a, b) => {
+    if (a.pokemon_species_id !== b.pokemon_species_id) {
+      return (a.pokemon_species_id ?? 0) - (b.pokemon_species_id ?? 0);
+    }
+    const aOrder = a.order === -1 ? 1000 : a.order ?? 0;
+    const bOrder = b.order === -1 ? 1000 : b.order ?? 0;
+    return aOrder - bOrder;
+  });
   return result.map((pokemon) => pokemon.id);
 };
 
@@ -118,14 +122,39 @@ export const getPokemonWithAbilities = async (id: number) => {
 };
 
 export const getPokemonIcons = async (): Promise<Record<number, string>> => {
-  const sprites = await prisma.pokemon_v2_pokemonsprites.findMany();
+  const sprites = await prisma.pokemon_v2_pokemonsprites.findMany({
+    select: {
+      pokemon_id: true,
+      sprites: true,
+      pokemon_v2_pokemon: {
+        select: {
+          pokemon_species_id: true,
+          name: true,
+        },
+      },
+    },
+  });
   return Object.fromEntries(
-    sprites.map(({ pokemon_id, sprites }) => {
+    sprites.map(({ pokemon_id, sprites, pokemon_v2_pokemon }) => {
+      const speciesId = pokemon_v2_pokemon?.pokemon_species_id
+        ?.toString()
+        .padStart(3, "0");
+      const name = pokemon_v2_pokemon?.name;
+
+      const suffix = ICON_SUFFIXES.find((region) =>
+        name?.toLowerCase().includes(region)
+      );
+
+      const filename = `${speciesId}${suffix ? `-${suffix}` : ""}.png`;
+
+      const fallbackUrl = `https://raw.githubusercontent.com/pokedextracker/pokesprite/refs/heads/master/images/${filename}`;
+
       const parsedSprites = JSON.parse(sprites);
       return [
         pokemon_id,
         parsedSprites.versions["generation-viii"].icons.front_default ??
-          parsedSprites.versions["generation-vii"].icons.front_default,
+          parsedSprites.versions["generation-vii"].icons.front_default ??
+          fallbackUrl,
       ];
     })
   );

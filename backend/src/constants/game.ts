@@ -9,3 +9,5 @@ export const DAILY_CHALLENGE_GUESS_LIMIT = 8;
 // Pokemon generation constants
 export const MIN_GENERATION = 1;
 export const MAX_GENERATION = 9;
+
+export const ICON_SUFFIXES = ["alola", "galar", "hisui", "paldea", "mega"];

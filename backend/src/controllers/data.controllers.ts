@@ -16,7 +16,7 @@ export const getPokemonNames = async (req: Request, res: Response) => {
   res.json(data);
 };
 
-const POKEMON_ICONS_LAST_UPDATED = new Date("2025-08-17").toUTCString();
+const POKEMON_ICONS_LAST_UPDATED = new Date("2025-08-24").toUTCString();
 export const getPokemonIcons = async (req: Request, res: Response) => {
   const ifModifiedSince = req.headers["if-modified-since"];
   if (ifModifiedSince && ifModifiedSince === POKEMON_ICONS_LAST_UPDATED) {
