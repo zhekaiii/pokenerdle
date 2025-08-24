@@ -24,7 +24,7 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
   const [statsLoading, setStatsLoading] = useState(false);
 
   useEffect(() => {
-    posthog.capture("daily_challenge_stats_dialog_opened");
+    if (open) posthog.capture("daily_challenge_stats_dialog_opened");
   }, [open]);
 
   // Fetch user stats when dialog opens and user is authenticated
