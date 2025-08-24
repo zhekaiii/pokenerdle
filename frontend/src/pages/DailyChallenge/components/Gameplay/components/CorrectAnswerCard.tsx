@@ -12,6 +12,11 @@ import {
   getFormattedPokemonName,
 } from "@/utils/formatters";
 import { useMemo } from "react";
+import classes from "./CorrectAnswerCard.module.scss";
+
+// These colours are not very strong i.e. quite neutral tone and in a gradient
+// will be overpowered by the other colours.
+const NEUTRAL_COLOURS = ["normal", "dark", "rock"];
 
 type Props = {
   correctAnswer: CorrectAnswer | null;
@@ -21,6 +26,35 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
   const { hasSolved, guesses } = useDailyChallengeData();
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
+
+  const borderStyles = useMemo(() => {
+    if (!correctAnswer) return undefined;
+
+    const type1 = correctAnswer.pokemon.type1.toLowerCase();
+    const type2 = correctAnswer.pokemon.type2?.toLowerCase();
+
+    const isType1Neutral = NEUTRAL_COLOURS.includes(type1);
+    const isType2Neutral = NEUTRAL_COLOURS.includes(type2 ?? type1);
+
+    // To avoid the neutral colours being overpowered by the other colours,
+    // we need to make sure they occupy more space in the gradient.
+    const type2StartPercentage =
+      isType1Neutral !== isType2Neutral && isType2Neutral ? "25% 50%" : "50%";
+    const type2EndPercentage =
+      isType1Neutral !== isType2Neutral && isType1Neutral ? "75% 100%" : "100%";
+
+    const type1Color = `var(--${type1}-type)`;
+    const type2Color = `var(--${type2 ?? type1}-type)`;
+
+    return {
+      "--type1-color": type1Color,
+      "--type2-color": type2Color,
+      "--type2-start-percentage": type2StartPercentage,
+      "--type2-end-percentage": type2EndPercentage,
+      ...(type1 === type2 ? { animation: "none" } : {}),
+    } as React.CSSProperties;
+  }, [correctAnswer]);
+
   const pokemonName = useMemo(() => {
     const pokemonName = pokemonNames.find(
       (pokemon) => pokemon.id === correctAnswer?.pokemonId
@@ -47,7 +81,7 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
       <div className="tw:text-center tw:mb-2 tw:text-sm tw:text-muted-foreground">
         {subtitle}
       </div>
-      <Card responsive>
+      <Card responsive className={classes.Card} style={borderStyles}>
         <CardContent>
           <div className="tw:text-center tw:mb-3">
             <div className="tw:flex tw:items-center tw:justify-center tw:gap-3">
