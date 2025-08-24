@@ -40,25 +40,20 @@ export const getPokemonIdsByGeneration = async (
 ): Promise<number[]> => {
   const result = await prisma.pokemon_v2_pokemon.findMany({
     where: {
-      pokemon_v2_pokemonspecies: {
-        generation_id: generation,
+      pokemon_v2_pokemonform: {
+        some: {
+          pokemon_v2_versiongroup: {
+            generation_id: generation,
+          },
+        },
       },
     },
     select: {
       id: true,
-      pokemon_species_id: true,
-      order: true,
     },
-    orderBy: [{ pokemon_species_id: "asc" }, { order: "asc" }],
-  });
-
-  result.sort((a, b) => {
-    if (a.pokemon_species_id !== b.pokemon_species_id) {
-      return (a.pokemon_species_id ?? 0) - (b.pokemon_species_id ?? 0);
-    }
-    const aOrder = a.order === -1 ? 1000 : a.order ?? 0;
-    const bOrder = b.order === -1 ? 1000 : b.order ?? 0;
-    return aOrder - bOrder;
+    orderBy: {
+      id: "asc",
+    },
   });
   return result.map((pokemon) => pokemon.id);
 };
