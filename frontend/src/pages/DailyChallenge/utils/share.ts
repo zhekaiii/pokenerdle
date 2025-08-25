@@ -46,7 +46,8 @@ export const shareResults = async (guesses: DailyChallengeGuessResponse[]) => {
     await navigator.clipboard.writeText(shareText);
     toast({
       variant: "positive",
-      description: "Results copied to clipboard!",
+      description:
+        "Your browser doesn't support sharing. Results copied to clipboard!",
     });
   }
 };

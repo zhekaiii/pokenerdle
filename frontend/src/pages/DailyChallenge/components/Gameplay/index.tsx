@@ -155,18 +155,20 @@ const DailyChallengeGameplay: React.FC = () => {
               >
                 <Clipboard /> Copy
               </Button>
-              <Button
-                className="tw:flex-1"
-                onClick={() => {
-                  posthog.capture("daily_challenge_share_clicked", {
-                    has_solved: hasSolved,
-                    num_guesses: guesses?.guesses.length ?? 0,
-                  });
-                  shareResults(guesses?.guesses ?? []);
-                }}
-              >
-                <Share2 /> Share
-              </Button>
+              {"share" in navigator && (
+                <Button
+                  className="tw:flex-1"
+                  onClick={() => {
+                    posthog.capture("daily_challenge_share_clicked", {
+                      has_solved: hasSolved,
+                      num_guesses: guesses?.guesses.length ?? 0,
+                    });
+                    shareResults(guesses?.guesses ?? []);
+                  }}
+                >
+                  <Share2 /> Share
+                </Button>
+              )}
             </div>
             {isAuthenticated ? (
               <Button
