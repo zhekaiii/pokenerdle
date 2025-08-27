@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/Button";
-import { useAuth } from "@/hooks/useAuth";
 import clsx from "clsx";
 import { Calendar, LinkIcon, MapPin } from "lucide-react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Link, matchPath, useLocation } from "react-router";
 import useDetectKeyboardOpen from "use-detect-keyboard-open";
 import classes from "./index.module.scss";
@@ -11,23 +11,23 @@ import { ProfileIcon } from "./ProfileIcon";
 
 const MobileFooter: React.FC = () => {
   const isKeyboardOpen = useDetectKeyboardOpen();
-  const { user } = useAuth();
   const location = useLocation();
+  const { t } = useTranslation();
   const navItems = [
     {
       to: "/daily",
       icon: Calendar,
-      label: "Daily",
+      label: t("nav:dailyChallenge"),
     },
     {
       to: "/pokechain",
       icon: LinkIcon,
-      label: "PokéChain",
+      label: t("nav:pokeChain"),
     },
     {
       to: "/path-finder",
       icon: MapPin,
-      label: "Path Finder",
+      label: t("nav:pathFinder"),
     },
   ];
 
@@ -61,7 +61,7 @@ const MobileFooter: React.FC = () => {
             <Button variant="transparent" className={classes.NavButton}>
               <div className={classes.NavItem}>
                 <ProfileIcon />
-                <span className={classes.NavLabel}>Profile</span>
+                <span className={classes.NavLabel}>{t("nav:profile")}</span>
               </div>
             </Button>
           }

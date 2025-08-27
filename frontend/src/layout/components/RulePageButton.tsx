@@ -1,5 +1,6 @@
 import LinkButton from "@/components/recyclables/LinkButton";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
 
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
 };
 
 const RulePageButton: React.FC<Props> = ({ className }) => {
+  const { t } = useTranslation();
   const location = useLocation();
   const isRulePage = location.pathname.startsWith("/how-to-play");
   const rulePage = isRulePage
@@ -15,7 +17,7 @@ const RulePageButton: React.FC<Props> = ({ className }) => {
 
   return (
     <LinkButton to={rulePage} className={className} activeOverride={isRulePage}>
-      {isRulePage ? "Back to Game" : "How to Play"}
+      {isRulePage ? t("nav:backToGame") : t("nav:howToPlay")}
     </LinkButton>
   );
 };

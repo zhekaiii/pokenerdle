@@ -1,5 +1,6 @@
 import GoogleIcon from "@/assets/google.svg?react";
 import { themeAtom, THEMES } from "@/atoms/theme";
+import LanguageSelector from "@/components/LanguageSelector";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,7 @@ import {
   Settings,
   Sun,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 const themeIcons = {
@@ -39,6 +41,7 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
   trigger,
   triggerAsChild = false,
 }) => {
+  const { t } = useTranslation();
   const [currentTheme, setCurrentTheme] = useAtom(themeAtom);
   const { isAuthenticated, loading: authLoading, signOut } = useAuth();
 
@@ -58,13 +61,13 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
       <DropdownMenuContent collisionPadding={8}>
         <Link to="/settings">
           <DropdownMenuItem>
-            <Settings /> Settings
+            <Settings /> {t("nav:settings")}
           </DropdownMenuItem>
         </Link>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="tw:gap-2">
             <Icon className="tw:size-5 tw:text-muted-foreground" />
-            Dark Mode
+            {t("nav:darkMode")}
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             {THEMES.map((theme) => {
@@ -80,7 +83,7 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
                 >
                   <span>
                     <Icon className="tw:me-2 tw:inline-block" />
-                    {theme}
+                    {t(`nav:${theme}`)}
                   </span>
                   {theme === currentTheme && <Check />}
                 </DropdownMenuItem>
@@ -88,6 +91,7 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
             })}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+        <LanguageSelector />
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={isAuthenticated ? signOut : handleSignIn}
@@ -100,13 +104,13 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
               ) : (
                 <>
                   <GoogleIcon className="tw:size-4" />
-                  Login with Google
+                  {t("nav:loginWithGoogle")}
                 </>
               )}
             </>
           ) : (
             <>
-              <LogOut /> Logout
+              <LogOut /> {t("nav:logout")}
             </>
           )}
         </DropdownMenuItem>
