@@ -63,7 +63,7 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
         </Link>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="tw:gap-2">
-            <Icon className="tw:size-4 tw:text-muted-foreground" />
+            <Icon className="tw:size-5 tw:text-muted-foreground" />
             Dark Mode
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
