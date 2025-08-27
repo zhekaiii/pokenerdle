@@ -19,6 +19,7 @@ import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { CheckCircle, Share2, TrendingUp } from "lucide-react";
 import posthog from "posthog-js";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   challengeNumber,
   DAILY_CHALLENGE_GUESS_LIMIT,
@@ -55,6 +56,7 @@ const CompletionDialog: React.FC<Props> = ({
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
   const { loading: authLoading, isAuthenticated } = useAuth();
+  const { t } = useTranslation("daily");
 
   const pokemonName =
     correctAnswer?.pokemonId != undefined
@@ -66,7 +68,7 @@ const CompletionDialog: React.FC<Props> = ({
       has_solved: hasSolved,
       num_guesses: guesses.length,
     });
-    shareResults(guesses);
+    shareResults(guesses, t);
   };
 
   const attempts = guesses.length;

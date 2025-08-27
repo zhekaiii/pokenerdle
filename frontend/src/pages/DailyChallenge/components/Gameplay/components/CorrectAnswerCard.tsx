@@ -12,6 +12,7 @@ import {
   getFormattedPokemonName,
 } from "@/utils/formatters";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import classes from "./CorrectAnswerCard.module.scss";
 
 // These colours are not very strong i.e. quite neutral tone and in a gradient
@@ -26,6 +27,7 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
   const { hasSolved, guesses } = useDailyChallengeData();
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
+  const { t } = useTranslation("daily");
 
   const borderStyles = useMemo(() => {
     if (!correctAnswer) return undefined;
@@ -67,11 +69,17 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
   const subtitle = useMemo(() => {
     if (hasSolved) {
       return attempts === 1
-        ? "Incredible! You got it on your first guess!"
-        : `You found the mystery Pokémon in ${attempts}/${DAILY_CHALLENGE_GUESS_LIMIT} tries!`;
+        ? t("correctAnswer.firstGuess")
+        : `${t(
+            "correctAnswer.foundIn"
+          )} ${attempts}/${DAILY_CHALLENGE_GUESS_LIMIT} ${t(
+            "correctAnswer.tries"
+          )}`;
     }
-    return `You've used all ${DAILY_CHALLENGE_GUESS_LIMIT} attempts. Better luck tomorrow!`;
-  }, [hasSolved, attempts]);
+    return `${t(
+      "correctAnswer.usedAllAttempts"
+    )} ${DAILY_CHALLENGE_GUESS_LIMIT} ${t("correctAnswer.attempts")}`;
+  }, [hasSolved, attempts, t]);
 
   if (!correctAnswer) {
     return null;
@@ -94,7 +102,8 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
               <div className="tw:text-left">
                 <div className="tw:font-medium">{pokemonName}</div>
                 <div className="tw:text-sm tw:text-muted-foreground">
-                  Gen {correctAnswer.pokemon.generationId} •{" "}
+                  {t("correctAnswer.generation")}{" "}
+                  {correctAnswer.pokemon.generationId} •{" "}
                   {formatPokemonHeight(correctAnswer.pokemon.height)} •{" "}
                   {correctAnswer.pokemon.color}
                 </div>

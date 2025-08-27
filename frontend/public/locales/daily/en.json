@@ -1,0 +1,86 @@
+{
+  "title": "PokéNerdle Daily",
+  "challengeNumber": "Daily Challenge #{{number}}",
+  "buttons": {
+    "viewStats": "View Stats",
+    "startGuessing": "Start Guessing",
+    "continueGuessing": "Continue Guessing",
+    "share": "Share",
+    "copy": "Copy Results"
+  },
+  "messages": {
+    "foundPokemon": "You have found the mystery Pokémon!",
+    "loading": "Loading...",
+    "syncing": "Syncing data...",
+    "error": "An error occurred"
+  },
+  "share": {
+    "success": "Results copied to clipboard!",
+    "unsupported": "Your browser doesn't support sharing. Results copied to clipboard!",
+    "firstTry": "Got it on the first try! So lucky!",
+    "attempts_one": "Solved in {{count}}/{{total}} attempt",
+    "attempts_other": "Solved in {{count}}/{{total}} attempts",
+    "title": "PokéNerdle Daily #{{number}}",
+    "challengePrompt": "Can you guess 'em all?"
+  },
+  "stats": {
+    "title": "Statistics",
+    "gamesPlayed": "Games Played",
+    "winRate": "Win Rate",
+    "currentStreak": "Current Streak",
+    "maxStreak": "Max Streak",
+    "averageGuesses": "Average Guesses"
+  },
+  "guessBox": {
+    "placeholder": "Enter Pokémon name...",
+    "noResults": "No Pokémon found",
+    "selectPokemon": "Select a Pokémon to guess",
+    "awaitingGuess": "Awaiting your guess..."
+  },
+  "guessDetails": {
+    "correct": "You are correct!",
+    "typeAlso": "Target is also a",
+    "type": "type!",
+    "typeMovesDeal": "type moves deal",
+    "damageAgainstTarget": "x damage against the target (ignoring abilities).",
+    "mono": "mono",
+    "notMonotype": "Target is not a monotype",
+    "sameGeneration": "Target is from the same generation!",
+    "fromGeneration": "Target is from",
+    "earlier": "an earlier",
+    "later": "a later",
+    "generation": "generation.",
+    "alsoColor": "Target's base form is also",
+    "inColor": "in color!",
+    "notColor": "Target's base form is not",
+    "notInColor": "in color.",
+    "alsoHeight": "Target is also",
+    "mTall": "m tall!",
+    "isHeight": "Target is",
+    "shorter": "shorter",
+    "taller": "taller",
+    "than": "than"
+  },
+  "gameplay": {
+    "foundPokemon": "You have found the mystery Pokémon!",
+    "guessPrompt_one": "Can you guess the mystery Pokémon in {{count}} attempt?",
+    "guessPrompt_other": "Can you guess the mystery Pokémon in {{count}} attempts?",
+    "copySuccess": "Results copied to clipboard!",
+    "copy": "Copy",
+    "viewStats": "View Stats",
+    "signInPrompt": "Sign in to save your daily challenge results!"
+  },
+  "correctAnswer": {
+    "firstGuess": "Incredible! You got it on your first guess!",
+    "foundIn": "You found the mystery Pokémon in",
+    "tries": "tries!",
+    "usedAllAttempts": "You've used all",
+    "attempts": "attempts. Better luck tomorrow!",
+    "generation": "Gen"
+  },
+  "completion": {
+    "congratulations": "Congratulations!",
+    "completed": "You completed today's challenge",
+    "nextChallenge": "Come back tomorrow for a new challenge!"
+  }
+}

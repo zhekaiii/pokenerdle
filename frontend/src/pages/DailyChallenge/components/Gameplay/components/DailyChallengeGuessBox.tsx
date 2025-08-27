@@ -5,6 +5,7 @@ import { COLUMNS } from "@/pages/DailyChallenge/constants";
 import { formatPokemonHeight } from "@/utils/formatters";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import React, { memo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { DailyChallengeGuessIcon } from "../../DailyChallengeGuessIcon";
 
 import placeholderIcon from "@/assets/question_mark.png";
@@ -20,6 +21,7 @@ type Props = {
 };
 
 const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
+  const { t } = useTranslation("daily");
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
   const pokemonName =
@@ -31,7 +33,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
   if (!guess) {
     return (
       <Card responsive className="tw:text-muted-foreground">
-        <CardContent>Awaiting your guess...</CardContent>
+        <CardContent>{t("guessBox.awaitingGuess")}</CardContent>
       </Card>
     );
   }
@@ -111,76 +113,86 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
         <CardContent className="tw:text-muted-foreground">
           <ul className="tw:list-disc tw:ps-6">
             {guess.correct ? (
-              <li>You are correct!</li>
+              <li>{t("guessDetails.correct")}</li>
             ) : (
               <>
                 <li>
                   {guess.type1Correctness === "=" ? (
                     <>
-                      Target is also a <TypeChip type={guess.pokemon.type1} />{" "}
-                      type!
+                      {t("guessDetails.typeAlso")}{" "}
+                      <TypeChip type={guess.pokemon.type1} />{" "}
+                      {t("guessDetails.type")}
                     </>
                   ) : (
                     <>
-                      <TypeChip type={guess.pokemon.type1} /> type moves deal{" "}
-                      {guess.type1Correctness}x damage against the target
-                      (ignoring abilities).
+                      <TypeChip type={guess.pokemon.type1} />{" "}
+                      {t("guessDetails.typeMovesDeal")} {guess.type1Correctness}
+                      {t("guessDetails.damageAgainstTarget")}
                     </>
                   )}
                 </li>
                 <li>
                   {guess.type2Correctness === "=" ? (
                     <>
-                      Target is also a{" "}
+                      {t("guessDetails.typeAlso")}{" "}
                       {guess.pokemon.type2 ? (
                         <TypeChip type={guess.pokemon.type2} />
                       ) : (
-                        "mono"
+                        t("guessDetails.mono")
                       )}{" "}
-                      type!
+                      {t("guessDetails.type")}
                     </>
                   ) : guess.pokemon.type2 ? (
                     <>
-                      <TypeChip type={guess.pokemon.type2} /> type moves deal{" "}
-                      {guess.type2Correctness}x damage against the target
-                      (ignoring abilities).
+                      <TypeChip type={guess.pokemon.type2} />{" "}
+                      {t("guessDetails.typeMovesDeal")} {guess.type2Correctness}
+                      {t("guessDetails.damageAgainstTarget")}
                     </>
                   ) : (
-                    "Target is not a monotype"
+                    t("guessDetails.notMonotype")
                   )}
                 </li>
                 <li>
                   {guess.genCorrectness === "=" ? (
-                    <>Target is from the same generation!</>
+                    <>{t("guessDetails.sameGeneration")}</>
                   ) : (
                     <>
-                      Target is from{" "}
-                      {guess.genCorrectness === "<" ? "an earlier" : "a later"}{" "}
-                      generation.
+                      {t("guessDetails.fromGeneration")}{" "}
+                      {guess.genCorrectness === "<"
+                        ? t("guessDetails.earlier")
+                        : t("guessDetails.later")}{" "}
+                      {t("guessDetails.generation")}
                     </>
                   )}
                 </li>
                 <li>
                   {guess.colorCorrectness ? (
                     <>
-                      Target&apos;s base form is also{" "}
-                      {guess.pokemon.color.toLowerCase()} in color!
+                      {t("guessDetails.alsoColor")}{" "}
+                      {guess.pokemon.color.toLowerCase()}{" "}
+                      {t("guessDetails.inColor")}
                     </>
                   ) : (
                     <>
-                      Target&apos;s base form is not{" "}
-                      {guess.pokemon.color.toLowerCase()} in color.
+                      {t("guessDetails.notColor")}{" "}
+                      {guess.pokemon.color.toLowerCase()}{" "}
+                      {t("guessDetails.notInColor")}
                     </>
                   )}
                 </li>
                 <li>
                   {guess.heightCorrectness === "=" ? (
-                    <>Target is also {pokemonHeight} m tall!</>
+                    <>
+                      {t("guessDetails.alsoHeight")} {pokemonHeight}{" "}
+                      {t("guessDetails.mTall")}
+                    </>
                   ) : (
                     <>
-                      Target is{" "}
-                      {guess.heightCorrectness === "<" ? "shorter" : "taller"}{" "}
-                      than {pokemonHeight}.
+                      {t("guessDetails.isHeight")}{" "}
+                      {guess.heightCorrectness === "<"
+                        ? t("guessDetails.shorter")
+                        : t("guessDetails.taller")}{" "}
+                      {t("guessDetails.than")} {pokemonHeight}.
                     </>
                   )}
                 </li>

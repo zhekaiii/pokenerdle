@@ -1,0 +1,86 @@
+{
+  "title": "宝可梦每日挑战",
+  "challengeNumber": "每日挑战 #{{number}}",
+  "buttons": {
+    "viewStats": "查看统计",
+    "startGuessing": "开始猜测",
+    "continueGuessing": "继续猜测",
+    "share": "分享",
+    "copy": "复制结果"
+  },
+  "messages": {
+    "foundPokemon": "你找到了神秘的宝可梦！",
+    "loading": "加载中...",
+    "syncing": "同步数据中...",
+    "error": "发生错误"
+  },
+  "share": {
+    "success": "结果已复制到剪贴板！",
+    "unsupported": "你的浏览器不支持分享。结果已复制到剪贴板！",
+    "firstTry": "第一次就猜对了！太幸运了！",
+    "attempts_one": "{{count}}/{{total}} 次尝试解决",
+    "attempts_other": "{{count}}/{{total}} 次尝试解决",
+    "title": "宝可梦每日挑战 #{{number}}",
+    "challengePrompt": "你能猜出它们全部吗？"
+  },
+  "stats": {
+    "title": "统计",
+    "gamesPlayed": "游戏次数",
+    "winRate": "胜率",
+    "currentStreak": "当前连胜",
+    "maxStreak": "最长连胜",
+    "averageGuesses": "平均猜测次数"
+  },
+  "guessBox": {
+    "placeholder": "输入宝可梦名称...",
+    "noResults": "未找到宝可梦",
+    "selectPokemon": "选择要猜测的宝可梦",
+    "awaitingGuess": "等待你的猜测..."
+  },
+  "guessDetails": {
+    "correct": "你猜对了！",
+    "typeAlso": "目标也是",
+    "type": "属性！",
+    "typeMovesDeal": "属性招式对目标造成",
+    "damageAgainstTarget": "倍伤害（忽略特性）。",
+    "mono": "单一",
+    "notMonotype": "目标不是单属性",
+    "sameGeneration": "目标来自同一世代！",
+    "fromGeneration": "目标来自",
+    "earlier": "较早的",
+    "later": "较晚的",
+    "generation": "世代。",
+    "alsoColor": "目标的基础形态也是",
+    "inColor": "颜色！",
+    "notColor": "目标的基础形态不是",
+    "notInColor": "颜色。",
+    "alsoHeight": "目标也是",
+    "mTall": "米高！",
+    "isHeight": "目标",
+    "shorter": "更矮",
+    "taller": "更高",
+    "than": "比"
+  },
+  "gameplay": {
+    "foundPokemon": "你找到了神秘的宝可梦！",
+    "guessPrompt_one": "你能在 {{count}} 次尝试中猜出神秘的宝可梦吗？",
+    "guessPrompt_other": "你能在 {{count}} 次尝试中猜出神秘的宝可梦吗？",
+    "copySuccess": "结果已复制到剪贴板！",
+    "copy": "复制",
+    "viewStats": "查看统计",
+    "signInPrompt": "登录以保存你的每日挑战结果！"
+  },
+  "correctAnswer": {
+    "firstGuess": "太棒了！你第一次就猜对了！",
+    "foundIn": "你在",
+    "tries": "次尝试中找到了神秘的宝可梦！",
+    "usedAllAttempts": "你已经用完了所有",
+    "attempts": "次尝试。明天再试吧！",
+    "generation": "世代"
+  },
+  "completion": {
+    "congratulations": "恭喜！",
+    "completed": "你完成了今天的挑战",
+    "nextChallenge": "明天回来参加新的挑战！"
+  }
+}
