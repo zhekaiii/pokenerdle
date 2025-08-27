@@ -234,9 +234,8 @@ const BattleScreen: React.FC<Props> = ({
     socket.on("wrongAnswer", ({ pokemonId, points, player, reason }) => {
       const isPlayersTurn = player === socket.id;
       const pronoun = isPlayersTurn ? "You" : "Your opponent";
-      const pokemonName = pokemonNames?.find(
-        (pokemon) => pokemon.id == pokemonId
-      )?.name;
+      const pokemonName =
+        pokemonId != undefined ? pokemonNames[pokemonId]?.name : undefined;
       toast({
         variant: "destructive",
         title: (

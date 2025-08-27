@@ -30,13 +30,17 @@ const PokemonCombobox: React.FC<Props> = ({
   className,
 }) => {
   const { pokemonIcons } = usePokemonIcons();
-  const pokemonNames = usePokemonNames();
+  const pokemonNamesMap = usePokemonNames();
+  const pokemonNames = useMemo(
+    () => Object.values(pokemonNamesMap),
+    [pokemonNamesMap]
+  );
   const filteredPokemon = useMemo(
     () =>
       new Fuse(
         pokemonNames
           ? filter
-            ? pokemonNames.filter(filter)
+            ? Object.values(pokemonNames).filter(filter)
             : pokemonNames
           : [],
         {

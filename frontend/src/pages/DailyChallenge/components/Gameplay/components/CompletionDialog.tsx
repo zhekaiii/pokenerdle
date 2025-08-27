@@ -56,9 +56,10 @@ const CompletionDialog: React.FC<Props> = ({
   const pokemonNames = usePokemonNames();
   const { loading: authLoading, isAuthenticated } = useAuth();
 
-  const pokemonName = pokemonNames?.find(
-    (pokemon) => pokemon.id === correctAnswer?.pokemonId
-  );
+  const pokemonName =
+    correctAnswer?.pokemonId != undefined
+      ? pokemonNames[correctAnswer.pokemonId]
+      : undefined;
 
   const handleShare = () => {
     posthog.capture("daily_challenge_share_clicked", {

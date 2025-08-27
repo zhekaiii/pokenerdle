@@ -99,9 +99,9 @@ export const usePokemonByGeneration = (generation: number) => {
   const pokemonNames = usePokemonNames();
 
   const pokemonForGeneration = pokemonIdsByGeneration[generation]
-    ? pokemonNames.filter((pokemon) =>
-        pokemonIdsByGeneration[generation].includes(pokemon.id)
-      )
+    ? pokemonIdsByGeneration[generation]
+        .map((id) => pokemonNames[id])
+        .filter(Boolean)
     : [];
 
   const isLoading =

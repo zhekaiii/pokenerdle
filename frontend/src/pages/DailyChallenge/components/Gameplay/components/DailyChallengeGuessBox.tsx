@@ -22,7 +22,8 @@ type Props = {
 const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
-  const pokemonName = pokemonNames?.find((p) => p.id === guess?.pokemonId);
+  const pokemonName =
+    guess?.pokemonId != undefined ? pokemonNames[guess.pokemonId] : undefined;
   const [isExpanded, setIsExpanded] = useState(false);
   const isOpen = isExpanded || forceOpen;
   const pokemonHeight = formatPokemonHeight(guess?.pokemon.height ?? 0);

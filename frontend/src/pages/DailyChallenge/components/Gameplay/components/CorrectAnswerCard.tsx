@@ -56,9 +56,10 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
   }, [correctAnswer]);
 
   const pokemonName = useMemo(() => {
-    const pokemonName = pokemonNames.find(
-      (pokemon) => pokemon.id === correctAnswer?.pokemonId
-    );
+    const pokemonName =
+      correctAnswer?.pokemonId != undefined
+        ? pokemonNames[correctAnswer.pokemonId]
+        : undefined;
     return pokemonName && getFormattedPokemonName(pokemonName);
   }, [correctAnswer?.pokemonId, pokemonNames]);
   const attempts = guesses?.guesses.length ?? 0;
