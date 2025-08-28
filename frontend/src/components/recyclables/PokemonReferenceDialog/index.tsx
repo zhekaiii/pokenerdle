@@ -113,7 +113,7 @@ const PokemonReferenceDialog: React.FC<Props> = ({
   }, [open, activeGeneration, savedScrollPositions]);
 
   return (
-    <Dialog open onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="tw:h-[80vh] tw:flex tw:flex-col">
         <DialogHeader>
           <DialogTitle>Pokemon Reference</DialogTitle>
