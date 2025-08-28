@@ -21,7 +21,7 @@ type Props = {
 };
 
 const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
-  const { t } = useTranslation("daily");
+  const { t } = useTranslation(["daily", "pokemon"]);
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
   const pokemonName =
@@ -65,8 +65,11 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                   {pokemonName?.name || pokemonName?.speciesName}
                 </h3>
                 <div className="tw:text-muted-foreground tw:text-sm">
-                  Gen {guess.pokemon.generationId} &bull; {pokemonHeight} &bull;{" "}
-                  {guess.pokemon.color}
+                  {t("pokemon:genX", {
+                    gen: guess.pokemon.generationId,
+                  })}{" "}
+                  &bull; {t("pokemon:height", { height: pokemonHeight })} &bull;{" "}
+                  {t(`colors.${guess.pokemon.color}`)}
                 </div>
               </div>
               <div className="tw:flex tw:flex-col tw:ms-auto">

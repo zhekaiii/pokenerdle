@@ -73,8 +73,7 @@
   "correctAnswer": {
     "firstGuess": "Incredible! You got it on your first guess!",
     "foundInAttempts": "You found the mystery Pokémon in {{num_guesses}}/{{max_guesses}} tries!",
-    "usedAllAttempts": "You've used all {{max_guesses}} attempts. Better luck tomorrow!",
-    "generation": "Gen"
+    "usedAllAttempts": "You've used all {{max_guesses}} attempts. Better luck tomorrow!"
   },
   "completion": {
     "congratulations": "Congratulations!",
@@ -96,5 +95,17 @@
     "gen": "Gen",
     "color": "Color",
     "height": "Height"
+  },
+  "colors": {
+    "black": "Black",
+    "blue": "Blue",
+    "brown": "Brown",
+    "gray": "Gray",
+    "green": "Green",
+    "pink": "Pink",
+    "purple": "Purple",
+    "red": "Red",
+    "white": "White",
+    "yellow": "Yellow"
   }
 }

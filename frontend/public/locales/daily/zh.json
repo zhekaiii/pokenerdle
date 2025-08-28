@@ -72,9 +72,8 @@
   },
   "correctAnswer": {
     "firstGuess": "太棒了！你第一次就猜对了！",
-    "foundIn": "你在 {{num_guesses}}/{{max_guesses}} 次尝试中找到了神秘的宝可梦！",
-    "usedAllAttempts": "你已经用完了所有 {{max_guesses}} 次尝试。明天再试吧！",
-    "generation": "世代"
+    "foundInAttempts": "你在 {{num_guesses}}/{{max_guesses}} 次尝试中找到了神秘的宝可梦！",
+    "usedAllAttempts": "你已经用完了所有 {{max_guesses}} 次尝试。明天再试吧！"
   },
   "completion": {
     "congratulations": "恭喜！",
@@ -96,5 +95,17 @@
     "gen": "世代",
     "color": "颜色",
     "height": "高度"
+  },
+  "colors": {
+    "black": "黑",
+    "blue": "蓝",
+    "brown": "棕",
+    "gray": "灰",
+    "green": "绿",
+    "pink": "粉红",
+    "purple": "紫",
+    "red": "红",
+    "white": "白",
+    "yellow": "黄"
   }
 }

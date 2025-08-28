@@ -6,13 +6,13 @@ import { DailyPokemon } from "../utils/types.js";
 export const DailyPokemonToResponse = async (
   pokemon: DailyPokemon
 ): Promise<DailyChallengeGuessResponse["pokemon"]> => {
-  const { name: color } =
-    await prisma.pokemon_v2_pokemoncolorname.findFirstOrThrow({
+  const { name: color } = await prisma.pokemon_v2_pokemoncolor.findFirstOrThrow(
+    {
       where: {
-        pokemon_color_id: pokemon.pokemon_v2_pokemonspecies!.pokemon_color_id!,
-        language_id: LanguageId.English,
+        id: pokemon.pokemon_v2_pokemonspecies!.pokemon_color_id!,
       },
-    });
+    }
+  );
 
   const nestedTypes = await prisma.pokemon_v2_pokemontype.findMany({
     where: {

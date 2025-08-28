@@ -27,7 +27,7 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
   const { hasSolved, guesses } = useDailyChallengeData();
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
-  const { t } = useTranslation("daily");
+  const { t } = useTranslation(["daily", "pokemon"]);
 
   const borderStyles = useMemo(() => {
     if (!correctAnswer) return undefined;
@@ -70,17 +70,12 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
     if (hasSolved) {
       return attempts === 1
         ? t("correctAnswer.firstGuess")
-        : t(
-          "correctAnswer.foundInAttempts",
-          {
+        : t("correctAnswer.foundInAttempts", {
             num_guesses: attempts,
             max_guesses: DAILY_CHALLENGE_GUESS_LIMIT,
-          }
-        );
+          });
     }
-    return t(
-      "correctAnswer.usedAllAttempts"
-    );
+    return t("correctAnswer.usedAllAttempts");
   }, [hasSolved, attempts, t]);
 
   if (!correctAnswer) {
@@ -104,10 +99,14 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
               <div className="tw:text-left">
                 <div className="tw:font-medium">{pokemonName}</div>
                 <div className="tw:text-sm tw:text-muted-foreground">
-                  {t("correctAnswer.generation")}{" "}
-                  {correctAnswer.pokemon.generationId} •{" "}
-                  {formatPokemonHeight(correctAnswer.pokemon.height)} •{" "}
-                  {correctAnswer.pokemon.color}
+                  {t("pokemon:genX", {
+                    gen: correctAnswer.pokemon.generationId,
+                  })}{" "}
+                  &bull;{" "}
+                  {t("pokemon:height", {
+                    height: formatPokemonHeight(correctAnswer.pokemon.height),
+                  })}
+                  &bull; {t(`colors.${correctAnswer.pokemon.color}`)}
                 </div>
               </div>
             </div>
