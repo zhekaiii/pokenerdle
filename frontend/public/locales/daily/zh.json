@@ -89,5 +89,12 @@
     "confirmGuessPrompt": "你确定要猜测 <strong>{{pokemon}}</strong> 吗？",
     "confirmGuessCancel": "取消",
     "confirmGuessGuess": "猜测"
+  },
+  "columns": {
+    "type1": "属性 1",
+    "type2": "属性 2",
+    "gen": "世代",
+    "color": "颜色",
+    "height": "高度"
   }
 }

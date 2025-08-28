@@ -9,9 +9,9 @@ export const challengeNumber =
   differenceInCalendarDays(new Date(FROZEN_DATE), DAY_1) + 1;
 
 export const COLUMNS = [
-  { label: "Type 1", key: "type1Correctness" },
-  { label: "Type 2", key: "type2Correctness" },
-  { label: "Gen", key: "genCorrectness" },
-  { label: "Color", key: "colorCorrectness" },
-  { label: "Height", key: "heightCorrectness" },
+  { label: "type1", key: "type1Correctness" },
+  { label: "type2", key: "type2Correctness" },
+  { label: "gen", key: "genCorrectness" },
+  { label: "color", key: "colorCorrectness" },
+  { label: "height", key: "heightCorrectness" },
 ] as const;

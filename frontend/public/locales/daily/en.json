@@ -89,5 +89,12 @@
     "confirmGuessPrompt": "Are you sure you want to guess <strong>{{pokemon}}</strong>?",
     "confirmGuessCancel": "Cancel",
     "confirmGuessGuess": "Guess"
+  },
+  "columns": {
+    "type1": "Type 1",
+    "type2": "Type 2",
+    "gen": "Gen",
+    "color": "Color",
+    "height": "Height"
   }
 }

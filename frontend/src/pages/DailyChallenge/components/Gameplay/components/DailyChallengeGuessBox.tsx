@@ -93,7 +93,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                 )}
               >
                 <span className={styles["DailyChallengeGameplay__GridHeader"]}>
-                  {column.label}
+                  {t(column.label)}
                 </span>
                 <DailyChallengeGuessIcon guess={guess} colKey={column.key} />
               </div>
