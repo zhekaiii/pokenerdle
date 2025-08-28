@@ -164,7 +164,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                       }}
                     />
                   ) : (
-                    t("guessDetails.notMonotype")
+                    t("guessDetails.type.notMonotype")
                   )}
                 </li>
                 <li>
