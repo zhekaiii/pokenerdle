@@ -1,4 +1,5 @@
 import placeholderIcon from "@/assets/question_mark.png";
+import { ImageWithPlaceholder } from "@/components/recyclables/PokemonReferenceDialog/ImageWithPlaceholder";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +22,7 @@ import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonByGeneration } from "@/hooks/usePokemonIdsByGeneration";
 import { MAX_GENERATION, MIN_GENERATION } from "@/lib/constants";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
+import clsx from "clsx";
 import { atom, useAtom } from "jotai";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
@@ -38,12 +40,14 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onGuess?: (pokemon: PokemonNamesResponse) => void;
+  disabled?: Set<number>;
 }
 
 const PokemonReferenceDialog: React.FC<Props> = ({
   open,
   onOpenChange,
   onGuess,
+  disabled,
 }) => {
   const { getPokemonIcon } = usePokemonIcons();
   const scrollContainerRef = useRef<Record<number, HTMLDivElement | null>>(
@@ -109,8 +113,8 @@ const PokemonReferenceDialog: React.FC<Props> = ({
   }, [open, activeGeneration, savedScrollPositions]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="tw:max-h-[80vh] tw:flex tw:flex-col">
+    <Dialog open onOpenChange={onOpenChange}>
+      <DialogContent className="tw:h-[80vh] tw:flex tw:flex-col">
         <DialogHeader>
           <DialogTitle>Pokemon Reference</DialogTitle>
           <DialogDescription>
@@ -145,34 +149,44 @@ const PokemonReferenceDialog: React.FC<Props> = ({
                 }}
               >
                 {isLoading ? (
-                  <Loader2 className="tw:w-10 tw:h-10 tw:m-auto tw:animate-spin tw:my-10" />
+                  <div className="tw:grid tw:place-content-center tw:h-full">
+                    <Loader2 className="tw:w-10 tw:h-10 tw:animate-spin" />
+                  </div>
                 ) : pokemon.length === 0 ? (
                   <div className="tw:my-10 tw:text-center">
                     No Pokemon found for Generation {gen}
                   </div>
                 ) : (
                   <div className={styles.PokemonGrid}>
-                    {pokemon.map((pokemon) => (
-                      <div
-                        key={pokemon.id}
-                        className={styles.PokemonItem}
-                        title={pokemon.name || pokemon.speciesName}
-                        onClick={() => handlePokemonClick(pokemon)}
-                      >
-                        <img
-                          src={getPokemonIcon(pokemon.id)}
-                          alt={pokemon.name || pokemon.speciesName}
-                          className={styles.PokemonIcon}
-                          loading="lazy"
-                          onError={(e) => {
-                            e.currentTarget.src = placeholderIcon;
-                          }}
-                        />
-                        <span className={styles.PokemonName}>
-                          {pokemon.name || pokemon.speciesName}
-                        </span>
-                      </div>
-                    ))}
+                    {pokemon.map((pokemon) => {
+                      const isDisabled = disabled?.has(pokemon.id);
+                      return (
+                        <div
+                          key={pokemon.id}
+                          className={clsx(
+                            styles.PokemonItem,
+                            isDisabled && styles["PokemonItem--disabled"]
+                          )}
+                          title={pokemon.name || pokemon.speciesName}
+                          onClick={() =>
+                            !isDisabled && handlePokemonClick(pokemon)
+                          }
+                        >
+                          <ImageWithPlaceholder
+                            src={getPokemonIcon(pokemon.id)}
+                            alt={pokemon.name || pokemon.speciesName}
+                            className={styles.PokemonIcon}
+                            loading="lazy"
+                            onError={(e) => {
+                              e.currentTarget.src = placeholderIcon;
+                            }}
+                          />
+                          <span className={styles.PokemonName}>
+                            {pokemon.name || pokemon.speciesName}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </TabsContent>

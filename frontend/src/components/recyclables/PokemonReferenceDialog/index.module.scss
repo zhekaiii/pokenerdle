@@ -13,15 +13,22 @@
   border-radius: 0.5rem;
   border: 1px solid hsl(var(--border));
   transition: all 0.2s ease-in-out;
-  cursor: pointer;
 
-  &:hover {
-    background-color: var(--muted);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  &--disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+  }
 
-    img {
-      animation: bobbing 0.8s infinite steps(2);
+  &:not(.PokemonItem--disabled) {
+    cursor: pointer;
+    &:hover {
+      background-color: var(--muted);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+      img {
+        animation: bobbing 0.8s infinite steps(2);
+      }
     }
   }
 }

@@ -206,6 +206,9 @@ const DailyChallengeGameplay: React.FC = () => {
           onSelectPokemon(pokemon);
           setShowPokemonReference(false);
         }}
+        disabled={
+          new Set(guesses?.guesses.map(({ pokemonId }) => pokemonId) ?? [])
+        }
       />
     </div>
   );
