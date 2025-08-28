@@ -72,10 +72,8 @@
   },
   "correctAnswer": {
     "firstGuess": "Incredible! You got it on your first guess!",
-    "foundIn": "You found the mystery Pokémon in",
-    "tries": "tries!",
-    "usedAllAttempts": "You've used all",
-    "attempts": "attempts. Better luck tomorrow!",
+    "foundInAttempts": "You found the mystery Pokémon in {{num_guesses}}/{{max_guesses}} tries!",
+    "usedAllAttempts": "You've used all {{max_guesses}} attempts. Better luck tomorrow!",
     "generation": "Gen"
   },
   "completion": {

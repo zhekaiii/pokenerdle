@@ -72,10 +72,8 @@
   },
   "correctAnswer": {
     "firstGuess": "太棒了！你第一次就猜对了！",
-    "foundIn": "你在",
-    "tries": "次尝试中找到了神秘的宝可梦！",
-    "usedAllAttempts": "你已经用完了所有",
-    "attempts": "次尝试。明天再试吧！",
+    "foundIn": "你在 {{num_guesses}}/{{max_guesses}} 次尝试中找到了神秘的宝可梦！",
+    "usedAllAttempts": "你已经用完了所有 {{max_guesses}} 次尝试。明天再试吧！",
     "generation": "世代"
   },
   "completion": {

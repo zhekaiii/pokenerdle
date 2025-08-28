@@ -70,15 +70,17 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
     if (hasSolved) {
       return attempts === 1
         ? t("correctAnswer.firstGuess")
-        : `${t(
-            "correctAnswer.foundIn"
-          )} ${attempts}/${DAILY_CHALLENGE_GUESS_LIMIT} ${t(
-            "correctAnswer.tries"
-          )}`;
+        : t(
+          "correctAnswer.foundInAttempts",
+          {
+            num_guesses: attempts,
+            max_guesses: DAILY_CHALLENGE_GUESS_LIMIT,
+          }
+        );
     }
-    return `${t(
+    return t(
       "correctAnswer.usedAllAttempts"
-    )} ${DAILY_CHALLENGE_GUESS_LIMIT} ${t("correctAnswer.attempts")}`;
+    );
   }, [hasSolved, attempts, t]);
 
   if (!correctAnswer) {
