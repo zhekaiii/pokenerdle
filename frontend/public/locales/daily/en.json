@@ -39,27 +39,27 @@
   },
   "guessDetails": {
     "correct": "You are correct!",
-    "typeAlso": "Target is also a",
-    "type": "type!",
-    "typeMovesDeal": "type moves deal",
-    "damageAgainstTarget": "x damage against the target (ignoring abilities).",
-    "mono": "mono",
-    "notMonotype": "Target is not a monotype",
-    "sameGeneration": "Target is from the same generation!",
-    "fromGeneration": "Target is from",
-    "earlier": "an earlier",
-    "later": "a later",
-    "generation": "generation.",
-    "alsoColor": "Target's base form is also",
-    "inColor": "in color!",
-    "notColor": "Target's base form is not",
-    "notInColor": "in color.",
-    "alsoHeight": "Target is also",
-    "mTall": "m tall!",
-    "isHeight": "Target is",
-    "shorter": "shorter",
-    "taller": "taller",
-    "than": "than"
+    "type": {
+      "correct": "Target is also a <type></type> type!",
+      "incorrect_zero": "<type></type> type moves has no effect against the target (ignoring abilities).",
+      "incorrect_other": "<type></type> type moves deal {{count}}x damage against the target (ignoring abilities).",
+      "alsoMono": "Target is also a monotype!",
+      "notMonotype": "Target is not a monotype"
+    },
+    "generation": {
+      "correct": "Target is from the same generation!",
+      "earlier": "Target is from an earlier generation!",
+      "later": "Target is from a later generation!"
+    },
+    "color": {
+      "correct": "Target's base form is also {{color}} in color!",
+      "incorrect": "Target's base form is not {{color}} in color!"
+    },
+    "height": {
+      "correct": "Target is also {{height}}!",
+      "shorter": "Target is shorter than {{height}}!",
+      "taller": "Target is taller than {{height}}!"
+    }
   },
   "gameplay": {
     "foundPokemon": "You have found the mystery Pokémon!",

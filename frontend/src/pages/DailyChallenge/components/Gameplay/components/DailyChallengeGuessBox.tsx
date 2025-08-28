@@ -5,7 +5,7 @@ import { COLUMNS } from "@/pages/DailyChallenge/constants";
 import { formatPokemonHeight } from "@/utils/formatters";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import React, { memo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { DailyChallengeGuessIcon } from "../../DailyChallengeGuessIcon";
 
 import placeholderIcon from "@/assets/question_mark.png";
@@ -121,81 +121,94 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
               <>
                 <li>
                   {guess.type1Correctness === "=" ? (
-                    <>
-                      {t("guessDetails.typeAlso")}{" "}
-                      <TypeChip type={guess.pokemon.type1} />{" "}
-                      {t("guessDetails.type")}
-                    </>
+                    <Trans
+                      ns="daily"
+                      i18nKey="guessDetails.type.correct"
+                      components={{
+                        type: <TypeChip type={guess.pokemon.type1} />,
+                      }}
+                    />
                   ) : (
-                    <>
-                      <TypeChip type={guess.pokemon.type1} />{" "}
-                      {t("guessDetails.typeMovesDeal")} {guess.type1Correctness}
-                      {t("guessDetails.damageAgainstTarget")}
-                    </>
+                    <Trans
+                      ns="daily"
+                      i18nKey="guessDetails.type.incorrect"
+                      count={guess.type1Correctness}
+                      components={{
+                        type: <TypeChip type={guess.pokemon.type1} />,
+                      }}
+                    />
                   )}
                 </li>
                 <li>
                   {guess.type2Correctness === "=" ? (
                     <>
-                      {t("guessDetails.typeAlso")}{" "}
                       {guess.pokemon.type2 ? (
-                        <TypeChip type={guess.pokemon.type2} />
+                        <Trans
+                          ns="daily"
+                          i18nKey="guessDetails.type.correct"
+                          components={{
+                            type: <TypeChip type={guess.pokemon.type2} />,
+                          }}
+                        />
                       ) : (
-                        t("guessDetails.mono")
-                      )}{" "}
-                      {t("guessDetails.type")}
+                        t("guessDetails.type.alsoMono")
+                      )}
                     </>
                   ) : guess.pokemon.type2 ? (
-                    <>
-                      <TypeChip type={guess.pokemon.type2} />{" "}
-                      {t("guessDetails.typeMovesDeal")} {guess.type2Correctness}
-                      {t("guessDetails.damageAgainstTarget")}
-                    </>
+                    <Trans
+                      ns="daily"
+                      i18nKey="guessDetails.type.incorrect"
+                      count={guess.type2Correctness as number}
+                      components={{
+                        type: <TypeChip type={guess.pokemon.type2} />,
+                      }}
+                    />
                   ) : (
                     t("guessDetails.notMonotype")
                   )}
                 </li>
                 <li>
                   {guess.genCorrectness === "=" ? (
-                    <>{t("guessDetails.sameGeneration")}</>
+                    <>{t("guessDetails.generation.correct")}</>
                   ) : (
                     <>
-                      {t("guessDetails.fromGeneration")}{" "}
                       {guess.genCorrectness === "<"
-                        ? t("guessDetails.earlier")
-                        : t("guessDetails.later")}{" "}
-                      {t("guessDetails.generation")}
+                        ? t("guessDetails.generation.earlier")
+                        : t("guessDetails.generation.later")}
                     </>
                   )}
                 </li>
                 <li>
                   {guess.colorCorrectness ? (
                     <>
-                      {t("guessDetails.alsoColor")}{" "}
-                      {guess.pokemon.color.toLowerCase()}{" "}
-                      {t("guessDetails.inColor")}
+                      {t("guessDetails.color.correct", {
+                        color: t(`colors.${guess.pokemon.color}`).toLowerCase(),
+                      })}
                     </>
                   ) : (
                     <>
-                      {t("guessDetails.notColor")}{" "}
-                      {guess.pokemon.color.toLowerCase()}{" "}
-                      {t("guessDetails.notInColor")}
+                      {t("guessDetails.color.incorrect", {
+                        color: t(`colors.${guess.pokemon.color}`).toLowerCase(),
+                      })}
                     </>
                   )}
                 </li>
                 <li>
                   {guess.heightCorrectness === "=" ? (
                     <>
-                      {t("guessDetails.alsoHeight")} {pokemonHeight}{" "}
-                      {t("guessDetails.mTall")}
+                      {t("guessDetails.height.correct", {
+                        height: pokemonHeight,
+                      })}
                     </>
                   ) : (
                     <>
-                      {t("guessDetails.isHeight")}{" "}
                       {guess.heightCorrectness === "<"
-                        ? t("guessDetails.shorter")
-                        : t("guessDetails.taller")}{" "}
-                      {t("guessDetails.than")} {pokemonHeight}.
+                        ? t("guessDetails.height.shorter", {
+                            height: pokemonHeight,
+                          })
+                        : t("guessDetails.height.taller", {
+                            height: pokemonHeight,
+                          })}
                     </>
                   )}
                 </li>

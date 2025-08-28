@@ -39,27 +39,27 @@
   },
   "guessDetails": {
     "correct": "你猜对了！",
-    "typeAlso": "目标也是",
-    "type": "属性！",
-    "typeMovesDeal": "属性招式对目标造成",
-    "damageAgainstTarget": "倍伤害（忽略特性）。",
-    "mono": "单一",
-    "notMonotype": "目标不是单属性",
-    "sameGeneration": "目标来自同一世代！",
-    "fromGeneration": "目标来自",
-    "earlier": "较早的",
-    "later": "较晚的",
-    "generation": "世代。",
-    "alsoColor": "目标的基础形态也是",
-    "inColor": "颜色！",
-    "notColor": "目标的基础形态不是",
-    "notInColor": "颜色。",
-    "alsoHeight": "目标也是",
-    "mTall": "米高！",
-    "isHeight": "目标",
-    "shorter": "更矮",
-    "taller": "更高",
-    "than": "比"
+    "type": {
+      "correct": "目标也是 <type></type> 属性！",
+      "incorrect_zero": "<type></type> 属性招式对目标没有效果（无视特性）。",
+      "incorrect_other": "<type></type> 属性招式对目标造成{{count}}倍伤害（无视特性）。",
+      "alsoMono": "目标也是单属性！",
+      "notMonotype": "目标不是单属性"
+    },
+    "generation": {
+      "correct": "目标来自同一世代！",
+      "earlier": "目标来自较早的世代！",
+      "later": "目标来自较晚的世代！"
+    },
+    "color": {
+      "correct": "目标的基础形态也是{{color}}色！",
+      "incorrect": "目标的基础形态不是{{color}}色！"
+    },
+    "height": {
+      "correct": "目标也是{{height}}米高！",
+      "shorter": "目标比{{height}}米矮！",
+      "taller": "目标比{{height}}米高！"
+    }
   },
   "gameplay": {
     "foundPokemon": "你找到了神秘的宝可梦！",
@@ -83,15 +83,15 @@
   "pokemonReference": {
     "title": "宝可梦图鉴",
     "modalDescription": "请注意部分图标可能不准确。你也可以点击宝可梦进行猜测。",
-    "noPokemonFound": "没有找到第 {{gen}} 世代的宝可梦",
+    "noPokemonFound": "没有找到第{{gen}}世代的宝可梦",
     "confirmGuessTitle": "确认猜测",
     "confirmGuessPrompt": "你确定要猜测 <strong>{{pokemon}}</strong> 吗？",
     "confirmGuessCancel": "取消",
     "confirmGuessGuess": "猜测"
   },
   "columns": {
-    "type1": "属性 1",
-    "type2": "属性 2",
+    "type1": "属性1",
+    "type2": "属性2",
     "gen": "世代",
     "color": "颜色",
     "height": "高度"
