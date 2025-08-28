@@ -13,16 +13,9 @@ import {
 } from "@/components/ui/DropdownMenu";
 import { useGoogleSignIn } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
+import clsx from "clsx";
 import { useAtom } from "jotai";
-import {
-  Check,
-  Loader2,
-  LogOut,
-  Monitor,
-  Moon,
-  Settings,
-  Sun,
-} from "lucide-react";
+import { Loader2, LogOut, Monitor, Moon, Settings, Sun } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
@@ -75,17 +68,25 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
               return (
                 <DropdownMenuItem
                   key={theme}
-                  className="tw:capitalize tw:justify-between"
+                  className={clsx(
+                    "tw:capitalize tw:justify-between tw:not-last:mb-1",
+                    theme === currentTheme &&
+                      "tw:bg-primary! tw:text-primary-foreground!"
+                  )}
                   onSelect={(e) => {
                     e.preventDefault();
                     setCurrentTheme(theme);
                   }}
                 >
                   <span>
-                    <Icon className="tw:me-2 tw:inline-block" />
+                    <Icon
+                      className={clsx(
+                        "tw:me-2 tw:inline-block",
+                        theme === currentTheme && "tw:text-inherit"
+                      )}
+                    />
                     {t(`nav:${theme}`)}
                   </span>
-                  {theme === currentTheme && <Check />}
                 </DropdownMenuItem>
               );
             })}
