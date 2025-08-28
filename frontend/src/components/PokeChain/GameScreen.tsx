@@ -5,9 +5,9 @@ import BattleScreen from "./BattleScreen";
 import GamePreparation from "./GamePreparation";
 import { usePokeChainContext } from "./context/PokeChainContext";
 
-type Props = {
+interface Props {
   exitRoom: () => void;
-};
+}
 
 const GameScreen: React.FC<Props> = ({ exitRoom }) => {
   const socket = useSocket();

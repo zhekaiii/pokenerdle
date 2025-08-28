@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { PopoverContentProps } from "@radix-ui/react-popover";
 import { Input } from "./Input";
 
-type ComboboxProps<T> = {
+interface ComboboxProps<T> {
   options: T[];
   getOptionLabel: (option: T) => string;
   getOptionValue: (option: T) => React.Key;
@@ -33,7 +33,7 @@ type ComboboxProps<T> = {
   loop?: boolean;
   popoverSide?: PopoverContentProps["side"];
   className?: string;
-};
+}
 
 const ComboBox = (<T,>({
   options,

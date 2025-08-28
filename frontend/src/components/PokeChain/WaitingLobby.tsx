@@ -4,10 +4,10 @@ import { X } from "lucide-react";
 import React, { useCallback, useMemo, useState } from "react";
 import classes from "./WaitingLobby.module.scss";
 
-type Props = {
+interface Props {
   roomCode: string;
   exitRoom: () => void;
-};
+}
 
 const WaitingLobby: React.FC<Props> = ({ roomCode, exitRoom }) => {
   const [buttonLabel, setButtonLabel] = useState("Copy invite link");

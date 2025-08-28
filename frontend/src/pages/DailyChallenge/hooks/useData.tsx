@@ -15,13 +15,13 @@ import { CheckCircle } from "lucide-react";
 import posthog from "posthog-js";
 import { useEffect, useMemo, useState } from "react";
 
-export type DailyChallenge = {
+export interface DailyChallenge {
   date: string;
   guesses: DailyChallengeGuessResponse[];
   synced?: boolean;
-};
+}
 
-export type CorrectAnswer = {
+export interface CorrectAnswer {
   pokemonId: number;
   pokemon: {
     type1: string;
@@ -30,7 +30,7 @@ export type CorrectAnswer = {
     generationId: number;
     color: string;
   };
-};
+}
 
 export const guessesAtom = atomWithStorage<DailyChallenge | null>(
   DAILY_CHALLENGE_KEY,

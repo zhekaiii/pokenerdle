@@ -5,12 +5,12 @@ import battleBoardClasses from "../PokeChain/BattleBoard.module.scss";
 import LinkChip from "../PokeChain/LinkChip";
 import PokemonCard from "../recyclables/PokemonCard";
 
-type Props = {
+interface Props {
   startPokemon: PokemonWithAbilities;
   endPokemon: PokemonWithAbilities;
   pathPokemon: PokemonWithAbilities[];
   onRemove: (index: number) => void;
-};
+}
 
 const PathBoard: React.FC<Props> = ({
   startPokemon,

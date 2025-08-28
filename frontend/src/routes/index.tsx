@@ -3,9 +3,9 @@ import Layout from "@/layout/Layout";
 import { createBrowserRouter, Navigate, RouteObject } from "react-router";
 import HowToPlayPage from "../pages/HowToPlay";
 
-export type RouteHandle = {
+export interface RouteHandle {
   shouldShowRuleButton?: boolean;
-};
+}
 
 const routes: RouteObject[] = [
   {

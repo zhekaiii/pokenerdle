@@ -2,9 +2,9 @@ import LinkButton from "@/components/recyclables/LinkButton";
 import React from "react";
 import { useLocation } from "react-router";
 
-type Props = {
+interface Props {
   className?: string;
-};
+}
 
 const RulePageButton: React.FC<Props> = ({ className }) => {
   const location = useLocation();

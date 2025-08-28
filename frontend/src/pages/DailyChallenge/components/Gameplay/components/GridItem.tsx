@@ -2,10 +2,10 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import styles from "../index.module.scss";
 
-type Props = {
+interface Props {
   children: React.ReactNode;
   className?: string;
-};
+}
 
 const GridItem: React.FC<Props> = ({ className, children }) => {
   return (

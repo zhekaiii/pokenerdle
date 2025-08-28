@@ -13,10 +13,10 @@ import { TrendingUp } from "lucide-react";
 import posthog from "posthog-js";
 import React, { useEffect, useState } from "react";
 
-type Props = {
+interface Props {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-};
+}
 
 const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
   const { loading: authLoading, isAuthenticated } = useAuth();

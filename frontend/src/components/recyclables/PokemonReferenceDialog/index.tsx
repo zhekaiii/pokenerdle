@@ -34,11 +34,11 @@ const generations = Array.from(
   (_, i) => MIN_GENERATION + i
 );
 
-type Props = {
+interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onGuess?: (pokemon: PokemonNamesResponse) => void;
-};
+}
 
 const PokemonReferenceDialog: React.FC<Props> = ({
   open,

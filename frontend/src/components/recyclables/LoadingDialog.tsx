@@ -10,9 +10,9 @@ import {
   DialogTitle,
 } from "../ui/Dialog";
 
-type Props = {
+interface Props {
   open: boolean;
-};
+}
 
 const LoadingDialog: React.FC<Props> = ({ open }) => {
   return (

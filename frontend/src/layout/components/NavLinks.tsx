@@ -2,9 +2,9 @@ import LinkButton from "@/components/recyclables/LinkButton";
 import React from "react";
 import RulePageButton from "./RulePageButton";
 
-type Props = {
+interface Props {
   className?: string;
-};
+}
 
 const NavLinks: React.FC<Props> = ({ className }) => {
   return (

@@ -13,13 +13,13 @@ import {
 import { Card, CardContent } from "../../ui/Card";
 import classes from "./index.module.scss";
 
-type Props = {
+interface Props {
   pokemon: PokemonWithAbilities;
   showAbility?: boolean;
   removable?: boolean;
   sharedLinks?: Record<string, number>;
   onRemove?: () => void;
-};
+}
 
 const SHINY_PROBABILITY = 1 / 2 ** 12;
 

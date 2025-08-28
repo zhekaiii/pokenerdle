@@ -14,10 +14,10 @@ import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 import styles from "../index.module.scss";
 
-type Props = {
+interface Props {
   guess?: DailyChallengeGuessResponse;
   forceOpen?: boolean;
-};
+}
 
 const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
   const { getPokemonIcon } = usePokemonIcons();

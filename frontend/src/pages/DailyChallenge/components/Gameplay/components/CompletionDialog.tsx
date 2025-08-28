@@ -25,7 +25,7 @@ import {
 } from "../../../constants";
 import { shareResults } from "../../../utils/share";
 
-type Props = {
+interface Props {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   guesses: DailyChallengeGuessResponse[];
@@ -42,7 +42,7 @@ type Props = {
     };
   };
   onShowStatsDialog?: () => void;
-};
+}
 
 const CompletionDialog: React.FC<Props> = ({
   open,

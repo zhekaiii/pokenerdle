@@ -7,11 +7,11 @@ import { Slider } from "../ui/Slider";
 import { Switch } from "../ui/Switch";
 import classes from "./GameSettings.module.scss";
 
-type Props = {
+interface Props {
   settings: BattleRoomSettings;
   setTimer?: (timer: number) => void;
   setShowAbility?: (showAbility: boolean) => void;
-};
+}
 
 const MAX_TIMER = 90;
 const MIN_TIMER = 5;

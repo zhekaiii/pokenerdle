@@ -2,12 +2,12 @@ import { PathFinderResponse } from "@pokenerdle/shared";
 import posthog from "posthog-js";
 import { useEffect, useRef } from "react";
 
-type UseEventTrackingProps = {
+interface UseEventTrackingProps {
   challenge: PathFinderResponse | null;
   isPuzzleSolved: boolean;
   startTime: number;
   numGuesses: number;
-};
+}
 
 export const useEventTracking = ({
   challenge,

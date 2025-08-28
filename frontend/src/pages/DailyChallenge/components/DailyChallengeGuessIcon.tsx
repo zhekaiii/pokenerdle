@@ -3,10 +3,10 @@ import { ArrowDown, ArrowUp, Check, X } from "lucide-react";
 import { COLUMNS } from "../constants";
 import EffectivenessIcon from "./EffectivenessIcon";
 
-type Props = {
+interface Props {
   guess: DailyChallengeGuessResponse;
   colKey: (typeof COLUMNS)[number]["key"];
-};
+}
 
 export const DailyChallengeGuessIcon: React.FC<Props> = ({ guess, colKey }) => {
   if (guess.correct) return <Check />;
