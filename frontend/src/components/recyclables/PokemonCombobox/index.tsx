@@ -10,6 +10,8 @@ import classes from "./index.module.scss";
 
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import Fuse from "fuse.js";
+import pinyin from "pinyin";
+import { useTranslation } from "react-i18next";
 interface Props {
   input: string;
   setInput: (input: string) => void;
@@ -29,11 +31,27 @@ const PokemonCombobox: React.FC<Props> = ({
   filter,
   className,
 }) => {
+  const {
+    i18n: { resolvedLanguage },
+  } = useTranslation();
+  const needsPinyin = resolvedLanguage === "zh";
   const { pokemonIcons } = usePokemonIcons();
   const pokemonNamesMap = usePokemonNames();
   const pokemonNames = useMemo(
-    () => Object.values(pokemonNamesMap),
-    [pokemonNamesMap]
+    () =>
+      needsPinyin
+        ? Object.values(pokemonNamesMap).map((pokemon) => {
+            const py = pinyin(pokemon.name, {
+              style: pinyin.STYLE_NORMAL,
+            });
+            return {
+              ...pokemon,
+              pinyin: py.join(" "),
+              initials: py.map((p) => p[0]).join(""),
+            };
+          })
+        : Object.values(pokemonNamesMap),
+    [pokemonNamesMap, needsPinyin]
   );
   const filteredPokemon = useMemo(
     () =>
@@ -44,10 +62,12 @@ const PokemonCombobox: React.FC<Props> = ({
             : pokemonNames
           : [],
         {
-          keys: ["name", { name: "speciesName", weight: 2 }],
+          keys: needsPinyin
+            ? ["pinyin", "initials", "name", { name: "speciesName", weight: 2 }]
+            : ["name", { name: "speciesName", weight: 2 }],
         }
       ),
-    [pokemonNames, filter]
+    [pokemonNames, filter, needsPinyin]
   );
   const suggestions = useMemo(
     () => filteredPokemon.search(input, { limit: 10 }).map(({ item }) => item),
