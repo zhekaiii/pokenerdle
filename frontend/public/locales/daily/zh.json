@@ -80,5 +80,14 @@
     "congratulations": "恭喜！",
     "completed": "你完成了今天的挑战",
     "nextChallenge": "明天回来参加新的挑战！"
+  },
+  "pokemonReference": {
+    "title": "宝可梦图鉴",
+    "modalDescription": "请注意部分图标可能不准确。你也可以点击宝可梦进行猜测。",
+    "noPokemonFound": "没有找到第 {{gen}} 世代的宝可梦",
+    "confirmGuessTitle": "确认猜测",
+    "confirmGuessPrompt": "你确定要猜测 <strong>{{pokemon}}</strong> 吗？",
+    "confirmGuessCancel": "取消",
+    "confirmGuessGuess": "猜测"
   }
 }

@@ -80,5 +80,14 @@
     "congratulations": "Congratulations!",
     "completed": "You completed today's challenge",
     "nextChallenge": "Come back tomorrow for a new challenge!"
+  },
+  "pokemonReference": {
+    "title": "Pokémon Reference",
+    "modalDescription": "Note that some icons might be inaccurate. You can click on a Pokémon to make a guess.",
+    "noPokemonFound": "No Pokemon found for Generation {{gen}}",
+    "confirmGuessTitle": "Confirm Guess",
+    "confirmGuessPrompt": "Are you sure you want to guess <strong>{{pokemon}}</strong>?",
+    "confirmGuessCancel": "Cancel",
+    "confirmGuessGuess": "Guess"
   }
 }
