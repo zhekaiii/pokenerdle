@@ -20,7 +20,7 @@ export default defineConfig([
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "react/prop-types": "off",
-      "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+      "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
       "react/react-in-jsx-scope": "off",
     },
     settings: {

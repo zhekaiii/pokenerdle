@@ -1,7 +1,7 @@
 import { BattleRoomSettings, PokemonWithAbilities } from "@pokenerdle/shared";
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
-type PokeChainContextType = {
+interface PokeChainContextType {
   settings: BattleRoomSettings;
   roomCode: string | null;
   isOpponentConnected: boolean;
@@ -14,7 +14,7 @@ type PokeChainContextType = {
   setStarterPokemon: React.Dispatch<
     React.SetStateAction<PokemonWithAbilities | null>
   >;
-};
+}
 
 const PokeChainContext = createContext<PokeChainContextType | undefined>(
   undefined
@@ -30,9 +30,9 @@ export const usePokeChainContext = () => {
   return context;
 };
 
-type PokeChainContextProviderProps = {
+interface PokeChainContextProviderProps {
   children: ReactNode;
-};
+}
 
 export const PokeChainContextProvider: React.FC<
   PokeChainContextProviderProps

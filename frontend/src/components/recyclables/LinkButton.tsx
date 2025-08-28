@@ -2,12 +2,12 @@ import React from "react";
 import { Link, To, useMatch } from "react-router";
 import { Button } from "../ui/Button";
 
-type Props = {
+interface Props {
   to: To;
   children: React.ReactNode;
   className?: string;
   activeOverride?: boolean;
-};
+}
 
 const LinkButton: React.FC<Props> = ({
   to,

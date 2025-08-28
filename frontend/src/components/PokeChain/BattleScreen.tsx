@@ -44,12 +44,12 @@ import GameHeader from "./GameHeader";
 import LinkChip from "./LinkChip";
 import { usePokeChainContext } from "./context/PokeChainContext";
 
-type Props = {
+interface Props {
   isGoingFirst: boolean;
   starterPokemon: PokemonGuess;
   goBackToPreparation: () => void;
   exitRoom: () => void;
-};
+}
 
 const BattleScreen: React.FC<Props> = ({
   isGoingFirst,

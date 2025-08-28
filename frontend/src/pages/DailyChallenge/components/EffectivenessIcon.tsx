@@ -7,9 +7,9 @@ import NotVeryEffective from "@/assets/icons/effectiveness/NotVeryEffective.svg?
 import SuperEffective from "@/assets/icons/effectiveness/SuperEffective.svg?react";
 import React from "react";
 
-type Props = {
+interface Props {
   value: number | "NA";
-};
+}
 
 const EffectivenessIcon: React.FC<Props> = ({ value }) => {
   switch (value) {

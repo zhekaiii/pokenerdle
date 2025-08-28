@@ -32,10 +32,10 @@ const themeIcons = {
   system: Monitor,
 };
 
-type ProfileDropdownMenuProps = {
+interface ProfileDropdownMenuProps {
   trigger: React.ReactNode;
   triggerAsChild?: boolean;
-};
+}
 
 export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
   trigger,

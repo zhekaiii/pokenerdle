@@ -19,9 +19,9 @@ import classes from "./CorrectAnswerCard.module.scss";
 // will be overpowered by the other colours.
 const NEUTRAL_COLOURS = ["normal", "dark", "rock"];
 
-type Props = {
+interface Props {
   correctAnswer: CorrectAnswer | null;
-};
+}
 
 const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
   const { hasSolved, guesses } = useDailyChallengeData();

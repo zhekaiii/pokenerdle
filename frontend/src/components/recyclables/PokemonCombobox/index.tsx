@@ -10,7 +10,7 @@ import classes from "./index.module.scss";
 
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import Fuse from "fuse.js";
-type Props = {
+interface Props {
   input: string;
   setInput: (input: string) => void;
   disabled?: boolean;
@@ -18,7 +18,7 @@ type Props = {
   side?: PopoverContentProps["side"];
   filter?: (pokemon: PokemonNamesResponse) => boolean;
   className?: string;
-};
+}
 
 const PokemonCombobox: React.FC<Props> = ({
   input,

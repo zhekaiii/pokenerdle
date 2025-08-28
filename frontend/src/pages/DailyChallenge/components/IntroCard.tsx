@@ -14,9 +14,9 @@ import { Link } from "react-router";
 import { challengeNumber } from "../constants";
 import { useDailyChallengeData } from "../hooks/useData";
 
-type Props = {
+interface Props {
   onStart: () => void;
-};
+}
 
 const DailyChallengeIntroCard: React.FC<Props> = ({ onStart }) => {
   const { guesses, isGameFinished } = useDailyChallengeData();

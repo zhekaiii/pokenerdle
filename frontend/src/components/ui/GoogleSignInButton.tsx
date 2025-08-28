@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { Button, ButtonProps } from "./Button";
 
-type UseGoogleSignInProps = {
+interface UseGoogleSignInProps {
   onSignIn?: () => void;
   redirectTo?: string;
-};
+}
 
 export const useGoogleSignIn = ({
   onSignIn,

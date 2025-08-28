@@ -6,13 +6,13 @@ import PokemonCard from "../recyclables/PokemonCard";
 import battleBoardClasses from "./BattleBoard.module.scss";
 import LinkChip from "./LinkChip";
 
-type Props = {
+interface Props {
   pokemons: PokemonGuess[];
   showAbility: boolean;
   isGameEnded: boolean;
   sharedLinks: Record<string, number>;
   evolutionLinkCount: Record<string, number>;
-};
+}
 
 const BattleBoard: React.FC<Props> = ({
   pokemons,

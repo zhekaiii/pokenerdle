@@ -3,9 +3,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
 
-type Props = {
+interface Props {
   className?: string;
-};
+}
 
 const RulePageButton: React.FC<Props> = ({ className }) => {
   const { t } = useTranslation();

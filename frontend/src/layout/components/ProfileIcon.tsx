@@ -3,9 +3,9 @@ import clsx from "clsx";
 import { UserCircle } from "lucide-react";
 import { useState } from "react";
 
-type Props = {
+interface Props {
   sizeClassName?: string;
-};
+}
 
 export const ProfileIcon: React.FC<Props> = ({
   sizeClassName = "tw:size-5",

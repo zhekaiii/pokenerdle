@@ -3,13 +3,13 @@ import AnimatedNumber from "../recyclables/AnimatedNumber";
 import { Card } from "../ui/Card";
 import { usePokeChainContext } from "./context/PokeChainContext";
 
-type GameHeaderProps = {
+interface GameHeaderProps {
   playerPoints: number;
   opponentPoints: number;
   playerStreak: number;
   opponentStreak: number;
   chainLength: number;
-};
+}
 
 const GameHeader: React.FC<GameHeaderProps> = ({
   playerPoints,

@@ -5,10 +5,10 @@ import classes from "./GamePreparation.module.scss";
 import GameSettings from "./GameSettings";
 import { usePokeChainContext } from "./context/PokeChainContext";
 
-type Props = {
+interface Props {
   isGoingFirst?: boolean;
   exitRoom: () => void;
-};
+}
 
 const GamePreparation: React.FC<Props> = ({ isGoingFirst, exitRoom }) => {
   const socket = useSocket();

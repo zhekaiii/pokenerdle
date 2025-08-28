@@ -3,9 +3,9 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import styles from "./Card.module.scss";
 
-type CardProps = {
+interface CardProps {
   responsive?: boolean;
-};
+}
 
 function Card({
   className,
