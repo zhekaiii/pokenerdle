@@ -110,7 +110,6 @@ type Props = {
 const TypeChip: React.FC<Props> = ({
   size = 24,
   type,
-  children,
   className,
   ...props
 }) => {
@@ -130,8 +129,8 @@ const TypeChip: React.FC<Props> = ({
       {...props}
     >
       <img style={{ height: `${size}px`, width: `${size}px` }} src={icon} />
-      <span>
-        {translatedType} {children}
+      <span className="tw:flex-1 tw:text-center tw:whitespace-nowrap">
+        {translatedType}
       </span>
     </div>
   );
