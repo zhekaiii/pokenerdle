@@ -75,7 +75,9 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
             max_guesses: DAILY_CHALLENGE_GUESS_LIMIT,
           });
     }
-    return t("correctAnswer.usedAllAttempts");
+    return t("correctAnswer.usedAllAttempts", {
+      max_guesses: DAILY_CHALLENGE_GUESS_LIMIT,
+    });
   }, [hasSolved, attempts, t]);
 
   if (!correctAnswer) {
