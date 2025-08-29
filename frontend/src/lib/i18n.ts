@@ -11,11 +11,15 @@ i18n
     backend: {
       loadPath: "/locales/{{ns}}/{{lng}}.json",
     },
-    fallbackLng: {
-      en: ["en"],
-      zh: ["zh"],
+    supportedLngs: ["en", "zh"],
+    nonExplicitSupportedLngs: true,
+    fallbackLng: (code: string) => {
+      if (code.startsWith("en")) return ["en"];
+      if (code.startsWith("zh")) return ["zh"];
+      return ["en"];
     },
     debug: import.meta.env.DEV,
+    load: "languageOnly",
 
     interpolation: {
       escapeValue: false,
