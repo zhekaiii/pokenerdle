@@ -69,7 +69,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                     gen: guess.pokemon.generationId,
                   })}{" "}
                   &bull; {t("pokemon:height", { height: pokemonHeight })} &bull;{" "}
-                  {t(`colors.${guess.pokemon.color}`)}
+                  {t(`colors.${guess.pokemon.color.toLowerCase()}`)}
                 </div>
               </div>
               <div className="tw:flex tw:flex-col tw:ms-auto">

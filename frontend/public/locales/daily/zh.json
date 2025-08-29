@@ -42,8 +42,7 @@
     "correct": "你猜对了！",
     "type": {
       "correct": "目标也是 <type></type> 属性！",
-      "incorrect_zero": "<type></type> 属性招式对目标没有效果（无视特性）。",
-      "incorrect_other": "<type></type> 属性招式对目标造成{{count}}倍伤害（无视特性）。",
+      "incorrect": "<type></type> 属性招式对目标造成{{count}}倍伤害（无视特性）。",
       "alsoMono": "目标也是单属性！",
       "notMonotype": "目标不是单属性"
     },
@@ -87,7 +86,7 @@
     "modalDescription": "请注意部分图标可能不准确。你也可以点击宝可梦进行猜测。",
     "noPokemonFound": "没有找到第{{gen}}世代的宝可梦",
     "confirmGuessTitle": "确认猜测",
-    "confirmGuessPrompt": "你确定要猜测 <strong>{{pokemon}}</strong> 吗？",
+    "confirmGuessPrompt": "你确定要猜测<strong>{{pokemon}}</strong>吗？",
     "confirmGuessCancel": "取消",
     "confirmGuessGuess": "猜测"
   },

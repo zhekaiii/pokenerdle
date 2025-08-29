@@ -26,8 +26,8 @@ import clsx from "clsx";
 import { atom, useAtom } from "jotai";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import styles from "./index.module.scss";
-import { useTranslation } from "react-i18next";
 
 const dialogScrollPositionsAtom = atom<Record<string, number>>({});
 const tabAtom = atom(MIN_GENERATION);
@@ -194,12 +194,21 @@ const PokemonReferenceDialog: React.FC<Props> = ({
       <AlertDialog open={confirmGuessOpen} onOpenChange={setConfirmGuessOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("pokemonReference.confirmGuessTitle")}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("pokemonReference.confirmGuessTitle")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {t("pokemonReference.confirmGuessPrompt", {
-                pokemon: selectedPokemon?.name || selectedPokemon?.speciesName
-              })}
-              ?
+              <Trans
+                ns="daily"
+                i18nKey="pokemonReference.confirmGuessPrompt"
+                components={{
+                  strong: <strong />,
+                }}
+                values={{
+                  pokemon:
+                    selectedPokemon?.name || selectedPokemon?.speciesName,
+                }}
+              />
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -108,7 +108,8 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
                   {t("pokemon:height", {
                     height: formatPokemonHeight(correctAnswer.pokemon.height),
                   })}
-                  &bull; {t(`colors.${correctAnswer.pokemon.color}`)}
+                  &bull;{" "}
+                  {t(`colors.${correctAnswer.pokemon.color.toLowerCase()}`)}
                 </div>
               </div>
             </div>

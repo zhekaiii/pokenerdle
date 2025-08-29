@@ -42,8 +42,7 @@
     "correct": "You are correct!",
     "type": {
       "correct": "Target is also a <type></type> type!",
-      "incorrect_zero": "<type></type> type moves has no effect against the target (ignoring abilities).",
-      "incorrect_other": "<type></type> type moves deal {{count}}x damage against the target (ignoring abilities).",
+      "incorrect": "<type></type> type moves deal {{count}}x damage against the target (ignoring abilities).",
       "alsoMono": "Target is also a monotype!",
       "notMonotype": "Target is not a monotype"
     },
