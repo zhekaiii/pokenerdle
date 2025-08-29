@@ -21,4 +21,4 @@ export const getFormattedPokemonName = (pokemon: {
 };
 
 export const formatPokemonHeight = (height: number | null) =>
-  `${((height ?? 0) / 10).toFixed(1)} m`;
+  ((height ?? 0) / 10).toFixed(1);

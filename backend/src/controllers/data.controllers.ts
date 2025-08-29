@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { MAX_GENERATION, MIN_GENERATION } from "../constants/game.js";
 import { StatusCode } from "../data/const.js";
 import * as dataService from "../services/data.services.js";
+import { getLanguageId } from "../utils/lang.js";
 
 const POKEMON_NAMES_LAST_UPDATED = new Date("2025-08-29").toUTCString();
 export const getPokemonNames = async (req: Request, res: Response) => {
@@ -12,7 +13,9 @@ export const getPokemonNames = async (req: Request, res: Response) => {
   }
 
   res.setHeader("last-modified", POKEMON_NAMES_LAST_UPDATED);
-  const data = await dataService.getPokemonNames();
+  const data = await dataService.getPokemonNames(
+    getLanguageId(String(req.query.lang) ?? "en")
+  );
   res.json(data);
 };
 

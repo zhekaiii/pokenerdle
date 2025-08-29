@@ -26,6 +26,7 @@ import clsx from "clsx";
 import { atom, useAtom } from "jotai";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import styles from "./index.module.scss";
 
 const dialogScrollPositionsAtom = atom<Record<string, number>>({});
@@ -49,6 +50,7 @@ const PokemonReferenceDialog: React.FC<Props> = ({
   onGuess,
   disabled,
 }) => {
+  const { t } = useTranslation("daily");
   const { getPokemonIcon } = usePokemonIcons();
   const scrollContainerRef = useRef<Record<number, HTMLDivElement | null>>(
     Object.fromEntries(generations.map((gen) => [gen, null]))
@@ -111,10 +113,9 @@ const PokemonReferenceDialog: React.FC<Props> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="tw:h-[80vh] tw:flex tw:flex-col">
         <DialogHeader>
-          <DialogTitle>Pokemon Reference</DialogTitle>
+          <DialogTitle>{t("pokemonReference.title")}</DialogTitle>
           <DialogDescription>
-            Note that some icons might be inaccurate. You can click on a Pokémon
-            to make a guess.
+            {t("pokemonReference.modalDescription")}
           </DialogDescription>
         </DialogHeader>
 
@@ -149,7 +150,7 @@ const PokemonReferenceDialog: React.FC<Props> = ({
                   </div>
                 ) : pokemon.length === 0 ? (
                   <div className="tw:my-10 tw:text-center">
-                    No Pokemon found for Generation {gen}
+                    {t("pokemonReference.noPokemonFound", { gen })}
                   </div>
                 ) : (
                   <div className={styles.PokemonGrid}>
@@ -193,21 +194,29 @@ const PokemonReferenceDialog: React.FC<Props> = ({
       <AlertDialog open={confirmGuessOpen} onOpenChange={setConfirmGuessOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Guess</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("pokemonReference.confirmGuessTitle")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to guess{" "}
-              <strong>
-                {selectedPokemon?.name || selectedPokemon?.speciesName}
-              </strong>
-              ?
+              <Trans
+                ns="daily"
+                i18nKey="pokemonReference.confirmGuessPrompt"
+                components={{
+                  strong: <strong />,
+                }}
+                values={{
+                  pokemon:
+                    selectedPokemon?.name || selectedPokemon?.speciesName,
+                }}
+              />
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={handleCancelGuess}>
-              Cancel
+              {t("pokemonReference.confirmGuessCancel")}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmGuess}>
-              Guess
+              {t("pokemonReference.confirmGuessGuess")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

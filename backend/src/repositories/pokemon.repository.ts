@@ -13,7 +13,7 @@ import { prisma } from "../lib/prisma.js";
 import { randomChoice, randomChoiceWeighted } from "../utils/random.js";
 import { DailyPokemon, isTruthy } from "../utils/types.js";
 
-export const getPokemonNames = async () => {
+export const getPokemonNames = async (lang: LanguageId) => {
   const pokemonDetails: PokemonNamesResponse[] = await prisma.$queryRaw`
     SELECT
       p.id,
@@ -29,11 +29,11 @@ export const getPokemonNames = async () => {
       pokemon_v2_pokemonform f
       INNER JOIN pokemon_v2_pokemon p ON p.id = f.pokemon_id
       LEFT JOIN pokemon_v2_pokemonformname fn ON f.id = fn.pokemon_form_id
-      AND fn.language_id = ${LanguageId.English}
+      AND fn.language_id = ${lang}
       INNER JOIN pokemon_v2_pokemonspecies ps ON ps.id = p.pokemon_species_id
       INNER JOIN pokemon_v2_pokemonspeciesname psn ON psn.pokemon_species_id = ps.id
     WHERE
-      psn.language_id = ${LanguageId.English}
+      psn.language_id = ${lang}
       AND f.is_default = true
     GROUP BY
       p.id;

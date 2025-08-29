@@ -1,5 +1,6 @@
 import GoogleIcon from "@/assets/google.svg?react";
 import { themeAtom, THEMES } from "@/atoms/theme";
+import LanguageSelector from "@/components/LanguageSelector";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,16 +13,10 @@ import {
 } from "@/components/ui/DropdownMenu";
 import { useGoogleSignIn } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
+import clsx from "clsx";
 import { useAtom } from "jotai";
-import {
-  Check,
-  Loader2,
-  LogOut,
-  Monitor,
-  Moon,
-  Settings,
-  Sun,
-} from "lucide-react";
+import { Loader2, LogOut, Monitor, Moon, Settings, Sun } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 const themeIcons = {
@@ -39,6 +34,7 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
   trigger,
   triggerAsChild = false,
 }) => {
+  const { t } = useTranslation();
   const [currentTheme, setCurrentTheme] = useAtom(themeAtom);
   const { isAuthenticated, loading: authLoading, signOut } = useAuth();
 
@@ -58,13 +54,13 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
       <DropdownMenuContent collisionPadding={8}>
         <Link to="/settings">
           <DropdownMenuItem>
-            <Settings /> Settings
+            <Settings /> {t("nav:settings")}
           </DropdownMenuItem>
         </Link>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="tw:gap-2">
             <Icon className="tw:size-5 tw:text-muted-foreground" />
-            Dark Mode
+            {t("nav:darkMode")}
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             {THEMES.map((theme) => {
@@ -72,22 +68,30 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
               return (
                 <DropdownMenuItem
                   key={theme}
-                  className="tw:capitalize tw:justify-between"
-                  onSelect={(e) => {
-                    e.preventDefault();
+                  className={clsx(
+                    "tw:capitalize tw:justify-between tw:not-last:mb-1",
+                    theme === currentTheme &&
+                      "tw:bg-primary! tw:text-primary-foreground!"
+                  )}
+                  onSelect={() => {
                     setCurrentTheme(theme);
                   }}
                 >
                   <span>
-                    <Icon className="tw:me-2 tw:inline-block" />
-                    {theme}
+                    <Icon
+                      className={clsx(
+                        "tw:me-2 tw:inline-block",
+                        theme === currentTheme && "tw:text-inherit"
+                      )}
+                    />
+                    {t(`nav:${theme}`)}
                   </span>
-                  {theme === currentTheme && <Check />}
                 </DropdownMenuItem>
               );
             })}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+        <LanguageSelector />
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={isAuthenticated ? signOut : handleSignIn}
@@ -100,13 +104,13 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
               ) : (
                 <>
                   <GoogleIcon className="tw:size-4" />
-                  Login with Google
+                  {t("nav:loginWithGoogle")}
                 </>
               )}
             </>
           ) : (
             <>
-              <LogOut /> Logout
+              <LogOut /> {t("nav:logout")}
             </>
           )}
         </DropdownMenuItem>

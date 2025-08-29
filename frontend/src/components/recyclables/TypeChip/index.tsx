@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 import bugIcon from "src/assets/icons/types/bug.svg";
 import darkIcon from "src/assets/icons/types/dark.svg";
@@ -112,8 +113,11 @@ const TypeChip: React.FC<Props> = ({
   className,
   ...props
 }) => {
+  const { t } = useTranslation("types");
   const { icon, bgClass } = TYPE_ICON_CONFIG[type.toLowerCase()] ?? {};
   if (!icon) return;
+
+  const translatedType = t(type.toLowerCase(), { defaultValue: type });
 
   return (
     <div
@@ -126,7 +130,7 @@ const TypeChip: React.FC<Props> = ({
     >
       <img style={{ height: `${size}px`, width: `${size}px` }} src={icon} />
       <span className="tw:flex-1 tw:text-center tw:whitespace-nowrap">
-        {type}
+        {translatedType}
       </span>
     </div>
   );

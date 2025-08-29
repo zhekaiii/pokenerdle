@@ -1,0 +1,112 @@
+{
+  "title": "宝可梦每日挑战",
+  "challengeNumber": "每日挑战 #{{number}}",
+  "buttons": {
+    "viewStats": "查看统计",
+    "startGuessing": "开始猜测",
+    "continueGuessing": "继续猜测",
+    "share": "分享",
+    "copy": "复制结果"
+  },
+  "messages": {
+    "foundPokemon": "你找到了神秘的宝可梦！",
+    "loading": "加载中...",
+    "syncing": "同步数据中...",
+    "error": "发生错误"
+  },
+  "share": {
+    "success": "结果已复制到剪贴板！",
+    "unsupported": "你的浏览器不支持分享。结果已复制到剪贴板！",
+    "firstTry": "第一次就猜对了！太幸运了！",
+    "attempts_one": "{{count}}/{{total}} 次尝试解决",
+    "attempts_other": "{{count}}/{{total}} 次尝试解决",
+    "title": "宝可梦每日挑战 #{{number}}",
+    "challengePrompt": "你能猜出它们全部吗？",
+    "challengeFailed": "今天没有猜出神秘的宝可梦。明天再试吧！"
+  },
+  "stats": {
+    "title": "统计",
+    "gamesPlayed": "游戏次数",
+    "winRate": "胜率",
+    "currentStreak": "当前连胜",
+    "maxStreak": "最长连胜",
+    "averageGuesses": "平均猜测次数"
+  },
+  "guessBox": {
+    "placeholder": "输入宝可梦名称...",
+    "noResults": "未找到宝可梦",
+    "selectPokemon": "选择要猜测的宝可梦",
+    "awaitingGuess": "等待你的猜测..."
+  },
+  "guessDetails": {
+    "correct": "你猜对了！",
+    "type": {
+      "correct": "目标也是 <type></type> 属性！",
+      "incorrect": "<type></type> 属性招式对目标造成{{count}}倍伤害（无视特性）。",
+      "alsoMono": "目标也是单属性！",
+      "notMonotype": "目标不是单属性"
+    },
+    "generation": {
+      "correct": "目标来自同一世代！",
+      "earlier": "目标来自较早的世代！",
+      "later": "目标来自较晚的世代！"
+    },
+    "color": {
+      "correct": "目标的基础形态也是{{color}}色！",
+      "incorrect": "目标的基础形态不是{{color}}色！"
+    },
+    "height": {
+      "correct": "目标也是{{height}}米高！",
+      "shorter": "目标比{{height}}米矮！",
+      "taller": "目标比{{height}}米高！"
+    }
+  },
+  "gameplay": {
+    "foundPokemon": "你找到了神秘的宝可梦！",
+    "guessPrompt_one": "你能在 {{count}} 次尝试中猜出神秘的宝可梦吗？",
+    "guessPrompt_other": "你能在 {{count}} 次尝试中猜出神秘的宝可梦吗？",
+    "copySuccess": "结果已复制到剪贴板！",
+    "copy": "复制",
+    "viewStats": "查看统计",
+    "signInPrompt": "登录以保存你的每日挑战结果！",
+    "betterLuckTomorrow": "明天再试吧！"
+  },
+  "correctAnswer": {
+    "firstGuess": "太棒了！你第一次就猜对了！",
+    "foundInAttempts": "你在 {{num_guesses}}/{{max_guesses}} 次尝试中找到了神秘的宝可梦！",
+    "usedAllAttempts": "你已经用完了所有 {{max_guesses}} 次尝试。明天再试吧！"
+  },
+  "completion": {
+    "congratulations": "恭喜！",
+    "completed": "你完成了今天的挑战",
+    "nextChallenge": "明天回来参加新的挑战！"
+  },
+  "pokemonReference": {
+    "title": "宝可梦图鉴",
+    "modalDescription": "请注意部分图标可能不准确。你也可以点击宝可梦进行猜测。",
+    "noPokemonFound": "没有找到第{{gen}}世代的宝可梦",
+    "confirmGuessTitle": "确认猜测",
+    "confirmGuessPrompt": "你确定要猜测<strong>{{pokemon}}</strong>吗？",
+    "confirmGuessCancel": "取消",
+    "confirmGuessGuess": "猜测"
+  },
+  "columns": {
+    "type1": "属性1",
+    "type2": "属性2",
+    "gen": "世代",
+    "color": "颜色",
+    "height": "高度"
+  },
+  "colors": {
+    "black": "黑",
+    "blue": "蓝",
+    "brown": "棕",
+    "gray": "灰",
+    "green": "绿",
+    "pink": "粉红",
+    "purple": "紫",
+    "red": "红",
+    "white": "白",
+    "yellow": "黄"
+  }
+}

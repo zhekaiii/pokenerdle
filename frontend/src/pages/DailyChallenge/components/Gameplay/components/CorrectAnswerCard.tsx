@@ -12,6 +12,7 @@ import {
   getFormattedPokemonName,
 } from "@/utils/formatters";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import classes from "./CorrectAnswerCard.module.scss";
 
 // These colours are not very strong i.e. quite neutral tone and in a gradient
@@ -26,6 +27,7 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
   const { hasSolved, guesses } = useDailyChallengeData();
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
+  const { t } = useTranslation(["daily", "pokemon"]);
 
   const borderStyles = useMemo(() => {
     if (!correctAnswer) return undefined;
@@ -56,9 +58,10 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
   }, [correctAnswer]);
 
   const pokemonName = useMemo(() => {
-    const pokemonName = pokemonNames.find(
-      (pokemon) => pokemon.id === correctAnswer?.pokemonId
-    );
+    const pokemonName =
+      correctAnswer?.pokemonId != undefined
+        ? pokemonNames[correctAnswer.pokemonId]
+        : undefined;
     return pokemonName && getFormattedPokemonName(pokemonName);
   }, [correctAnswer?.pokemonId, pokemonNames]);
   const attempts = guesses?.guesses.length ?? 0;
@@ -66,11 +69,16 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
   const subtitle = useMemo(() => {
     if (hasSolved) {
       return attempts === 1
-        ? "Incredible! You got it on your first guess!"
-        : `You found the mystery Pokémon in ${attempts}/${DAILY_CHALLENGE_GUESS_LIMIT} tries!`;
+        ? t("correctAnswer.firstGuess")
+        : t("correctAnswer.foundInAttempts", {
+            num_guesses: attempts,
+            max_guesses: DAILY_CHALLENGE_GUESS_LIMIT,
+          });
     }
-    return `You've used all ${DAILY_CHALLENGE_GUESS_LIMIT} attempts. Better luck tomorrow!`;
-  }, [hasSolved, attempts]);
+    return t("correctAnswer.usedAllAttempts", {
+      max_guesses: DAILY_CHALLENGE_GUESS_LIMIT,
+    });
+  }, [hasSolved, attempts, t]);
 
   if (!correctAnswer) {
     return null;
@@ -93,9 +101,15 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
               <div className="tw:text-left">
                 <div className="tw:font-medium">{pokemonName}</div>
                 <div className="tw:text-sm tw:text-muted-foreground">
-                  Gen {correctAnswer.pokemon.generationId} •{" "}
-                  {formatPokemonHeight(correctAnswer.pokemon.height)} •{" "}
-                  {correctAnswer.pokemon.color}
+                  {t("pokemon:genX", {
+                    gen: correctAnswer.pokemon.generationId,
+                  })}{" "}
+                  &bull;{" "}
+                  {t("pokemon:height", {
+                    height: formatPokemonHeight(correctAnswer.pokemon.height),
+                  })}
+                  &bull;{" "}
+                  {t(`colors.${correctAnswer.pokemon.color.toLowerCase()}`)}
                 </div>
               </div>
             </div>

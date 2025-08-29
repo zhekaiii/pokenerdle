@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import ErrorPage from "./layout/ErrorPage";
+import "./lib/i18n.ts";
 
 // This resolves the issue where rebuilding produces different hashes for the same file,
 // causing the browser to load the old filename (which doesn't exist).

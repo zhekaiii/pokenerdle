@@ -1,0 +1,112 @@
+{
+  "title": "PokéNerdle Daily",
+  "challengeNumber": "Daily Challenge #{{number}}",
+  "buttons": {
+    "viewStats": "View Stats",
+    "startGuessing": "Start Guessing",
+    "continueGuessing": "Continue Guessing",
+    "share": "Share",
+    "copy": "Copy Results"
+  },
+  "messages": {
+    "foundPokemon": "You have found the mystery Pokémon!",
+    "loading": "Loading...",
+    "syncing": "Syncing data...",
+    "error": "An error occurred"
+  },
+  "share": {
+    "success": "Results copied to clipboard!",
+    "unsupported": "Your browser doesn't support sharing. Results copied to clipboard!",
+    "firstTry": "Got it on the first try! So lucky!",
+    "attempts_one": "Solved in {{count}}/{{total}} attempt",
+    "attempts_other": "Solved in {{count}}/{{total}} attempts",
+    "title": "PokéNerdle Daily #{{number}}",
+    "challengePrompt": "Can you guess 'em all?",
+    "challengeFailed": "Failed to solve the challenge today. Better luck tomorrow!"
+  },
+  "stats": {
+    "title": "Statistics",
+    "gamesPlayed": "Games Played",
+    "winRate": "Win Rate",
+    "currentStreak": "Current Streak",
+    "maxStreak": "Max Streak",
+    "averageGuesses": "Average Guesses"
+  },
+  "guessBox": {
+    "placeholder": "Enter Pokémon name...",
+    "noResults": "No Pokémon found",
+    "selectPokemon": "Select a Pokémon to guess",
+    "awaitingGuess": "Awaiting your guess..."
+  },
+  "guessDetails": {
+    "correct": "You are correct!",
+    "type": {
+      "correct": "Target is also a <type></type> type!",
+      "incorrect": "<type></type> type moves deal {{count}}x damage against the target (ignoring abilities).",
+      "alsoMono": "Target is also a monotype!",
+      "notMonotype": "Target is not a monotype"
+    },
+    "generation": {
+      "correct": "Target is from the same generation!",
+      "earlier": "Target is from an earlier generation!",
+      "later": "Target is from a later generation!"
+    },
+    "color": {
+      "correct": "Target's base form is also {{color}} in color!",
+      "incorrect": "Target's base form is not {{color}} in color!"
+    },
+    "height": {
+      "correct": "Target is also {{height}}!",
+      "shorter": "Target is shorter than {{height}}!",
+      "taller": "Target is taller than {{height}}!"
+    }
+  },
+  "gameplay": {
+    "foundPokemon": "You have found the mystery Pokémon!",
+    "guessPrompt_one": "Can you guess the mystery Pokémon in {{count}} attempt?",
+    "guessPrompt_other": "Can you guess the mystery Pokémon in {{count}} attempts?",
+    "copySuccess": "Results copied to clipboard!",
+    "copy": "Copy",
+    "viewStats": "View Stats",
+    "signInPrompt": "Sign in to save your daily challenge results!",
+    "betterLuckTomorrow": "Better luck tomorrow!"
+  },
+  "correctAnswer": {
+    "firstGuess": "Incredible! You got it on your first guess!",
+    "foundInAttempts": "You found the mystery Pokémon in {{num_guesses}}/{{max_guesses}} tries!",
+    "usedAllAttempts": "You've used all {{max_guesses}} attempts. Better luck tomorrow!"
+  },
+  "completion": {
+    "congratulations": "Congratulations!",
+    "completed": "You completed today's challenge",
+    "nextChallenge": "Come back tomorrow for a new challenge!"
+  },
+  "pokemonReference": {
+    "title": "Pokémon Reference",
+    "modalDescription": "Note that some icons might be inaccurate. You can click on a Pokémon to make a guess.",
+    "noPokemonFound": "No Pokemon found for Generation {{gen}}",
+    "confirmGuessTitle": "Confirm Guess",
+    "confirmGuessPrompt": "Are you sure you want to guess <strong>{{pokemon}}</strong>?",
+    "confirmGuessCancel": "Cancel",
+    "confirmGuessGuess": "Guess"
+  },
+  "columns": {
+    "type1": "Type 1",
+    "type2": "Type 2",
+    "gen": "Gen",
+    "color": "Color",
+    "height": "Height"
+  },
+  "colors": {
+    "black": "Black",
+    "blue": "Blue",
+    "brown": "Brown",
+    "gray": "Gray",
+    "green": "Green",
+    "pink": "Pink",
+    "purple": "Purple",
+    "red": "Red",
+    "white": "White",
+    "yellow": "Yellow"
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "daily": {
+    "title": "Rules of Daily Challenge",
+    "jumpToExamples": "Jump to Examples",
+    "objective": {
+      "title": "🎯 Objective",
+      "description": "Guess the daily mystery Pokémon in <strong>8 tries or less</strong>!",
+      "features": {
+        "dailyPokemon": "Each day features a new mystery Pokémon",
+        "sharedPokemon": "Everyone gets the same Pokémon each day",
+        "useClues": "Use the clues from each guess to narrow down your options",
+        "shareResults": "Share your results with friends!"
+      }
+    },
+    "howCluesWork": {
+      "title": "🔍 How Clues Work",
+      "introduction": "After each guess, you'll get feedback based on 5 categories:",
+      "types": {
+        "title": "🍃💧🔥 Type 1 & Type 2",
+        "description": "How effective would your guess' types be when attacking the target Pokémon?",
+        "matchDescription": "If types match exactly, you'll see a checkmark! ✅ Otherwise, you may see different icons depending on how effective the type is!",
+        "damageLevels": {
+          "4x": {
+            "label": "4x damage:",
+            "description": "Extremely effective (Ice vs Grass/Flying)"
+          },
+          "2x": {
+            "label": "2x damage:",
+            "description": "Super effective (Fire vs Grass)"
+          },
+          "1x": {
+            "label": "1x damage:",
+            "description": "Normal effectiveness (Normal vs Psychic)"
+          },
+          "0_5x": {
+            "label": "0.5x damage:",
+            "description": "Not very effective (Water vs Fire)"
+          },
+          "0_25x": {
+            "label": "0.25x damage:",
+            "description": "Mostly ineffective (Normal vs Rock/Steel)"
+          },
+          "0x": {
+            "label": "0x damage:",
+            "description": "No effect (Normal vs Ghost)"
+          },
+          "na": {
+            "label": "Not Applicable:",
+            "description": "Your Pokémon is a monotype, and the target is not."
+          },
+          "match": {
+            "label": "Match:",
+            "description": "Your guessed Pokémon's type matches the target's. If both Pokémon are monotypes, Type 2 will be a match"
+          }
+        }
+      },
+      "generation": {
+        "title": "📅 Generation",
+        "description": "Is the target from the same generation as your guess?",
+        "rangeDescription": "Generations range from 1 (Kanto) to 9 (Paldea)",
+        "indicators": {
+          "newer": {
+            "label": "Newer:",
+            "description": "Target is from a newer generation than your guess"
+          },
+          "older": {
+            "label": "Older:",
+            "description": "Target is from an older generation than your guess"
+          },
+          "match": {
+            "label": "Match:",
+            "description": "You guess belongs to the same generation as your target!"
+          }
+        }
+      },
+      "color": {
+        "title": "🎨 Color",
+        "description": "Do both Pokémon share the same primary color?",
+        "classificationDescription": "Based on official Pokédex color classifications",
+        "indicators": {
+          "match": {
+            "label": "Match:",
+            "description": "Your guess shares the same primary color as the target Pokémon"
+          },
+          "different": {
+            "label": "Different:",
+            "description": "Your guess has a different primary color than the target Pokémon"
+          }
+        }
+      },
+      "height": {
+        "title": "📏 Height",
+        "description": "How effective would your guess' types be against the target Pokémon?",
+        "measurementDescription": "Measured in meters (e.g., Pikachu is 0.4m tall)",
+        "indicators": {
+          "taller": {
+            "label": "Taller:",
+            "description": "Target is taller than your guess"
+          },
+          "shorter": {
+            "label": "Shorter:",
+            "description": "Target is shorter than your guess"
+          },
+          "match": {
+            "label": "Match:",
+            "description": "Your guess is the same height as the target!"
+          }
+        }
+      }
+    },
+    "examples": {
+      "title": "💡 Example Guesses",
+      "description": "Suppose the mystery Pokémon is Gyarados (Water/Flying, Gen 1, Blue, 6.5m tall), and you make the following 2 guesses. You will receive the following feedback:"
+    },
+    "buttons": {
+      "playNow": "Play Now"
+    }
+  }
+}

@@ -3,6 +3,7 @@ import { useRouteHandles } from "@/hooks/useRouteHandles";
 import breakpoints from "@/utils/breakpoints";
 import clsx from "clsx";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { useMedia } from "react-use";
 import classes from "./index.module.scss";
@@ -16,6 +17,7 @@ const Header: React.FC = () => {
   const shouldShowRuleButton = routeHandles.some(
     ({ shouldShowRuleButton }) => shouldShowRuleButton
   );
+  const { t } = useTranslation("nav");
 
   return (
     <header
@@ -34,9 +36,9 @@ const Header: React.FC = () => {
       <div className="tw:grow" />
       {!isSmallerThanSm && (
         <>
-          <LinkButton to="/daily">Daily</LinkButton>
-          <LinkButton to="/pokechain">PokéChain</LinkButton>
-          <LinkButton to="/path-finder">Path Finder</LinkButton>
+          <LinkButton to="/daily">{t("dailyChallenge")}</LinkButton>
+          <LinkButton to="/pokechain">{t("pokeChain")}</LinkButton>
+          <LinkButton to="/path-finder">{t("pathFinder")}</LinkButton>
         </>
       )}
       {shouldShowRuleButton && <RulePageButton className="tw:mr-2" />}

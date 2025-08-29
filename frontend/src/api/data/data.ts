@@ -6,7 +6,7 @@ import {
 import axios from "axios";
 
 export default {
-  getPokemonNames: async (lastModified?: string | null) => {
+  getPokemonNames: async (lang: string, lastModified?: string | null) => {
     let headers: Record<string, string> | undefined;
     if (lastModified) {
       headers = {
@@ -16,7 +16,7 @@ export default {
 
     const response = await axios.get<PokemonNamesResponse[]>(
       "/v1/data/pokemon-names",
-      { headers }
+      { headers, params: { lang } }
     );
 
     return {

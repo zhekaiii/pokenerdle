@@ -2,10 +2,10 @@ import api from "@/api";
 import { MAX_GENERATION, MIN_GENERATION } from "@/lib/constants";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import axios from "axios";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useCallback, useEffect } from "react";
-import { pokemonNamesByIdAtom } from "./usePokemonNames";
+import { usePokemonNames } from "./usePokemonNames";
 
 const pokemonIdsByGenerationAtom = atomWithStorage<Record<number, number[]>>(
   "pokemonIdsByGeneration",
@@ -91,18 +91,17 @@ export const usePokemonIdsByGeneration = () => {
 export const usePokemonByGeneration = (generation: number) => {
   const { pokemonIdsByGeneration, fetchPokemonIdsForGeneration } =
     usePokemonIdsByGeneration();
-  const pokemonNamesById = useAtomValue(pokemonNamesByIdAtom);
+  const pokemonNames = usePokemonNames();
 
-  const pokemonForGeneration =
-    pokemonIdsByGeneration[generation] && pokemonNamesById
-      ? pokemonIdsByGeneration[generation].reduce((acc, id) => {
-          const pokemon = pokemonNamesById[id];
-          if (pokemon) {
-            acc.push(pokemon);
-          }
-          return acc;
-        }, [] as PokemonNamesResponse[])
-      : [];
+  const pokemonForGeneration = pokemonIdsByGeneration[generation]
+    ? pokemonIdsByGeneration[generation].reduce((acc, id) => {
+        const pokemon = pokemonNames[id];
+        if (pokemon) {
+          acc.push(pokemon);
+        }
+        return acc;
+      }, [] as PokemonNamesResponse[])
+    : [];
 
   const isLoading =
     !pokemonIdsByGeneration[generation] &&

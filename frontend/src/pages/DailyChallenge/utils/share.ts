@@ -1,5 +1,6 @@
 import { toast } from "@/hooks/useToast";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
+import { TFunction } from "i18next";
 import {
   challengeNumber,
   COLUMNS,
@@ -19,25 +20,33 @@ const generateGridEmojis = (guesses: DailyChallengeGuessResponse[]) => {
     .join("\n");
 };
 
-export const generateShareText = (guesses: DailyChallengeGuessResponse[]) => {
-  const attempts = `${guesses.length}/${DAILY_CHALLENGE_GUESS_LIMIT}`;
+export const generateShareText = (
+  guesses: DailyChallengeGuessResponse[],
+  t: TFunction
+) => {
   const solved = guesses[guesses.length - 1].correct;
   const grid = generateGridEmojis(guesses);
-  let text = `PokeNerdle Daily #${challengeNumber}\n\n`;
+  let text = `${t("share.title", { number: challengeNumber })}\n\n`;
   if (solved) {
     text +=
       guesses.length == 1
-        ? "Got it on the first try! So lucky!\n\n"
-        : `Guessed in ${attempts} tries!\n\n`;
+        ? `${t("share.firstTry")}\n\n`
+        : `${t("share.attempts", {
+            count: guesses.length,
+            total: DAILY_CHALLENGE_GUESS_LIMIT,
+          })}\n\n`;
   } else {
-    text += `Failed to solve the challenge today. Better luck tomorrow!\n\n`;
+    text += `${t("share.challengeFailed")}\n\n`;
   }
-  text += `${grid}\n\nCan you guess 'em all? https://pokenerdle.app`;
+  text += `${grid}\n\n${t("share.challengePrompt")} https://pokenerdle.app`;
   return text;
 };
 
-export const shareResults = async (guesses: DailyChallengeGuessResponse[]) => {
-  const shareText = generateShareText(guesses);
+export const shareResults = async (
+  guesses: DailyChallengeGuessResponse[],
+  t: TFunction
+) => {
+  const shareText = generateShareText(guesses, t);
   if (navigator.share) {
     // Native mobile sharing
     await navigator.share({
@@ -48,8 +57,7 @@ export const shareResults = async (guesses: DailyChallengeGuessResponse[]) => {
     await navigator.clipboard.writeText(shareText);
     toast({
       variant: "positive",
-      description:
-        "Your browser doesn't support sharing. Results copied to clipboard!",
+      description: t("share.unsupported"),
     });
   }
 };

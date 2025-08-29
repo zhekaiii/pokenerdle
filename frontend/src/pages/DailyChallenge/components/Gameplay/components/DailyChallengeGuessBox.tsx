@@ -5,6 +5,7 @@ import { COLUMNS } from "@/pages/DailyChallenge/constants";
 import { formatPokemonHeight } from "@/utils/formatters";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import React, { memo, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { DailyChallengeGuessIcon } from "../../DailyChallengeGuessIcon";
 
 import placeholderIcon from "@/assets/question_mark.png";
@@ -20,9 +21,11 @@ interface Props {
 }
 
 const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
+  const { t } = useTranslation(["daily", "pokemon"]);
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
-  const pokemonName = pokemonNames?.find((p) => p.id === guess?.pokemonId);
+  const pokemonName =
+    guess?.pokemonId != undefined ? pokemonNames[guess.pokemonId] : undefined;
   const [isExpanded, setIsExpanded] = useState(false);
   const isOpen = isExpanded || forceOpen;
   const pokemonHeight = formatPokemonHeight(guess?.pokemon.height ?? 0);
@@ -30,7 +33,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
   if (!guess) {
     return (
       <Card responsive className="tw:text-muted-foreground">
-        <CardContent>Awaiting your guess...</CardContent>
+        <CardContent>{t("guessBox.awaitingGuess")}</CardContent>
       </Card>
     );
   }
@@ -62,8 +65,11 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                   {pokemonName?.name || pokemonName?.speciesName}
                 </h3>
                 <div className="tw:text-muted-foreground tw:text-sm">
-                  Gen {guess.pokemon.generationId} &bull; {pokemonHeight} &bull;{" "}
-                  {guess.pokemon.color}
+                  {t("pokemon:genX", {
+                    gen: guess.pokemon.generationId,
+                  })}{" "}
+                  &bull; {t("pokemon:height", { height: pokemonHeight })} &bull;{" "}
+                  {t(`colors.${guess.pokemon.color.toLowerCase()}`)}
                 </div>
               </div>
               <div className="tw:flex tw:flex-col tw:ms-auto">
@@ -90,7 +96,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
                 )}
               >
                 <span className={styles["DailyChallengeGameplay__GridHeader"]}>
-                  {column.label}
+                  {t(column.label)}
                 </span>
                 <DailyChallengeGuessIcon guess={guess} colKey={column.key} />
               </div>
@@ -110,76 +116,99 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
         <CardContent className="tw:text-muted-foreground">
           <ul className="tw:list-disc tw:ps-6">
             {guess.correct ? (
-              <li>You are correct!</li>
+              <li>{t("guessDetails.correct")}</li>
             ) : (
               <>
                 <li>
                   {guess.type1Correctness === "=" ? (
-                    <>
-                      Target is also a <TypeChip type={guess.pokemon.type1} />{" "}
-                      type!
-                    </>
+                    <Trans
+                      ns="daily"
+                      i18nKey="guessDetails.type.correct"
+                      components={{
+                        type: <TypeChip type={guess.pokemon.type1} />,
+                      }}
+                    />
                   ) : (
-                    <>
-                      <TypeChip type={guess.pokemon.type1} /> type moves deal{" "}
-                      {guess.type1Correctness}x damage against the target
-                      (ignoring abilities).
-                    </>
+                    <Trans
+                      ns="daily"
+                      i18nKey="guessDetails.type.incorrect"
+                      count={guess.type1Correctness}
+                      components={{
+                        type: <TypeChip type={guess.pokemon.type1} />,
+                      }}
+                    />
                   )}
                 </li>
                 <li>
                   {guess.type2Correctness === "=" ? (
                     <>
-                      Target is also a{" "}
                       {guess.pokemon.type2 ? (
-                        <TypeChip type={guess.pokemon.type2} />
+                        <Trans
+                          ns="daily"
+                          i18nKey="guessDetails.type.correct"
+                          components={{
+                            type: <TypeChip type={guess.pokemon.type2} />,
+                          }}
+                        />
                       ) : (
-                        "mono"
-                      )}{" "}
-                      type!
+                        t("guessDetails.type.alsoMono")
+                      )}
                     </>
                   ) : guess.pokemon.type2 ? (
-                    <>
-                      <TypeChip type={guess.pokemon.type2} /> type moves deal{" "}
-                      {guess.type2Correctness}x damage against the target
-                      (ignoring abilities).
-                    </>
+                    <Trans
+                      ns="daily"
+                      i18nKey="guessDetails.type.incorrect"
+                      count={guess.type2Correctness as number}
+                      components={{
+                        type: <TypeChip type={guess.pokemon.type2} />,
+                      }}
+                    />
                   ) : (
-                    "Target is not a monotype"
+                    t("guessDetails.type.notMonotype")
                   )}
                 </li>
                 <li>
                   {guess.genCorrectness === "=" ? (
-                    <>Target is from the same generation!</>
+                    <>{t("guessDetails.generation.correct")}</>
                   ) : (
                     <>
-                      Target is from{" "}
-                      {guess.genCorrectness === "<" ? "an earlier" : "a later"}{" "}
-                      generation.
+                      {guess.genCorrectness === "<"
+                        ? t("guessDetails.generation.earlier")
+                        : t("guessDetails.generation.later")}
                     </>
                   )}
                 </li>
                 <li>
                   {guess.colorCorrectness ? (
                     <>
-                      Target&apos;s base form is also{" "}
-                      {guess.pokemon.color.toLowerCase()} in color!
+                      {t("guessDetails.color.correct", {
+                        color: t(`colors.${guess.pokemon.color}`).toLowerCase(),
+                      })}
                     </>
                   ) : (
                     <>
-                      Target&apos;s base form is not{" "}
-                      {guess.pokemon.color.toLowerCase()} in color.
+                      {t("guessDetails.color.incorrect", {
+                        color: t(`colors.${guess.pokemon.color}`).toLowerCase(),
+                      })}
                     </>
                   )}
                 </li>
                 <li>
                   {guess.heightCorrectness === "=" ? (
-                    <>Target is also {pokemonHeight} m tall!</>
+                    <>
+                      {t("guessDetails.height.correct", {
+                        height: pokemonHeight,
+                      })}
+                    </>
                   ) : (
                     <>
-                      Target is{" "}
-                      {guess.heightCorrectness === "<" ? "shorter" : "taller"}{" "}
-                      than {pokemonHeight}.
+                      {guess.heightCorrectness === "<"
+                        ? t("guessDetails.height.shorter", {
+                            height: pokemonHeight,
+                          })
+                        : t("guessDetails.height.taller", {
+                            height: pokemonHeight,
+                          })}
                     </>
                   )}
                 </li>

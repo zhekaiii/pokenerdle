@@ -18,6 +18,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import posthog from "posthog-js";
+import { useTranslation } from "react-i18next";
 import { challengeNumber, DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
 import { generateShareText, shareResults } from "../../utils/share";
@@ -41,6 +42,7 @@ const DailyChallengeGameplay: React.FC = () => {
   const [showPokemonReference, setShowPokemonReference] = useState(false);
   const [showStatsDialog, setShowStatsDialog] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation("daily");
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
     onGuess(pokemon).finally(() => setInput(""));
   };
@@ -61,23 +63,17 @@ const DailyChallengeGameplay: React.FC = () => {
     <div className="tw:flex tw:flex-col tw:flex-auto tw:max-w-[400px] tw:w-full">
       <LoadingDialog open={isLoading || isLoadingAnswer} />
       <h2 className="tw:text-center tw:font-bold tw:text-lg">
-        Daily Challenge #{challengeNumber}
+        {t("challengeNumber", { number: challengeNumber })}
       </h2>
       <div className="tw:text-center tw:text-muted-foreground tw:mb-2">
-        {hasSolved ? (
-          "You have found the mystery Pokémon!"
-        ) : hasReachedLimit ? (
-          "Better luck tomorrow!"
-        ) : (
-          <>
-            Can you guess the mystery Pokémon in{" "}
-            {DAILY_CHALLENGE_GUESS_LIMIT - (guesses?.guesses.length ?? 0)}
-            {DAILY_CHALLENGE_GUESS_LIMIT - (guesses?.guesses.length ?? 0) === 1
-              ? " attempt"
-              : " attempts"}
-            ?
-          </>
-        )}
+        {hasSolved
+          ? t("gameplay.foundPokemon")
+          : hasReachedLimit
+          ? t("gameplay.betterLuckTomorrow")
+          : t("gameplay.guessPrompt", {
+              count:
+                DAILY_CHALLENGE_GUESS_LIMIT - (guesses?.guesses.length ?? 0),
+            })}
       </div>
 
       <div className="tw:grid tw:grid-flow-row tw:gap-2">
@@ -142,20 +138,20 @@ const DailyChallengeGameplay: React.FC = () => {
                 className="tw:flex-1"
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    generateShareText(guesses?.guesses ?? [])
+                    generateShareText(guesses?.guesses ?? [], t)
                   );
                   posthog.capture("daily_challenge_copy_clicked");
                   toast({
                     description: (
                       <div className="tw:flex tw:flex-nowrap">
                         <ClipboardCheck className="tw:me-2" />
-                        Results copied to clipboard!
+                        {t("gameplay.copySuccess")}
                       </div>
                     ),
                   });
                 }}
               >
-                <Clipboard /> Copy
+                <Clipboard /> {t("buttons.copy")}
               </Button>
               {"share" in navigator && (
                 <Button
@@ -165,10 +161,10 @@ const DailyChallengeGameplay: React.FC = () => {
                       has_solved: hasSolved,
                       num_guesses: guesses?.guesses.length ?? 0,
                     });
-                    shareResults(guesses?.guesses ?? []);
+                    shareResults(guesses?.guesses ?? [], t);
                   }}
                 >
-                  <Share2 /> Share
+                  <Share2 /> {t("buttons.share")}
                 </Button>
               )}
             </div>
@@ -180,14 +176,14 @@ const DailyChallengeGameplay: React.FC = () => {
                 onClick={() => setShowStatsDialog(true)}
               >
                 <TrendingUp />
-                View Stats
+                {t("gameplay.viewStats")}
               </Button>
             ) : (
               !authLoading && (
                 <>
                   <GoogleSignInButton variant="outline" />
                   <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
-                    Sign in to save your daily challenge results!
+                    {t("gameplay.signInPrompt")}
                   </p>
                 </>
               )
