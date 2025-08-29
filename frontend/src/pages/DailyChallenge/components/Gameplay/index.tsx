@@ -66,6 +66,8 @@ const DailyChallengeGameplay: React.FC = () => {
       <div className="tw:text-center tw:text-muted-foreground tw:mb-2">
         {hasSolved ? (
           "You have found the mystery Pokémon!"
+        ) : hasReachedLimit ? (
+          "Better luck tomorrow!"
         ) : (
           <>
             Can you guess the mystery Pokémon in{" "}
