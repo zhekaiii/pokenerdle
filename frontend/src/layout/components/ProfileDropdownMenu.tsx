@@ -73,8 +73,7 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
                     theme === currentTheme &&
                       "tw:bg-primary! tw:text-primary-foreground!"
                   )}
-                  onSelect={(e) => {
-                    e.preventDefault();
+                  onSelect={() => {
                     setCurrentTheme(theme);
                   }}
                 >

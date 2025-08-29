@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 
 const languages = [
   { code: "en", name: "English" },
-  { code: "zh", name: "中文" },
+  { code: "zh", name: "中文", beta: true },
 ];
 
 const LanguageSelector: React.FC = () => {
@@ -38,6 +38,11 @@ const LanguageSelector: React.FC = () => {
             )}
           >
             {language.name}
+            {language.beta && (
+              <span className="tw:text-xs tw:text-muted-foreground tw:ms-auto">
+                Beta
+              </span>
+            )}
           </DropdownMenuItem>
         ))}
       </DropdownMenuSubContent>
