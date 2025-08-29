@@ -17,7 +17,7 @@ const Header: React.FC = () => {
   const shouldShowRuleButton = routeHandles.some(
     ({ shouldShowRuleButton }) => shouldShowRuleButton
   );
-  const { t } = useTranslation();
+  const { t } = useTranslation("nav");
 
   return (
     <header
@@ -36,9 +36,9 @@ const Header: React.FC = () => {
       <div className="tw:grow" />
       {!isSmallerThanSm && (
         <>
-          <LinkButton to="/daily">{t("nav:dailyChallenge")}</LinkButton>
-          <LinkButton to="/pokechain">{t("nav:pokeChain")}</LinkButton>
-          <LinkButton to="/path-finder">{t("nav:pathFinder")}</LinkButton>
+          <LinkButton to="/daily">{t("dailyChallenge")}</LinkButton>
+          <LinkButton to="/pokechain">{t("pokeChain")}</LinkButton>
+          <LinkButton to="/path-finder">{t("pathFinder")}</LinkButton>
         </>
       )}
       {shouldShowRuleButton && <RulePageButton className="tw:mr-2" />}

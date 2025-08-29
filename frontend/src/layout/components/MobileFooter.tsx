@@ -12,22 +12,22 @@ import { ProfileIcon } from "./ProfileIcon";
 const MobileFooter: React.FC = () => {
   const isKeyboardOpen = useDetectKeyboardOpen();
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t } = useTranslation("nav");
   const navItems = [
     {
       to: "/daily",
       icon: Calendar,
-      label: t("nav:dailyChallenge"),
+      label: t("dailyChallenge"),
     },
     {
       to: "/pokechain",
       icon: LinkIcon,
-      label: t("nav:pokeChain"),
+      label: t("pokeChain"),
     },
     {
       to: "/path-finder",
       icon: MapPin,
-      label: t("nav:pathFinder"),
+      label: t("pathFinder"),
     },
   ];
 
@@ -61,7 +61,7 @@ const MobileFooter: React.FC = () => {
             <Button variant="transparent" className={classes.NavButton}>
               <div className={classes.NavItem}>
                 <ProfileIcon />
-                <span className={classes.NavLabel}>{t("nav:profile")}</span>
+                <span className={classes.NavLabel}>{t("profile")}</span>
               </div>
             </Button>
           }
