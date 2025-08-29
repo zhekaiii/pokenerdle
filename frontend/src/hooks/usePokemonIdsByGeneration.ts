@@ -1,9 +1,10 @@
 import api from "@/api";
 import { MAX_GENERATION, MIN_GENERATION } from "@/lib/constants";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
+import axios from "axios";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { usePokemonNames } from "./usePokemonNames";
 
 const pokemonIdsByGenerationAtom = atomWithStorage<Record<number, number[]>>(
@@ -28,24 +29,16 @@ export const usePokemonIdsByGeneration = () => {
     lastModifiedByGenerationAtom
   );
 
-  const getPokemonIdsForGeneration = useCallback(
+  const fetchPokemonIdsForGeneration = useCallback(
     async (generation: number): Promise<number[]> => {
       if (generation < MIN_GENERATION || generation > MAX_GENERATION) {
         return [];
       }
 
-      // Return cached data if available
-      if (pokemonIdsByGeneration[generation]) {
-        return pokemonIdsByGeneration[generation];
-      }
-
-      // Fetch data for this generation
+      const lastModified = lastModifiedByGeneration[generation];
       try {
-        // FIXME: Axios throws an error if 304 is returned
-        // const lastModified = lastModifiedByGeneration[generation];
         const { data, lastModified: newLastModified } =
-          await api.data.getPokemonIdsByGeneration(null, generation);
-
+          await api.data.getPokemonIdsByGeneration(lastModified, generation);
         // Update cache
         const updatedIds = { ...pokemonIdsByGeneration, [generation]: data };
         const updatedLastModified = {
@@ -55,9 +48,11 @@ export const usePokemonIdsByGeneration = () => {
 
         setPokemonIdsByGeneration(updatedIds);
         setLastModifiedByGeneration(updatedLastModified);
-
         return data;
       } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 304) {
+          return pokemonIdsByGeneration[generation];
+        }
         console.error(
           `Failed to fetch Pokemon IDs for generation ${generation}:`,
           error
@@ -88,20 +83,24 @@ export const usePokemonIdsByGeneration = () => {
 
   return {
     pokemonIdsByGeneration,
-    getPokemonIdsForGeneration,
+    fetchPokemonIdsForGeneration,
     getPokemonNamesForGeneration,
   };
 };
 
 export const usePokemonByGeneration = (generation: number) => {
-  const { pokemonIdsByGeneration, getPokemonIdsForGeneration } =
+  const { pokemonIdsByGeneration, fetchPokemonIdsForGeneration } =
     usePokemonIdsByGeneration();
   const pokemonNames = usePokemonNames();
 
   const pokemonForGeneration = pokemonIdsByGeneration[generation]
-    ? pokemonIdsByGeneration[generation]
-        .map((id) => pokemonNames[id])
-        .filter(Boolean)
+    ? pokemonIdsByGeneration[generation].reduce((acc, id) => {
+        const pokemon = pokemonNames[id];
+        if (pokemon) {
+          acc.push(pokemon);
+        }
+        return acc;
+      }, [] as PokemonNamesResponse[])
     : [];
 
   const isLoading =
@@ -109,10 +108,13 @@ export const usePokemonByGeneration = (generation: number) => {
     generation >= MIN_GENERATION &&
     generation <= MAX_GENERATION;
 
+  useEffect(() => {
+    fetchPokemonIdsForGeneration(generation);
+  }, [generation, fetchPokemonIdsForGeneration]);
+
   return {
     pokemon: pokemonForGeneration,
     ids: pokemonIdsByGeneration[generation] || [],
     isLoading,
-    fetch: () => getPokemonIdsForGeneration(generation),
   };
 };

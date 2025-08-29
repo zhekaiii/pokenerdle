@@ -113,5 +113,7 @@ export const getUserDailyStatsData = async (userId: string) => {
     HAVING
       count(1) = ${DAILY_CHALLENGE_GUESS_LIMIT}
       OR BOOL_OR("isCorrect")
+    ORDER BY
+     "dailyChallengeId"
   `;
 };

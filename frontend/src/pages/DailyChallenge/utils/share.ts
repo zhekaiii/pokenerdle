@@ -35,6 +35,8 @@ export const generateShareText = (
             count: guesses.length,
             total: DAILY_CHALLENGE_GUESS_LIMIT,
           })}\n\n`;
+  } else {
+    text += `${t("share.challengeFailed")}\n\n`;
   }
   text += `${grid}\n\n${t("share.challengePrompt")} https://pokenerdle.app`;
   return text;

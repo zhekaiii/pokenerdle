@@ -68,6 +68,8 @@ const DailyChallengeGameplay: React.FC = () => {
       <div className="tw:text-center tw:text-muted-foreground tw:mb-2">
         {hasSolved
           ? t("gameplay.foundPokemon")
+          : hasReachedLimit
+          ? t("gameplay.betterLuckTomorrow")
           : t("gameplay.guessPrompt", {
               count:
                 DAILY_CHALLENGE_GUESS_LIMIT - (guesses?.guesses.length ?? 0),

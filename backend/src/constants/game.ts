@@ -11,3 +11,36 @@ export const MIN_GENERATION = 1;
 export const MAX_GENERATION = 9;
 
 export const ICON_SUFFIXES = ["alola", "galar", "hisui", "paldea", "mega"];
+
+export const DAILY_WHITELISTED_ALTERNATE_FORMS = [
+  "alola",
+  "galar",
+  "hisui",
+  "paldea",
+];
+
+export const DAILY_WHITELISTED_POKEMON_WHERE = {
+  where: {
+    AND: [
+      {
+        NOT: {
+          name: {
+            contains: "-totem",
+          },
+        },
+      },
+      {
+        OR: [
+          {
+            is_default: true,
+          },
+          ...DAILY_WHITELISTED_ALTERNATE_FORMS.map((suffix) => ({
+            name: {
+              contains: `-${suffix}`,
+            },
+          })),
+        ],
+      },
+    ],
+  },
+};

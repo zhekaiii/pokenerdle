@@ -21,7 +21,8 @@
     "attempts_one": "{{count}}/{{total}} 次尝试解决",
     "attempts_other": "{{count}}/{{total}} 次尝试解决",
     "title": "宝可梦每日挑战 #{{number}}",
-    "challengePrompt": "你能猜出它们全部吗？"
+    "challengePrompt": "你能猜出它们全部吗？",
+    "challengeFailed": "今天没有猜出神秘的宝可梦。明天再试吧！"
   },
   "stats": {
     "title": "统计",
@@ -68,7 +69,8 @@
     "copySuccess": "结果已复制到剪贴板！",
     "copy": "复制",
     "viewStats": "查看统计",
-    "signInPrompt": "登录以保存你的每日挑战结果！"
+    "signInPrompt": "登录以保存你的每日挑战结果！",
+    "betterLuckTomorrow": "明天再试吧！"
   },
   "correctAnswer": {
     "firstGuess": "太棒了！你第一次就猜对了！",

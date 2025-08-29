@@ -21,7 +21,8 @@
     "attempts_one": "Solved in {{count}}/{{total}} attempt",
     "attempts_other": "Solved in {{count}}/{{total}} attempts",
     "title": "PokéNerdle Daily #{{number}}",
-    "challengePrompt": "Can you guess 'em all?"
+    "challengePrompt": "Can you guess 'em all?",
+    "challengeFailed": "Failed to solve the challenge today. Better luck tomorrow!"
   },
   "stats": {
     "title": "Statistics",
@@ -68,7 +69,8 @@
     "copySuccess": "Results copied to clipboard!",
     "copy": "Copy",
     "viewStats": "View Stats",
-    "signInPrompt": "Sign in to save your daily challenge results!"
+    "signInPrompt": "Sign in to save your daily challenge results!",
+    "betterLuckTomorrow": "Better luck tomorrow!"
   },
   "correctAnswer": {
     "firstGuess": "Incredible! You got it on your first guess!",
