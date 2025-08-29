@@ -7,24 +7,26 @@ import {
   SelectValue,
 } from "@/components/ui/Select";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
 const OPTIONS = [
   {
-    label: "Daily Challenge",
+    label: "dailyChallenge",
     value: "/how-to-play/daily",
   },
   {
-    label: "PokéChain",
+    label: "pokeChain",
     value: "/how-to-play/pokechain",
   },
   {
-    label: "Path Finder",
+    label: "pathFinder",
     value: "/how-to-play/path-finder",
   },
 ];
 
 const HowToPlayPage: React.FC = () => {
+  const { t } = useTranslation("nav");
   const location = useLocation();
   const navigate = useNavigate();
   const value = OPTIONS.find((option) =>
@@ -41,7 +43,7 @@ const HowToPlayPage: React.FC = () => {
           <SelectGroup>
             {OPTIONS.map((option) => (
               <SelectItem key={option.value} value={option.value}>
-                {option.label}
+                {t(option.label)}
               </SelectItem>
             ))}
           </SelectGroup>

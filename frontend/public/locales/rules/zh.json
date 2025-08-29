@@ -1,0 +1,119 @@
+{
+  "daily": {
+    "title": "每日挑战规则",
+    "jumpToExamples": "跳转到示例",
+    "objective": {
+      "title": "🎯 目标",
+      "description": "在<strong>8次尝试或更少</strong>内猜出每日神秘宝可梦！",
+      "features": {
+        "dailyPokemon": "每天都有新的神秘宝可梦",
+        "sharedPokemon": "每个人每天都会得到相同的宝可梦",
+        "useClues": "利用每次猜测的线索来缩小选项范围",
+        "shareResults": "与朋友分享你的结果！"
+      }
+    },
+    "howCluesWork": {
+      "title": "🔍 线索工作原理",
+      "introduction": "每次猜测后，你将根据5个类别获得反馈：",
+      "types": {
+        "title": "🍃💧🔥 属性1 与 属性2",
+        "description": "你的猜测属性攻击目标宝可梦的效果如何？",
+        "matchDescription": "如果属性完全一样，你会看到一个对勾！✅ 否则，你可能会看到不同的图标，取决于属性的效果！",
+        "damageLevels": {
+          "4x": {
+            "label": "4倍伤害：",
+            "description": "极度有效（冰 vs 草/飞行）"
+          },
+          "2x": {
+            "label": "2倍伤害：",
+            "description": "超有效（火 vs 草）"
+          },
+          "1x": {
+            "label": "1倍伤害：",
+            "description": "正常效果（一般 vs 超能力）"
+          },
+          "0_5x": {
+            "label": "0.5倍伤害：",
+            "description": "不太有效（水 vs 火）"
+          },
+          "0_25x": {
+            "label": "0.25倍伤害：",
+            "description": "几乎无效（一般 vs 岩石/钢）"
+          },
+          "0x": {
+            "label": "0倍伤害：",
+            "description": "无效（一般 vs 幽灵）"
+          },
+          "na": {
+            "label": "不适用：",
+            "description": "你的宝可梦是单属性，而目标不是单属性。"
+          },
+          "match": {
+            "label": "一样：",
+            "description": "你猜测的宝可梦属性与目标一样。如果两只宝可梦都是单属性，属性2也会一样"
+          }
+        }
+      },
+      "generation": {
+        "title": "📅 世代",
+        "description": "目标是否与你的猜测来自同一世代？",
+        "rangeDescription": "世代范围从第一世代（关都）到第九世代（帕底亚）",
+        "indicators": {
+          "newer": {
+            "label": "更新的：",
+            "description": "目标来自比你的猜测更新的世代"
+          },
+          "older": {
+            "label": "更旧的：",
+            "description": "目标来自比你的猜测更旧的世代"
+          },
+          "match": {
+            "label": "一样：",
+            "description": "你的猜测与目标属于同一世代！"
+          }
+        }
+      },
+      "color": {
+        "title": "🎨 颜色",
+        "description": "两只宝可梦是否共享相同的主体颜色？",
+        "classificationDescription": "基于官方宝可梦图鉴颜色分类",
+        "indicators": {
+          "match": {
+            "label": "一样：",
+            "description": "你的猜测与目标宝可梦共享相同的主体颜色"
+          },
+          "different": {
+            "label": "不同：",
+            "description": "你的猜测与目标宝可梦的主体颜色不同"
+          }
+        }
+      },
+      "height": {
+        "title": "📏 身高",
+        "description": "你的猜测属性攻击目标宝可梦的效果如何？",
+        "measurementDescription": "以米为单位测量（例如，皮卡丘身高0.4米）",
+        "indicators": {
+          "taller": {
+            "label": "更高的：",
+            "description": "目标比你的猜测更高"
+          },
+          "shorter": {
+            "label": "更矮的：",
+            "description": "目标比你的猜测更矮"
+          },
+          "match": {
+            "label": "一样：",
+            "description": "你的猜测与目标身高相同！"
+          }
+        }
+      }
+    },
+    "examples": {
+      "title": "💡 猜测示例",
+      "description": "假设神秘宝可梦是暴鲤龙（水/飞行，第1世代，蓝色，6.5米高），你进行了以下2次猜测。你将收到以下反馈："
+    },
+    "buttons": {
+      "playNow": "立即游玩"
+    }
+  }
+}
