@@ -3,7 +3,7 @@ import { MAX_GENERATION, MIN_GENERATION } from "../constants/game.js";
 import { StatusCode } from "../data/const.js";
 import * as dataService from "../services/data.services.js";
 
-const POKEMON_NAMES_LAST_UPDATED = new Date("2025-08-19").toUTCString();
+const POKEMON_NAMES_LAST_UPDATED = new Date("2025-08-29").toUTCString();
 export const getPokemonNames = async (req: Request, res: Response) => {
   const ifModifiedSince = req.headers["if-modified-since"];
   if (ifModifiedSince && ifModifiedSince === POKEMON_NAMES_LAST_UPDATED) {
@@ -38,7 +38,7 @@ export const getPokemonWithAbilities = async (req: Request, res: Response) => {
   res.json(await dataService.getPokemonWithAbilities(id));
 };
 
-const POKEMON_GENERATIONS_LAST_UPDATED = new Date("2025-08-19").toUTCString();
+const POKEMON_GENERATIONS_LAST_UPDATED = new Date("2025-08-29").toUTCString();
 export const getPokemonIdsByGeneration = async (
   req: Request,
   res: Response

@@ -2,7 +2,11 @@ import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
 import { pokemon_v2_ability, pokemon_v2_pokemon } from "@prisma/client";
 import { readFileSync, writeFileSync } from "fs";
 import { Heap } from "heap-js";
-import { ICON_SUFFIXES, MIN_PATHFINDER_LENGTH } from "../constants/game.js";
+import {
+  DAILY_WHITELISTED_POKEMON_WHERE,
+  ICON_SUFFIXES,
+  MIN_PATHFINDER_LENGTH,
+} from "../constants/game.js";
 import { LanguageId } from "../lib/constants.js";
 import { Graph } from "../lib/graph.js";
 import { prisma } from "../lib/prisma.js";
@@ -30,11 +34,13 @@ export const getPokemonNames = async () => {
       INNER JOIN pokemon_v2_pokemonspeciesname psn ON psn.pokemon_species_id = ps.id
     WHERE
       psn.language_id = ${LanguageId.English}
+      AND f.is_default = true
     GROUP BY
       p.id;
   `;
   return pokemonDetails;
 };
+
 export const getPokemonIdsByGeneration = async (
   generation: number
 ): Promise<number[]> => {
@@ -42,6 +48,7 @@ export const getPokemonIdsByGeneration = async (
     where: {
       pokemon_v2_pokemonform: {
         some: {
+          is_default: true,
           pokemon_v2_versiongroup: {
             generation_id: generation,
           },
@@ -245,11 +252,7 @@ export const getRandomPokemonPath = () => {
 };
 
 export const getNumDefaultPokemon = async () => {
-  return await prisma.pokemon_v2_pokemon.count({
-    where: {
-      is_default: true,
-    },
-  });
+  return await prisma.pokemon_v2_pokemon.count(DAILY_WHITELISTED_POKEMON_WHERE);
 };
 
 type GetPokemonParams =
@@ -265,12 +268,17 @@ export const getPokemonForDaily = async (
 ): Promise<DailyPokemon | null> => {
   let pokemonId: number;
   if ("offset" in props) {
-    const result: [{ id: number }] | [] =
-      await prisma.$queryRaw`SELECT id FROM pokemon_v2_pokemon WHERE is_default LIMIT 1 OFFSET ${props.offset}`;
-    if (result.length == 0) {
+    const result = await prisma.pokemon_v2_pokemon.findFirst({
+      ...DAILY_WHITELISTED_POKEMON_WHERE,
+      skip: props.offset,
+      select: {
+        id: true,
+      },
+    });
+    if (!result) {
       throw new Error("No Pokemon found");
     }
-    pokemonId = result[0].id;
+    pokemonId = result.id;
   } else {
     pokemonId = props.id;
   }

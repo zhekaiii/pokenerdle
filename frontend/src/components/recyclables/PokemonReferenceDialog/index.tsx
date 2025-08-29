@@ -80,12 +80,7 @@ const PokemonReferenceDialog: React.FC<Props> = ({
   );
 
   const [activeGeneration, setActiveGeneration] = useAtom(tabAtom);
-  const { pokemon, isLoading, fetch } =
-    usePokemonByGeneration(activeGeneration);
-
-  useEffect(() => {
-    fetch();
-  }, [activeGeneration, fetch]);
+  const { pokemon, isLoading } = usePokemonByGeneration(activeGeneration);
 
   // Save scroll position when dialog closes
   useEffect(() => {
