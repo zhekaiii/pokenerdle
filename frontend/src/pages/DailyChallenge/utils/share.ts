@@ -29,6 +29,8 @@ export const generateShareText = (guesses: DailyChallengeGuessResponse[]) => {
       guesses.length == 1
         ? "Got it on the first try! So lucky!\n\n"
         : `Guessed in ${attempts} tries!\n\n`;
+  } else {
+    text += `Failed to solve the challenge today. Better luck tomorrow!\n\n`;
   }
   text += `${grid}\n\nCan you guess 'em all? https://pokenerdle.app`;
   return text;
