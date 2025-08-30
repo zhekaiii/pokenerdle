@@ -28,30 +28,30 @@ export const usePokemonNames = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!i18n.resolvedLanguage) return;
+    if (!i18n.language) return;
     queryClient
       .fetchQuery({
-        queryKey: ["pokemonNames", i18n.resolvedLanguage],
+        queryKey: ["pokemonNames", i18n.language],
         queryFn: () =>
           api.data.getPokemonNames(
-            i18n.resolvedLanguage!,
-            lastModified[i18n.resolvedLanguage!]
+            i18n.language!,
+            lastModified[i18n.language!]
           ),
       })
       .then(({ data, lastModified }) => {
         setPokemonNames((prev) => ({
           ...prev,
-          [i18n.resolvedLanguage!]: Object.fromEntries(
+          [i18n.language!]: Object.fromEntries(
             data.map((pokemon) => [pokemon.id, pokemon])
           ),
         }));
         setLastModified((prev) => ({
           ...prev,
-          [i18n.resolvedLanguage!]: lastModified,
+          [i18n.language!]: lastModified,
         }));
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to fetch when the language changes
-  }, [i18n.resolvedLanguage]);
+  }, [i18n.language]);
 
-  return i18n.resolvedLanguage ? pokemonNames[i18n.resolvedLanguage] ?? {} : {};
+  return i18n.language ? pokemonNames[i18n.language] ?? {} : {};
 };

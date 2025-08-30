@@ -10,7 +10,8 @@ import { useTranslation } from "react-i18next";
 
 const languages = [
   { code: "en", name: "English" },
-  { code: "zh", name: "中文", beta: true },
+  { code: "zh-Hans", name: "中文（简体）", beta: true },
+  { code: "zh-Hant", name: "中文（繁体）", beta: true },
 ];
 
 const LanguageSelector: React.FC = () => {
@@ -32,7 +33,7 @@ const LanguageSelector: React.FC = () => {
             key={language.code}
             onClick={() => handleLanguageChange(language.code)}
             className={clsx(
-              i18n.resolvedLanguage === language.code &&
+              i18n.language === language.code &&
                 "tw:bg-primary! tw:text-primary-foreground!",
               "tw:not-last:mb-1"
             )}

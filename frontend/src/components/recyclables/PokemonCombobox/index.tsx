@@ -32,9 +32,9 @@ const PokemonCombobox: React.FC<Props> = ({
   className,
 }) => {
   const {
-    i18n: { resolvedLanguage },
+    i18n: { language },
   } = useTranslation();
-  const needsPinyin = resolvedLanguage === "zh";
+  const needsPinyin = language.startsWith("zh");
   const { pokemonIcons } = usePokemonIcons();
   const pokemonNamesMap = usePokemonNames();
   const pokemonNames = useMemo(

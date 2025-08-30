@@ -17,7 +17,7 @@ const Header: React.FC = () => {
   const shouldShowRuleButton = routeHandles.some(
     ({ shouldShowRuleButton }) => shouldShowRuleButton
   );
-  const { t } = useTranslation("nav");
+  const { t, i18n } = useTranslation("nav");
 
   return (
     <header

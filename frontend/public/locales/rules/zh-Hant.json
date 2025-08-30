@@ -1,0 +1,119 @@
+{
+  "daily": {
+    "title": "每日挑戰規則",
+    "jumpToExamples": "跳轉到範例",
+    "objective": {
+      "title": "🎯 目標",
+      "description": "在<strong>8次嘗試或更少</strong>內猜出每日神秘寶可夢！",
+      "features": {
+        "dailyPokemon": "每天都有新的神秘寶可夢",
+        "sharedPokemon": "每個人每天都會得到相同的寶可夢",
+        "useClues": "利用每次猜測的線索來縮小選項範圍",
+        "shareResults": "與朋友分享你的結果！"
+      }
+    },
+    "howCluesWork": {
+      "title": "🔍 線索工作原理",
+      "introduction": "每次猜測後，你將根據5個類別獲得回饋：",
+      "types": {
+        "title": "🍃💧🔥 屬性1 與 屬性2",
+        "description": "你的猜測屬性攻擊目標寶可夢的效果如何？",
+        "matchDescription": "如果屬性完全一樣，你會看到一個對勾！✅ 否則，你可能會看到不同的圖示，取決於屬性的效果！",
+        "damageLevels": {
+          "4x": {
+            "label": "4倍傷害：",
+            "description": "極度有效（冰 vs 草/飛行）"
+          },
+          "2x": {
+            "label": "2倍傷害：",
+            "description": "超有效（火 vs 草）"
+          },
+          "1x": {
+            "label": "1倍傷害：",
+            "description": "正常效果（一般 vs 超能力）"
+          },
+          "0_5x": {
+            "label": "0.5倍傷害：",
+            "description": "不太有效（水 vs 火）"
+          },
+          "0_25x": {
+            "label": "0.25倍傷害：",
+            "description": "幾乎無效（一般 vs 岩石/鋼）"
+          },
+          "0x": {
+            "label": "0倍傷害：",
+            "description": "無效（一般 vs 幽靈）"
+          },
+          "na": {
+            "label": "不適用：",
+            "description": "你的寶可夢是單屬性，而目標不是單屬性。"
+          },
+          "match": {
+            "label": "一樣：",
+            "description": "你猜測的寶可夢屬性與目標一樣。如果兩隻寶可夢都是單屬性，屬性2也會一樣"
+          }
+        }
+      },
+      "generation": {
+        "title": "📅 世代",
+        "description": "目標是否與你的猜測來自同一世代？",
+        "rangeDescription": "世代範圍從第一世代（關都）到第九世代（帕底亞）",
+        "indicators": {
+          "newer": {
+            "label": "更新的：",
+            "description": "目標來自比你的猜測更新的世代"
+          },
+          "older": {
+            "label": "更舊的：",
+            "description": "目標來自比你的猜測更舊的世代"
+          },
+          "match": {
+            "label": "一樣：",
+            "description": "你的猜測與目標屬於同一世代！"
+          }
+        }
+      },
+      "color": {
+        "title": "🎨 顏色",
+        "description": "兩隻寶可夢是否共享相同的主體顏色？",
+        "classificationDescription": "基於官方寶可夢圖鑑顏色分類",
+        "indicators": {
+          "match": {
+            "label": "一樣：",
+            "description": "你的猜測與目標寶可夢共享相同的主體顏色"
+          },
+          "different": {
+            "label": "不同：",
+            "description": "你的猜測與目標寶可夢的主體顏色不同"
+          }
+        }
+      },
+      "height": {
+        "title": "📏 身高",
+        "description": "你的猜測屬性攻擊目標寶可夢的效果如何？",
+        "measurementDescription": "以米為單位測量（例如，皮卡丘身高0.4米）",
+        "indicators": {
+          "taller": {
+            "label": "更高的：",
+            "description": "目標比你的猜測更高"
+          },
+          "shorter": {
+            "label": "更矮的：",
+            "description": "目標比你的猜測更矮"
+          },
+          "match": {
+            "label": "一樣：",
+            "description": "你的猜測與目標身高相同！"
+          }
+        }
+      }
+    },
+    "examples": {
+      "title": "💡 猜測範例",
+      "description": "假設神秘寶可夢是暴鯉龍（水/飛行，第1世代，藍色，6.5米高），你進行了以下2次猜測。你將收到以下回饋："
+    },
+    "buttons": {
+      "playNow": "立即遊玩"
+    }
+  }
+}

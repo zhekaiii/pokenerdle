@@ -11,15 +11,7 @@ i18n
     backend: {
       loadPath: "/locales/{{ns}}/{{lng}}.json",
     },
-    supportedLngs: ["en", "zh"],
-    nonExplicitSupportedLngs: true,
-    fallbackLng: (code: string) => {
-      if (code.startsWith("en")) return ["en"];
-      if (code.startsWith("zh")) return ["zh"];
-      return ["en"];
-    },
     debug: import.meta.env.DEV,
-    load: "languageOnly",
 
     interpolation: {
       escapeValue: false,
@@ -28,6 +20,16 @@ i18n
     detection: {
       order: ["localStorage", "navigator", "htmlTag"],
       caches: ["localStorage"],
+      convertDetectedLanguage: (code) => {
+        if (code.startsWith("en")) return "en";
+        if (["zh-TW", "zh-HK", "zh-MO", "zh-Hant"].includes(code)) {
+          return "zh-Hant";
+        }
+        if (code.startsWith("zh")) {
+          return "zh-Hans";
+        }
+        return "en";
+      },
     },
   });
 

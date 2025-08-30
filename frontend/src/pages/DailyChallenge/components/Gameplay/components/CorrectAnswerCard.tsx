@@ -7,10 +7,7 @@ import {
   CorrectAnswer,
   useDailyChallengeData,
 } from "@/pages/DailyChallenge/hooks/useData";
-import {
-  formatPokemonHeight,
-  getFormattedPokemonName,
-} from "@/utils/formatters";
+import { formatPokemonHeight } from "@/utils/formatters";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import classes from "./CorrectAnswerCard.module.scss";
@@ -62,7 +59,7 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
       correctAnswer?.pokemonId != undefined
         ? pokemonNames[correctAnswer.pokemonId]
         : undefined;
-    return pokemonName && getFormattedPokemonName(pokemonName);
+    return pokemonName?.name || pokemonName?.speciesName;
   }, [correctAnswer?.pokemonId, pokemonNames]);
   const attempts = guesses?.guesses.length ?? 0;
 
