@@ -133,6 +133,7 @@ const PathFinderGame: React.FC = () => {
       const previousPokemon = path.length
         ? path[path.length - 1]
         : challenge.startPokemon;
+      const previousPokemonName = pokemonNames[previousPokemon.id];
       const isAbilityShared = previousPokemon.abilities.some((ability) =>
         pokemonWithAbilities.abilities.some((a) => a.id === ability.id)
       );
@@ -144,7 +145,8 @@ const PathFinderGame: React.FC = () => {
               <TriangleAlert className="tw:mr-2" />
               <div>
                 {pokemonName?.name || pokemonName?.speciesName} does not share
-                an ability with {pokemonName?.name || pokemonName?.speciesName}
+                an ability with{" "}
+                {previousPokemonName?.name || previousPokemonName?.speciesName}
               </div>
             </div>
           ),
