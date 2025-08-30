@@ -1,6 +1,6 @@
+import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { useToast } from "@/hooks/useToast";
 import { QUERY_KEY } from "@/lib/query";
-import { getFormattedPokemonName } from "@/utils/formatters";
 import { getSharedAbilities } from "@/utils/pokeChainUtils";
 import {
   PathFinderResponse,
@@ -44,7 +44,11 @@ const PathFinderGame: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [startTime, setStartTime] = useState(Date.now());
   const [numGuesses, setNumGuesses] = useState(0);
+  const pokemonNames = usePokemonNames();
   const queryClient = useQueryClient();
+  const lastPokemon =
+    challenge && (path.length ? path[path.length - 1] : challenge.startPokemon);
+  const lastPokemonName = lastPokemon && pokemonNames[lastPokemon.id];
 
   const isPuzzleSolved = useMemo(() => {
     if (!challenge || path.length == 0) return false;
@@ -124,6 +128,7 @@ const PathFinderGame: React.FC = () => {
         queryKey: [QUERY_KEY.POKEMON, pokemon.id],
         queryFn: () => api.data.getPokemonWithAbilities(pokemon.id),
       });
+      const pokemonName = pokemonNames[pokemon.id];
       setNumGuesses(numGuesses + 1);
       const previousPokemon = path.length
         ? path[path.length - 1]
@@ -138,8 +143,8 @@ const PathFinderGame: React.FC = () => {
             <div className="tw:flex tw:flex-nowrap">
               <TriangleAlert className="tw:mr-2" />
               <div>
-                {getFormattedPokemonName(pokemonWithAbilities)} does not share
-                an ability with {getFormattedPokemonName(previousPokemon)}
+                {pokemonName?.name || pokemonName?.speciesName} does not share
+                an ability with {pokemonName?.name || pokemonName?.speciesName}
               </div>
             </div>
           ),
@@ -238,10 +243,7 @@ const PathFinderGame: React.FC = () => {
                 <div className="tw:space-y-2">
                   <label className="tw:text-sm tw:font-medium">
                     Which Pokémon shares an ability with{" "}
-                    {getFormattedPokemonName(
-                      path[path.length - 1] ?? challenge.startPokemon
-                    )}
-                    ?
+                    {lastPokemonName?.name || lastPokemonName?.speciesName}?
                   </label>
                   <PokemonCombobox
                     input={input}

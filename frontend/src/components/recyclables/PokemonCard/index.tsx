@@ -1,15 +1,13 @@
 import questionMarkIcon from "@/assets/question_mark_big.png";
 import { Button } from "@/components/ui/Button";
+import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { MAX_LINKS } from "@/utils/pokeChainUtils";
 import { PokemonWithAbilities } from "@pokenerdle/shared";
 import clsx from "clsx";
 import { uniqBy } from "es-toolkit";
 import { X } from "lucide-react";
 import React, { useMemo, useRef } from "react";
-import {
-  formatAbilityName,
-  getFormattedPokemonName,
-} from "../../../utils/formatters";
+import { formatAbilityName } from "../../../utils/formatters";
 import { Card, CardContent } from "../../ui/Card";
 import classes from "./index.module.scss";
 
@@ -30,6 +28,8 @@ const PokemonCard: React.FC<Props> = ({
   sharedLinks = {},
   onRemove,
 }) => {
+  const pokemonNames = usePokemonNames();
+  const pokemonName = pokemonNames[pokemon.id];
   const { current: isShiny } = useRef(Math.random() <= SHINY_PROBABILITY);
   const abilities = useMemo(
     () => uniqBy(pokemon.abilities, (ability) => ability.name),
@@ -87,11 +87,12 @@ const PokemonCard: React.FC<Props> = ({
               pokemon.name.includes("gmax"),
           })}
           src={pokemonSpriteUrl}
-          alt={pokemon.name}
+          alt={pokemonName?.name || pokemonName?.speciesName}
         />
 
         <span className={classes["PokemonCard__PkmnName"]}>
-          #{pokemonNumber} {getFormattedPokemonName(pokemon)} {isShiny && "✨"}
+          #{pokemonNumber} {pokemonName?.name || pokemonName?.speciesName}{" "}
+          {isShiny && "✨"}
         </span>
         {showAbility &&
           abilities.map((ability) => {
