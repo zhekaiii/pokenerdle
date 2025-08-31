@@ -19,6 +19,9 @@ export default defineConfig({
     tailwindcss(),
     svgr(),
   ],
+  build: {
+    sourcemap: true,
+  },
   css: {
     preprocessorOptions: {
       scss: {
