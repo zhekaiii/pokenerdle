@@ -235,7 +235,10 @@ const BattleScreen: React.FC<Props> = ({
       const isPlayersTurn = player === socket.id;
       const pronoun = isPlayersTurn ? "You" : "Your opponent";
       const pokemonName =
-        pokemonId != undefined ? pokemonNames[pokemonId]?.name : undefined;
+        pokemonId != undefined
+          ? pokemonNames[pokemonId]?.name ||
+            pokemonNames[pokemonId]?.speciesName
+          : undefined;
       toast({
         variant: "destructive",
         title: (
