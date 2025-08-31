@@ -10,6 +10,7 @@
     "be-build": "pnpm --filter @pokenerdle/backend build",
     "shared-build": "pnpm --filter @pokenerdle/shared build",
     "build": "pnpm shared-build && concurrently \"pnpm be-build\" \"pnpm fe-build\"",
+    "heroku-cleanup": "posthog-cli sourcemap inject --directory ./frontend/dist/assets && posthog-cli sourcemap upload --directory ./frontend/dist/assets --delete-after",
     "start": "pnpm --filter @pokenerdle/backend start"
   },
   "devDependencies": {
