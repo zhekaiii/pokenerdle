@@ -1,7 +1,10 @@
 import React from "react";
 import AnimatedNumber from "../recyclables/AnimatedNumber";
 import { Card } from "../ui/Card";
-import { usePokeChainContext } from "./context/PokeChainContext";
+import {
+  getOpponentDisplayName,
+  usePokeChainContext,
+} from "./context/PokeChainContext";
 
 interface GameHeaderProps {
   playerPoints: number;
@@ -18,12 +21,12 @@ const GameHeader: React.FC<GameHeaderProps> = ({
   opponentStreak,
   chainLength,
 }) => {
-  const { isSinglePlayer } = usePokeChainContext();
+  const { isSinglePlayer, opponentDisplayName } = usePokeChainContext();
   return (
     <Card>
       <div className="tw:flex tw:justify-between tw:items-center tw:px-4 tw:py-2 tw:gap-2">
         <div>
-          <b className="tw:block">Player</b>
+          <b className="tw:block">You</b>
           <small className="tw:me-1">
             <AnimatedNumber as="span" number={playerPoints} /> points
           </small>
@@ -35,7 +38,9 @@ const GameHeader: React.FC<GameHeaderProps> = ({
         </div>
         {!isSinglePlayer && (
           <div className="tw:text-end">
-            <b className="tw:block">Opponent</b>
+            <b className="tw:block">
+              {getOpponentDisplayName(opponentDisplayName)}
+            </b>
             <small className="tw:me-1">
               <AnimatedNumber as="span" number={opponentPoints} /> points
             </small>

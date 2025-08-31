@@ -55,10 +55,14 @@ const nextTurn = (roomId: string, isFirstTurn?: true) => {
 };
 
 const initRoom = (
-  room: Pick<BattleRoom, "players" | "pokemon" | "settings" | "numPlayers">
+  room: Pick<
+    BattleRoom,
+    "players" | "displayNames" | "pokemon" | "settings" | "numPlayers"
+  >
 ): BattleRoom => {
   return {
     players: room.players,
+    displayNames: room.displayNames,
     pokemon: [room.pokemon[0]],
     settings: room.settings,
     timer: null,
@@ -79,7 +83,8 @@ const initRoom = (
 export const createBattleRoom = async (
   socket: PokeNerdleSocket,
   settings: BattleRoomSettings,
-  isSinglePlayer?: boolean
+  isSinglePlayer?: boolean,
+  displayName?: string
 ) => {
   console.log(`Received create request from ${socket.id}`);
   while (true) {
@@ -91,6 +96,7 @@ export const createBattleRoom = async (
     const pokemon = await dataService.getStarterPokemon();
     ongoingBattles[roomId] = initRoom({
       players: [socket.id],
+      displayNames: [displayName || null],
       pokemon: [pokemon],
       settings,
       numPlayers: isSinglePlayer ? 1 : 2,
@@ -103,7 +109,11 @@ export const createBattleRoom = async (
   }
 };
 
-export const joinRoom = (socket: PokeNerdleSocket, roomId: string) => {
+export const joinRoom = (
+  socket: PokeNerdleSocket,
+  roomId: string,
+  displayName?: string
+) => {
   console.log("Joining room", roomId);
   if (!(roomId in ongoingBattles)) {
     socket.emit("roomError", ErrorRoomNotFound);
@@ -120,9 +130,12 @@ export const joinRoom = (socket: PokeNerdleSocket, roomId: string) => {
     return;
   }
   room.players = [room.players[0], socket.id];
+  room.displayNames = [room.displayNames[0], displayName || null];
   socket.join(roomId);
   socket.emit("roomCode", roomId, room.settings);
-  io.of(RouteNames.BATTLES_WS).to(roomId).emit("opponentJoined");
+  io.of(RouteNames.BATTLES_WS)
+    .to(roomId)
+    .emit("opponentJoined", displayName || null);
   console.log(ongoingBattles);
 };
 
@@ -145,9 +158,10 @@ export const leaveRoom = (
   }
 
   room.timer && clearTimeout(room.timer);
-  ongoingBattles[roomId].players.forEach((id) => {
+  ongoingBattles[roomId].players.forEach((id, index) => {
     if (id !== socket.id) {
-      socket.to(id).emit("roomError", "Opponent left the battle!");
+      const opponentName = room.displayNames[index] || "Opponent";
+      socket.to(id).emit("roomError", `${opponentName} left the battle!`);
     }
     io.socketsLeave(roomId);
   });

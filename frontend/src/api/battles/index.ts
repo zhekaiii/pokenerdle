@@ -22,7 +22,7 @@ export default {
       onRoomReady("");
       onError(error);
     });
-    socket.on("opponentJoined", () => {
+    socket.on("opponentJoined", (displayName: string | null) => {
       setIsOpponentJoined(true);
     });
     return socket;
@@ -30,12 +30,17 @@ export default {
   createBattleRoom: (
     socket: PokeNerdleSocket,
     settings: BattleRoomSettings,
-    isSinglePlayer?: boolean
+    isSinglePlayer?: boolean,
+    displayName?: string
   ) => {
-    socket.emit("create", { settings, isSinglePlayer });
+    socket.emit("create", { settings, isSinglePlayer, displayName });
   },
-  joinRoom: (socket: PokeNerdleSocket, roomCode: string) => {
-    socket.emit("join", roomCode);
+  joinRoom: (
+    socket: PokeNerdleSocket,
+    roomCode: string,
+    displayName?: string
+  ) => {
+    socket.emit("join", roomCode, displayName);
   },
   validatePokemon: (
     socket: PokeNerdleSocket,

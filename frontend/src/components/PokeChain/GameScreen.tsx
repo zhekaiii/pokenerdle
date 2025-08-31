@@ -14,6 +14,7 @@ const GameScreen: React.FC<Props> = ({ exitRoom }) => {
   const { roomCode, starterPokemon, setStarterPokemon } = usePokeChainContext();
   const [isGoingFirst, setIsGoingFirst] = useState<boolean>();
   const [isGameStarted, setIsGameStarted] = useState(false);
+
   const goBackToPreparation = useCallback(() => {
     socket.emit("isMyTurn", setIsGoingFirst);
     setIsGameStarted(false);

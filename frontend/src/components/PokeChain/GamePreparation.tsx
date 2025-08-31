@@ -3,7 +3,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSocket } from "../../hooks/useSocket";
 import classes from "./GamePreparation.module.scss";
 import GameSettings from "./GameSettings";
-import { usePokeChainContext } from "./context/PokeChainContext";
+import {
+  getOpponentDisplayName,
+  getYourOpponentDisplayName,
+  usePokeChainContext,
+} from "./context/PokeChainContext";
 
 interface Props {
   isGoingFirst?: boolean;
@@ -12,7 +16,8 @@ interface Props {
 
 const GamePreparation: React.FC<Props> = ({ isGoingFirst, exitRoom }) => {
   const socket = useSocket();
-  const { settings, isSinglePlayer } = usePokeChainContext();
+  const { settings, isSinglePlayer, opponentDisplayName } =
+    usePokeChainContext();
   const [secondsLeft, setSecondsLeft] = useState(15);
   const [isReady, setIsReady] = useState(false);
   const [isOpponentReady, setIsOpponentReady] = useState(false);
@@ -51,7 +56,12 @@ const GamePreparation: React.FC<Props> = ({ isGoingFirst, exitRoom }) => {
   return (
     <div className={classes.GamePreparation}>
       {!isSinglePlayer && isGoingFirst !== undefined && (
-        <div>{isGoingFirst ? "You" : "Your opponent"} will go first</div>
+        <div>
+          {isGoingFirst
+            ? "You"
+            : getYourOpponentDisplayName(opponentDisplayName)}{" "}
+          will go first
+        </div>
       )}
 
       <GameSettings settings={settings} />
@@ -73,7 +83,9 @@ const GamePreparation: React.FC<Props> = ({ isGoingFirst, exitRoom }) => {
             Ready ({secondsLeft})
           </Button>
           {isOpponentReady && (
-            <small className="tw:mt-2">Opponent is ready</small>
+            <small className="tw:mt-2">
+              {getOpponentDisplayName(opponentDisplayName)} is ready
+            </small>
           )}
         </div>
       </div>

@@ -16,10 +16,12 @@ import { PokeNerdleServer } from "../utils/types.js";
 
 export const initializeBattleWsRoutes = (io: PokeNerdleServer) => {
   io.of(RouteNames.BATTLES_WS).on("connection", (socket) => {
-    socket.on("create", ({ settings, isSinglePlayer }) =>
-      createBattleRoom(socket, settings, isSinglePlayer)
+    socket.on("create", ({ settings, isSinglePlayer, displayName }) =>
+      createBattleRoom(socket, settings, isSinglePlayer, displayName)
     );
-    socket.on("join", (roomId: string) => joinRoom(socket, roomId));
+    socket.on("join", (roomId: string, displayName?: string) =>
+      joinRoom(socket, roomId, displayName)
+    );
     socket.on("answer", (pokemon: PokemonNamesResponse, roomId: string) =>
       validatePokemon(socket, pokemon, roomId)
     );

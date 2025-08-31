@@ -42,7 +42,12 @@ import BattleBoard from "./BattleBoard";
 import battleScreenClasses from "./BattleScreen.module.scss";
 import GameHeader from "./GameHeader";
 import LinkChip from "./LinkChip";
-import { usePokeChainContext } from "./context/PokeChainContext";
+import {
+  getOpponentDisplayName,
+  getOpponentDisplayNamePossessive,
+  getYourOpponentDisplayName,
+  usePokeChainContext,
+} from "./context/PokeChainContext";
 
 interface Props {
   isGoingFirst: boolean;
@@ -58,8 +63,13 @@ const BattleScreen: React.FC<Props> = ({
   exitRoom,
 }) => {
   const socket = useSocket();
-  const { roomCode, settings, isSinglePlayer, setStarterPokemon } =
-    usePokeChainContext();
+  const {
+    roomCode,
+    settings,
+    isSinglePlayer,
+    setStarterPokemon,
+    opponentDisplayName,
+  } = usePokeChainContext();
   const { toast } = useToast();
   const [input, setInput] = useState("");
   const pokemonNames = usePokemonNames();
@@ -233,7 +243,9 @@ const BattleScreen: React.FC<Props> = ({
     );
     socket.on("wrongAnswer", ({ pokemonId, points, player, reason }) => {
       const isPlayersTurn = player === socket.id;
-      const pronoun = isPlayersTurn ? "You" : "Your opponent";
+      const pronoun = isPlayersTurn
+        ? "You"
+        : getYourOpponentDisplayName(opponentDisplayName);
       const pokemonName =
         pokemonId != undefined
           ? pokemonNames[pokemonId]?.name ||
@@ -319,17 +331,21 @@ const BattleScreen: React.FC<Props> = ({
       return "Game Over!";
     }
     if (!isGameEnded) {
-      return isPlayersTurn ? "Your turn" : "Opponent's turn";
+      return isPlayersTurn
+        ? "Your turn"
+        : `${getOpponentDisplayNamePossessive(opponentDisplayName)} turn`;
     }
     if (forfeitInfo?.forfeit) {
       return forfeitInfo.forfeitedBy === socket.id
         ? "You forfeited the match!"
-        : "Your opponent forfeited!";
+        : `${getYourOpponentDisplayName(opponentDisplayName)} forfeited!`;
     }
     if (isDraw) {
       return "It's a draw!";
     }
-    return `${hasWon ? "You" : "Your opponent"} won!`;
+    return `${
+      hasWon ? "You" : getYourOpponentDisplayName(opponentDisplayName)
+    } won!`;
   }, [
     isSinglePlayer,
     isGameEnded,
@@ -338,6 +354,7 @@ const BattleScreen: React.FC<Props> = ({
     hasWon,
     isPlayersTurn,
     socket.id,
+    opponentDisplayName,
   ]);
 
   return (
@@ -431,7 +448,11 @@ const BattleScreen: React.FC<Props> = ({
               <RefreshCw /> {isSinglePlayer ? "Replay" : "Rematch"}{" "}
               {rematchTimer > 0 && `(${rematchTimer})`}
             </Button>
-            {opponentRematch && <small>Opponent wants a rematch</small>}
+            {opponentRematch && (
+              <small>
+                {getOpponentDisplayName(opponentDisplayName)} wants a rematch
+              </small>
+            )}
           </div>
         </div>
       )}

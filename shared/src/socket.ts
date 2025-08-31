@@ -9,7 +9,7 @@ export interface ServerToClientEvents {
     isSinglePlayer?: boolean
   ) => void;
   roomError: (error: string) => void;
-  opponentJoined: () => void;
+  opponentJoined: (displayName: string | null) => void;
   wrongAnswer: (data: {
     pokemonId: number;
     points: number;
@@ -41,8 +41,9 @@ export interface ClientToServerEvents {
   create: (params: {
     settings: BattleRoomSettings;
     isSinglePlayer?: boolean;
+    displayName?: string;
   }) => void;
-  join: (roomId: string) => void;
+  join: (roomId: string, displayName?: string) => void;
   answer: (pokemon: PokemonNamesResponse, roomId: string) => void;
   leave: (roomId: string, callback?: () => void) => void;
   disconnecting: () => void;

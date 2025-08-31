@@ -7,6 +7,8 @@ import {
   CardTitle,
 } from "@/components/ui/Card";
 import { trackRoomCreated } from "@/lib/events";
+import { displayNameAtom } from "@/pages/Settings";
+import { useAtomValue } from "jotai";
 import { HelpCircle, Plus, User, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
@@ -32,6 +34,7 @@ const PokeChainLobby: React.FC = () => {
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [showAbility, setShowAbility] = useState(true);
   const [timer, setTimer] = useState(20);
+  const displayName = useAtomValue(displayNameAtom);
 
   useEffect(() => {
     const hideLoadingDialog = () => {
@@ -60,7 +63,8 @@ const PokeChainLobby: React.FC = () => {
         timer,
         showAbility,
       },
-      isSinglePlayer
+      isSinglePlayer,
+      displayName
     );
   };
 
@@ -68,7 +72,7 @@ const PokeChainLobby: React.FC = () => {
     if (isConnecting || roomCodeInput.length !== MAX_ROOM_CODE_LENGTH) return;
     setIsConnecting(true);
     setIsOpponentConnected(true);
-    api.battles.joinRoom(socket!, roomCodeInput);
+    api.battles.joinRoom(socket!, roomCodeInput, displayName);
   };
 
   const joinRoomSection = (

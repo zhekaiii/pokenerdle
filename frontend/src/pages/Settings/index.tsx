@@ -8,10 +8,16 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { LogOut, Palette, Settings as SettingsIcon, User } from "lucide-react";
+import {
+  IdCard,
+  LogOut,
+  Palette,
+  Settings as SettingsIcon,
+  User,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-const displayNameAtom = atomWithStorage("display-name", "", undefined, {
+export const displayNameAtom = atomWithStorage("display-name", "", undefined, {
   getOnInit: true,
 });
 
@@ -22,7 +28,7 @@ const Settings: React.FC = () => {
   const [displayName, setDisplayName] = useState(storedDisplayName);
 
   const handleDisplayNameUpdate = async () => {
-    if (!user || !displayName.trim()) return;
+    if (!displayName.trim()) return;
     setStoredDisplayName(displayName.trim());
   };
 
@@ -39,6 +45,47 @@ const Settings: React.FC = () => {
         <SettingsIcon className="tw:size-6" />
         <h1 className="tw:text-2xl tw:font-bold">Settings</h1>
       </div>
+
+      {/* Display Name Settings */}
+      <Card responsive>
+        <CardHeader>
+          <div className="tw:flex tw:items-center tw:gap-3">
+            <IdCard className="tw:size-5" />
+            <h2 className="tw:text-lg tw:font-semibold">Display Name</h2>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="tw:space-y-4">
+            <div>
+              <Label htmlFor="display-name">
+                Display Name{" "}
+                <span className="tw:text-muted-foreground tw:text-xs">
+                  (for PokéChain)
+                </span>
+              </Label>
+              <div className="tw:flex tw:gap-2 tw:mt-1">
+                <Input
+                  id="display-name"
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="Enter your display name"
+                  className="tw:flex-1"
+                />
+                <Button
+                  onClick={handleDisplayNameUpdate}
+                  disabled={!displayName.trim()}
+                >
+                  Update
+                </Button>
+              </div>
+              <p className="tw:text-sm tw:text-muted-foreground tw:mt-2">
+                This name will be shown to other players in PokéChain battles.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Account Information */}
       <Card responsive>
@@ -60,31 +107,6 @@ const Settings: React.FC = () => {
                   disabled
                   className="tw:mt-1"
                 />
-              </div>
-
-              <div>
-                <Label htmlFor="display-name">
-                  Display Name{" "}
-                  <span className="tw:text-muted-foreground tw:text-xs">
-                    (for PokéChain)
-                  </span>
-                </Label>
-                <div className="tw:flex tw:gap-2 tw:mt-1">
-                  <Input
-                    id="display-name"
-                    type="text"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Enter your display name"
-                    className="tw:flex-1"
-                  />
-                  <Button
-                    onClick={handleDisplayNameUpdate}
-                    disabled={!displayName.trim()}
-                  >
-                    Update
-                  </Button>
-                </div>
               </div>
 
               <div className="tw:pt-4 tw:border-t">

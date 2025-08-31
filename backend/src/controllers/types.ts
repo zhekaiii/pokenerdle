@@ -8,6 +8,7 @@ import { pokemon_v2_pokemonspecies } from "@prisma/client";
 
 export type BattleRoom = {
   players: [string] | [string, string];
+  displayNames: [string | null] | [string | null, string | null];
   pokemon: PokemonWithAbilities[];
   settings: BattleRoomSettings;
   turn: number;

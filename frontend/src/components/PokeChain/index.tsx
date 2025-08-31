@@ -1,15 +1,17 @@
 import { useToast } from "@/hooks/useToast";
+import { displayNameAtom } from "@/pages/Settings";
+import { useAtomValue } from "jotai";
 import { TriangleAlert } from "lucide-react";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 import { useSocket } from "../../hooks/useSocket";
-import GameScreen from "./GameScreen";
-import PokeChainLobby from "./PokeChainLobby";
-import WaitingLobby from "./WaitingLobby";
 import {
   PokeChainContextProvider,
   usePokeChainContext,
 } from "./context/PokeChainContext";
+import GameScreen from "./GameScreen";
+import PokeChainLobby from "./PokeChainLobby";
+import WaitingLobby from "./WaitingLobby";
 
 const PokeChain: React.FC = () => {
   const socket = useSocket();
@@ -21,9 +23,11 @@ const PokeChain: React.FC = () => {
     setIsSinglePlayer,
     setIsOpponentConnected,
     setRoomCode,
+    setOpponentDisplayName,
   } = usePokeChainContext();
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
+  const displayName = useAtomValue(displayNameAtom);
 
   const exitRoom = () => {
     if (!roomCode) return;
@@ -57,8 +61,9 @@ const PokeChain: React.FC = () => {
       });
       setSearchParams();
     });
-    socket.on("opponentJoined", () => {
+    socket.on("opponentJoined", (displayName: string | null) => {
       setIsOpponentConnected(true);
+      setOpponentDisplayName(displayName);
     });
 
     return () => {
@@ -72,7 +77,7 @@ const PokeChain: React.FC = () => {
   useEffect(() => {
     const roomCode = searchParams.get("roomCode");
     if (roomCode) {
-      socket.emit("join", roomCode);
+      socket.emit("join", roomCode, displayName);
       setSearchParams();
     }
   }, []);
