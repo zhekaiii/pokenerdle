@@ -1,0 +1,25 @@
+{
+  "title": "设置",
+  "displayName": {
+    "title": "显示名称",
+    "label": "显示名称",
+    "pokechainNote": "（用于宝可梦链）",
+    "placeholder": "输入您的显示名称",
+    "updateButton": "更新",
+    "description": "此名称将在宝可梦链对战中对其他玩家显示。"
+  },
+  "account": {
+    "title": "账户信息",
+    "email": "邮箱",
+    "signInPrompt": "登录以管理您的账户设置。",
+    "logoutButton": "退出登录"
+  },
+  "appearance": {
+    "title": "外观",
+    "themeMode": "主题模式"
+  },
+  "language": {
+    "title": "语言",
+    "description": "选择您偏好的应用程序界面语言。"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "title": "Settings",
+  "displayName": {
+    "title": "Display Name",
+    "label": "Display Name",
+    "pokechainNote": "(for PokéChain)",
+    "placeholder": "Enter your display name",
+    "updateButton": "Update",
+    "description": "This name will be shown to other players in PokéChain battles."
+  },
+  "account": {
+    "title": "Account Information",
+    "email": "Email",
+    "signInPrompt": "Sign in to manage your account settings.",
+    "logoutButton": "Log Out"
+  },
+  "appearance": {
+    "title": "Appearance",
+    "themeMode": "Theme Mode"
+  },
+  "language": {
+    "title": "Language",
+    "description": "Choose your preferred language for the application interface."
+  }
+}

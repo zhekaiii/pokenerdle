@@ -1,6 +1,6 @@
 import GoogleIcon from "@/assets/google.svg?react";
 import { themeAtom, THEMES } from "@/atoms/theme";
-import LanguageSelector from "@/components/LanguageSelector";
+import { LanguageDropdownSubmenu } from "@/components/LanguageSelector";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -91,7 +91,7 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
             })}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
-        <LanguageSelector />
+        <LanguageDropdownSubmenu />
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={isAuthenticated ? signOut : handleSignIn}
