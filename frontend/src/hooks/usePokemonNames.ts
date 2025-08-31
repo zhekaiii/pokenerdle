@@ -1,6 +1,7 @@
 import api from "@/api";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
@@ -49,6 +50,12 @@ export const usePokemonNames = () => {
           ...prev,
           [i18n.language!]: lastModified,
         }));
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error) && error.response?.status === 304) {
+          return;
+        }
+        throw error;
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to fetch when the language changes
   }, [i18n.language]);

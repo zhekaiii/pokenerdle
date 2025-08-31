@@ -30,9 +30,9 @@ export const usePokemonIdsByGeneration = () => {
   );
 
   const fetchPokemonIdsForGeneration = useCallback(
-    async (generation: number): Promise<number[]> => {
+    async (generation: number): Promise<void> => {
       if (generation < MIN_GENERATION || generation > MAX_GENERATION) {
-        return [];
+        return;
       }
 
       const lastModified = lastModifiedByGeneration[generation];
@@ -48,16 +48,11 @@ export const usePokemonIdsByGeneration = () => {
 
         setPokemonIdsByGeneration(updatedIds);
         setLastModifiedByGeneration(updatedLastModified);
-        return data;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 304) {
-          return pokemonIdsByGeneration[generation];
+          return;
         }
-        console.error(
-          `Failed to fetch Pokemon IDs for generation ${generation}:`,
-          error
-        );
-        return [];
+        throw error;
       }
     },
     [

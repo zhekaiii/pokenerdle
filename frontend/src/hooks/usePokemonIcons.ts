@@ -1,5 +1,6 @@
 import api from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useCallback, useEffect } from "react";
@@ -45,6 +46,12 @@ export const usePokemonIcons = () => {
       .then(({ data, lastModified }) => {
         setPokemonIcons(data);
         setLastModified(lastModified);
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error) && error.response?.status === 304) {
+          return;
+        }
+        throw error;
       });
   }, []);
 
