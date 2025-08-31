@@ -35,7 +35,7 @@ const PokemonCombobox: React.FC<Props> = ({
     i18n: { language },
   } = useTranslation();
   const needsPinyin = language.startsWith("zh");
-  const { pokemonIcons } = usePokemonIcons();
+  const { getPokemonIcon } = usePokemonIcons();
   const pokemonNamesMap = usePokemonNames();
   const pokemonNames = useMemo(
     () =>
@@ -63,16 +63,20 @@ const PokemonCombobox: React.FC<Props> = ({
           : [],
         {
           keys: needsPinyin
-            ? ["pinyin", "initials", "name", { name: "speciesName", weight: 2 }]
+            ? ["pinyin", "initials"]
             : ["name", { name: "speciesName", weight: 2 }],
         }
       ),
     [pokemonNames, filter, needsPinyin]
   );
-  const suggestions = useMemo(
-    () => filteredPokemon.search(input, { limit: 10 }).map(({ item }) => item),
-    [filteredPokemon, input]
-  );
+  const suggestions = useMemo(() => {
+    const inputString = needsPinyin
+      ? pinyin(input, { style: pinyin.STYLE_NORMAL }).join(" ")
+      : input;
+    return filteredPokemon
+      .search(inputString, { limit: 10 })
+      .map(({ item }) => item);
+  }, [filteredPokemon, input, needsPinyin]);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -113,10 +117,7 @@ const PokemonCombobox: React.FC<Props> = ({
             <div className="tw:flex tw:items-center">
               <img
                 className={classes["PokemonCombobox__PokemonIcon"]}
-                src={
-                  pokemonIcons?.[option.id] ??
-                  `https://raw.githubusercontent.com/pokedextracker/pokesprite/refs/heads/master/images/${option.id}.png`
-                }
+                src={getPokemonIcon(option.id)}
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = iconPlaceholder;
                 }}
