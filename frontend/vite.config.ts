@@ -21,33 +21,6 @@ export default defineConfig({
   ],
   build: {
     sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            if (
-              /(i18next)\//.test(id)
-            ) {
-              return "vendor-i18n";
-            }
-            if (
-              /(react|react-dom|react-router)\//.test(id)
-            ) {
-              return "vendor-react";
-            }
-            if (/posthog-js\//.test(id)) {
-              return "vendor-posthog";
-            }
-            if (/axios\//.test(id)) {
-              return "vendor-http";
-            }
-            if (/@radix-ui\//.test(id)) {
-              return "vendor-radix";
-            }
-          }
-        },
-      },
-    },
   },
   css: {
     preprocessorOptions: {
