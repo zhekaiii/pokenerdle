@@ -17,6 +17,8 @@ i18n
       escapeValue: false,
     },
 
+    fallbackLng: "en",
+
     detection: {
       order: ["localStorage", "navigator", "htmlTag"],
       caches: ["localStorage"],

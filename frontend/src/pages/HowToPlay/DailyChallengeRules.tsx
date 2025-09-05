@@ -81,14 +81,14 @@ const DailyChallengeRules: React.FC = () => {
               __html: t("daily.objective.description"),
             }}
           />
-          <p>
+          <div>
             <ul className="tw:list-disc tw:ps-6 tw:text-muted-foreground">
               <li>{t("daily.objective.features.dailyPokemon")}</li>
               <li>{t("daily.objective.features.sharedPokemon")}</li>
               <li>{t("daily.objective.features.useClues")}</li>
               <li>{t("daily.objective.features.shareResults")}</li>
             </ul>
-          </p>
+          </div>
         </section>
 
         <section className="tw:flex tw:flex-col tw:gap-4">

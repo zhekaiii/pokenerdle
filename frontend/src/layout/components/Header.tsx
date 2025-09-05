@@ -16,7 +16,6 @@ const Header: React.FC = () => {
   const shouldShowRuleButton = matches.some(
     (match) => match.context.shouldShowRuleButton
   );
-  console.log({ matches });
   const { t } = useTranslation("nav");
 
   return (
