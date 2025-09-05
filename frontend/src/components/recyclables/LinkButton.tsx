@@ -1,9 +1,9 @@
+import { Link, LinkProps, useMatchRoute } from "@tanstack/react-router";
 import React from "react";
-import { Link, To, useMatch } from "react-router";
 import { Button } from "../ui/Button";
 
 interface Props {
-  to: To;
+  to: LinkProps["to"];
   children: React.ReactNode;
   className?: string;
   activeOverride?: boolean;
@@ -15,7 +15,7 @@ const LinkButton: React.FC<Props> = ({
   className,
   activeOverride,
 }) => {
-  const isActive = useMatch(to.toString());
+  const isActive = useMatchRoute()({ to });
   return (
     <Button
       asChild

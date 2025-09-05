@@ -1,11 +1,10 @@
 import LinkButton from "@/components/recyclables/LinkButton";
-import { useRouteHandles } from "@/hooks/useRouteHandles";
 import breakpoints from "@/utils/breakpoints";
+import { Link, useMatches } from "@tanstack/react-router";
 import clsx from "clsx";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
-import { useMedia } from "react-use";
+import useMedia from "react-use/lib/useMedia";
 import classes from "./index.module.scss";
 import { ProfileDropdownMenu } from "./ProfileDropdownMenu";
 import { ProfileIcon } from "./ProfileIcon";
@@ -13,11 +12,12 @@ import RulePageButton from "./RulePageButton";
 
 const Header: React.FC = () => {
   const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`);
-  const routeHandles = useRouteHandles();
-  const shouldShowRuleButton = routeHandles.some(
-    ({ shouldShowRuleButton }) => shouldShowRuleButton
+  const matches = useMatches();
+  const shouldShowRuleButton = matches.some(
+    (match) => match.context.shouldShowRuleButton
   );
-  const { t, i18n } = useTranslation("nav");
+  console.log({ matches });
+  const { t } = useTranslation("nav");
 
   return (
     <header

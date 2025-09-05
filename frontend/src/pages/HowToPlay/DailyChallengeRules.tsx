@@ -8,10 +8,10 @@ import {
   CardTitle,
 } from "@/components/ui/Card";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
+import { Link } from "@tanstack/react-router";
 import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import EffectivenessIcon from "../DailyChallenge/components/EffectivenessIcon";
 import DailyChallengeGuessBox from "../DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 

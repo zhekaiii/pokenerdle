@@ -8,10 +8,10 @@ import {
 } from "@/components/ui/Card";
 import { trackRoomCreated } from "@/lib/events";
 import { displayNameAtom } from "@/pages/Settings";
+import { Link } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { HelpCircle, Plus, User, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router";
 import api from "../../api";
 import { useSocket } from "../../hooks/useSocket";
 import LoadingDialog from "../recyclables/LoadingDialog";

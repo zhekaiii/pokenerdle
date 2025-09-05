@@ -1,4 +1,5 @@
 import tailwindcss from "@tailwindcss/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { defineConfig } from "vite";
@@ -10,6 +11,10 @@ import viteTsconfigPaths from "vite-tsconfig-paths";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    tanstackRouter({
+      target: "react",
+      autoCodeSplitting: true,
+    }),
     react(),
     viteTsconfigPaths(),
     eslint(),
@@ -24,14 +29,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          "vendor-react": ["react", "react-dom", "react-router"],
           "vendor-posthog": ["posthog-js", "posthog-js/react"],
-          "vendor-i18n": [
-            "i18next",
-            "react-i18next",
-            "i18next-browser-languagedetector",
-            "i18next-http-backend",
-          ],
         },
       },
     },

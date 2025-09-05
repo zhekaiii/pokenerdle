@@ -4,9 +4,9 @@ import PokemonCard from "@/components/recyclables/PokemonCard";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { PokemonWithAbilities } from "@pokenerdle/shared";
+import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
 import React from "react";
-import { Link } from "react-router";
 
 const BULBASAUR: PokemonWithAbilities = {
   id: 1,

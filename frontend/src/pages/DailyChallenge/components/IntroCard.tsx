@@ -8,9 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/Card";
+import { Link } from "@tanstack/react-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import { challengeNumber } from "../constants";
 import { useDailyChallengeData } from "../hooks/useData";
 

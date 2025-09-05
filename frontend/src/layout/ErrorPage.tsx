@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
+import { Link } from "@tanstack/react-router";
 import React from "react";
-import { Link } from "react-router";
 import PageContainer from "./PageContainer";
 
 const ErrorBoundary: React.FC = () => {

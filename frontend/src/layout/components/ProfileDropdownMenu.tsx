@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/DropdownMenu";
 import { useGoogleSignIn } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
+import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { Loader2, LogOut, Monitor, Moon, Settings, Sun } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 
 const themeIcons = {
   dark: Moon,

@@ -8,6 +8,7 @@ import {
   PokemonWithAbilities,
 } from "@pokenerdle/shared";
 import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import {
   CheckCircle,
   HelpCircle,
@@ -17,7 +18,6 @@ import {
 } from "lucide-react";
 import posthog from "posthog-js";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router";
 import api from "../../api";
 import LoadingDialog from "../recyclables/LoadingDialog";
 import PokemonCombobox from "../recyclables/PokemonCombobox";

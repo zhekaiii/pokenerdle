@@ -6,9 +6,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/Select";
+import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Outlet, useLocation, useNavigate } from "react-router";
 
 const OPTIONS = [
   {
@@ -35,7 +35,7 @@ const HowToPlayPage: React.FC = () => {
 
   return (
     <div className="tw:max-w-3xl tw:mx-auto tw:w-full">
-      <Select value={value} onValueChange={navigate}>
+      <Select value={value} onValueChange={(value) => navigate({ to: value })}>
         <SelectTrigger className="tw:mb-4 tw:w-[180px]">
           <SelectValue />
         </SelectTrigger>

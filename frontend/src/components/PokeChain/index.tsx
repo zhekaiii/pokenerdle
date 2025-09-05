@@ -3,7 +3,6 @@ import { displayNameAtom } from "@/pages/Settings";
 import { useAtomValue } from "jotai";
 import { TriangleAlert } from "lucide-react";
 import { useEffect } from "react";
-import { useSearchParams } from "react-router";
 import { useSocket } from "../../hooks/useSocket";
 import {
   PokeChainContextProvider,
@@ -26,7 +25,9 @@ const PokeChain: React.FC = () => {
     setOpponentDisplayName,
   } = usePokeChainContext();
   const { toast } = useToast();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = new URL(window.location.href).searchParams;
+  const room = searchParams.get("room");
+  const single = searchParams.get("single");
   const displayName = useAtomValue(displayNameAtom);
 
   const exitRoom = () => {
@@ -35,7 +36,6 @@ const PokeChain: React.FC = () => {
       setRoomCode(null);
       setIsOpponentConnected(false);
       setSettings({ timer: 20, showAbility: true });
-      setSearchParams();
     });
   };
 
@@ -59,7 +59,6 @@ const PokeChain: React.FC = () => {
           </>
         ),
       });
-      setSearchParams();
     });
     socket.on("opponentJoined", (displayName: string | null) => {
       setIsOpponentConnected(true);
@@ -72,13 +71,12 @@ const PokeChain: React.FC = () => {
       socket.off("roomError");
       socket.off("opponentJoined");
     };
-  }, [setSearchParams, socket]);
+  }, [socket]);
 
   useEffect(() => {
     const roomCode = searchParams.get("roomCode");
     if (roomCode) {
       socket.emit("join", roomCode, displayName);
-      setSearchParams();
     }
   }, []);
 
