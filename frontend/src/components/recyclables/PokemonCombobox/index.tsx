@@ -8,9 +8,9 @@ import { BrowserView, isMacOs } from "react-device-detect";
 import { ComboBox } from "../../ui/ComboBox";
 import classes from "./index.module.scss";
 
+import { usePinyin } from "@/hooks/usePinyin";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import Fuse from "fuse.js";
-import pinyin from "pinyin";
 import { useTranslation } from "react-i18next";
 interface Props {
   input: string;
@@ -25,7 +25,7 @@ interface Props {
 const PokemonCombobox: React.FC<Props> = ({
   input,
   setInput,
-  disabled,
+  disabled: _disabled,
   onSelect,
   side,
   filter,
@@ -33,13 +33,24 @@ const PokemonCombobox: React.FC<Props> = ({
 }) => {
   const {
     i18n: { language },
-  } = useTranslation();
+    t,
+  } = useTranslation("pokemon");
   const needsPinyin = language.startsWith("zh");
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNamesMap = usePokemonNames();
+
+  // Use our custom hook for lazy loading pinyin
+  const {
+    pinyin,
+    isLoading: isLoadingPinyin,
+    error: pinyinError,
+  } = usePinyin(needsPinyin);
+
+  const disabled = _disabled || isLoadingPinyin;
+
   const pokemonNames = useMemo(
     () =>
-      needsPinyin
+      needsPinyin && pinyin
         ? Object.values(pokemonNamesMap).map((pokemon) => {
             const py = pinyin(pokemon.name, {
               style: pinyin.STYLE_NORMAL,
@@ -51,7 +62,7 @@ const PokemonCombobox: React.FC<Props> = ({
             };
           })
         : Object.values(pokemonNamesMap),
-    [pokemonNamesMap, needsPinyin]
+    [pokemonNamesMap, needsPinyin, pinyin]
   );
   const filteredPokemon = useMemo(
     () =>
@@ -70,13 +81,14 @@ const PokemonCombobox: React.FC<Props> = ({
     [pokemonNames, filter, needsPinyin]
   );
   const suggestions = useMemo(() => {
-    const inputString = needsPinyin
-      ? pinyin(input, { style: pinyin.STYLE_NORMAL }).join(" ")
-      : input;
+    const inputString =
+      needsPinyin && pinyin
+        ? pinyin(input, { style: pinyin.STYLE_NORMAL }).join(" ")
+        : input;
     return filteredPokemon
       .search(inputString, { limit: 10 })
       .map(({ item }) => item);
-  }, [filteredPokemon, input, needsPinyin]);
+  }, [filteredPokemon, input, needsPinyin, pinyin]);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -138,8 +150,13 @@ const PokemonCombobox: React.FC<Props> = ({
         }}
         inputProps={{
           ref: inputRef,
-          placeholder: "Enter a Pokemon",
+          placeholder: isLoadingPinyin
+            ? t("combobox.loadingChineseSupport")
+            : pinyinError
+            ? t("combobox.chineseSupportUnavailable")
+            : t("combobox.placeholder"),
           className,
+          disabled: disabled || isLoadingPinyin,
         }}
       />
     </form>

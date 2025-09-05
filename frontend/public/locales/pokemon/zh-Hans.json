@@ -1,5 +1,10 @@
 {
   "genX": "第{{gen}}世代",
   "generation": "世代",
-  "height": "{{height}} 米"
+  "height": "{{height}} 米",
+  "combobox": {
+    "placeholder": "输入宝可梦名称",
+    "loadingChineseSupport": "正在加载中文支持...",
+    "chineseSupportUnavailable": "中文支持不可用"
+  }
 }

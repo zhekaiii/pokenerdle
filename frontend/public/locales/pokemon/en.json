@@ -1,5 +1,10 @@
 {
   "genX": "Gen {{gen}}",
   "generation": "Generation",
-  "height": "{{height}} m"
+  "height": "{{height}} m",
+  "combobox": {
+    "placeholder": "Enter a Pokemon",
+    "loadingChineseSupport": "Loading Chinese support...",
+    "chineseSupportUnavailable": "Chinese support unavailable"
+  }
 }
