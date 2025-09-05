@@ -21,6 +21,20 @@ export default defineConfig({
   ],
   build: {
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom", "react-router"],
+          "vendor-posthog": ["posthog-js", "posthog-js/react"],
+          "vendor-i18n": [
+            "i18next",
+            "react-i18next",
+            "i18next-browser-languagedetector",
+            "i18next-http-backend",
+          ],
+        },
+      },
+    },
   },
   css: {
     preprocessorOptions: {
