@@ -5,9 +5,12 @@ import {
 } from "@tanstack/react-router/ssr/server";
 import type express from "express";
 import type { i18n } from "i18next";
+import { atom, createStore } from "jotai";
 import AppProvider from "./AppProviders";
+import { Theme, themeAtom } from "./atoms/theme";
 import "./fetch-polyfill";
 import { createRouter } from "./router";
+import { getThemeFromCookies } from "./utils/theme";
 
 export async function render({
   req,
@@ -50,13 +53,17 @@ export async function render({
     },
   });
 
+  const theme = getThemeFromCookies(req.headers.cookie);
+  const store = createStore();
+  store.set(themeAtom as ReturnType<typeof atom<Theme>>, theme);
+
   // Let's use the default stream handler to create the response
   const response = await handler(({ responseHeaders, router }) =>
     renderRouterToString({
       responseHeaders,
       router,
       children: (
-        <AppProvider i18nInstance={req.i18n}>
+        <AppProvider i18nInstance={req.i18n} store={store}>
           <RouterServer router={router} />
         </AppProvider>
       ),

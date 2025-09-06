@@ -1,3 +1,4 @@
+import { themeAtom } from "@/atoms/theme";
 import breakpoints from "@/utils/breakpoints";
 import {
   createRootRouteWithContext,
@@ -6,6 +7,7 @@ import {
   redirect,
   Scripts,
 } from "@tanstack/react-router";
+import { useAtomValue } from "jotai";
 import { useTranslation } from "react-i18next";
 import { useMedia } from "react-use";
 import Header from "../layout/components/Header";
@@ -13,13 +15,23 @@ import MobileFooter from "../layout/components/MobileFooter";
 import PageContainer from "../layout/PageContainer";
 
 function RootLayout() {
+  const theme = useAtomValue(themeAtom);
   const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`, false);
   const {
     i18n: { language },
   } = useTranslation();
 
   return (
-    <html lang={language}>
+    <html
+      lang={language}
+      className={
+        theme === "dark"
+          ? "tw:dark"
+          : theme === "light"
+          ? "tw:light"
+          : undefined
+      }
+    >
       <head>
         <meta charSet="UTF-8" />
         <link rel="icon" type="image/png" href="/pokeball.png" />
@@ -27,7 +39,10 @@ function RootLayout() {
           name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"
         />
-        <meta name="theme-color" content="#ffffff" />
+        <meta
+          name="theme-color"
+          content={theme === "dark" ? "#171717" : "#ffffff"}
+        />
         <title>PokéNerdle</title>
         <meta
           name="description"
