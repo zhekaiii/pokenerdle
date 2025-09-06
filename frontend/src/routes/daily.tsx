@@ -6,4 +6,7 @@ export const Route = createFileRoute("/daily")({
   context: () => ({
     shouldShowRuleButton: true,
   }),
+  head: () => ({
+    meta: [{ title: "Daily Challenge – PokéNerdle" }],
+  }),
 });

@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/Button";
-import { Link } from "@tanstack/react-router";
 import React from "react";
 import PageContainer from "./PageContainer";
 
@@ -12,9 +11,7 @@ const ErrorBoundary: React.FC = () => {
         or going back to the home page.
       </p>
       <Button asChild>
-        <Link to="/" reloadDocument>
-          Home
-        </Link>
+        <a href="/">Home</a>
       </Button>
     </PageContainer>
   );

@@ -11,7 +11,10 @@ import { ProfileIcon } from "./ProfileIcon";
 import RulePageButton from "./RulePageButton";
 
 const Header: React.FC = () => {
-  const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`);
+  const isSmallerThanSm = import.meta.env.SSR
+    ? false
+    : // eslint-disable-next-line react-hooks/rules-of-hooks -- only used in client
+      useMedia(`(max-width: ${breakpoints.sm}px)`);
   const matches = useMatches();
   const shouldShowRuleButton = matches.some(
     (match) => match.context.shouldShowRuleButton

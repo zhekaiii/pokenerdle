@@ -8,7 +8,7 @@ interface Props {
 }
 
 const RulePageButton: React.FC<Props> = ({ className }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("nav");
   const location = useLocation();
   const isRulePage = location.pathname.startsWith("/how-to-play");
   const rulePage = (
@@ -19,7 +19,7 @@ const RulePageButton: React.FC<Props> = ({ className }) => {
 
   return (
     <LinkButton to={rulePage} className={className} activeOverride={isRulePage}>
-      {isRulePage ? t("nav:backToGame") : t("nav:howToPlay")}
+      {isRulePage ? t("backToGame") : t("howToPlay")}
     </LinkButton>
   );
 };

@@ -1,11 +1,11 @@
 import api from "@/api";
+import i18n from "@/lib/i18n";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
 
 const pokemonNamesAtom = atomWithStorage<
   Record<string, Record<number, PokemonNamesResponse>>
@@ -25,7 +25,6 @@ const lastModifiedAtom = atomWithStorage<Record<string, string | null>>(
 export const usePokemonNames = () => {
   const [pokemonNames, setPokemonNames] = useAtom(pokemonNamesAtom);
   const [lastModified, setLastModified] = useAtom(lastModifiedAtom);
-  const { i18n } = useTranslation();
   const queryClient = useQueryClient();
 
   useEffect(() => {

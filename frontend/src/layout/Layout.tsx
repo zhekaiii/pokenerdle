@@ -1,7 +1,7 @@
 import breakpoints from "@/utils/breakpoints";
 import { Outlet } from "@tanstack/react-router";
 import React from "react";
-import { useMedia } from "react-use";
+import useMedia from "react-use/lib/useMedia";
 import PageContainer from "./PageContainer";
 import Header from "./components/Header";
 import MobileFooter from "./components/MobileFooter";

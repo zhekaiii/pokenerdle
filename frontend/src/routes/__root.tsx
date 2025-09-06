@@ -1,33 +1,98 @@
 import breakpoints from "@/utils/breakpoints";
 import {
   createRootRouteWithContext,
+  HeadContent,
   Outlet,
   redirect,
+  Scripts,
 } from "@tanstack/react-router";
-import { useMedia } from "react-use";
-import PageContainer from "../layout/PageContainer";
+import useMedia from "react-use/lib/useMedia";
 import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
+import PageContainer from "../layout/PageContainer";
 
 function RootLayout() {
-  const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`);
+  const isSmallerThanSm = import.meta.env.SSR
+    ? false
+    : // eslint-disable-next-line react-hooks/rules-of-hooks -- only used in client
+      useMedia(`(max-width: ${breakpoints.sm}px)`);
   return (
-    <PageContainer>
-      <Header />
-      <Outlet />
-      {isSmallerThanSm && <MobileFooter />}
-    </PageContainer>
+    <html lang="en">
+      <head>
+        <meta charSet="UTF-8" />
+        <link rel="icon" type="image/png" href="/pokeball.png" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"
+        />
+        <meta name="theme-color" content="#ffffff" />
+        <title>PokéNerdle</title>
+        <meta
+          name="description"
+          content="PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!"
+        />
+        <meta
+          name="keywords"
+          content="Pokemon, Game, Puzzle, PokéNerdle, PokeChain, PokeNerdle"
+        />
+        <meta property="og:title" content="PokéNerdle" />
+        <meta
+          property="og:description"
+          content="PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!"
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:image"
+          content="https://pokenerdle.app/pokenerdle.png"
+        />
+        <HeadContent />
+      </head>
+      <body>
+        <PageContainer>
+          <Header />
+          <Outlet />
+          {isSmallerThanSm && <MobileFooter />}
+        </PageContainer>
+        <Scripts />
+      </body>
+    </html>
   );
 }
 
 interface RootRouteContext {
   shouldShowRuleButton?: boolean;
+  head: string;
 }
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({
+  head: () => ({
+    scripts: [
+      ...(!import.meta.env.PROD
+        ? [
+            {
+              type: "module",
+              children: `import RefreshRuntime from "/@react-refresh"
+  RefreshRuntime.injectIntoGlobalHook(window)
+  window.$RefreshReg$ = () => {}
+  window.$RefreshSig$ = () => (type) => type
+  window.__vite_plugin_react_preamble_installed__ = true`,
+            },
+            {
+              type: "module",
+              src: "/@vite/client",
+            },
+          ]
+        : []),
+      {
+        type: "module",
+        src: import.meta.env.PROD
+          ? "/static/entry-client.js"
+          : "/src/entry-client.tsx",
+      },
+    ],
+  }),
   component: RootLayout,
   beforeLoad: ({ location }) => {
-    // Redirect from root to /daily if we're at the root path
     if (location.pathname === "/") {
       throw redirect({
         to: "/daily",
