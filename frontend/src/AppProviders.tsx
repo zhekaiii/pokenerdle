@@ -7,6 +7,7 @@ import { useThemeListener } from "./atoms/theme";
 import { AuthInitializer } from "./components/AuthInitializer";
 import { Toaster } from "./components/ui/Toaster";
 import { SocketProvider } from "./contexts/SocketContext";
+import "./index.css";
 import ErrorPage from "./layout/ErrorPage";
 
 interface AppProviderProps {

@@ -2,7 +2,6 @@ import { RouterClient } from "@tanstack/react-router/ssr/client";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import AppProviders from "./AppProviders";
-import "./index.css";
 import "./lib/i18n.ts";
 import { createRouter } from "./router";
 

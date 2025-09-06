@@ -13,7 +13,6 @@ const PageContainer: React.FC<Props> = ({ children }) => {
       useDetectKeyboardOpen();
   return (
     <main
-      id="root"
       className={clsx(
         classes.PageContainer,
         isKeyboardOpen && classes.KeyboardOpen

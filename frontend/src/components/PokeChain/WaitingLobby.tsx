@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { useLocation } from "@tanstack/react-router";
 import { debounce } from "es-toolkit";
 import { X } from "lucide-react";
 import React, { useCallback, useMemo, useState } from "react";
@@ -11,11 +12,12 @@ interface Props {
 
 const WaitingLobby: React.FC<Props> = ({ roomCode, exitRoom }) => {
   const [buttonLabel, setButtonLabel] = useState("Copy invite link");
+  const location = useLocation();
   const shareLink = useMemo(() => {
     const url = new URL(location.href);
     url.searchParams.set("roomCode", roomCode);
     return url.toString();
-  }, [roomCode]);
+  }, [roomCode, location.href]);
 
   const resetButtonLabel = useCallback(
     debounce(() => {
