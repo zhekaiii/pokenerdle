@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RouterClient } from "@tanstack/react-router/ssr/client";
+import i18n from "i18next";
 import { PostHogErrorBoundary, PostHogProvider } from "posthog-js/react";
 import { useState } from "react";
 import { I18nextProvider } from "react-i18next";
@@ -8,12 +8,13 @@ import { AuthInitializer } from "./components/AuthInitializer";
 import { Toaster } from "./components/ui/Toaster";
 import { SocketProvider } from "./contexts/SocketContext";
 import ErrorPage from "./layout/ErrorPage";
-import i18n from "./lib/i18n";
-import { createRouter } from "./router";
 
-const router = createRouter();
+interface AppProviderProps {
+  i18nInstance?: typeof i18n;
+  children: React.ReactNode;
+}
 
-function AppProvider() {
+function AppProvider({ i18nInstance, children }: AppProviderProps) {
   useThemeListener();
   const [queryClient] = useState(() => new QueryClient());
 
@@ -31,8 +32,8 @@ function AppProvider() {
         <AuthInitializer />
         <SocketProvider>
           <QueryClientProvider client={queryClient}>
-            <I18nextProvider i18n={i18n}>
-              <RouterClient router={router} />
+            <I18nextProvider i18n={i18nInstance || i18n}>
+              {children}
               <Toaster />
             </I18nextProvider>
           </QueryClientProvider>

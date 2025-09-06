@@ -4,7 +4,6 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/DropdownMenu";
-import i18n from "@/lib/i18n";
 import clsx from "clsx";
 import { Languages } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -23,6 +22,7 @@ const languages = [
 ];
 
 export const LanguageDropdownSelector: React.FC = () => {
+  const { i18n } = useTranslation();
   return (
     <Select value={i18n.language} onValueChange={i18n.changeLanguage}>
       <SelectTrigger>

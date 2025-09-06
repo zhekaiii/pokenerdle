@@ -21,8 +21,9 @@ if (!import.meta.env.SSR) {
       fallbackLng: "en",
 
       detection: {
-        order: ["localStorage", "navigator", "htmlTag"],
-        caches: ["localStorage"],
+        order: ["localStorage", "cookie", "navigator", "htmlTag"],
+        caches: ["localStorage", "cookie"],
+        cookieMinutes: 60 * 24 * 365 * 10, // 10 years,
         convertDetectedLanguage: (code) => {
           if (code.startsWith("en")) return "en";
           if (["zh-TW", "zh-HK", "zh-MO", "zh-Hant"].includes(code)) {
@@ -35,20 +36,6 @@ if (!import.meta.env.SSR) {
         },
       },
     });
-} else {
-  // SSR setup - minimal configuration without browser plugins
-  i18n.use(initReactI18next).init({
-    lng: "en", // Default language for SSR
-    fallbackLng: "en",
-    interpolation: {
-      escapeValue: false,
-    },
-    resources: {
-      en: {
-        translation: {}, // Will be loaded client-side
-      },
-    },
-  });
 }
 
 export default i18n;

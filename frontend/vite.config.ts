@@ -71,6 +71,9 @@ export default defineConfig((configEnv) => ({
       },
     },
   },
+  ssr: {
+    noExternal: ["react-use"],
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

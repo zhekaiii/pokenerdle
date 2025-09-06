@@ -6,18 +6,20 @@ import {
   redirect,
   Scripts,
 } from "@tanstack/react-router";
-import useMedia from "react-use/lib/useMedia";
+import { useTranslation } from "react-i18next";
+import { useMedia } from "react-use";
 import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
 import PageContainer from "../layout/PageContainer";
 
 function RootLayout() {
-  const isSmallerThanSm = import.meta.env.SSR
-    ? false
-    : // eslint-disable-next-line react-hooks/rules-of-hooks -- only used in client
-      useMedia(`(max-width: ${breakpoints.sm}px)`);
+  const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`, false);
+  const {
+    i18n: { language },
+  } = useTranslation();
+
   return (
-    <html lang="en">
+    <html lang={language}>
       <head>
         <meta charSet="UTF-8" />
         <link rel="icon" type="image/png" href="/pokeball.png" />

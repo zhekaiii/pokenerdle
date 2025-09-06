@@ -1,8 +1,12 @@
+import { RouterClient } from "@tanstack/react-router/ssr/client";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import AppProviders from "./AppProviders";
 import "./index.css";
 import "./lib/i18n.ts";
+import { createRouter } from "./router";
+
+const router = createRouter();
 
 // This resolves the issue where rebuilding produces different hashes for the same file,
 // causing the browser to load the old filename (which doesn't exist).
@@ -15,6 +19,8 @@ window.addEventListener("vite:preloadError", (e) => {
 hydrateRoot(
   document,
   <React.StrictMode>
-    <AppProviders />
+    <AppProviders>
+      <RouterClient router={router} />
+    </AppProviders>
   </React.StrictMode>
 );

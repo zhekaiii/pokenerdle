@@ -4,7 +4,9 @@ import {
   renderRouterToString,
 } from "@tanstack/react-router/ssr/server";
 import type express from "express";
+import type { i18n } from "i18next";
 import { pipeline } from "node:stream/promises";
+import AppProvider from "./AppProviders";
 import "./fetch-polyfill";
 import { createRouter } from "./router";
 
@@ -14,7 +16,7 @@ export async function render({
   head,
 }: {
   head: string;
-  req: express.Request;
+  req: express.Request & { i18n: i18n };
   res: express.Response;
 }) {
   // Convert the express request to a fetch request
@@ -54,7 +56,11 @@ export async function render({
     renderRouterToString({
       responseHeaders,
       router,
-      children: <RouterServer router={router} />,
+      children: (
+        <AppProvider i18nInstance={req.i18n}>
+          <RouterServer router={router} />
+        </AppProvider>
+      ),
     })
   );
 

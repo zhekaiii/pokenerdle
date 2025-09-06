@@ -1,10 +1,48 @@
 import express from "express";
 import getPort, { portNumbers } from "get-port";
+import i18n from "i18next";
+import FsBackend from "i18next-fs-backend";
+import i18nMiddleware from "i18next-http-middleware";
+import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import * as zlib from "node:zlib";
+import { initReactI18next } from "react-i18next";
 
 const isTest = process.env.NODE_ENV === "test" || !!process.env.VITE_TEST_BUILD;
+
+i18n
+  .use(initReactI18next)
+  .use(i18nMiddleware.LanguageDetector)
+  .use(FsBackend)
+  .init({
+    preload: ["en", "zh-Hans", "zh-Hant"],
+    ns: fs.readdirSync(path.join(import.meta.dirname, "./public/locales")),
+    backend: {
+      loadPath: path.join(
+        import.meta.dirname,
+        "./public/locales/{{ns}}/{{lng}}.json"
+      ),
+    },
+    fallbackLng: "en",
+    interpolation: {
+      escapeValue: false,
+    },
+    detection: {
+      order: ["cookie", "header"],
+      caches: ["cookie"],
+      cookieMinutes: 60 * 24 * 365 * 10, // 10 years,
+      convertDetectedLanguage: (code) => {
+        if (["zh-TW", "zh-HK", "zh-MO", "zh-Hant"].includes(code)) {
+          return "zh-Hant";
+        }
+        if (code.startsWith("zh")) {
+          return "zh-Hans";
+        }
+        return "en";
+      },
+    },
+  });
 
 export async function createServer(
   root = process.cwd(),
@@ -51,6 +89,8 @@ export async function createServer(
   }
 
   if (isProd) app.use(express.static("./dist/client"));
+
+  app.use(i18nMiddleware.handle(i18n));
 
   app.use(/(.*)/, async (req, res) => {
     try {

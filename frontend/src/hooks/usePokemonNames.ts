@@ -1,8 +1,8 @@
 import api from "@/api";
-import i18n from "@/lib/i18n";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import i18n from "i18next";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";

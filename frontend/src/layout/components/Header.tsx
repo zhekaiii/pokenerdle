@@ -4,17 +4,14 @@ import { Link, useMatches } from "@tanstack/react-router";
 import clsx from "clsx";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import useMedia from "react-use/lib/useMedia";
+import { useMedia } from "react-use";
 import classes from "./index.module.scss";
 import { ProfileDropdownMenu } from "./ProfileDropdownMenu";
 import { ProfileIcon } from "./ProfileIcon";
 import RulePageButton from "./RulePageButton";
 
 const Header: React.FC = () => {
-  const isSmallerThanSm = import.meta.env.SSR
-    ? false
-    : // eslint-disable-next-line react-hooks/rules-of-hooks -- only used in client
-      useMedia(`(max-width: ${breakpoints.sm}px)`);
+  const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`, false);
   const matches = useMatches();
   const shouldShowRuleButton = matches.some(
     (match) => match.context.shouldShowRuleButton
