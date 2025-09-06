@@ -68,30 +68,27 @@ interface RootRouteContext {
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({
   head: () => ({
-    scripts: [
-      ...(!import.meta.env.PROD
-        ? [
-            {
-              type: "module",
-              children: `import RefreshRuntime from "/@react-refresh"
-  RefreshRuntime.injectIntoGlobalHook(window)
-  window.$RefreshReg$ = () => {}
-  window.$RefreshSig$ = () => (type) => type
-  window.__vite_plugin_react_preamble_installed__ = true`,
-            },
-            {
-              type: "module",
-              src: "/@vite/client",
-            },
-          ]
-        : []),
-      {
-        type: "module",
-        src: import.meta.env.PROD
-          ? "/static/entry-client.js"
-          : "/src/entry-client.tsx",
-      },
-    ],
+    scripts: import.meta.env.PROD
+      ? [
+          {
+            type: "module",
+            src: "/static/entry-client.js",
+          },
+        ]
+      : [
+          {
+            type: "module",
+            children: `import RefreshRuntime from "/@react-refresh"
+RefreshRuntime.injectIntoGlobalHook(window)
+window.$RefreshReg$ = () => {}
+window.$RefreshSig$ = () => (type) => type
+window.__vite_plugin_react_preamble_installed__ = true`,
+          },
+          {
+            type: "module",
+            src: "/src/entry-client.tsx",
+          },
+        ],
   }),
   component: RootLayout,
   beforeLoad: ({ location }) => {

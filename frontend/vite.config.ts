@@ -29,6 +29,7 @@ const clientBuildConfig: BuildOptions = {
       },
     },
   },
+  manifest: true,
 };
 
 const ssrBuildConfig: BuildOptions = {
@@ -72,7 +73,7 @@ export default defineConfig((configEnv) => ({
     },
   },
   ssr: {
-    noExternal: ["react-use"],
+    noExternal: ["react-use", "posthog-js"],
   },
   resolve: {
     alias: {

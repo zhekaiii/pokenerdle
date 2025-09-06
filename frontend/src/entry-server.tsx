@@ -5,7 +5,6 @@ import {
 } from "@tanstack/react-router/ssr/server";
 import type express from "express";
 import type { i18n } from "i18next";
-import { pipeline } from "node:stream/promises";
 import AppProvider from "./AppProviders";
 import "./fetch-polyfill";
 import { createRouter } from "./router";
@@ -72,7 +71,8 @@ export async function render({
     res.setHeader(name, value);
   });
 
-  // Stream the response body
-  // @ts-expect-error response.body is not null
-  return pipeline(response.body, res);
+  let html = await response.text();
+  html = html.replace(/<\/head>/, `${head}</head>`);
+
+  res.send(html);
 }

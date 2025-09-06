@@ -8,6 +8,7 @@ import path from "node:path";
 import process from "node:process";
 import * as zlib from "node:zlib";
 import { initReactI18next } from "react-i18next";
+import manifest from "./dist/client/.vite/manifest.json" assert { type: "json" };
 
 const isTest = process.env.NODE_ENV === "test" || !!process.env.VITE_TEST_BUILD;
 
@@ -92,6 +93,11 @@ export async function createServer(
 
   app.use(i18nMiddleware.handle(i18n));
 
+  let cssFiles = [];
+  if (isProd) {
+    cssFiles = manifest["src/entry-client.tsx"].css;
+  }
+
   app.use(/(.*)/, async (req, res) => {
     try {
       const url = req.originalUrl;
@@ -115,6 +121,10 @@ export async function createServer(
         viteHead.indexOf("<head>") + 6,
         viteHead.indexOf("</head>")
       );
+
+      viteHead += cssFiles
+        .map((css) => `<link rel="stylesheet" href="${css}" />`)
+        .join("");
 
       const entry = await (async () => {
         if (!isProd) {
