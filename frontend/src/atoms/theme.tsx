@@ -19,22 +19,24 @@ export const themeAtom = import.meta.env.SSR
         });
       },
       removeItem: (key) => Cookies.remove(key),
-      subscribe(key, callback, initialValue) {
-        const listener = (e: CookieChangeEvent) => {
-          for (const changed of e.changed) {
-            if (changed.name === key) {
-              callback(changed.value as Theme);
-              return;
-            }
+      subscribe: isSecureContext
+        ? (key, callback, initialValue) => {
+            const listener = (e: CookieChangeEvent) => {
+              for (const changed of e.changed) {
+                if (changed.name === key) {
+                  callback(changed.value as Theme);
+                  return;
+                }
+              }
+              for (const deleted of e.deleted) {
+                if (deleted.name === key) {
+                  callback(initialValue);
+                  return;
+                }
+              }
+            };
+            cookieStore.addEventListener("change", listener);
+            return () => cookieStore.removeEventListener("change", listener);
           }
-          for (const deleted of e.deleted) {
-            if (deleted.name === key) {
-              callback(initialValue);
-              return;
-            }
-          }
-        };
-        cookieStore.addEventListener("change", listener);
-        return () => cookieStore.removeEventListener("change", listener);
-      },
+        : undefined,
     });
