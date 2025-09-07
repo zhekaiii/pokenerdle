@@ -10,7 +10,7 @@ import { AuthInitializer } from "./components/AuthInitializer";
 import { Toaster } from "./components/ui/Toaster";
 import { SocketProvider } from "./contexts/SocketContext";
 import "./index.scss";
-import ErrorPage from "./layout/ErrorPage";
+import { ErrorPage } from "./layout/ErrorPage";
 
 interface AppProviderProps {
   i18nInstance?: typeof i18n;
@@ -35,7 +35,7 @@ function AppProvider({
         debug: import.meta.env.MODE === "development",
       }}
     >
-      <PostHogErrorBoundary fallback={<ErrorPage />}>
+      <PostHogErrorBoundary fallback={ErrorPage}>
         <JotaiProvider store={store}>
           <AuthInitializer />
           <SocketProvider>

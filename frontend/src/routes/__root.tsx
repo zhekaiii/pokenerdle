@@ -1,4 +1,5 @@
 import { themeAtom } from "@/atoms/theme";
+import { ErrorPage } from "@/layout/ErrorPage";
 import breakpoints from "@/utils/breakpoints";
 import {
   createRootRouteWithContext,
@@ -118,4 +119,5 @@ window.__vite_plugin_react_preamble_installed__ = true`,
       });
     }
   },
+  errorComponent: ErrorPage,
 });
