@@ -6,4 +6,10 @@ export const Route = createFileRoute("/pokechain")({
   context: () => ({
     shouldShowRuleButton: true,
   }),
+  head: () => ({
+    meta: [
+      { title: "PokéChain – PokéNerdle" },
+      { property: "og:title", content: "PokéChain – PokéNerdle" },
+    ],
+  }),
 });

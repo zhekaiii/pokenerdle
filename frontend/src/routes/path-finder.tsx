@@ -6,4 +6,10 @@ export const Route = createFileRoute("/path-finder")({
   context: () => ({
     shouldShowRuleButton: true,
   }),
+  head: () => ({
+    meta: [
+      { title: "Path Finder – PokéNerdle" },
+      { property: "og:title", content: "Path Finder – PokéNerdle" },
+    ],
+  }),
 });

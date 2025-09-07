@@ -7,6 +7,19 @@ export const Route = createFileRoute("/daily")({
     shouldShowRuleButton: true,
   }),
   head: () => ({
-    meta: [{ title: "Daily Challenge – PokéNerdle" }],
+    meta: [
+      { title: "Daily Challenge – PokéNerdle" },
+      { property: "og:title", content: "Daily Challenge – PokéNerdle" },
+      {
+        name: "description",
+        content:
+          "Play the Daily Challenge and test your Pokémon knowledge! Guess the daily mystery Pokémon in 8 tries or less!",
+      },
+      {
+        property: "og:description",
+        content:
+          "Play the Daily Challenge and test your Pokémon knowledge! Guess the daily mystery Pokémon in 8 tries or less!",
+      },
+    ],
   }),
 });

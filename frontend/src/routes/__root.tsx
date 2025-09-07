@@ -43,7 +43,6 @@ function RootLayout() {
           name="theme-color"
           content={theme === "dark" ? "#171717" : "#ffffff"}
         />
-        <title>PokéNerdle</title>
         <meta
           name="description"
           content="PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!"
@@ -52,7 +51,6 @@ function RootLayout() {
           name="keywords"
           content="Pokemon, Game, Puzzle, PokéNerdle, PokeChain, PokeNerdle"
         />
-        <meta property="og:title" content="PokéNerdle" />
         <meta
           property="og:description"
           content="PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!"
@@ -83,6 +81,10 @@ interface RootRouteContext {
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({
   head: () => ({
+    meta: [
+      { title: "PokéNerdle" },
+      { property: "og:title", content: "PokéNerdle" },
+    ],
     scripts: import.meta.env.PROD
       ? [
           {
