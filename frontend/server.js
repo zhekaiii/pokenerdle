@@ -1,3 +1,9 @@
+import {
+  createServerClient,
+  parseCookieHeader,
+  serializeCookieHeader,
+} from "@supabase/ssr";
+import dotenv from "dotenv";
 import express from "express";
 import i18n from "i18next";
 import FsBackend from "i18next-fs-backend";
@@ -8,6 +14,8 @@ import process from "node:process";
 import * as zlib from "node:zlib";
 import { initReactI18next } from "react-i18next";
 import manifest from "./dist/client/.vite/manifest.json" assert { type: "json" };
+
+dotenv.config();
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -44,6 +52,23 @@ i18n
     },
   });
 
+/**
+ * @type {import('express').RequestHandler}
+ */
+const authCallback = async (req, res) => {
+  const code = req.query.code;
+  const next = req.query.next ?? "/";
+  if (code) {
+    await req.supabase.auth.exchangeCodeForSession(code);
+  }
+  res.redirect(303, next);
+};
+
+/**
+ *
+ * @param {express.Application} app
+ * @returns
+ */
 export async function createServer(app) {
   /**
    * @type {import('vite').ViteDevServer}
@@ -86,6 +111,37 @@ export async function createServer(app) {
     app.use(express.static(path.join(import.meta.dirname, "./dist/client")));
 
   app.use(i18nMiddleware.handle(i18n));
+  app.use(async (req, res, next) => {
+    const supabase = createServerClient(
+      process.env.VITE_SUPABASE_URL,
+      process.env.SUPABASE_PUBLISHABLE_KEY,
+      {
+        cookies: {
+          getAll() {
+            return parseCookieHeader(req.headers.cookie ?? "");
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              res.appendHeader(
+                "Set-Cookie",
+                serializeCookieHeader(name, value, options)
+              )
+            );
+          },
+        },
+      }
+    );
+    req.supabase = supabase;
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (session) {
+      req.session = session;
+    }
+    next();
+  });
+
+  app.get("/auth/callback", authCallback);
 
   let cssFiles = [];
   if (isProd) {

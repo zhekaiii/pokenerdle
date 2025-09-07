@@ -2,35 +2,54 @@ import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import { atom } from "jotai";
 import { supabase } from "../lib/supabase";
 
+// Extend Window interface for SSR auth state
+declare global {
+  interface Window {
+    __AUTH_STATE__?: {
+      user: import("@supabase/supabase-js").User | null;
+      session: import("@supabase/supabase-js").Session | null;
+    };
+  }
+}
+
+// Get initial auth state from window if available (SSR hydration)
+const getInitialAuthState = () => {
+  if (!import.meta.env.SSR && window.__AUTH_STATE__) {
+    return window.__AUTH_STATE__;
+  }
+  return { user: null, session: null };
+};
+
+const initialAuthState = getInitialAuthState();
+
 // Base atoms
-export const userAtom = atom<User | null>(null);
-export const sessionAtom = atom<Session | null>(null);
-export const authLoadingAtom = atom<boolean>(true);
+export const userAtom = atom<User | null>(initialAuthState.user as User | null);
+export const sessionAtom = atom<Session | null>(
+  initialAuthState.session as Session | null
+);
+export const authLoadingAtom = atom<boolean>(false);
 
 // Derived atom for auth state
 export const isAuthenticatedAtom = atom((get) => get(userAtom) !== null);
 
 // Action atoms
-export const signInWithGoogleAtom = atom(
-  null,
-  async (get, set, redirectTo?: string) => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo,
-        queryParams: {
-          access_type: "offline",
-          prompt: "consent",
-        },
+export const signInWithGoogle = async (redirectTo?: string) => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo,
+      queryParams: {
+        access_type: "offline",
+        prompt: "consent",
       },
-    });
+    },
+  });
 
-    if (error) {
-      console.error("Error signing in with Google:", error);
-      throw error;
-    }
+  if (error) {
+    console.error("Error signing in with Google:", error);
+    throw error;
   }
-);
+};
 
 export const signOutAtom = atom(null, async (get, set) => {
   supabase.auth.signOut().catch((error) => {

@@ -1,3 +1,4 @@
+import { Session } from "@supabase/supabase-js";
 import {
   RouterServer,
   createRequestHandler,
@@ -5,9 +6,10 @@ import {
 } from "@tanstack/react-router/ssr/server";
 import type express from "express";
 import type { i18n } from "i18next";
-import { atom, createStore } from "jotai";
+import { createStore } from "jotai";
 import AppProvider from "./AppProviders";
-import { Theme, themeAtom } from "./atoms/theme";
+import { sessionAtom, userAtom } from "./atoms/auth";
+import { themeAtom } from "./atoms/theme";
 import "./fetch-polyfill";
 import { createRouter } from "./router";
 import { getThemeFromCookies } from "./utils/theme";
@@ -18,7 +20,7 @@ export async function render({
   head,
 }: {
   head: string;
-  req: express.Request & { i18n: i18n };
+  req: express.Request & { i18n: i18n; session: Session | null };
   res: express.Response;
 }) {
   // Convert the express request to a fetch request
@@ -55,7 +57,9 @@ export async function render({
 
   const theme = getThemeFromCookies(req.headers.cookie);
   const store = createStore();
-  store.set(themeAtom as ReturnType<typeof atom<Theme>>, theme);
+  store.set(themeAtom, theme);
+  store.set(sessionAtom, req.session);
+  store.set(userAtom, req.session?.user ?? null);
 
   // Let's use the default stream handler to create the response
   const response = await handler(({ responseHeaders, router }) =>
@@ -79,7 +83,17 @@ export async function render({
   });
 
   let html = await response.text();
-  html = html.replace(/<\/head>/, `${head}</head>`);
+
+  // Serialize auth state for client hydration
+  const authState = {
+    user: req.session?.user ?? null,
+    session: req.session,
+  };
+  const authStateScript = `<script>window.__AUTH_STATE__ = ${JSON.stringify(
+    authState
+  )};</script>`;
+
+  html = html.replace(/<\/head>/, `${head}${authStateScript}</head>`);
 
   res.send(html);
 }

@@ -3,7 +3,6 @@ import {
   authLoadingAtom,
   isAuthenticatedAtom,
   sessionAtom,
-  signInWithGoogleAtom,
   signOutAtom,
   userAtom,
 } from "../atoms/auth";
@@ -14,7 +13,6 @@ export function useAuth() {
   const loading = useAtomValue(authLoadingAtom);
   const isAuthenticated = useAtomValue(isAuthenticatedAtom);
 
-  const [, signInWithGoogle] = useAtom(signInWithGoogleAtom);
   const [, signOut] = useAtom(signOutAtom);
 
   return {
@@ -22,7 +20,6 @@ export function useAuth() {
     session,
     loading,
     isAuthenticated,
-    signInWithGoogle,
     signOut,
   };
 }
