@@ -1,5 +1,4 @@
 import express from "express";
-import getPort, { portNumbers } from "get-port";
 import i18n from "i18next";
 import FsBackend from "i18next-fs-backend";
 import i18nMiddleware from "i18next-http-middleware";
@@ -10,7 +9,7 @@ import * as zlib from "node:zlib";
 import { initReactI18next } from "react-i18next";
 import manifest from "./dist/client/.vite/manifest.json" assert { type: "json" };
 
-const isTest = process.env.NODE_ENV === "test" || !!process.env.VITE_TEST_BUILD;
+const isProd = process.env.NODE_ENV === "production";
 
 i18n
   .use(initReactI18next)
@@ -45,13 +44,7 @@ i18n
     },
   });
 
-export async function createServer(
-  root = process.cwd(),
-  isProd = process.env.NODE_ENV === "production",
-  hmrPort
-) {
-  const app = express();
-
+export async function createServer(app) {
   /**
    * @type {import('vite').ViteDevServer}
    */
@@ -60,8 +53,8 @@ export async function createServer(
     vite = await (
       await import("vite")
     ).createServer({
-      root,
-      logLevel: isTest ? "error" : "info",
+      root: process.cwd(),
+      logLevel: "info",
       server: {
         middlewareMode: true,
         watch: {
@@ -71,7 +64,7 @@ export async function createServer(
           interval: 100,
         },
         hmr: {
-          port: hmrPort,
+          port: undefined,
         },
       },
       appType: "custom",
@@ -89,7 +82,8 @@ export async function createServer(
     );
   }
 
-  if (isProd) app.use(express.static("./dist/client"));
+  if (isProd)
+    app.use(express.static(path.join(import.meta.dirname, "./dist/client")));
 
   app.use(i18nMiddleware.handle(i18n));
 
@@ -130,7 +124,9 @@ export async function createServer(
         if (!isProd) {
           return vite.ssrLoadModule("/src/entry-server.tsx");
         } else {
-          return import("./dist/server/entry-server.js");
+          return import(
+            path.join(import.meta.dirname, "./dist/server/entry-server.js")
+          );
         }
       })();
 
@@ -146,9 +142,9 @@ export async function createServer(
   return { app, vite };
 }
 
-if (!isTest) {
-  createServer().then(async ({ app }) => {
-    const port = await getPort({ port: portNumbers(5173, 5273) });
+if (!isProd) {
+  createServer(express()).then(async ({ app }) => {
+    const port = process.env.PORT || 5173;
     return app.listen(port, () => {
       console.info(`Client Server: http://localhost:${port}`);
     });

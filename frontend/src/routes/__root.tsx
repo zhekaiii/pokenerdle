@@ -87,7 +87,7 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
       ? [
           {
             type: "module",
-            src: "/static/entry-client.js",
+            src: "/assets/entry-client.js",
           },
         ]
       : [
