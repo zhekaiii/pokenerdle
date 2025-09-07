@@ -7,7 +7,7 @@ import data from "./data/data";
 import pathfinder from "./pathfinder/pathfinder";
 
 export const BACKEND_URL = import.meta.env.PROD
-  ? import.meta.env.VITE_BACKEND_URL
+  ? ""
   : import.meta.env.VITE_BACKEND_URL;
 
 axios.defaults.baseURL = `${BACKEND_URL}/api`;
