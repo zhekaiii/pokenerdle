@@ -8,7 +8,7 @@ import {
   PokemonWithAbilities,
 } from "@pokenerdle/shared";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useLoaderData } from "@tanstack/react-router";
 import {
   CheckCircle,
   HelpCircle,
@@ -33,7 +33,9 @@ import PathBoard from "./PathBoard";
 import { useEventTracking } from "./hooks/useEventTracking";
 
 const PathFinderGame: React.FC = () => {
-  const [challenge, setChallenge] = useState<PathFinderResponse | null>(null);
+  const initialChallenge = useLoaderData({ from: "/path-finder" });
+  const [challenge, setChallenge] =
+    useState<PathFinderResponse>(initialChallenge);
   const [input, setInput] = useState("");
   const [path, setPath] = useState<PokemonWithAbilities[]>([]);
   const fullPath = useMemo(() => {
@@ -169,8 +171,7 @@ const PathFinderGame: React.FC = () => {
   const isPathOptimal = challenge && fullPath.length === challenge.pathLength;
 
   useEffect(() => {
-    fetchChallenge();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only want to run on mount
+    posthog.capture("pathfinder_new_challenge");
   }, []);
 
   if (!challenge)
