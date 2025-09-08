@@ -1,5 +1,6 @@
 import { useToast } from "@/hooks/useToast";
 import { displayNameAtom } from "@/pages/Settings";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { TriangleAlert } from "lucide-react";
 import { useEffect } from "react";
@@ -25,9 +26,8 @@ const PokeChain: React.FC = () => {
     setOpponentDisplayName,
   } = usePokeChainContext();
   const { toast } = useToast();
-  const searchParams = new URL(window.location.href).searchParams;
-  const room = searchParams.get("room");
-  const single = searchParams.get("single");
+  const searchParams = useSearch({ strict: false }) as { roomCode?: string };
+  const navigate = useNavigate();
   const displayName = useAtomValue(displayNameAtom);
 
   const exitRoom = () => {
@@ -36,6 +36,7 @@ const PokeChain: React.FC = () => {
       setRoomCode(null);
       setIsOpponentConnected(false);
       setSettings({ timer: 20, showAbility: true });
+      navigate({ to: ".", replace: true });
     });
   };
 
@@ -59,6 +60,7 @@ const PokeChain: React.FC = () => {
           </>
         ),
       });
+      navigate({ to: ".", replace: true });
     });
     socket.on("opponentJoined", (displayName: string | null) => {
       setIsOpponentConnected(true);
@@ -71,12 +73,13 @@ const PokeChain: React.FC = () => {
       socket.off("roomError");
       socket.off("opponentJoined");
     };
-  }, [socket]);
+  }, [navigate, socket]);
 
   useEffect(() => {
-    const roomCode = searchParams.get("roomCode");
+    const roomCode = searchParams.roomCode;
     if (roomCode) {
       socket.emit("join", roomCode, displayName);
+      navigate({ to: ".", replace: true });
     }
   }, []);
 

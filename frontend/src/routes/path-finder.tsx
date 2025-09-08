@@ -1,8 +1,9 @@
+import { createApi } from "@/api";
+import PathFinderGame from "@/components/PathFinder/PathFinderGame";
 import { createFileRoute } from "@tanstack/react-router";
-import PathFinder from "../components/PathFinder";
 
 export const Route = createFileRoute("/path-finder")({
-  component: PathFinder,
+  component: PathFinderGame,
   context: () => ({
     shouldShowRuleButton: true,
   }),
@@ -12,4 +13,8 @@ export const Route = createFileRoute("/path-finder")({
       { property: "og:title", content: "Path Finder – PokéNerdle" },
     ],
   }),
+  loader: async ({ context: { store } }) => {
+    const api = createApi(store);
+    return await api.pathfinder.getChallenge();
+  },
 });
