@@ -7,6 +7,7 @@ import {
 import type express from "express";
 import type { i18n } from "i18next";
 import { createStore } from "jotai";
+import { pipeline } from "node:stream/promises";
 import AppProvider from "./AppProviders";
 import { sessionAtom, userAtom } from "./atoms/auth";
 import { themeAtom } from "./atoms/theme";
@@ -42,13 +43,14 @@ export async function render({
   const handler = createRequestHandler({
     request,
     createRouter: () => {
-      const router = createRouter();
+      const router = createRouter(store);
 
       // Update each router instance with the head info from vite
       router.update({
         context: {
           ...router.options.context,
           head,
+          store,
         },
       });
       return router;
@@ -82,18 +84,7 @@ export async function render({
     res.setHeader(name, value);
   });
 
-  let html = await response.text();
-
-  // Serialize auth state for client hydration
-  const authState = {
-    user: req.session?.user ?? null,
-    session: req.session,
-  };
-  const authStateScript = `<script>window.__AUTH_STATE__ = ${JSON.stringify(
-    authState
-  )};</script>`;
-
-  html = html.replace(/<\/head>/, `${head}${authStateScript}</head>`);
-
-  res.send(html);
+  // Stream the response body
+  // @ts-expect-error response.body is not null
+  return pipeline(response.body, res);
 }
