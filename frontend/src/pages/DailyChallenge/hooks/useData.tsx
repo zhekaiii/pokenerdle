@@ -1,4 +1,4 @@
-import { useApi } from "@/contexts/ApiContext";
+import api from "@/api";
 import {
   DAILY_CHALLENGE_GUESS_LIMIT,
   DAILY_CHALLENGE_KEY,
@@ -42,7 +42,6 @@ export const guessesAtom = atomWithStorage<DailyChallenge | null>(
 );
 
 export const useDailyChallengeData = () => {
-  const api = useApi();
   const { isAuthenticated } = useAuth();
   const [guesses, setGuesses] = useAtom(guessesAtom);
   const [isLoading, setIsLoading] = useState(false);
