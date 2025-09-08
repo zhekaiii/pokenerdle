@@ -153,7 +153,7 @@ const DailyChallengeGameplay: React.FC = () => {
               >
                 <Clipboard /> {t("buttons.copy")}
               </Button>
-              {"share" in navigator && (
+              {!import.meta.env.SSR && "share" in navigator && (
                 <Button
                   className="tw:flex-1"
                   onClick={() => {

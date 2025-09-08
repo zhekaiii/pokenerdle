@@ -4,11 +4,11 @@ import {
   type DailyChallengeStatsResponse,
   type DailyChallengeSyncGuessesResponse,
 } from "@pokenerdle/shared/daily";
-import axios from "axios";
+import { AxiosInstance } from "axios";
 
-export default {
+export default (axiosInstance: AxiosInstance) => ({
   submitGuess: async (id: number) => {
-    const { data } = await axios.post<DailyChallengeGuessResponse>(
+    const { data } = await axiosInstance.post<DailyChallengeGuessResponse>(
       "/v1/daily/challenge/submit",
       {
         pokemon_id: id,
@@ -18,7 +18,7 @@ export default {
     return data;
   },
   getUserGuesses: async (date?: string) => {
-    const { data } = await axios.get<DailyChallengeGuessResponse[]>(
+    const { data } = await axiosInstance.get<DailyChallengeGuessResponse[]>(
       "/v1/daily/challenge/guesses",
       {
         params: {
@@ -30,13 +30,14 @@ export default {
   },
   syncGuesses: async (guesses: DailyChallengeGuessResponse[], date: string) => {
     try {
-      const { data } = await axios.post<DailyChallengeSyncGuessesResponse>(
-        "/v1/daily/challenge/sync",
-        {
-          guesses: guesses.map((guess) => ({ pokemonId: guess.pokemonId })),
-          date,
-        }
-      );
+      const { data } =
+        await axiosInstance.post<DailyChallengeSyncGuessesResponse>(
+          "/v1/daily/challenge/sync",
+          {
+            guesses: guesses.map((guess) => ({ pokemonId: guess.pokemonId })),
+            date,
+          }
+        );
       return data;
     } catch (error) {
       console.error("Failed to sync guesses:", error);
@@ -44,7 +45,7 @@ export default {
     }
   },
   getAnswer: async () => {
-    const { data } = await axios.get<{
+    const { data } = await axiosInstance.get<{
       pokemonId: number;
       pokemon: {
         type1: string;
@@ -61,9 +62,9 @@ export default {
     return data;
   },
   getStats: async () => {
-    const { data } = await axios.get<DailyChallengeStatsResponse>(
+    const { data } = await axiosInstance.get<DailyChallengeStatsResponse>(
       "/v1/daily/challenge/stats"
     );
     return data;
   },
-};
+});

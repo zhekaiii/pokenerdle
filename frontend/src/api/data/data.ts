@@ -3,9 +3,9 @@ import {
   PokemonNamesResponse,
   PokemonWithAbilities,
 } from "@pokenerdle/shared";
-import axios from "axios";
+import { AxiosInstance } from "axios";
 
-export default {
+export default (axiosInstance: AxiosInstance) => ({
   getPokemonNames: async (lang: string, lastModified?: string | null) => {
     let headers: Record<string, string> | undefined;
     if (lastModified) {
@@ -14,7 +14,7 @@ export default {
       };
     }
 
-    const response = await axios.get<PokemonNamesResponse[]>(
+    const response = await axiosInstance.get<PokemonNamesResponse[]>(
       "/v1/data/pokemon-names",
       { headers, params: { lang } }
     );
@@ -32,7 +32,7 @@ export default {
       };
     }
 
-    const response = await axios.get<Record<number, string | null>>(
+    const response = await axiosInstance.get<Record<number, string | null>>(
       "/v1/data/pokemon-icons",
       { headers }
     );
@@ -43,11 +43,14 @@ export default {
     };
   },
   getPokemonWithAbilities: async (id: number) => {
-    const { data } = await axios.get<PokemonWithAbilities>("/v1/data/pokemon", {
-      params: {
-        id,
-      },
-    });
+    const { data } = await axiosInstance.get<PokemonWithAbilities>(
+      "/v1/data/pokemon",
+      {
+        params: {
+          id,
+        },
+      }
+    );
     return data;
   },
   getPokemonIdsByGeneration: async (
@@ -61,7 +64,7 @@ export default {
       };
     }
 
-    const response = await axios.get<PokemonIdsByGenerationResponse>(
+    const response = await axiosInstance.get<PokemonIdsByGenerationResponse>(
       "/v1/data/pokemon-generations",
       {
         headers,
@@ -74,4 +77,4 @@ export default {
       data: response.data,
     };
   },
-};
+});

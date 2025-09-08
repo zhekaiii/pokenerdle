@@ -1,10 +1,10 @@
+import { useApi } from "@/contexts/ApiContext";
 import {
   DAILY_CHALLENGE_GUESS_LIMIT,
   DAILY_CHALLENGE_KEY,
   FROZEN_DATE,
 } from "../constants";
 
-import api from "@/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
@@ -42,6 +42,7 @@ export const guessesAtom = atomWithStorage<DailyChallenge | null>(
 );
 
 export const useDailyChallengeData = () => {
+  const api = useApi();
   const { isAuthenticated } = useAuth();
   const [guesses, setGuesses] = useAtom(guessesAtom);
   const [isLoading, setIsLoading] = useState(false);
