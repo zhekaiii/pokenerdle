@@ -108,5 +108,9 @@
     "red": "Red",
     "white": "White",
     "yellow": "Yellow"
+  },
+  "toast": {
+    "correctGuess": "You got it! Well done!",
+    "gameOver": "Game Over! Better luck tomorrow!"
   }
 }
