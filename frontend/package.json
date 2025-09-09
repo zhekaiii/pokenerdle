@@ -8,7 +8,7 @@
     "build:client": "tsc -b . && vite build",
     "build:server": "vite build --ssr",
     "build": "pnpm build:client && pnpm build:server",
-    "heroku-postbuild": "pnpm build && posthog-cli sourcemap inject --directory ./dist/client/assets && posthog-cli sourcemap upload --directory ./dist/clientassets --delete-after",
+    "heroku-postbuild": "pnpm build && posthog-cli sourcemap inject --directory ./dist/client/assets && posthog-cli sourcemap upload --directory ./dist/client/assets --delete-after",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
