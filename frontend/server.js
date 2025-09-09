@@ -114,7 +114,7 @@ export async function createServer(app) {
   app.use(async (req, res, next) => {
     const supabase = createServerClient(
       process.env.VITE_SUPABASE_URL,
-      process.env.SUPABASE_PUBLISHABLE_KEY,
+      process.env.VITE_SUPABASE_ANON_KEY,
       {
         cookies: {
           getAll() {
