@@ -61,7 +61,13 @@ export const useSyncData = () => {
 
   useWatch(
     ([oldAuthenticated], [newAuthenticated]) => {
-      if (loading || oldAuthenticated || !newAuthenticated) return;
+      if (
+        loading ||
+        oldAuthenticated === undefined ||
+        oldAuthenticated ||
+        !newAuthenticated
+      )
+        return;
       // At this point, loading is false and oldAuthenticated is false and newAuthenticated is true,
       // meaning user just logged in
       if (
