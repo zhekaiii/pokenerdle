@@ -66,7 +66,7 @@ export default defineConfig((configEnv) => ({
     },
   },
   ssr: {
-    noExternal: ["react-use", "posthog-js"],
+    noExternal: ["posthog-js"],
   },
   resolve: {
     alias: {

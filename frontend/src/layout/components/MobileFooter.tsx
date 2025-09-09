@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/Button";
+import useDetectKeyboardOpen from "@/hooks/useDetectKeyboardOpen";
 import { Link, useLocation } from "@tanstack/react-router";
 import clsx from "clsx";
 import { Calendar, LinkIcon, MapPin } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import useDetectKeyboardOpen from "use-detect-keyboard-open";
 import classes from "./index.module.scss";
 import { ProfileDropdownMenu } from "./ProfileDropdownMenu";
 import { ProfileIcon } from "./ProfileIcon";

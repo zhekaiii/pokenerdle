@@ -10,7 +10,7 @@ import {
 } from "@/pages/DailyChallenge/hooks/useData";
 import { useSyncData } from "@/pages/DailyChallenge/hooks/useSyncData";
 import { createFileRoute } from "@tanstack/react-router";
-import { atom, useAtom } from "jotai";
+import { atom, useAtom, useStore } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 
 enum DailyChallengeState {
@@ -24,7 +24,8 @@ const dailyChallengeStateAtom = atom<DailyChallengeState>(
 
 const DailyChallengePage: React.FC = () => {
   const loadedData = Route.useLoaderData();
-  useHydrateAtoms([[guessesAtom, loadedData]]);
+  const store = useStore();
+  useHydrateAtoms([[guessesAtom, loadedData ?? store.get(guessesAtom)]]);
   useHydrateAtoms([
     [
       dailyChallengeStateAtom,

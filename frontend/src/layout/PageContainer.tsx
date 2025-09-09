@@ -1,6 +1,6 @@
+import useDetectKeyboardOpen from "@/hooks/useDetectKeyboardOpen";
 import clsx from "clsx";
 import React from "react";
-import useDetectKeyboardOpen from "use-detect-keyboard-open";
 import classes from "./PageContainer.module.scss";
 interface Props {
   children: React.ReactNode;

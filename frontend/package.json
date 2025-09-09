@@ -64,12 +64,10 @@
     "react-device-detect": "^2.2.3",
     "react-dom": "^19.1.1",
     "react-i18next": "^15.7.2",
-    "react-use": "^17.6.0",
     "sass": "^1.77.8",
     "socket.io-client": "^4.7.5",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
-    "use-detect-keyboard-open": "^0.4.0",
     "use-immer": "^0.11.0",
     "use-keyboard-list-navigation": "^2.4.2",
     "vaul": "^1.1.2"

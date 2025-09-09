@@ -1,7 +1,6 @@
 import { sessionAtom, userAtom } from "@/atoms/auth";
 import { themeAtom } from "@/atoms/theme";
 import { ErrorPage } from "@/layout/ErrorPage";
-import breakpoints from "@/utils/breakpoints";
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -13,7 +12,6 @@ import { useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { Store } from "jotai/vanilla/store";
 import { useTranslation } from "react-i18next";
-import { useMedia } from "react-use";
 import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
 import PageContainer from "../layout/PageContainer";
@@ -25,7 +23,6 @@ function RootLayout() {
     [userAtom, user],
   ]);
   const theme = useAtomValue(themeAtom);
-  const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`, false);
   const {
     i18n: { language },
   } = useTranslation();
@@ -75,7 +72,7 @@ function RootLayout() {
         <PageContainer>
           <Header />
           <Outlet />
-          {isSmallerThanSm && <MobileFooter />}
+          <MobileFooter />
         </PageContainer>
         <Scripts />
       </body>
