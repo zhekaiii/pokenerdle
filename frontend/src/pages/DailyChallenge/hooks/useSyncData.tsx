@@ -1,9 +1,11 @@
 import api from "@/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
+import { useWatch } from "@/hooks/useWatch";
 import { useAtom } from "jotai";
 import { CloudUpload } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { DAILY_CHALLENGE_GUESS_LIMIT, FROZEN_DATE } from "../constants";
 import { guessesAtom } from "./useData";
 
 export const useSyncData = () => {
@@ -56,6 +58,35 @@ export const useSyncData = () => {
       setIsSyncing(false);
     }
   }, [guesses, isAuthenticated, setGuesses, toast]);
+
+  useWatch(
+    ([oldAuthenticated], [newAuthenticated]) => {
+      if (loading || oldAuthenticated || !newAuthenticated) return;
+      // At this point, loading is false and oldAuthenticated is false and newAuthenticated is true,
+      // meaning user just logged in
+      if (
+        guesses &&
+        guesses.guesses.length > 0 &&
+        (guesses.guesses.length == DAILY_CHALLENGE_GUESS_LIMIT ||
+          guesses.guesses[guesses.guesses.length - 1].correct)
+      )
+        return;
+      setIsSyncing(true);
+      api.daily
+        .getUserGuesses(FROZEN_DATE)
+        .then((userGuesses) => {
+          setGuesses({
+            date: FROZEN_DATE,
+            guesses: userGuesses,
+            synced: true,
+          });
+        })
+        .finally(() => {
+          setIsSyncing(false);
+        });
+    },
+    [isAuthenticated, loading] as const
+  );
 
   useEffect(() => {
     if (
