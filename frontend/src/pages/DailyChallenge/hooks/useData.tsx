@@ -14,6 +14,7 @@ import { atomWithStorage } from "jotai/utils";
 import { CheckCircle } from "lucide-react";
 import posthog from "posthog-js";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export interface DailyChallenge {
   date: string;
@@ -49,6 +50,7 @@ export const useDailyChallengeData = () => {
     null
   );
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false);
+  const { t } = useTranslation("daily");
 
   const hasSolved = useMemo(
     () =>
@@ -124,7 +126,7 @@ export const useDailyChallengeData = () => {
           description: (
             <div className="tw:flex tw:flex-nowrap">
               <CheckCircle className="tw:mr-2" />
-              <div>You got it! Well done!</div>
+              <div>{t("toast.correctGuess")}</div>
             </div>
           ),
         });
@@ -136,7 +138,7 @@ export const useDailyChallengeData = () => {
           variant: "destructive",
           description: (
             <div className="tw:flex tw:flex-nowrap">
-              <div>Game Over! Better luck tomorrow!</div>
+              <div>{t("toast.gameOver")}</div>
             </div>
           ),
         });

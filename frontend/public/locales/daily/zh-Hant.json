@@ -108,5 +108,9 @@
     "red": "紅",
     "white": "白",
     "yellow": "黃"
+  },
+  "toast": {
+    "correctGuess": "你猜對了！幹得好！",
+    "gameOver": "你沒猜到！明天再試吧！"
   }
 }

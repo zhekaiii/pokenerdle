@@ -67,7 +67,7 @@ function RootLayout() {
         <meta property="og:type" content="website" />
         <meta
           property="og:image"
-          content="https://pokenerdle.app/pokenerdle.png"
+          content="https://pokenerdle.app/ogimage.png"
         />
         <HeadContent />
       </head>
