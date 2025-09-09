@@ -13,22 +13,25 @@ export const BACKEND_URL = import.meta.env.SSR
   ? ""
   : import.meta.env.VITE_BACKEND_URL;
 
-const createAxiosInstance = (store: Store): AxiosInstance => {
+const createAxiosInstance = (store?: Store): AxiosInstance => {
   const instance = axios.create({
     baseURL: `${BACKEND_URL}/api`,
   });
-  instance.interceptors.request.use((config) => {
-    const session = store.get(sessionAtom);
-    if (session?.access_token) {
-      config.headers.Authorization = `Bearer ${session.access_token}`;
-    }
-    return config;
-  });
+
+  if (store) {
+    instance.interceptors.request.use((config) => {
+      const session = store.get(sessionAtom);
+      if (session?.access_token) {
+        config.headers.Authorization = `Bearer ${session.access_token}`;
+      }
+      return config;
+    });
+  }
+
   return instance;
 };
 
-// Create API factory that accepts a store
-export const createApi = (store: Store) => {
+export const createApi = (store?: Store) => {
   const axiosInstance = createAxiosInstance(store);
 
   return {

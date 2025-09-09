@@ -11,8 +11,11 @@ import AppProvider from "./AppProviders";
 import { sessionAtom, userAtom } from "./atoms/auth";
 import { themeAtom } from "./atoms/theme";
 import "./fetch-polyfill";
+import { initializeSSRData } from "./lib/ssr-data";
 import { createRouter } from "./router";
 import { getThemeFromCookies } from "./utils/theme";
+
+const ssrDataInitializePromise = initializeSSRData();
 
 export async function render({
   req,
@@ -23,7 +26,8 @@ export async function render({
   req: express.Request & { i18n: i18n; session: Session | null };
   res: express.Response;
 }) {
-  // Convert the express request to a fetch request
+  await ssrDataInitializePromise;
+
   const url = new URL(req.originalUrl || req.url, "https://localhost:5173")
     .href;
 

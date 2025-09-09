@@ -3,24 +3,48 @@ import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import i18n from "i18next";
-import { useAtom } from "jotai";
+import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
 
-const pokemonNamesAtom = atomWithStorage<
-  Record<string, Record<number, PokemonNamesResponse>>
->("pokemonNamesV2", {}, undefined, {
-  getOnInit: true,
-});
+let globalSSRPokemonNames: Record<
+  string,
+  Record<number, PokemonNamesResponse>
+> = {};
 
-const lastModifiedAtom = atomWithStorage<Record<string, string | null>>(
-  "pokemonNamesV2LastModified",
-  {},
-  undefined,
-  {
-    getOnInit: true,
-  }
-);
+export const setSSRPokemonNamesData = (
+  data: Record<string, Record<number, PokemonNamesResponse>>,
+  lastModified: Record<string, string | null>
+) => {
+  globalSSRPokemonNames = data;
+};
+
+const pokemonNamesAtom = import.meta.env.SSR
+  ? atom(
+      () => globalSSRPokemonNames,
+      // In SSR, we don't need to set the value and this removes typescript errors
+      // since it's no longer a ReadonlyAtom
+      () => {}
+    )
+  : atomWithStorage<Record<string, Record<number, PokemonNamesResponse>>>(
+      "pokemonNamesV2",
+      {},
+      undefined,
+      {
+        getOnInit: true,
+      }
+    );
+
+const lastModifiedAtom = import.meta.env.SSR
+  ? atom<Record<string, string | null>>({})
+  : atomWithStorage<Record<string, string | null>>(
+      "pokemonNamesV2LastModified",
+      {},
+      undefined,
+      {
+        getOnInit: true,
+      }
+    );
 
 export const usePokemonNames = () => {
   const [pokemonNames, setPokemonNames] = useAtom(pokemonNamesAtom);
@@ -28,7 +52,9 @@ export const usePokemonNames = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!i18n.language) return;
+    // Don't fetch in SSR - data is already available from global store
+    if (import.meta.env.SSR || !i18n.language) return;
+
     queryClient
       .fetchQuery({
         queryKey: ["pokemonNames", i18n.language],
