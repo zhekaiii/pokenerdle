@@ -13,7 +13,6 @@ import path from "node:path";
 import process from "node:process";
 import * as zlib from "node:zlib";
 import { initReactI18next } from "react-i18next";
-import manifest from "./dist/client/.vite/manifest.json" assert { type: "json" };
 
 dotenv.config();
 
@@ -145,6 +144,12 @@ export async function createServer(app) {
 
   let cssFiles = [];
   if (isProd) {
+    const manifest = JSON.parse(
+      await fs.promises.readFile(
+        path.join(import.meta.dirname, "./dist/client/.vite/manifest.json"),
+        "utf-8"
+      )
+    );
     cssFiles = manifest["src/entry-client.tsx"].css;
   }
 

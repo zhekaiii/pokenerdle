@@ -7,7 +7,6 @@ import {
 import type express from "express";
 import type { i18n } from "i18next";
 import { createStore } from "jotai";
-import { pipeline } from "node:stream/promises";
 import AppProvider from "./AppProviders";
 import { sessionAtom, userAtom } from "./atoms/auth";
 import { themeAtom } from "./atoms/theme";
@@ -83,8 +82,9 @@ export async function render({
   response.headers.forEach((value, name) => {
     res.setHeader(name, value);
   });
+  let html = await response.text();
 
-  // Stream the response body
-  // @ts-expect-error response.body is not null
-  return pipeline(response.body, res);
+  html = html.replace(/<\/head>/, `${head}</head>`);
+
+  res.send(html);
 }
