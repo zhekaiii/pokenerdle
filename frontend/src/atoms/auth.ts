@@ -2,21 +2,7 @@ import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import { atom } from "jotai";
 import { supabase } from "../lib/supabase";
 
-// Extend Window interface for SSR auth state
-declare global {
-  interface Window {
-    __AUTH_STATE__?: {
-      user: import("@supabase/supabase-js").User | null;
-      session: import("@supabase/supabase-js").Session | null;
-    };
-  }
-}
-
-// Get initial auth state from window if available (SSR hydration)
 const getInitialAuthState = () => {
-  if (!import.meta.env.SSR && window.__AUTH_STATE__) {
-    return window.__AUTH_STATE__;
-  }
   return { user: null, session: null };
 };
 
