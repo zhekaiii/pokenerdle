@@ -1,5 +1,5 @@
 import { sessionAtom, userAtom } from "@/atoms/auth";
-import { themeAtom, useThemeListener } from "@/atoms/theme";
+import { themeAtom } from "@/atoms/theme";
 import { ErrorPage } from "@/layout/ErrorPage";
 import {
   createRootRouteWithContext,
@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
 import PageContainer from "../layout/PageContainer";
+import themeListenerScript from "../utils/themeListener?url";
 
 function RootLayout() {
   const { session, user } = Route.useLoaderData();
@@ -23,7 +24,6 @@ function RootLayout() {
     [userAtom, user],
   ]);
   const theme = useAtomValue(themeAtom);
-  useThemeListener();
   const {
     i18n: { language },
   } = useTranslation();
@@ -90,27 +90,33 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
       { title: "PokéNerdle" },
       { property: "og:title", content: "PokéNerdle" },
     ],
-    scripts: import.meta.env.PROD
-      ? [
-          {
-            type: "module",
-            src: "/assets/entry-client.js",
-          },
-        ]
-      : [
-          {
-            type: "module",
-            children: `import RefreshRuntime from "/@react-refresh"
+    scripts: [
+      {
+        type: "module",
+        src: themeListenerScript,
+      },
+      ...(import.meta.env.PROD
+        ? [
+            {
+              type: "module",
+              src: "/assets/entry-client.js",
+            },
+          ]
+        : [
+            {
+              type: "module",
+              children: `import RefreshRuntime from "/@react-refresh"
 RefreshRuntime.injectIntoGlobalHook(window)
 window.$RefreshReg$ = () => {}
 window.$RefreshSig$ = () => (type) => type
 window.__vite_plugin_react_preamble_installed__ = true`,
-          },
-          {
-            type: "module",
-            src: "/src/entry-client.tsx",
-          },
-        ],
+            },
+            {
+              type: "module",
+              src: "/src/entry-client.tsx",
+            },
+          ]),
+    ],
   }),
   component: RootLayout,
   beforeLoad: ({ location }) => {
