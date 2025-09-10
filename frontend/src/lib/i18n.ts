@@ -20,8 +20,8 @@ i18n
     fallbackLng: "en",
 
     detection: {
-      order: ["localStorage", "navigator", "htmlTag"],
-      caches: ["localStorage"],
+      order: ["localStorage", "cookie", "navigator", "htmlTag"],
+      caches: ["localStorage", "cookie"],
       convertDetectedLanguage: (code) => {
         if (code.startsWith("en")) return "en";
         if (["zh-TW", "zh-HK", "zh-MO", "zh-Hant"].includes(code)) {
