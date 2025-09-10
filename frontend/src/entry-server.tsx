@@ -11,6 +11,8 @@ import AppProviders from "./AppProviders";
 import { sessionAtom, userAtom } from "./atoms/auth";
 import { themeAtom } from "./atoms/theme";
 import "./fetch-polyfill";
+import { createSocket } from "./hooks/useSocket";
+import { createQueryClient } from "./lib/query";
 import { initializeSSRData } from "./lib/ssr-data";
 import { createRouter } from "./router";
 import { getThemeFromCookies } from "./utils/theme";
@@ -72,7 +74,12 @@ export async function render({
       responseHeaders,
       router,
       children: (
-        <AppProviders i18nInstance={req.i18n} store={store}>
+        <AppProviders
+          i18nInstance={req.i18n}
+          store={store}
+          queryClient={createQueryClient()}
+          socket={createSocket()}
+        >
           <RouterServer router={router} />
         </AppProviders>
       ),
