@@ -34,7 +34,7 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
   trigger,
   triggerAsChild = false,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("nav");
   const [currentTheme, setCurrentTheme] = useAtom(themeAtom);
   const { isAuthenticated, loading: authLoading, signOut } = useAuth();
 
@@ -54,13 +54,13 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
       <DropdownMenuContent collisionPadding={8}>
         <Link to="/settings">
           <DropdownMenuItem>
-            <Settings /> {t("nav:settings")}
+            <Settings /> {t("settings")}
           </DropdownMenuItem>
         </Link>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="tw:gap-2">
             <Icon className="tw:size-5 tw:text-muted-foreground" />
-            {t("nav:darkMode")}
+            {t("darkMode")}
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             {THEMES.map((theme) => {
@@ -84,7 +84,7 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
                         theme === currentTheme && "tw:text-inherit"
                       )}
                     />
-                    {t(`nav:${theme}`)}
+                    {t(theme)}
                   </span>
                 </DropdownMenuItem>
               );
@@ -104,13 +104,13 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
               ) : (
                 <>
                   <GoogleIcon className="tw:size-4" />
-                  {t("nav:loginWithGoogle")}
+                  {t("loginWithGoogle")}
                 </>
               )}
             </>
           ) : (
             <>
-              <LogOut /> {t("nav:logout")}
+              <LogOut /> {t("logout")}
             </>
           )}
         </DropdownMenuItem>

@@ -12,6 +12,7 @@
   padding: calc(var(--page-padding-y) + var(--header-height))
     var(--page-padding-x) calc(var(--page-padding-y) + var(--footer-height));
   min-height: 100dvh;
+  width: 100%;
   overflow: hidden;
 
   &.KeyboardOpen {

@@ -16,7 +16,23 @@
     cursor: pointer;
   }
 
-  &--small {
+  .DesktopNav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    @media (max-width: 640px) {
+      display: none;
+    }
+  }
+
+  .DesktopProfile {
+    @media (max-width: 640px) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
     .Logo {
       height: 80%;
     }
@@ -36,6 +52,10 @@
   z-index: 10;
   @supports (padding: max(0px)) {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  @media (min-width: 641px) {
+    display: none;
   }
 
   .MobileFooterNav {

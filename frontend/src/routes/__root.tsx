@@ -1,33 +1,119 @@
-import breakpoints from "@/utils/breakpoints";
+import { sessionAtom, userAtom } from "@/atoms/auth";
+import { themeAtom, useThemeListener } from "@/atoms/theme";
+import { ErrorPage } from "@/layout/ErrorPage";
 import {
   createRootRouteWithContext,
+  HeadContent,
   Outlet,
   redirect,
+  Scripts,
 } from "@tanstack/react-router";
-import { useMedia } from "react-use";
-import PageContainer from "../layout/PageContainer";
+import { useAtomValue } from "jotai";
+import { useHydrateAtoms } from "jotai/utils";
+import { Store } from "jotai/vanilla/store";
+import { useTranslation } from "react-i18next";
 import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
+import PageContainer from "../layout/PageContainer";
 
 function RootLayout() {
-  const isSmallerThanSm = useMedia(`(max-width: ${breakpoints.sm}px)`);
+  const { session, user } = Route.useLoaderData();
+  useHydrateAtoms([
+    [sessionAtom, session],
+    [userAtom, user],
+  ]);
+  const theme = useAtomValue(themeAtom);
+  useThemeListener();
+  const {
+    i18n: { language },
+  } = useTranslation();
+
   return (
-    <PageContainer>
-      <Header />
-      <Outlet />
-      {isSmallerThanSm && <MobileFooter />}
-    </PageContainer>
+    <html
+      lang={language}
+      className={
+        theme === "dark"
+          ? "tw:dark"
+          : theme === "light"
+          ? "tw:light"
+          : undefined
+      }
+    >
+      <head>
+        <meta charSet="UTF-8" />
+        <link rel="icon" type="image/png" href="/pokeball.png" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"
+        />
+        <meta name="theme-color" content="#ffffff" />
+        <meta
+          name="description"
+          content="PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!"
+        />
+        <meta
+          name="keywords"
+          content="Pokemon, Game, Puzzle, PokéNerdle, PokeChain, PokeNerdle"
+        />
+        <meta
+          property="og:description"
+          content="PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!"
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:image"
+          content="https://pokenerdle.app/ogimage.png"
+        />
+        <HeadContent />
+      </head>
+      <body>
+        <PageContainer>
+          <Header />
+          <Outlet />
+          <MobileFooter />
+        </PageContainer>
+        <Scripts />
+      </body>
+    </html>
   );
 }
 
 interface RootRouteContext {
   shouldShowRuleButton?: boolean;
+  head: string;
+  store: Store;
 }
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({
+  head: () => ({
+    meta: [
+      { title: "PokéNerdle" },
+      { property: "og:title", content: "PokéNerdle" },
+    ],
+    scripts: import.meta.env.PROD
+      ? [
+          {
+            type: "module",
+            src: "/assets/entry-client.js",
+          },
+        ]
+      : [
+          {
+            type: "module",
+            children: `import RefreshRuntime from "/@react-refresh"
+RefreshRuntime.injectIntoGlobalHook(window)
+window.$RefreshReg$ = () => {}
+window.$RefreshSig$ = () => (type) => type
+window.__vite_plugin_react_preamble_installed__ = true`,
+          },
+          {
+            type: "module",
+            src: "/src/entry-client.tsx",
+          },
+        ],
+  }),
   component: RootLayout,
   beforeLoad: ({ location }) => {
-    // Redirect from root to /daily if we're at the root path
     if (location.pathname === "/") {
       throw redirect({
         to: "/daily",
@@ -36,5 +122,14 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
         replace: true,
       });
     }
+  },
+  errorComponent: ErrorPage,
+  loader: ({ context: { store } }) => {
+    const session = store.get(sessionAtom);
+    const user = store.get(userAtom);
+    return {
+      session,
+      user,
+    };
   },
 });

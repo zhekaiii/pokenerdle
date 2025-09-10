@@ -34,7 +34,11 @@ const DailyChallengeIntroCard: React.FC<Props> = ({ onStart }) => {
         <img src={questionMarkIcon} />
       </CardContent>
       <CardFooter className="tw:flex tw:flex-col tw:gap-2">
-        <Button className="tw:w-full" onClick={onStart}>
+        <Button
+          className="tw:w-full"
+          onClick={onStart}
+          suppressHydrationWarning
+        >
           {isGameFinished
             ? t("buttons.viewStats")
             : !guesses?.guesses.length

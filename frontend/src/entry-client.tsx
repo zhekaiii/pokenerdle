@@ -1,10 +1,16 @@
-import { PostHogErrorBoundary, PostHogProvider } from "posthog-js/react";
+import { RouterClient } from "@tanstack/react-router/ssr/client";
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
-import App from "./App";
-import "./index.css";
-import ErrorPage from "./layout/ErrorPage";
+import AppProviders from "./AppProviders";
+import { store } from "./atoms/store";
+import { createSocket } from "./hooks/useSocket";
 import "./lib/i18n.ts";
+import { createQueryClient } from "./lib/query";
+import { createRouter } from "./router";
+
+const router = createRouter(store);
+const queryClient = createQueryClient();
+const socket = createSocket();
 
 // This resolves the issue where rebuilding produces different hashes for the same file,
 // causing the browser to load the old filename (which doesn't exist).
@@ -15,20 +21,10 @@ window.addEventListener("vite:preloadError", (e) => {
 });
 
 hydrateRoot(
-  document.getElementById("root")!,
+  document,
   <React.StrictMode>
-    <PostHogProvider
-      apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
-      options={{
-        api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-        defaults: "2025-05-24",
-        capture_exceptions: true, // This enables capturing exceptions using Error Tracking
-        debug: import.meta.env.MODE === "development",
-      }}
-    >
-      <PostHogErrorBoundary fallback={<ErrorPage />}>
-        <App />
-      </PostHogErrorBoundary>
-    </PostHogProvider>
+    <AppProviders queryClient={queryClient} socket={socket}>
+      <RouterClient router={router} />
+    </AppProviders>
   </React.StrictMode>
 );

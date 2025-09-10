@@ -1,11 +1,11 @@
 import { PathFinderResponse } from "@pokenerdle/shared";
-import axios from "axios";
+import { AxiosInstance } from "axios";
 
-export default {
+export default (axiosInstance: AxiosInstance) => ({
   getChallenge: async () => {
-    const { data } = await axios.get<PathFinderResponse>(
+    const { data } = await axiosInstance.get<PathFinderResponse>(
       "/v1/pathfinder/challenge"
     );
     return data;
   },
-};
+});

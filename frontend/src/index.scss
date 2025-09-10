@@ -2,7 +2,16 @@
 
 @plugin 'tailwindcss-animate';
 
-@custom-variant dark (&:where(.tw\:dark, .tw\:dark *));
+@custom-variant dark {
+  :where(.tw\:dark, .tw\:dark *):not(:where(.tw\:light, .tw\:light *)) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    :not(:where(.tw\:light, .tw\:light *)) {
+      @slot;
+    }
+  }
+}
 
 @layer base {
   button,
@@ -123,7 +132,52 @@
 }
 
 @layer base {
-  :root {
+  @mixin redeclare-vars {
+    --tw-radius-lg: var(--radius);
+    --tw-radius-md: calc(var(--radius) - 2px);
+    --tw-radius-sm: calc(var(--radius) - 4px);
+
+    --tw-color-background: var(--background);
+    --tw-color-foreground: var(--foreground);
+
+    --tw-color-card: var(--card);
+    --tw-color-card-foreground: var(--card-foreground);
+
+    --tw-color-popover: var(--popover);
+    --tw-color-popover-foreground: var(--popover-foreground);
+
+    --tw-color-primary: var(--primary);
+    --tw-color-primary-foreground: var(--primary-foreground);
+
+    --tw-color-secondary: var(--secondary);
+    --tw-color-secondary-foreground: var(--secondary-foreground);
+
+    --tw-color-muted: var(--muted);
+    --tw-color-muted-foreground: var(--muted-foreground);
+
+    --tw-color-accent: var(--accent);
+    --tw-color-accent-foreground: var(--accent-foreground);
+
+    --tw-color-destructive: var(--destructive);
+
+    --tw-color-positive: var(--positive);
+
+    --tw-color-warning: var(--warning);
+    --tw-color-warning-foreground: var(--warning-foreground);
+
+    --tw-color-border: var(--border);
+    --tw-color-input: var(--input);
+    --tw-color-ring: var(--ring);
+
+    --tw-color-chart-1: var(--chart-1);
+    --tw-color-chart-2: var(--chart-2);
+    --tw-color-chart-3: var(--chart-3);
+    --tw-color-chart-4: var(--chart-4);
+    --tw-color-chart-5: var(--chart-5);
+  }
+
+  // --- Light theme variables ---
+  @mixin light-vars {
     --radius: 0.625rem;
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
@@ -157,8 +211,11 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+    @include redeclare-vars;
   }
-  .tw\:dark {
+
+  // --- Dark theme variables ---
+  @mixin dark-vars {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
@@ -191,6 +248,24 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.439 0 0);
+    @include redeclare-vars;
+  }
+
+  // Apply mixins
+  :root,
+  :root.tw\:light,
+  .tw\:light {
+    @include light-vars;
+  }
+
+  .tw\:dark {
+    @include dark-vars;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      @include dark-vars;
+    }
   }
 }
 

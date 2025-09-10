@@ -1,4 +1,5 @@
 import { PathFinderResponse } from "@pokenerdle/shared";
+import { useLocation } from "@tanstack/react-router";
 import posthog from "posthog-js";
 import { useEffect, useRef } from "react";
 
@@ -15,6 +16,7 @@ export const useEventTracking = ({
   startTime,
   numGuesses,
 }: UseEventTrackingProps) => {
+  const location = useLocation();
   const currentPathRef = useRef(location.pathname);
 
   const reportAbandon = () => {

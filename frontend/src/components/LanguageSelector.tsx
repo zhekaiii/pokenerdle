@@ -22,7 +22,7 @@ const languages = [
 ];
 
 export const LanguageDropdownSelector: React.FC = () => {
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
   return (
     <Select value={i18n.language} onValueChange={i18n.changeLanguage}>
       <SelectTrigger>
@@ -45,13 +45,13 @@ export const LanguageDropdownSelector: React.FC = () => {
 };
 
 export const LanguageDropdownSubmenu: React.FC = () => {
-  const { i18n, t } = useTranslation();
+  const { i18n, t } = useTranslation("nav");
 
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
         <Languages className="tw:text-muted-foreground tw:me-2" />{" "}
-        {t("nav:language")}
+        {t("language")}
       </DropdownMenuSubTrigger>
       <DropdownMenuSubContent>
         {languages.map((language) => (

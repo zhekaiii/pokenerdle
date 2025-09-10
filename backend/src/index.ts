@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import express, { ErrorRequestHandler } from "express";
 import { createServer } from "http";
-import path, { dirname } from "path";
 import { Server } from "socket.io";
 import { fileURLToPath } from "url";
 import { initializeBattleWsRoutes } from "./handlers/index.js";
@@ -18,7 +17,6 @@ import pathfinderRouter from "./routes/pathfinder.routes.js";
 import { PokeNerdleServer } from "./utils/types.js";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 dotenv.config();
 
 const app = express();
@@ -73,15 +71,13 @@ app.use("/porygon/static", staticPorygonMiddleware);
 app.use("/api", router);
 app.use(errorHandler);
 
-// Static files
-app.use(express.static(path.join(__dirname, "..", "..", "frontend", "dist")));
-
-// Fallback route for SPA
-app.get(/(.*)/, (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "..", "..", "frontend", "dist", "index.html")
+if (process.env.NODE_ENV === "production") {
+  const { createServer: createSsrServer } = await import(
+    // @ts-expect-error -- Dynamic import
+    "../../frontend/server.js"
   );
-});
+  await createSsrServer(app);
+}
 
 httpServer.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

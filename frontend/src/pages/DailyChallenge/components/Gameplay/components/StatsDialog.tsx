@@ -1,4 +1,4 @@
-import dailyApi from "@/api/daily";
+import api from "@/api";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import {
@@ -33,7 +33,7 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
       if (open && isAuthenticated && !authLoading && !stats && !statsLoading) {
         setStatsLoading(true);
         try {
-          const userStats = await dailyApi.getStats();
+          const userStats = await api.daily.getStats();
           setStats(userStats);
         } catch (error) {
           console.error("Failed to fetch user stats:", error);

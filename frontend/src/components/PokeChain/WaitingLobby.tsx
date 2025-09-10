@@ -12,6 +12,7 @@ interface Props {
 const WaitingLobby: React.FC<Props> = ({ roomCode, exitRoom }) => {
   const [buttonLabel, setButtonLabel] = useState("Copy invite link");
   const shareLink = useMemo(() => {
+    if (import.meta.env.SSR) return "";
     const url = new URL(location.href);
     url.searchParams.set("roomCode", roomCode);
     return url.toString();
@@ -21,7 +22,7 @@ const WaitingLobby: React.FC<Props> = ({ roomCode, exitRoom }) => {
     debounce(() => {
       setButtonLabel("Copy invite link");
     }, 4000),
-    [setButtonLabel]
+    []
   );
 
   const onClickButton = () => {

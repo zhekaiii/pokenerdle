@@ -1,24 +1,27 @@
 import GoogleIcon from "@/assets/google.svg?react";
+import { signInWithGoogle } from "@/atoms/auth";
 import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
 import { Button, ButtonProps } from "./Button";
 
 interface UseGoogleSignInProps {
-  onSignIn?: () => void;
-  redirectTo?: string;
+  redirectToPath?: string;
 }
 
 export const useGoogleSignIn = ({
-  onSignIn,
-  redirectTo,
+  redirectToPath = !import.meta.env.SSR ? location.pathname : "",
 }: UseGoogleSignInProps = {}) => {
-  const { signInWithGoogle } = useAuth();
+  const redirectToSearchParams = new URLSearchParams({ next: redirectToPath });
   const [loading, setLoading] = useState(false);
   const handleSignIn = async () => {
     try {
       setLoading(true);
-      await signInWithGoogle(redirectTo);
-      onSignIn?.();
+      await signInWithGoogle(
+        new URL(
+          location.origin +
+            "/auth/callback?" +
+            redirectToSearchParams.toString()
+        ).toString()
+      );
     } catch (error) {
       console.error("Sign in failed:", error);
     } finally {
@@ -39,13 +42,17 @@ type GoogleSignInButtonProps = {
 } & UseGoogleSignInProps;
 
 export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
-  onSignIn,
   className,
   variant,
   size,
-  redirectTo = location.origin + location.pathname,
+  /**
+   * Path to redirect to after sign in
+   */
+  redirectToPath,
 }) => {
-  const { loading, handleSignIn } = useGoogleSignIn({ onSignIn, redirectTo });
+  const { loading, handleSignIn } = useGoogleSignIn({
+    redirectToPath,
+  });
 
   return (
     <Button

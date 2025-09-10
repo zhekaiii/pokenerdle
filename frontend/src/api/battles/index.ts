@@ -4,9 +4,9 @@ import {
   PokemonNamesResponse,
   PokemonWithAbilities,
 } from "@pokenerdle/shared";
-import axios from "axios";
+import { AxiosInstance } from "axios";
 
-export default {
+export default (axiosInstance: AxiosInstance) => ({
   init: (
     socket: PokeNerdleSocket,
     onRoomReady: (roomCode: string, settings?: BattleRoomSettings) => void,
@@ -50,7 +50,7 @@ export default {
     socket.emit("answer", pokemon, roomId);
   },
   getStarterPokemon: async (roomId: string) => {
-    const { data } = await axios.get<PokemonWithAbilities>(
+    const { data } = await axiosInstance.get<PokemonWithAbilities>(
       "/v1/battles/starter-pokemon",
       {
         params: { roomId },
@@ -58,4 +58,4 @@ export default {
     );
     return data;
   },
-};
+});
