@@ -28,6 +28,7 @@ const clientBuildConfig: BuildOptions = {
     },
   },
   manifest: true,
+  cssCodeSplit: false,
 };
 
 const ssrBuildConfig: BuildOptions = {
@@ -39,6 +40,7 @@ const ssrBuildConfig: BuildOptions = {
   rollupOptions: {
     input: path.resolve(__dirname, "src/entry-server.tsx"),
   },
+  cssCodeSplit: false,
 };
 
 // https://vitejs.dev/config/

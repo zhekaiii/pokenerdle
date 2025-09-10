@@ -144,7 +144,7 @@ export async function createServer(app) {
 
   app.get("/auth/callback", authCallback);
 
-  let cssFiles = [];
+  let cssFile = "";
   if (isProd) {
     const manifest = JSON.parse(
       await fs.promises.readFile(
@@ -152,7 +152,7 @@ export async function createServer(app) {
         "utf-8"
       )
     );
-    cssFiles = manifest["src/entry-client.tsx"].css;
+    cssFile = manifest["style.css"].file;
   }
 
   app.use(/(.*)/, async (req, res) => {
@@ -179,9 +179,7 @@ export async function createServer(app) {
         viteHead.indexOf("</head>")
       );
 
-      viteHead += cssFiles
-        .map((css) => `<link rel="stylesheet" href="${css}" />`)
-        .join("");
+      viteHead += `<link rel="stylesheet" href="${cssFile}" />`;
 
       const entry = await (async () => {
         if (!isProd) {
