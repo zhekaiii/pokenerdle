@@ -1,5 +1,5 @@
 import { sessionAtom, userAtom } from "@/atoms/auth";
-import { themeAtom } from "@/atoms/theme";
+import { themeAtom, useThemeListener } from "@/atoms/theme";
 import { ErrorPage } from "@/layout/ErrorPage";
 import {
   createRootRouteWithContext,
@@ -23,6 +23,7 @@ function RootLayout() {
     [userAtom, user],
   ]);
   const theme = useAtomValue(themeAtom);
+  useThemeListener();
   const {
     i18n: { language },
   } = useTranslation();
@@ -45,10 +46,7 @@ function RootLayout() {
           name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"
         />
-        <meta
-          name="theme-color"
-          content={theme === "dark" ? "#171717" : "#ffffff"}
-        />
+        <meta name="theme-color" content="#ffffff" />
         <meta
           name="description"
           content="PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!"
