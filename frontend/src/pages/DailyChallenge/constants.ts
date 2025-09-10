@@ -7,7 +7,7 @@ export const DAILY_CHALLENGE_GUESS_LIMIT = 8;
 export const DAY_1 = new TZDate(2025, 7, 9, "Asia/Singapore");
 export const FROZEN_DATE = format(TZDate.tz("Asia/Singapore"), "yyyy-MM-dd");
 export const challengeNumber =
-  differenceInCalendarDays(new Date(FROZEN_DATE), DAY_1) + 1;
+  differenceInCalendarDays(new TZDate(FROZEN_DATE, "Asia/Singapore"), DAY_1) + 1;
 
 export const COLUMNS = [
   { label: "columns.type1", key: "type1Correctness" },
