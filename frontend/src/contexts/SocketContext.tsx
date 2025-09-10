@@ -8,9 +8,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [socket] = useState<PokeNerdleSocket>(() =>
-    io(`${BACKEND_URL}/ws/battles`, {
-      transports: ["websocket", " polling", "flashsocket"],
-    })
+    import.meta.env.SSR
+      ? // We only use sockets in client side, so we need to use a dummy socket in SSR
+        ({ id: "ssr" } as unknown as PokeNerdleSocket)
+      : io(`${BACKEND_URL}/ws/battles`, {
+          transports: ["websocket", " polling", "flashsocket"],
+        })
   );
 
   return (

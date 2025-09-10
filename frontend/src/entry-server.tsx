@@ -7,7 +7,7 @@ import {
 import type express from "express";
 import type { i18n } from "i18next";
 import { createStore } from "jotai";
-import AppProvider from "./AppProviders";
+import AppProviders from "./AppProviders";
 import { sessionAtom, userAtom } from "./atoms/auth";
 import { themeAtom } from "./atoms/theme";
 import "./fetch-polyfill";
@@ -72,9 +72,9 @@ export async function render({
       responseHeaders,
       router,
       children: (
-        <AppProvider i18nInstance={req.i18n} store={store}>
+        <AppProviders i18nInstance={req.i18n} store={store}>
           <RouterServer router={router} />
-        </AppProvider>
+        </AppProviders>
       ),
     })
   );

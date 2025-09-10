@@ -14,7 +14,9 @@ import process from "node:process";
 import * as zlib from "node:zlib";
 import { initReactI18next } from "react-i18next";
 
-dotenv.config();
+dotenv.config({
+  path: path.join(import.meta.dirname, ".env"),
+});
 
 const isProd = process.env.NODE_ENV === "production";
 
