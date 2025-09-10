@@ -38,7 +38,9 @@ export const generateShareText = (
   } else {
     text += `${t("share.challengeFailed")}\n\n`;
   }
-  text += `${grid}\n\n${t("share.challengePrompt")} https://pokenerdle.app`;
+  text += `${grid}\n\n${t(
+    "share.challengePrompt"
+  )} https://pokenerdle.app/daily`;
   return text;
 };
 
