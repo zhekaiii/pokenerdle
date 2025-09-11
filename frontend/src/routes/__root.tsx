@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
 import PageContainer from "../layout/PageContainer";
-import themeListenerScript from "../utils/themeListener?raw";
+import themeListenerScript from "../utils/themeListener?worker&url";
 
 function RootLayout() {
   const { session, user } = Route.useLoaderData();
@@ -93,7 +93,7 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
     scripts: [
       {
         type: "module",
-        children: themeListenerScript,
+        src: themeListenerScript,
       },
       ...(import.meta.env.PROD
         ? [
