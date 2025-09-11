@@ -70,14 +70,6 @@ type Theme = "dark" | "light" | "system";
     }
   }
 
-  // Initialize on DOM ready
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      handleThemeChange(); // Set initial theme
-      initThemeListener();
-    });
-  } else {
-    handleThemeChange(); // Set initial theme
-    initThemeListener();
-  }
+  handleThemeChange(); // Set initial theme
+  initThemeListener();
 })();
