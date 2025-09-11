@@ -41,7 +41,7 @@ function RootLayout() {
     >
       <head>
         <meta charSet="UTF-8" />
-        <link rel="icon" type="image/png" href="/pokeball.png" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"
