@@ -15,7 +15,6 @@ import { useTranslation } from "react-i18next";
 import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
 import PageContainer from "../layout/PageContainer";
-import themeListenerScript from "../utils/themeListener?worker&url";
 
 function RootLayout() {
   const { session, user } = Route.useLoaderData();
@@ -46,7 +45,25 @@ function RootLayout() {
           name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"
         />
-        <meta name="theme-color" content="#ffffff" />
+        {theme === "light" ? (
+          <meta name="theme-color" content="#ffffff" />
+        ) : theme === "dark" ? (
+          <meta name="theme-color" content="#171717" />
+        ) : (
+          <>
+            <meta
+              name="theme-color"
+              content="#ffffff"
+              media="(prefers-color-scheme: light)"
+            />
+            <meta
+              name="theme-color"
+              content="#171717"
+              media="(prefers-color-scheme: dark)"
+            />
+          </>
+        )}
+
         <meta
           name="description"
           content="PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!"
@@ -91,10 +108,6 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
       { property: "og:title", content: "PokéNerdle" },
     ],
     scripts: [
-      {
-        type: "module",
-        src: themeListenerScript,
-      },
       ...(import.meta.env.PROD
         ? [
             {
