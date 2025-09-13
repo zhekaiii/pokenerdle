@@ -1,7 +1,10 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
-import { COLUMNS } from "@/pages/DailyChallenge/constants";
+import {
+  COLUMNS,
+  DAILY_CHALLENGE_GUESS_LIMIT,
+} from "@/pages/DailyChallenge/constants";
 import { formatPokemonHeight } from "@/utils/formatters";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import React, { memo, useState } from "react";
@@ -18,10 +21,17 @@ import styles from "../index.module.scss";
 interface Props {
   guess?: DailyChallengeGuessResponse;
   forceOpen?: boolean;
+  guessNumber?: number;
+  children?: React.ReactNode;
 }
 
-const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
-  const { t } = useTranslation(["daily", "pokemon"]);
+export const DailyChallengeGuessBox: React.FC<Props> = ({
+  guess,
+  forceOpen,
+  guessNumber,
+  children,
+}) => {
+  const { t } = useTranslation(["daily", "pokemon", "common"]);
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
   const pokemonName =
@@ -33,7 +43,17 @@ const DailyChallengeGuessBox: React.FC<Props> = ({ guess, forceOpen }) => {
   if (!guess) {
     return (
       <Card responsive className="tw:text-muted-foreground">
-        <CardContent>{t("guessBox.awaitingGuess")}</CardContent>
+        <CardContent>
+          {t("guessBox.awaitingGuess", {
+            current: guessNumber,
+            count_ord: t("common:count_ordinal", {
+              count: guessNumber,
+              ordinal: true,
+            }),
+            total: DAILY_CHALLENGE_GUESS_LIMIT,
+          })}
+          {children}
+        </CardContent>
       </Card>
     );
   }

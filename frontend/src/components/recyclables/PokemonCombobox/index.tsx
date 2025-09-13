@@ -145,9 +145,6 @@ const PokemonCombobox: React.FC<Props> = ({
           </div>
         )}
         onSelect={onSelect}
-        popoverContentProps={{
-          className: "tw:opacity-80",
-        }}
         inputProps={{
           ref: inputRef,
           placeholder: isLoadingPinyin

@@ -16,5 +16,7 @@
   "psychic": "超能力",
   "rock": "岩石",
   "steel": "鋼",
-  "water": "水"
+  "water": "水",
+  "monotype": "單屬性",
+  "dualtype": "雙屬性"
 }

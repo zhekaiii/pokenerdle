@@ -26,20 +26,20 @@ export const generateShareText = (
 ) => {
   const solved = guesses[guesses.length - 1].correct;
   const grid = generateGridEmojis(guesses);
-  let text = `${t("share.title", { number: challengeNumber })}\n\n`;
+  let text = `${t("daily:share.title", { number: challengeNumber })}\n\n`;
   if (solved) {
     text +=
       guesses.length == 1
-        ? `${t("share.firstTry")}\n\n`
-        : `${t("share.attempts", {
+        ? `${t("daily:share.firstTry")}\n\n`
+        : `${t("daily:share.attempts", {
             count: guesses.length,
             total: DAILY_CHALLENGE_GUESS_LIMIT,
           })}\n\n`;
   } else {
-    text += `${t("share.challengeFailed")}\n\n`;
+    text += `${t("daily:share.challengeFailed")}\n\n`;
   }
   text += `${grid}\n\n${t(
-    "share.challengePrompt"
+    "daily:share.challengePrompt"
   )} https://pokenerdle.app/daily`;
   return text;
 };
@@ -59,7 +59,7 @@ export const shareResults = async (
     await navigator.clipboard.writeText(shareText);
     toast({
       variant: "positive",
-      description: t("share.unsupported"),
+      description: t("daily:share.unsupported"),
     });
   }
 };

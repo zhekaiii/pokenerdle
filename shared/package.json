@@ -20,6 +20,10 @@
     "./daily": {
       "types": "./dist/daily/index.d.ts",
       "default": "./dist/daily/index.js"
+    },
+    "./pokemon": {
+      "types": "./dist/pokemon/index.d.ts",
+      "default": "./dist/pokemon/index.js"
     }
   },
   "typesVersions": {

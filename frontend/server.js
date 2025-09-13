@@ -27,6 +27,8 @@ i18n
   .init({
     preload: ["en", "zh-Hans", "zh-Hant"],
     ns: fs.readdirSync(path.join(import.meta.dirname, "./public/locales")),
+    defaultNS: "common",
+    fallbackNS: "common",
     backend: {
       loadPath: path.join(
         import.meta.dirname,

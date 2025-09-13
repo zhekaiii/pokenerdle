@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
 import PokemonReferenceDialog from "@/components/recyclables/PokemonReferenceDialog";
+import { TypeChecklist } from "@/components/recyclables/TypeChecklist/TypeChecklist";
 import { Button } from "@/components/ui/Button";
 import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
-import { DailyChallengeGuessBoxMemo } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
+import { DailyChallengeGuessBox } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
 import {
@@ -80,47 +81,51 @@ const DailyChallengeGameplay: React.FC = () => {
         {Array.from({
           length: isGameFinished
             ? guesses?.guesses.length ?? 0
-            : DAILY_CHALLENGE_GUESS_LIMIT,
+            : (guesses?.guesses.length ?? 0) + 1,
         }).map((_, i) => {
           const guess = guesses?.guesses[i];
-          return <DailyChallengeGuessBoxMemo key={i} guess={guess} />;
+          return (
+            <DailyChallengeGuessBox key={i} guess={guess} guessNumber={i + 1}>
+              <div className={clsx(styles.DailyChallengeInputContainer)}>
+                <PokemonCombobox
+                  className="tw:bg-background"
+                  disabled={isLoading}
+                  input={input}
+                  setInput={setInput}
+                  onSelect={(pokemon) => {
+                    posthog.capture("daily_challenge_guess", {
+                      from: "pokemon_combobox",
+                    });
+                    onSelectPokemon(pokemon);
+                  }}
+                  filter={
+                    guesses
+                      ? (p) =>
+                          !guesses.guesses
+                            .map(({ pokemonId }) => pokemonId)
+                            .includes(p.id)
+                      : undefined
+                  }
+                />
+                <Button
+                  size="icon"
+                  className="tw:flex-shrink-0"
+                  onClick={() => {
+                    posthog.capture("daily_challenge_pokemon_reference_opened");
+                    setShowPokemonReference(true);
+                  }}
+                >
+                  <BookOpen />
+                </Button>
+              </div>
+            </DailyChallengeGuessBox>
+          );
         })}
       </div>
       {!hasReachedLimit && !hasSolved ? (
         <>
-          <div className="tw:mb-[50px]" />
-          <div className={clsx(styles.DailyChallengeInputContainer)}>
-            <PokemonCombobox
-              className="tw:bg-background"
-              disabled={isLoading}
-              input={input}
-              setInput={setInput}
-              onSelect={(pokemon) => {
-                posthog.capture("daily_challenge_guess", {
-                  from: "pokemon_combobox",
-                });
-                onSelectPokemon(pokemon);
-              }}
-              filter={
-                guesses
-                  ? (p) =>
-                      !guesses.guesses
-                        .map(({ pokemonId }) => pokemonId)
-                        .includes(p.id)
-                  : undefined
-              }
-            />
-            <Button
-              size="icon"
-              className="tw:flex-shrink-0"
-              onClick={() => {
-                posthog.capture("daily_challenge_pokemon_reference_opened");
-                setShowPokemonReference(true);
-              }}
-            >
-              <BookOpen />
-            </Button>
-          </div>
+          <hr className="tw:my-4" />
+          <TypeChecklist guesses={guesses?.guesses || []} />
         </>
       ) : (
         <>
@@ -155,6 +160,7 @@ const DailyChallengeGameplay: React.FC = () => {
               </Button>
               {!import.meta.env.SSR && "share" in navigator && (
                 <Button
+                  suppressHydrationWarning
                   className="tw:flex-1"
                   onClick={() => {
                     posthog.capture("daily_challenge_share_clicked", {

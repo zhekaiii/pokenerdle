@@ -2,6 +2,8 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+import monotypeIcon from "src/assets/icons/effectiveness/NormalEffective.svg?react";
+import dualtypeIcon from "src/assets/icons/effectiveness/SuperEffective.svg?react";
 import bugIcon from "src/assets/icons/types/bug.svg";
 import darkIcon from "src/assets/icons/types/dark.svg";
 import dragonIcon from "src/assets/icons/types/dragon.svg";
@@ -24,7 +26,7 @@ import waterIcon from "src/assets/icons/types/water.svg";
 const TYPE_ICON_CONFIG: Record<
   string,
   {
-    icon: string;
+    icon: string | React.ComponentType;
     bgClass: string;
   }
 > = {
@@ -100,6 +102,14 @@ const TYPE_ICON_CONFIG: Record<
     icon: waterIcon,
     bgClass: "tw:bg-(--water-type)",
   },
+  monotype: {
+    icon: monotypeIcon,
+    bgClass: "tw:bg-(--normal-type)",
+  },
+  dualtype: {
+    icon: dualtypeIcon,
+    bgClass: "tw:bg-(--normal-type)",
+  },
 };
 
 type Props = {
@@ -114,21 +124,25 @@ const TypeChip: React.FC<Props> = ({
   ...props
 }) => {
   const { t } = useTranslation("types");
-  const { icon, bgClass } = TYPE_ICON_CONFIG[type.toLowerCase()] ?? {};
-  if (!icon) return;
+  const { icon: Icon, bgClass } = TYPE_ICON_CONFIG[type.toLowerCase()] ?? {};
+  if (!Icon) return;
 
   const translatedType = t(type.toLowerCase(), { defaultValue: type });
 
   return (
     <div
       className={cn(
-        "tw:rounded-full tw:pe-2 tw:inline-flex tw:items-center tw:text-background tw:dark:text-foreground tw:align-middle tw:min-w-max",
+        "tw:rounded-full tw:pe-2 tw:inline-flex tw:items-center tw:text-background tw:dark:text-foreground tw:align-middle tw:min-w-max tw:select-none",
         bgClass,
         className
       )}
       {...props}
     >
-      <img style={{ height: `${size}px`, width: `${size}px` }} src={icon} />
+      {typeof Icon === "string" ? (
+        <img style={{ height: `${size}px`, width: `${size}px` }} src={Icon} />
+      ) : (
+        <Icon />
+      )}
       <span className="tw:flex-1 tw:text-center tw:whitespace-nowrap">
         {translatedType}
       </span>

@@ -18,8 +18,8 @@
     "success": "結果已複製到剪貼簿！",
     "unsupported": "你的瀏覽器不支援分享。結果已複製到剪貼簿！",
     "firstTry": "第一次就猜對了！太幸運了！",
-    "attempts_one": "{{count}}/{{total}} 次嘗試解決",
-    "attempts_other": "{{count}}/{{total}} 次嘗試解決",
+    "attempts": "{{count}}/{{total}} 次嘗試解決",
+    "attempts_with_auto_infer": "{{count}}/{{total}} 次嘗試解決（使用了自動推斷）",
     "title": "寶可夢每日挑戰 #{{number}}",
     "challengePrompt": "你能猜出它們全部嗎？",
     "challengeFailed": "今天沒有猜出神秘的寶可夢。明天再試吧！"
@@ -36,7 +36,7 @@
     "placeholder": "輸入寶可夢名稱...",
     "noResults": "未找到寶可夢",
     "selectPokemon": "選擇要猜測的寶可夢",
-    "awaitingGuess": "等待你的猜測..."
+    "awaitingGuess": "等待你{{count_ord}}個猜測（{{current}}/{{total}}）"
   },
   "guessDetails": {
     "correct": "你猜對了！",
@@ -112,5 +112,10 @@
   "toast": {
     "correctGuess": "你猜對了！幹得好！",
     "gameOver": "你沒猜到！明天再試吧！"
+  },
+  "typeChecklist": {
+    "autoInfer": "自動推斷",
+    "title": "屬性清單",
+    "eliminationReasoning": "排除推理"
   }
 }

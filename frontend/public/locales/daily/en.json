@@ -20,6 +20,8 @@
     "firstTry": "Got it on the first try! So lucky!",
     "attempts_one": "Solved in {{count}}/{{total}} attempt",
     "attempts_other": "Solved in {{count}}/{{total}} attempts",
+    "attempts_with_auto_infer_one": "Solved in {{count}}/{{total}} attempt with auto-infer",
+    "attempts_with_auto_infer_other": "Solved in {{count}}/{{total}} attempts with auto-infer",
     "title": "PokéNerdle Daily #{{number}}",
     "challengePrompt": "Can you guess 'em all?",
     "challengeFailed": "Failed to solve the challenge today. Better luck tomorrow!"
@@ -36,7 +38,7 @@
     "placeholder": "Enter Pokémon name...",
     "noResults": "No Pokémon found",
     "selectPokemon": "Select a Pokémon to guess",
-    "awaitingGuess": "Awaiting your guess..."
+    "awaitingGuess": "Awaiting your {{count_ord}} guess ({{current}} of {{total}})"
   },
   "guessDetails": {
     "correct": "You are correct!",
@@ -112,5 +114,10 @@
   "toast": {
     "correctGuess": "You got it! Well done!",
     "gameOver": "Game Over! Better luck tomorrow!"
+  },
+  "typeChecklist": {
+    "autoInfer": "Auto-Infer",
+    "title": "Type Checklist",
+    "eliminationReasoning": "Elimination Reasoning"
   }
 }
