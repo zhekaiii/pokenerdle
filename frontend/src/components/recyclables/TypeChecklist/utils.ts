@@ -1,12 +1,6 @@
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { POKEMON_TYPES } from "@pokenerdle/shared/pokemon";
 import { uniq } from "es-toolkit";
-import _ALL_POSSIBLE_MATCHUPS from "./matchupsByAttacker.json";
-
-const ALL_POSSIBLE_MATCHUPS = _ALL_POSSIBLE_MATCHUPS as Record<
-  string,
-  Record<number, string[]>
->;
 
 export const MONO_TYPE_ID = 69;
 export const DUAL_TYPE_ID = 70;
@@ -19,9 +13,13 @@ const generateTypeKey = (type1: string, type2: string) => {
   return sortedTypes.join("-");
 };
 
-export const eliminateTypesFromGuesses = (
+export const eliminateTypesFromGuesses = async (
   guesses: DailyChallengeGuessResponse[]
 ) => {
+  const ALL_POSSIBLE_MATCHUPS = (await import(
+    "./matchupsByAttacker.json"
+  )) as Record<string, Record<number, string[]>>;
+
   const confirmedTypes = new Set<number>(
     guesses
       .filter((guess) => guess.correct || guess.type1Correctness === "=")

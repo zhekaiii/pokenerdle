@@ -22,12 +22,14 @@ interface Props {
   guess?: DailyChallengeGuessResponse;
   forceOpen?: boolean;
   guessNumber?: number;
+  children?: React.ReactNode;
 }
 
-const DailyChallengeGuessBox: React.FC<Props> = ({
+export const DailyChallengeGuessBox: React.FC<Props> = ({
   guess,
   forceOpen,
   guessNumber,
+  children,
 }) => {
   const { t } = useTranslation(["daily", "pokemon", "common"]);
   const { getPokemonIcon } = usePokemonIcons();
@@ -50,6 +52,7 @@ const DailyChallengeGuessBox: React.FC<Props> = ({
             }),
             total: DAILY_CHALLENGE_GUESS_LIMIT,
           })}
+          {children}
         </CardContent>
       </Card>
     );

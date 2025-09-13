@@ -36,11 +36,11 @@
 }
 
 .DailyChallengeInputContainer {
-  position: sticky;
-  bottom: calc(var(--page-padding-y) + var(--footer-height));
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  flex-wrap: nowrap;
+  margin-top: 0.25rem;
 
   > :first-child {
     flex: 1;

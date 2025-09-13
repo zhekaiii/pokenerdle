@@ -1,27 +1,45 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/Card";
-import { Label } from "@/components/ui/Label";
-import { Switch } from "@/components/ui/Switch";
-import { TZDate } from "@date-fns/tz";
+import { FROZEN_DATE } from "@/pages/DailyChallenge/constants";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { POKEMON_TYPES } from "@pokenerdle/shared/pokemon";
 import clsx from "clsx";
-import { formatDate } from "date-fns";
-import { atom, useAtom, useSetAtom } from "jotai";
+import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import TypeChip from "../TypeChip";
-import { DUAL_TYPE_ID, eliminateTypesFromGuesses, MONO_TYPE_ID } from "./utils";
+import { DUAL_TYPE_ID, MONO_TYPE_ID } from "./utils";
 
-const disabledTypesAtom = atom<number[]>([]);
-const autoCalculateAtom = atomWithStorage<boolean>(
-  "dailyChallengeAutoCalculate",
-  false
+const disabledTypesStorageAtom = atomWithStorage<{
+  date: string;
+  types: number[];
+}>("dailyChallengeDisabledTypes", {
+  date: FROZEN_DATE,
+  types: [],
+});
+const disabledTypesAtom = atom(
+  (get) => {
+    const { date, types } = get(disabledTypesStorageAtom);
+    if (date === FROZEN_DATE) {
+      return types;
+    }
+    return [];
+  },
+  (_, set, value: number[]) => {
+    set(disabledTypesStorageAtom, {
+      date: FROZEN_DATE,
+      types: value,
+    });
+  }
 );
-export const autoCalculateLastUsedAtom = atomWithStorage<string | null>(
-  "dailyChallengeAutoCalculateLastUsed",
-  null
-);
+
+// const autoInferAtom = atomWithStorage<boolean>(
+//   "dailyChallengeAutoCalculate",
+//   false
+// );
+// export const autoInferLastUsedAtom = atomWithStorage<string | null>(
+//   "dailyChallengeAutoCalculateLastUsed",
+//   null
+// );
 
 const MONO_DUAL_TYPES = [
   { id: MONO_TYPE_ID, name: "monotype" },
@@ -39,47 +57,50 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
 }) => {
   const { t } = useTranslation("daily");
   const [disabledTypes, setDisabledTypes] = useAtom(disabledTypesAtom);
-  const [autoCalculate, setAutoCalculate] = useAtom(autoCalculateAtom);
-  const setAutoCalculateLastUsed = useSetAtom(autoCalculateLastUsedAtom);
-
-  useEffect(() => {
-    if (!autoCalculate) {
-      return;
-    }
-    setDisabledTypes(eliminateTypesFromGuesses(guesses));
-  }, [autoCalculate, guesses, setDisabledTypes]);
 
   const toggleDisabledType = (id: number) => {
-    setDisabledTypes((prev) =>
-      prev.includes(id) ? prev.filter((type) => type !== id) : [...prev, id]
+    setDisabledTypes(
+      disabledTypes.includes(id)
+        ? disabledTypes.filter((type) => type !== id)
+        : [...disabledTypes, id]
     );
   };
 
-  const hasGuess = guesses.length > 0;
-  useEffect(() => {
-    if (autoCalculate && hasGuess) {
-      setAutoCalculateLastUsed(
-        formatDate(TZDate.tz("Asia/Singapore"), "yyyy-MM-dd")
-      );
-    }
-  }, [autoCalculate, hasGuess, setAutoCalculateLastUsed]);
+  // const [autoInfer, setAutoCalculate] = useAtom(autoInferAtom);
+  // const setAutoCalculateLastUsed = useSetAtom(autoInferLastUsedAtom);
+
+  // useEffect(() => {
+  //   if (!autoInfer) {
+  //     return;
+  //   }
+  //   setDisabledTypes(eliminateTypesFromGuesses(guesses));
+  // }, [autoInfer, guesses, setDisabledTypes]);
+
+  // const hasGuess = guesses.length > 0;
+  // useEffect(() => {
+  //   if (autoInfer && hasGuess) {
+  //     setAutoCalculateLastUsed(
+  //       formatDate(TZDate.tz("Asia/Singapore"), "yyyy-MM-dd")
+  //     );
+  //   }
+  // }, [autoInfer, hasGuess, setAutoCalculateLastUsed]);
 
   return (
     <Card responsive className={className} {...props}>
       <CardContent>
-        <div className="tw:flex tw:justify-between tw:gap-2">
+        <div className="tw:flex tw:justify-between tw:gap-2 tw:mb-2">
           <CardTitle>{t("typeChecklist.title")}</CardTitle>
-          <div className="tw:flex tw:items-center tw:mb-4">
+          {/* <div className="tw:flex tw:items-center">
             <Switch
               id="easy-mode-switch"
               className="tw:me-2"
-              checked={autoCalculate}
+              checked={autoInfer}
               onCheckedChange={setAutoCalculate}
             />
             <Label htmlFor="easy-mode-switch">
-              {t("typeChecklist.autoCalculate")}
+              {t("typeChecklist.autoInfer")}
             </Label>
-          </div>
+          </div> */}
         </div>
         {[POKEMON_TYPES, MONO_DUAL_TYPES].map((arr, index) => (
           <div
@@ -93,10 +114,8 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
                     className={clsx(
                       disabledTypes.includes(id) && "tw:opacity-30"
                     )}
-                    {...(!autoCalculate && {
-                      role: "button",
-                      onClick: () => toggleDisabledType(id),
-                    })}
+                    role="button"
+                    onClick={() => toggleDisabledType(id)}
                     type={name}
                   />
                   {disabledTypes.includes(id) && (
