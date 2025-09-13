@@ -9,7 +9,9 @@ import {
   guessesAtom,
 } from "@/pages/DailyChallenge/hooks/useData";
 import { useSyncData } from "@/pages/DailyChallenge/hooks/useSyncData";
+import { TZDate } from "@date-fns/tz";
 import { createFileRoute } from "@tanstack/react-router";
+import { format } from "date-fns";
 import { atom, useAtom, useStore } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 
@@ -76,10 +78,13 @@ export const Route = createFileRoute("/daily")({
     const session = store.get(sessionAtom);
     if (!session) return null;
     try {
+      const today = import.meta.env.SSR
+        ? format(TZDate.tz("Asia/Singapore"), "yyyy-MM-dd")
+        : FROZEN_DATE;
       const api = createApi(store);
-      const userGuesses = await api.daily.getUserGuesses(FROZEN_DATE);
+      const userGuesses = await api.daily.getUserGuesses(today);
       return {
-        date: FROZEN_DATE,
+        date: today,
         guesses: userGuesses,
         synced: true,
       };
