@@ -116,7 +116,6 @@
     "gameOver": "Game Over! Better luck tomorrow!"
   },
   "typeChecklist": {
-    "autoInfer": "Auto-Infer",
     "title": "Type Checklist",
     "eliminationReasoning": "Elimination Reasoning"
   }

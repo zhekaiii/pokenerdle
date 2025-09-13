@@ -32,15 +32,6 @@ const disabledTypesAtom = atom(
   }
 );
 
-// const autoInferAtom = atomWithStorage<boolean>(
-//   "dailyChallengeAutoCalculate",
-//   false
-// );
-// export const autoInferLastUsedAtom = atomWithStorage<string | null>(
-//   "dailyChallengeAutoCalculateLastUsed",
-//   null
-// );
-
 const MONO_DUAL_TYPES = [
   { id: MONO_TYPE_ID, name: "monotype" },
   { id: DUAL_TYPE_ID, name: "dualtype" },
@@ -66,41 +57,11 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
     );
   };
 
-  // const [autoInfer, setAutoCalculate] = useAtom(autoInferAtom);
-  // const setAutoCalculateLastUsed = useSetAtom(autoInferLastUsedAtom);
-
-  // useEffect(() => {
-  //   if (!autoInfer) {
-  //     return;
-  //   }
-  //   setDisabledTypes(eliminateTypesFromGuesses(guesses));
-  // }, [autoInfer, guesses, setDisabledTypes]);
-
-  // const hasGuess = guesses.length > 0;
-  // useEffect(() => {
-  //   if (autoInfer && hasGuess) {
-  //     setAutoCalculateLastUsed(
-  //       formatDate(TZDate.tz("Asia/Singapore"), "yyyy-MM-dd")
-  //     );
-  //   }
-  // }, [autoInfer, hasGuess, setAutoCalculateLastUsed]);
-
   return (
     <Card responsive className={className} {...props}>
       <CardContent>
         <div className="tw:flex tw:justify-between tw:gap-2 tw:mb-2">
           <CardTitle>{t("typeChecklist.title")}</CardTitle>
-          {/* <div className="tw:flex tw:items-center">
-            <Switch
-              id="easy-mode-switch"
-              className="tw:me-2"
-              checked={autoInfer}
-              onCheckedChange={setAutoCalculate}
-            />
-            <Label htmlFor="easy-mode-switch">
-              {t("typeChecklist.autoInfer")}
-            </Label>
-          </div> */}
         </div>
         {[POKEMON_TYPES, MONO_DUAL_TYPES].map((arr, index) => (
           <div

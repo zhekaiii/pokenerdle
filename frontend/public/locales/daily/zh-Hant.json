@@ -114,7 +114,6 @@
     "gameOver": "你沒猜到！明天再試吧！"
   },
   "typeChecklist": {
-    "autoInfer": "自動推斷",
     "title": "屬性清單",
     "eliminationReasoning": "排除推理"
   }
