@@ -168,7 +168,7 @@ const PokemonReferenceDialog: React.FC<Props> = ({
                             !isDisabled && handlePokemonClick(pokemon)
                           }
                         >
-                          <div className="tw:h-14">
+                          <div className="tw:h-14 tw:flex tw:items-end">
                             <ImageWithPlaceholder
                               src={getPokemonIcon(pokemon.id)}
                               alt={pokemon.name || pokemon.speciesName}
