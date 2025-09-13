@@ -81,6 +81,7 @@ function RootLayout() {
           property="og:image"
           content="https://pokenerdle.app/ogimage.png"
         />
+        <meta name="twitter:card" content="summary_large_image" />
         <HeadContent />
       </head>
       <body>
