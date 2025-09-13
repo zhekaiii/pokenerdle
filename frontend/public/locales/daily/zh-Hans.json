@@ -18,8 +18,8 @@
     "success": "结果已复制到剪贴板！",
     "unsupported": "你的浏览器不支持分享。结果已复制到剪贴板！",
     "firstTry": "第一次就猜对了！太幸运了！",
-    "attempts_one": "{{count}}/{{total}} 次尝试解决",
-    "attempts_other": "{{count}}/{{total}} 次尝试解决",
+    "attempts": "{{count}}/{{total}} 次尝试解决",
+    "attempts_with_auto_infer": "{{count}}/{{total}} 次尝试解决（使用了自动推断）",
     "title": "宝可梦每日挑战 #{{number}}",
     "challengePrompt": "你能猜出它们全部吗？",
     "challengeFailed": "今天没有猜出神秘的宝可梦。明天再试吧！"

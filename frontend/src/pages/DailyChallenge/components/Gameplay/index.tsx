@@ -3,7 +3,10 @@ import React, { useEffect, useState } from "react";
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
 import PokemonReferenceDialog from "@/components/recyclables/PokemonReferenceDialog";
-import { TypeChecklist } from "@/components/recyclables/TypeChecklist/TypeChecklist";
+import {
+  autoCalculateLastUsedAtom,
+  TypeChecklist,
+} from "@/components/recyclables/TypeChecklist/TypeChecklist";
 import { Button } from "@/components/ui/Button";
 import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,6 +14,7 @@ import { useToast } from "@/hooks/useToast";
 import { DailyChallengeGuessBoxMemo } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
+import { useAtomValue } from "jotai";
 import {
   BookOpen,
   Clipboard,
@@ -26,8 +30,10 @@ import { generateShareText, shareResults } from "../../utils/share";
 import CorrectAnswerCard from "./components/CorrectAnswerCard";
 import StatsDialog from "./components/StatsDialog";
 import styles from "./index.module.scss";
+
 const DailyChallengeGameplay: React.FC = () => {
   const { isAuthenticated, loading: authLoading } = useAuth();
+  const autoInferLastUsed = useAtomValue(autoCalculateLastUsedAtom);
   const {
     onGuess,
     guesses,
@@ -146,7 +152,11 @@ const DailyChallengeGameplay: React.FC = () => {
                 className="tw:flex-1"
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    generateShareText(guesses?.guesses ?? [], t)
+                    generateShareText(
+                      guesses?.guesses ?? [],
+                      autoInferLastUsed,
+                      t
+                    )
                   );
                   posthog.capture("daily_challenge_copy_clicked");
                   toast({
@@ -170,7 +180,7 @@ const DailyChallengeGameplay: React.FC = () => {
                       has_solved: hasSolved,
                       num_guesses: guesses?.guesses.length ?? 0,
                     });
-                    shareResults(guesses?.guesses ?? [], t);
+                    shareResults(guesses?.guesses ?? [], autoInferLastUsed, t);
                   }}
                 >
                   <Share2 /> {t("buttons.share")}

@@ -1,10 +1,12 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/Card";
 import { Label } from "@/components/ui/Label";
 import { Switch } from "@/components/ui/Switch";
+import { TZDate } from "@date-fns/tz";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { POKEMON_TYPES } from "@pokenerdle/shared/pokemon";
 import clsx from "clsx";
-import { atom, useAtom } from "jotai";
+import { formatDate } from "date-fns";
+import { atom, useAtom, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -15,6 +17,10 @@ const disabledTypesAtom = atom<number[]>([]);
 const autoCalculateAtom = atomWithStorage<boolean>(
   "dailyChallengeAutoCalculate",
   false
+);
+export const autoCalculateLastUsedAtom = atomWithStorage<string | null>(
+  "dailyChallengeAutoCalculateLastUsed",
+  null
 );
 
 const MONO_DUAL_TYPES = [
@@ -34,6 +40,7 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
   const { t } = useTranslation("daily");
   const [disabledTypes, setDisabledTypes] = useAtom(disabledTypesAtom);
   const [autoCalculate, setAutoCalculate] = useAtom(autoCalculateAtom);
+  const setAutoCalculateLastUsed = useSetAtom(autoCalculateLastUsedAtom);
 
   useEffect(() => {
     if (!autoCalculate) {
@@ -47,6 +54,16 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
       prev.includes(id) ? prev.filter((type) => type !== id) : [...prev, id]
     );
   };
+
+  const hasGuess = guesses.length > 0;
+  useEffect(() => {
+    if (autoCalculate && hasGuess) {
+      setAutoCalculateLastUsed(
+        formatDate(TZDate.tz("Asia/Singapore"), "yyyy-MM-dd")
+      );
+    }
+  }, [autoCalculate, hasGuess, setAutoCalculateLastUsed]);
+
   return (
     <Card responsive className={className} {...props}>
       <CardContent>
