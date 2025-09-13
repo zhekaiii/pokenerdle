@@ -36,12 +36,8 @@
 }
 
 .DailyChallengeInputContainer {
-  position: fixed;
-  inset-inline-start: 50%;
-  transform: translateX(-50%);
-  width: 400px;
+  position: sticky;
   bottom: calc(var(--page-padding-y) + var(--footer-height));
-  max-width: calc(100vw - 20px);
   display: flex;
   gap: 0.5rem;
   align-items: center;

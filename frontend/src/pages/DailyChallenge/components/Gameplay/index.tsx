@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
 import PokemonReferenceDialog from "@/components/recyclables/PokemonReferenceDialog";
+import { TypeChecklist } from "@/components/recyclables/TypeChecklist/TypeChecklist";
 import { Button } from "@/components/ui/Button";
 import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,7 +26,6 @@ import { generateShareText, shareResults } from "../../utils/share";
 import CorrectAnswerCard from "./components/CorrectAnswerCard";
 import StatsDialog from "./components/StatsDialog";
 import styles from "./index.module.scss";
-
 const DailyChallengeGameplay: React.FC = () => {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const {
@@ -80,7 +80,7 @@ const DailyChallengeGameplay: React.FC = () => {
         {Array.from({
           length: isGameFinished
             ? guesses?.guesses.length ?? 0
-            : DAILY_CHALLENGE_GUESS_LIMIT,
+            : (guesses?.guesses.length ?? 0) + 1,
         }).map((_, i) => {
           const guess = guesses?.guesses[i];
           return (
@@ -94,7 +94,7 @@ const DailyChallengeGameplay: React.FC = () => {
       </div>
       {!hasReachedLimit && !hasSolved ? (
         <>
-          <div className="tw:mb-[50px]" />
+          <hr className="tw:my-4" />
           <div className={clsx(styles.DailyChallengeInputContainer)}>
             <PokemonCombobox
               className="tw:bg-background"
@@ -127,6 +127,8 @@ const DailyChallengeGameplay: React.FC = () => {
               <BookOpen />
             </Button>
           </div>
+          <div className="tw:my-2" />
+          <TypeChecklist guesses={guesses?.guesses || []} />
         </>
       ) : (
         <>

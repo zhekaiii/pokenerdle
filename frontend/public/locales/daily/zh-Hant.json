@@ -112,5 +112,10 @@
   "toast": {
     "correctGuess": "你猜對了！幹得好！",
     "gameOver": "你沒猜到！明天再試吧！"
+  },
+  "typeChecklist": {
+    "autoCalculate": "自動推斷",
+    "title": "屬性清單",
+    "eliminationReasoning": "排除推理"
   }
 }
