@@ -36,7 +36,7 @@
     "placeholder": "输入宝可梦名称...",
     "noResults": "未找到宝可梦",
     "selectPokemon": "选择要猜测的宝可梦",
-    "awaitingGuess": "等待你的猜测..."
+    "awaitingGuess": "等待你{{count_ord}}个猜测（{{current}}/{{total}}）"
   },
   "guessDetails": {
     "correct": "你猜对了！",

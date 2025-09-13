@@ -36,7 +36,7 @@
     "placeholder": "Enter Pokémon name...",
     "noResults": "No Pokémon found",
     "selectPokemon": "Select a Pokémon to guess",
-    "awaitingGuess": "Awaiting your guess..."
+    "awaitingGuess": "Awaiting your {{count_ord}} guess ({{current}} of {{total}})"
   },
   "guessDetails": {
     "correct": "You are correct!",

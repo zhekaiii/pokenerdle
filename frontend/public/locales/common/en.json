@@ -1,0 +1,6 @@
+{
+  "count_ordinal_one": "{{count}}st",
+  "count_ordinal_two": "{{count}}nd",
+  "count_ordinal_few": "{{count}}rd",
+  "count_ordinal_other": "{{count}}th"
+}

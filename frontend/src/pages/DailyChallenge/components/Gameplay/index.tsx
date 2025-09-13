@@ -83,7 +83,13 @@ const DailyChallengeGameplay: React.FC = () => {
             : DAILY_CHALLENGE_GUESS_LIMIT,
         }).map((_, i) => {
           const guess = guesses?.guesses[i];
-          return <DailyChallengeGuessBoxMemo key={i} guess={guess} />;
+          return (
+            <DailyChallengeGuessBoxMemo
+              key={i}
+              guess={guess}
+              guessNumber={i + 1}
+            />
+          );
         })}
       </div>
       {!hasReachedLimit && !hasSolved ? (
@@ -155,6 +161,7 @@ const DailyChallengeGameplay: React.FC = () => {
               </Button>
               {!import.meta.env.SSR && "share" in navigator && (
                 <Button
+                  suppressHydrationWarning
                   className="tw:flex-1"
                   onClick={() => {
                     posthog.capture("daily_challenge_share_clicked", {
