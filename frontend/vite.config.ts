@@ -24,6 +24,14 @@ const clientBuildConfig: BuildOptions = {
       entryFileNames: "assets/[name].js",
       manualChunks: {
         "vendor-posthog": ["posthog-js", "posthog-js/react"],
+        "vendor-react": ["react", "react-dom", "react-dom/client"],
+        "vendor-router": ["@tanstack/react-router", "@tanstack/react-query"],
+        "vendor-i18n": [
+          "i18next",
+          "i18next-browser-languagedetector",
+          "i18next-http-backend",
+          "react-i18next",
+        ],
       },
     },
   },
