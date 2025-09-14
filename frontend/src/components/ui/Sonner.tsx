@@ -21,6 +21,7 @@ const Toaster: React.FC<ToasterProps> = (props) => {
         bottom: "calc(var(--page-padding-y) + var(--footer-height))",
       }}
       toastOptions={{
+        duration: 5000,
         classNames: {
           toast:
             "tw:group toast tw:group-[.toaster]:bg-background tw:group-[.toaster]:text-foreground tw:group-[.toaster]:border-border! tw:group-[.toaster]:shadow-lg",
