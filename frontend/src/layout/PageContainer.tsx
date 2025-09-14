@@ -8,10 +8,8 @@ interface Props {
 }
 
 const PageContainer: React.FC<Props> = ({ children }) => {
-  const isKeyboardOpen = import.meta.env.SSR
-    ? false
-    : // eslint-disable-next-line react-hooks/rules-of-hooks -- only used in client
-      useDetectKeyboardOpen();
+  const isKeyboardOpen = useDetectKeyboardOpen(undefined, false);
+
   return (
     <main
       className={clsx(
