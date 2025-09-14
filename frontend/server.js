@@ -77,6 +77,14 @@ export async function createServer(app) {
    * @type {import('vite').ViteDevServer}
    */
   let vite;
+  /**
+   * @type {import('@tanstack/react-router').AnyRouteMatch["scripts"]}
+   */
+  let scripts = [];
+  /**
+   * @type {import('@tanstack/react-router').AnyRouteMatch["links"]}
+   */
+  let links = [];
   if (!isProd) {
     vite = await (
       await import("vite")
@@ -147,6 +155,7 @@ export async function createServer(app) {
   app.get("/auth/callback", authCallback);
 
   let cssFile = "";
+  let preloadFiles = [];
   if (isProd) {
     const manifest = JSON.parse(
       await fs.promises.readFile(
@@ -155,6 +164,25 @@ export async function createServer(app) {
       )
     );
     cssFile = manifest["style.css"].file;
+    Object.values(manifest)
+      .filter((file) =>
+        [
+          "vendor-react",
+          "vendor-router",
+          "vendor-i18n",
+          "vendor-posthog",
+        ].includes(file.name)
+      )
+      .forEach((file) =>
+        links.push({
+          rel: "modulepreload",
+          href: file.file,
+        })
+      );
+    links.push({
+      rel: "stylesheet",
+      href: cssFile,
+    });
   }
 
   app.use(/(.*)/, async (req, res) => {
@@ -181,8 +209,6 @@ export async function createServer(app) {
         viteHead.indexOf("</head>")
       );
 
-      viteHead += `<link rel="stylesheet" href="${cssFile}" />`;
-
       const entry = await (async () => {
         if (!isProd) {
           return vite.ssrLoadModule("/src/entry-server.tsx");
@@ -194,7 +220,7 @@ export async function createServer(app) {
       })();
 
       console.info("Rendering: ", url, "...");
-      entry.render({ req, res, head: viteHead });
+      entry.render({ req, res, head: viteHead, links, scripts });
     } catch (e) {
       if (!isProd) vite.ssrFixStacktrace(e);
       console.info(e.stack);

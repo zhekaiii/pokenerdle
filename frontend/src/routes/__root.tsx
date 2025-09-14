@@ -2,6 +2,7 @@ import { sessionAtom, userAtom } from "@/atoms/auth";
 import { themeAtom } from "@/atoms/theme";
 import { ErrorPage } from "@/layout/ErrorPage";
 import {
+  AnyRouteMatch,
   createRootRouteWithContext,
   HeadContent,
   Outlet,
@@ -40,6 +41,7 @@ function RootLayout() {
     >
       <head>
         <meta charSet="UTF-8" />
+        <HeadContent />
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
         <meta
           name="viewport"
@@ -82,7 +84,6 @@ function RootLayout() {
           content="https://pokenerdle.app/ogimage.png"
         />
         <meta name="twitter:card" content="summary_large_image" />
-        <HeadContent />
       </head>
       <body>
         <PageContainer>
@@ -99,16 +100,29 @@ function RootLayout() {
 interface RootRouteContext {
   shouldShowRuleButton?: boolean;
   head: string;
+  scripts?: AnyRouteMatch["headScripts"];
+  links?: AnyRouteMatch["links"];
   store: Store;
 }
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({
-  head: () => ({
+  loader: ({ context: { scripts = [], links = [], store } }) => {
+    const session = store.get(sessionAtom);
+    const user = store.get(userAtom);
+    return {
+      session,
+      user,
+      scripts,
+      links,
+    };
+  },
+  head: ({ loaderData: { scripts = [], links = [] } = {} }) => ({
     meta: [
       { title: "PokéNerdle" },
       { property: "og:title", content: "PokéNerdle" },
     ],
     scripts: [
+      ...scripts,
       ...(import.meta.env.PROD
         ? [
             {
@@ -131,6 +145,7 @@ window.__vite_plugin_react_preamble_installed__ = true`,
             },
           ]),
     ],
+    links,
   }),
   component: RootLayout,
   beforeLoad: ({ location }) => {
@@ -144,12 +159,4 @@ window.__vite_plugin_react_preamble_installed__ = true`,
     }
   },
   errorComponent: ErrorPage,
-  loader: ({ context: { store } }) => {
-    const session = store.get(sessionAtom);
-    const user = store.get(userAtom);
-    return {
-      session,
-      user,
-    };
-  },
 });

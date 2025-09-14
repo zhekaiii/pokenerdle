@@ -1,20 +1,22 @@
 import { Session } from "@supabase/supabase-js";
+import { AnyRouteMatch } from "@tanstack/react-router";
 import {
   RouterServer,
   createRequestHandler,
-  renderRouterToString,
+  renderRouterToStream,
 } from "@tanstack/react-router/ssr/server";
 import type express from "express";
 import type { i18n } from "i18next";
 import { createStore } from "jotai";
+import { pipeline } from "node:stream/promises";
 import AppProviders from "./AppProviders";
 import { sessionAtom, userAtom } from "./atoms/auth";
 import { themeAtom } from "./atoms/theme";
 import "./fetch-polyfill";
 import { createSocket } from "./hooks/useSocket";
 import { createQueryClient } from "./lib/query";
-import { initializeSSRData } from "./lib/ssr-data";
 import { createRouter } from "./router";
+import { initializeSSRData } from "./ssr/loader";
 import { getThemeFromCookies } from "./utils/theme";
 
 const ssrDataInitializePromise = initializeSSRData();
@@ -23,10 +25,14 @@ export async function render({
   req,
   res,
   head,
+  links,
+  scripts,
 }: {
   head: string;
   req: express.Request & { i18n: i18n; session: Session | null };
   res: express.Response;
+  links?: AnyRouteMatch["links"];
+  scripts?: AnyRouteMatch["scripts"];
 }) {
   await ssrDataInitializePromise;
 
@@ -56,6 +62,8 @@ export async function render({
           ...router.options.context,
           head,
           store,
+          links,
+          scripts,
         },
       });
       return router;
@@ -70,7 +78,8 @@ export async function render({
 
   // Let's use the default stream handler to create the response
   const response = await handler(({ responseHeaders, router }) =>
-    renderRouterToString({
+    renderRouterToStream({
+      request,
       responseHeaders,
       router,
       children: (
@@ -93,9 +102,7 @@ export async function render({
   response.headers.forEach((value, name) => {
     res.setHeader(name, value);
   });
-  let html = await response.text();
 
-  html = html.replace(/<\/head>/, `${head}</head>`);
-
-  res.send(html);
+  // @ts-expect-error response.body is not null
+  return pipeline(response.body, res);
 }
