@@ -7,7 +7,6 @@ import { TypeChecklist } from "@/components/recyclables/TypeChecklist/TypeCheckl
 import { Button } from "@/components/ui/Button";
 import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
 import { DailyChallengeGuessBox } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
@@ -20,6 +19,7 @@ import {
 } from "lucide-react";
 import posthog from "posthog-js";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { challengeNumber, DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
 import { generateShareText, shareResults } from "../../utils/share";
@@ -42,7 +42,6 @@ const DailyChallengeGameplay: React.FC = () => {
   const [input, setInput] = useState("");
   const [showPokemonReference, setShowPokemonReference] = useState(false);
   const [showStatsDialog, setShowStatsDialog] = useState(false);
-  const { toast } = useToast();
   const { t } = useTranslation("daily");
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
     onGuess(pokemon).finally(() => setInput(""));
@@ -146,13 +145,8 @@ const DailyChallengeGameplay: React.FC = () => {
                     generateShareText(guesses?.guesses ?? [], t)
                   );
                   posthog.capture("daily_challenge_copy_clicked");
-                  toast({
-                    description: (
-                      <div className="tw:flex tw:flex-nowrap">
-                        <ClipboardCheck className="tw:me-2" />
-                        {t("gameplay.copySuccess")}
-                      </div>
-                    ),
+                  toast(t("share.success"), {
+                    icon: <ClipboardCheck />,
                   });
                 }}
               >

@@ -1,9 +1,8 @@
-import { useToast } from "@/hooks/useToast";
 import { displayNameAtom } from "@/pages/Settings";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
-import { TriangleAlert } from "lucide-react";
 import { useEffect } from "react";
+import { toast } from "sonner";
 import { useSocket } from "../../hooks/useSocket";
 import {
   PokeChainContextProvider,
@@ -25,7 +24,6 @@ const PokeChain: React.FC = () => {
     setRoomCode,
     setOpponentDisplayName,
   } = usePokeChainContext();
-  const { toast } = useToast();
   const searchParams = useSearch({ strict: false }) as { roomCode?: string };
   const navigate = useNavigate();
   const displayName = useAtomValue(displayNameAtom);
@@ -52,14 +50,7 @@ const PokeChain: React.FC = () => {
     socket.on("roomError", (error: string) => {
       console.error(error);
       setRoomCode("");
-      toast({
-        variant: "destructive",
-        description: (
-          <>
-            <TriangleAlert className="tw:inline tw:mr-2" /> {error}
-          </>
-        ),
-      });
+      toast.error(error.toString());
       navigate({ to: ".", replace: true });
     });
     socket.on("opponentJoined", (displayName: string | null) => {

@@ -1,6 +1,6 @@
-import { toast } from "@/hooks/useToast";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { TFunction } from "i18next";
+import { toast } from "sonner";
 import {
   challengeNumber,
   COLUMNS,
@@ -57,9 +57,6 @@ export const shareResults = async (
   } else {
     // Fallback to clipboard
     await navigator.clipboard.writeText(shareText);
-    toast({
-      variant: "positive",
-      description: t("daily:share.unsupported"),
-    });
+    toast.success(t("daily:share.unsupported"));
   }
 };

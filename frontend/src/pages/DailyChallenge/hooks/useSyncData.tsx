@@ -1,18 +1,19 @@
 import api from "@/api";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
 import { useWatch } from "@/hooks/useWatch";
 import { useAtom } from "jotai";
 import { CloudUpload } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { DAILY_CHALLENGE_GUESS_LIMIT, FROZEN_DATE } from "../constants";
 import { guessesAtom } from "./useData";
 
 export const useSyncData = () => {
   const [guesses, setGuesses] = useAtom(guessesAtom);
   const { isAuthenticated, loading } = useAuth();
-  const { toast } = useToast();
   const [isSyncing, setIsSyncing] = useState(false);
+  const { t } = useTranslation("daily");
 
   const handleSyncGuesses = useCallback(async () => {
     if (!isAuthenticated || !guesses || guesses.guesses.length === 0) return;
@@ -33,14 +34,8 @@ export const useSyncData = () => {
       }
 
       if (syncedGuesses.length > 0) {
-        toast({
-          variant: "positive",
-          description: (
-            <div className="tw:flex tw:flex-nowrap">
-              <CloudUpload className="tw:mr-2" />
-              <div>Your guesses have been saved to your account!</div>
-            </div>
-          ),
+        toast.success(t("sync.success"), {
+          icon: <CloudUpload />,
         });
         setGuesses({
           date: guesses.date,
@@ -50,14 +45,11 @@ export const useSyncData = () => {
       }
     } catch (error) {
       console.error("Failed to sync guesses:", error);
-      toast({
-        variant: "destructive",
-        description: "Something went wrong while saving your guesses.",
-      });
+      toast.error(t("sync.error"));
     } finally {
       setIsSyncing(false);
     }
-  }, [guesses, isAuthenticated, setGuesses, toast]);
+  }, [guesses, isAuthenticated, setGuesses, t]);
 
   useWatch(
     ([oldAuthenticated], [newAuthenticated]) => {

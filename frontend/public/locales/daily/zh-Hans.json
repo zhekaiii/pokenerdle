@@ -65,7 +65,6 @@
     "foundPokemon": "你找到了神秘的宝可梦！",
     "guessPrompt_one": "你能在 {{count}} 次尝试中猜出神秘的宝可梦吗？",
     "guessPrompt_other": "你能在 {{count}} 次尝试中猜出神秘的宝可梦吗？",
-    "copySuccess": "结果已复制到剪贴板！",
     "copy": "复制",
     "viewStats": "查看统计",
     "signInPrompt": "登录以保存你的每日挑战结果！",
@@ -116,5 +115,9 @@
   "typeChecklist": {
     "title": "属性清单",
     "eliminationReasoning": "排除推理"
+  },
+  "sync": {
+    "success": "您的猜测已保存到您的帐户中！",
+    "error": "保存您的猜测时出了问题。"
   }
 }

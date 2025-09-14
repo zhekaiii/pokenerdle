@@ -6,15 +6,14 @@ import {
 } from "../constants";
 
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { CheckCircle } from "lucide-react";
 import posthog from "posthog-js";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 export interface DailyChallenge {
   date: string;
@@ -61,7 +60,6 @@ export const useDailyChallengeData = () => {
       ),
     [guesses]
   );
-  const { toast } = useToast();
   const hasReachedLimit = Boolean(
     guesses && guesses.guesses.length === DAILY_CHALLENGE_GUESS_LIMIT
   );
@@ -121,27 +119,12 @@ export const useDailyChallengeData = () => {
         };
       });
       if (response.correct) {
-        toast({
-          variant: "positive",
-          description: (
-            <div className="tw:flex tw:flex-nowrap">
-              <CheckCircle className="tw:mr-2" />
-              <div>{t("toast.correctGuess")}</div>
-            </div>
-          ),
-        });
+        toast.success(`${t("toast.correctGuess")}`);
         posthog.capture("daily_challenge_solved", {
           num_guesses: numGuesses,
         });
       } else if (numGuesses === DAILY_CHALLENGE_GUESS_LIMIT) {
-        toast({
-          variant: "destructive",
-          description: (
-            <div className="tw:flex tw:flex-nowrap">
-              <div>{t("toast.gameOver")}</div>
-            </div>
-          ),
-        });
+        toast.error(t("toast.gameOver"));
         posthog.capture("daily_challenge_gameover");
       }
     } finally {

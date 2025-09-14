@@ -1,5 +1,4 @@
 import { usePokemonNames } from "@/hooks/usePokemonNames";
-import { useToast } from "@/hooks/useToast";
 import { QUERY_KEY } from "@/lib/query";
 import { getSharedAbilities } from "@/utils/pokeChainUtils";
 import {
@@ -9,15 +8,10 @@ import {
 } from "@pokenerdle/shared";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useLoaderData } from "@tanstack/react-router";
-import {
-  CheckCircle,
-  HelpCircle,
-  RefreshCw,
-  Target,
-  TriangleAlert,
-} from "lucide-react";
+import { CheckCircle, HelpCircle, RefreshCw, Target } from "lucide-react";
 import posthog from "posthog-js";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import api from "../../api";
 import LoadingDialog from "../recyclables/LoadingDialog";
 import PokemonCombobox from "../recyclables/PokemonCombobox";
@@ -42,7 +36,6 @@ const PathFinderGame: React.FC = () => {
     if (!challenge) return [];
     return [challenge.startPokemon, ...path, challenge.endPokemon];
   }, [challenge, path]);
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [startTime, setStartTime] = useState(Date.now());
   const [numGuesses, setNumGuesses] = useState(0);
@@ -79,11 +72,9 @@ const PathFinderGame: React.FC = () => {
       setStartTime(Date.now());
     } catch (error) {
       console.error("Error fetching Path Finder challenge:", error);
-      toast({
-        variant: "destructive",
-        description:
-          "Failed to fetch Path Finder challenge. Please try again later.",
-      });
+      toast.error(
+        "Failed to fetch Path Finder challenge. Please try again later."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -96,20 +87,14 @@ const PathFinderGame: React.FC = () => {
   useEffect(() => {
     if (isPuzzleSolved) {
       const timeTaken = Date.now() - startTime;
-      toast({
-        variant: "positive",
-        description: (
-          <div className="tw:flex tw:flex-nowrap">
-            <CheckCircle className="tw:mr-2" />
-            <div>
-              <div>Puzzle solved! Well done!</div>
-              <div>Time taken: {Math.floor(timeTaken / 1000)} seconds</div>
-              <div>Chain length: {fullPath.length}</div>
-              <div>Number of guesses: {numGuesses}</div>
-            </div>
-          </div>
-        ),
-      });
+      toast.success(
+        <div>
+          <div>Puzzle solved! Well done!</div>
+          <div>Time taken: {Math.floor(timeTaken / 1000)} seconds</div>
+          <div>Chain length: {fullPath.length}</div>
+          <div>Number of guesses: {numGuesses}</div>
+        </div>
+      );
       posthog.capture("pathfinder_solved", {
         time_taken_ms: timeTaken,
         path_length: fullPath.length,
@@ -140,28 +125,19 @@ const PathFinderGame: React.FC = () => {
         pokemonWithAbilities.abilities.some((a) => a.id === ability.id)
       );
       if (!isAbilityShared) {
-        toast({
-          variant: "destructive",
-          description: (
-            <div className="tw:flex tw:flex-nowrap">
-              <TriangleAlert className="tw:mr-2" />
-              <div>
-                {pokemonName?.name || pokemonName?.speciesName} does not share
-                an ability with{" "}
-                {previousPokemonName?.name || previousPokemonName?.speciesName}
-              </div>
-            </div>
-          ),
-        });
+        toast.error(
+          `${
+            pokemonName?.name || pokemonName?.speciesName
+          } does not share an ability with ${
+            previousPokemonName?.name || previousPokemonName?.speciesName
+          }`
+        );
         return;
       }
       setPath([...path, pokemonWithAbilities]);
     } catch (error) {
       console.error("Error fetching Pokemon:", error);
-      toast({
-        variant: "destructive",
-        description: "Failed to fetch Pokemon. Please try again later.",
-      });
+      toast.error("Failed to fetch Pokemon. Please try again later.");
     } finally {
       setIsLoading(false);
       setInput("");

@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/Sonner";
 import useDetectKeyboardOpen from "@/hooks/useDetectKeyboardOpen";
 import clsx from "clsx";
 import React from "react";
@@ -19,6 +20,7 @@ const PageContainer: React.FC<Props> = ({ children }) => {
       )}
     >
       {children}
+      <Toaster />
     </main>
   );
 };

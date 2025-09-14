@@ -6,7 +6,6 @@ import { PostHogErrorBoundary, PostHogProvider } from "posthog-js/react";
 import { I18nextProvider } from "react-i18next";
 import { store as defaultStore } from "./atoms/store";
 import { AuthInitializer } from "./components/AuthInitializer";
-import { Toaster } from "./components/ui/Toaster";
 import { SocketContext } from "./hooks/useSocket";
 import "./index.scss";
 import { ErrorPage } from "./layout/ErrorPage";
@@ -44,7 +43,6 @@ function AppProvider({
             <QueryClientProvider client={queryClient}>
               <I18nextProvider i18n={i18nInstance || i18n}>
                 {children}
-                <Toaster />
               </I18nextProvider>
             </QueryClientProvider>
           </SocketContext.Provider>

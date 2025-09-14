@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/Button";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
-import { useToast } from "@/hooks/useToast";
 import { trackAbilityLinkUsed, trackPokemonGuessed } from "@/lib/events";
 import {
   ForfeitInfo,
@@ -15,6 +14,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { toast } from "sonner";
 import { useImmer } from "use-immer";
 import api from "../../api";
 import { PokemonGuess } from "../../api/battles/types";
@@ -70,7 +70,6 @@ const BattleScreen: React.FC<Props> = ({
     setStarterPokemon,
     opponentDisplayName,
   } = usePokeChainContext();
-  const { toast } = useToast();
   const [input, setInput] = useState("");
   const pokemonNames = usePokemonNames();
   const [pokemons, setPokemons] = useState<PokemonGuess[]>([starterPokemon]);
@@ -251,24 +250,22 @@ const BattleScreen: React.FC<Props> = ({
           ? pokemonNames[pokemonId]?.name ||
             pokemonNames[pokemonId]?.speciesName
           : undefined;
-      toast({
-        variant: "destructive",
-        title: (
-          <>
-            {pronoun} guessed{" "}
-            <span className="tw:capitalize">{pokemonName}</span>
-          </>
-        ),
-        description: (
-          <>
-            {reason === WrongAnswerReason.AbilityLinkDepleted
-              ? `${pronoun} cannot use the same ability as a link more than ${MAX_LINKS} times.`
-              : reason === WrongAnswerReason.EvolutionLinkDepleted
-              ? `${pronoun} cannot guess Pokémon in the same evolution chain more than ${MAX_LINKS} times.`
-              : `${pokemonName} does not share an ability with the previous Pokémon.`}
-          </>
-        ),
-      });
+      toast.error(
+        <>
+          {pronoun} guessed <span className="tw:capitalize">{pokemonName}</span>
+        </>,
+        {
+          description: `
+              ${
+                reason === WrongAnswerReason.AbilityLinkDepleted
+                  ? `${pronoun} cannot use the same ability as a link more than ${MAX_LINKS} times.`
+                  : reason === WrongAnswerReason.EvolutionLinkDepleted
+                  ? `${pronoun} cannot guess Pokémon in the same evolution chain more than ${MAX_LINKS} times.`
+                  : `${pokemonName} does not share an ability with the previous Pokémon.`
+              }
+            `,
+        }
+      );
       if (isPlayersTurn) {
         setPlayerPoints(points);
         setPlayerStreak(0);
