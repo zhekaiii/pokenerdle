@@ -24,6 +24,10 @@
     "./pokemon": {
       "types": "./dist/pokemon/index.d.ts",
       "default": "./dist/pokemon/index.js"
+    },
+    "./date": {
+      "types": "./dist/date/index.d.ts",
+      "default": "./dist/date/index.js"
     }
   },
   "typesVersions": {

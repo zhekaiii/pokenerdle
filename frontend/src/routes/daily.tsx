@@ -10,6 +10,7 @@ import {
 } from "@/pages/DailyChallenge/hooks/useData";
 import { useSyncData } from "@/pages/DailyChallenge/hooks/useSyncData";
 import { TZDate } from "@date-fns/tz";
+import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { atom, useAtom, useStore } from "jotai";
@@ -79,7 +80,7 @@ export const Route = createFileRoute("/daily")({
     if (!session) return null;
     try {
       const today = import.meta.env.SSR
-        ? format(TZDate.tz("Asia/Singapore"), "yyyy-MM-dd")
+        ? format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd")
         : FROZEN_DATE;
       const api = createApi(store);
       const userGuesses = await api.daily.getUserGuesses(today);

@@ -1,5 +1,8 @@
+import { TZDate } from "@date-fns/tz";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
+import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import { pokemon_v2_pokemontype } from "@prisma/client";
+import { isSameDay } from "date-fns";
 import seedrandom from "seedrandom";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
 import { getOverallTypeEffectiveness } from "../lib/matchups.js";
@@ -18,6 +21,13 @@ import {
 } from "../repositories/pokemon.repository.js";
 import { tryParseNum } from "../utils/parse.js";
 import { Comp, DailyPokemon } from "../utils/types.js";
+
+// Helper function to check if two dates are consecutive days
+const isConsecutiveDay = (date1: Date, date2: Date): boolean => {
+  const oneDay = 24 * 60 * 60 * 1000; // milliseconds in one day
+  const diffInDays = Math.abs(date2.getTime() - date1.getTime()) / oneDay;
+  return diffInDays <= 1;
+};
 
 let dailyPokemons: Record<string, DailyPokemon> = {};
 
@@ -214,7 +224,7 @@ export const verifyGuess = async (
   if (
     guessPokemon.pokemon_v2_pokemonspecies?.pokemon_color_id ===
       targetPokemon.pokemon_v2_pokemonspecies?.pokemon_color_id &&
-      targetGen === guessGen &&
+    targetGen === guessGen &&
     targetPokemon.height === guessPokemon.height &&
     targetType1.type_id === guessType1.type_id &&
     targetType2?.type_id === guessType2?.type_id
@@ -326,6 +336,7 @@ export const syncUserGuesses = async (
 
 export const getUserStats = async (userId: string) => {
   const statsData = await getUserDailyStatsData(userId);
+  const today = TZDate.tz(SINGAPORE_TIMEZONE);
 
   if (statsData.length === 0) {
     return {
@@ -347,25 +358,33 @@ export const getUserStats = async (userId: string) => {
 
   // Calculate streaks
   let maxStreak = 0;
+  let streak = 0;
 
   // Convert date strings to Date objects for comparison
   const formattedDays = statsData.map((day) => ({
-    date: new Date(day.dailyChallengeId),
+    date: new TZDate(day.dailyChallengeId, SINGAPORE_TIMEZONE),
     isWin: day.correct,
   }));
 
-  let streak = 0;
-
   for (let i = 0; i < formattedDays.length; i++) {
     const day = formattedDays[i];
+    const isFirstDay = i === 0;
+    const isConsecutiveFromPrevious =
+      !isFirstDay && isConsecutiveDay(formattedDays[i - 1].date, day.date);
 
-    if (day.isWin) {
+    if (day.isWin && (isFirstDay || isConsecutiveFromPrevious)) {
       streak++;
       maxStreak = Math.max(maxStreak, streak);
     } else {
-      // Loss, reset temporary streak but keep max streak
       streak = 0;
     }
+  }
+
+  if (
+    formattedDays.length > 0 &&
+    !isSameDay(today, formattedDays[formattedDays.length - 1].date)
+  ) {
+    streak = 0;
   }
 
   return {
