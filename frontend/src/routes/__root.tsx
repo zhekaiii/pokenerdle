@@ -122,7 +122,7 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
       { property: "og:title", content: "PokéNerdle" },
     ],
     scripts: [
-      ...scripts,
+      ...(import.meta.env.SSR ? scripts : []),
       ...(import.meta.env.PROD
         ? [
             {
@@ -145,7 +145,7 @@ window.__vite_plugin_react_preamble_installed__ = true`,
             },
           ]),
     ],
-    links,
+    links: import.meta.env.SSR ? links : [],
   }),
   component: RootLayout,
   beforeLoad: ({ location }) => {
