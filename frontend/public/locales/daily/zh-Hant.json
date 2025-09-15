@@ -114,7 +114,9 @@
   },
   "typeChecklist": {
     "title": "屬性清單",
-    "eliminationReasoning": "排除推理"
+    "description": "你可以點擊一個屬性來劃掉它。使用這個作為參考來幫助你縮小選項！",
+    "eliminationReasoning": "排除推理",
+    "reset": "重置"
   },
   "sync": {
     "success": "您的猜測已保存到您的帳戶中！",

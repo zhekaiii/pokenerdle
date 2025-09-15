@@ -116,7 +116,9 @@
   },
   "typeChecklist": {
     "title": "Type Checklist",
-    "eliminationReasoning": "Elimination Reasoning"
+    "description": "You can click on a type to cross it off. Use this as a reference to help you narrow down your options!",
+    "eliminationReasoning": "Elimination Reasoning",
+    "reset": "Reset"
   },
   "sync": {
     "success": "Your guesses have been saved to your account!",

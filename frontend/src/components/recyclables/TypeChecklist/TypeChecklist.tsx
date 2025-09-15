@@ -1,10 +1,17 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/Card";
 import { FROZEN_DATE } from "@/pages/DailyChallenge/constants";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { POKEMON_TYPES } from "@pokenerdle/shared/pokemon";
 import clsx from "clsx";
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+import { RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import TypeChip from "../TypeChip";
 import { DUAL_TYPE_ID, MONO_TYPE_ID } from "./utils";
@@ -49,6 +56,10 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
   const { t } = useTranslation("daily");
   const [disabledTypes, setDisabledTypes] = useAtom(disabledTypesAtom);
 
+  const clearDisabledTypes = () => {
+    setDisabledTypes([]);
+  };
+
   const toggleDisabledType = (id: number) => {
     setDisabledTypes(
       disabledTypes.includes(id)
@@ -60,13 +71,17 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
   return (
     <Card responsive className={className} {...props}>
       <CardContent>
-        <div className="tw:flex tw:justify-between tw:gap-2 tw:mb-2">
+        <div className="tw:mb-2">
           <CardTitle>{t("typeChecklist.title")}</CardTitle>
+          <CardDescription>{t("typeChecklist.description")}</CardDescription>
         </div>
         {[POKEMON_TYPES, MONO_DUAL_TYPES].map((arr, index) => (
           <div
             key={index}
-            className="tw:flex tw:flex-wrap tw:gap-2 tw:justify-center tw:last:mt-2"
+            className={clsx(
+              "tw:flex tw:flex-wrap tw:gap-2 tw:justify-center",
+              index === 0 && "tw:mb-2"
+            )}
           >
             {arr.map(({ id, name }) => {
               return (
@@ -87,6 +102,13 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
             })}
           </div>
         ))}
+        <Button
+          className="tw:mx-auto tw:flex tw:mt-4"
+          onClick={clearDisabledTypes}
+        >
+          <RotateCcw />
+          {t("typeChecklist.reset")}
+        </Button>
       </CardContent>
     </Card>
   );

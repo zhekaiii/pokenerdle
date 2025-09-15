@@ -55,7 +55,7 @@
     "isbot": "^5.1.30",
     "jotai": "^2.13.1",
     "js-cookie": "^3.0.5",
-    "lucide-react": "^0.469.0",
+    "lucide-react": "^0.544.0",
     "node-fetch": "^3.3.2",
     "pinyin": "^4.0.0",
     "posthog-js": "^1.258.6",
