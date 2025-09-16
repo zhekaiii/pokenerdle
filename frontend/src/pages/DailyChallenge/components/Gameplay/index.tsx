@@ -46,6 +46,11 @@ const DailyChallengeGameplay: React.FC = () => {
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
     onGuess(pokemon).finally(() => setInput(""));
   };
+  const [rendered, setRendered] = useState(false);
+
+  useEffect(() => {
+    setRendered(true);
+  }, []);
 
   useEffect(() => {
     if (!isGameFinished) {
@@ -152,7 +157,7 @@ const DailyChallengeGameplay: React.FC = () => {
               >
                 <Clipboard /> {t("buttons.copy")}
               </Button>
-              {!import.meta.env.SSR && "share" in navigator && (
+              {rendered && "share" in navigator && (
                 <Button
                   suppressHydrationWarning
                   className="tw:flex-1"
