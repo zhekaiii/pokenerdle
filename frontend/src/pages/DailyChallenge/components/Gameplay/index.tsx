@@ -96,6 +96,7 @@ const DailyChallengeGameplay: React.FC = () => {
                   disabled={isLoading}
                   input={input}
                   setInput={setInput}
+                  side="bottom"
                   onSelect={(pokemon) => {
                     posthog.capture("daily_challenge_guess", {
                       from: "pokemon_combobox",
