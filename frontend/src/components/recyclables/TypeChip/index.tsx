@@ -115,12 +115,14 @@ const TYPE_ICON_CONFIG: Record<
 type Props = {
   size?: number;
   type: string;
+  clickable?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 const TypeChip: React.FC<Props> = ({
   size = 24,
   type,
   className,
+  clickable = false,
   ...props
 }) => {
   const { t } = useTranslation("types");
@@ -133,9 +135,11 @@ const TypeChip: React.FC<Props> = ({
     <div
       className={cn(
         "tw:rounded-full tw:pe-2 tw:inline-flex tw:items-center tw:text-background tw:dark:text-foreground tw:align-middle tw:min-w-max tw:select-none",
+        clickable && "tw:pointer-coarse:pe-3! tw:pointer-coarse:p-1",
         bgClass,
         className
       )}
+      role={clickable ? "button" : undefined}
       {...props}
     >
       {typeof Icon === "string" ? (

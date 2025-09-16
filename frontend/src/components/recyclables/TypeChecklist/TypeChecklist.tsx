@@ -72,7 +72,7 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
     <Card responsive className={className} {...props}>
       <CardContent>
         <div className="tw:mb-2">
-          <CardTitle>{t("typeChecklist.title")}</CardTitle>
+          <CardTitle className="tw:mb-1">{t("typeChecklist.title")}</CardTitle>
           <CardDescription>{t("typeChecklist.description")}</CardDescription>
         </div>
         {[POKEMON_TYPES, MONO_DUAL_TYPES].map((arr, index) => (
@@ -80,17 +80,17 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
             key={index}
             className={clsx(
               "tw:flex tw:flex-wrap tw:gap-2 tw:justify-center",
-              index === 0 && "tw:mb-2"
+              index === 0 && "tw:mb-2 tw:pointer-coarse:mb-3"
             )}
           >
             {arr.map(({ id, name }) => {
               return (
                 <div key={id} className="tw:relative">
                   <TypeChip
+                    clickable
                     className={clsx(
                       disabledTypes.includes(id) && "tw:opacity-30"
                     )}
-                    role="button"
                     onClick={() => toggleDisabledType(id)}
                     type={name}
                   />
