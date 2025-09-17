@@ -1,0 +1,61 @@
+.typeChart {
+  border-collapse: collapse;
+  background: var(--card);
+  text-align: center;
+  table-layout: auto;
+
+  th {
+    position: sticky;
+    background: var(--background);
+    &:first-child {
+      left: 0;
+    }
+  }
+
+  th,
+  td {
+    padding: 2px;
+    text-align: center;
+
+    > div {
+      display: flex;
+    }
+  }
+
+  thead {
+    th {
+      top: 0;
+      z-index: 2;
+      vertical-align: bottom;
+      height: 1px;
+      &:first-child {
+        background: var(--background);
+        border-right: 2px solid var(--border);
+        z-index: 3;
+      }
+      &:not(:first-child) > div > div {
+        writing-mode: vertical-rl; /* or vertical-lr */
+        text-orientation: mixed;
+        min-height: max-content;
+        flex-grow: 1;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      transition: background-color 0.2s ease;
+      &:nth-child(even) {
+        background: var(--muted);
+      }
+    }
+
+    th {
+      border-right: 2px solid var(--border);
+      z-index: 1;
+    }
+    td > svg {
+      display: inline;
+    }
+  }
+}

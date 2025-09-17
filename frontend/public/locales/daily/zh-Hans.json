@@ -116,7 +116,10 @@
     "title": "属性清单",
     "description": "你可以点击一个属性来划掉它。使用这个作为参考来帮助你缩小选项！",
     "eliminationReasoning": "排除推理",
-    "reset": "重置"
+    "reset": "重置",
+    "typeChart": "属性图表",
+    "defending": "防御",
+    "attacking": "攻击"
   },
   "sync": {
     "success": "您的猜测已保存到您的帐户中！",

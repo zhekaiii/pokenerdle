@@ -5,14 +5,17 @@ import {
   CardDescription,
   CardTitle,
 } from "@/components/ui/Card";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
 import { FROZEN_DATE } from "@/pages/DailyChallenge/constants";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { POKEMON_TYPES } from "@pokenerdle/shared/pokemon";
 import clsx from "clsx";
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Table } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { TypeChart } from "../TypeChart/TypeChart";
 import TypeChip from "../TypeChip";
 import { DUAL_TYPE_ID, MONO_TYPE_ID } from "./utils";
 
@@ -53,8 +56,9 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
   guesses = [],
   ...props
 }) => {
-  const { t } = useTranslation("daily");
+  const { t } = useTranslation(["daily", "common"]);
   const [disabledTypes, setDisabledTypes] = useAtom(disabledTypesAtom);
+  const [showTypeChart, setShowTypeChart] = useState(false);
 
   const clearDisabledTypes = () => {
     setDisabledTypes([]);
@@ -102,13 +106,25 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
             })}
           </div>
         ))}
-        <Button
-          className="tw:mx-auto tw:flex tw:mt-4"
-          onClick={clearDisabledTypes}
-        >
-          <RotateCcw />
-          {t("typeChecklist.reset")}
-        </Button>
+        <div className="tw:flex tw:flex-wrap tw:gap-2 tw:justify-center tw:mt-4">
+          <Dialog open={showTypeChart} onOpenChange={setShowTypeChart}>
+            <DialogContent showCloseButton={false} className="tw:p-1">
+              <TypeChart />
+              <Button onClick={() => setShowTypeChart(false)}>
+                {t("common:close")}
+              </Button>
+            </DialogContent>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Table /> {t("typeChecklist.typeChart")}
+              </Button>
+            </DialogTrigger>
+          </Dialog>
+          <Button onClick={clearDisabledTypes}>
+            <RotateCcw />
+            {t("typeChecklist.reset")}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,3 +1,4 @@
 {
-  "count_ordinal": "第{{count}}"
+  "count_ordinal": "第{{count}}",
+  "close": "關閉"
 }
