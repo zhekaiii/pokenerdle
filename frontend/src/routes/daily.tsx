@@ -84,6 +84,7 @@ export const Route = createFileRoute("/daily")({
         : FROZEN_DATE;
       const api = createApi(store);
       const userGuesses = await api.daily.getUserGuesses(today);
+      if (!userGuesses.length) return null;
       return {
         date: today,
         guesses: userGuesses,
