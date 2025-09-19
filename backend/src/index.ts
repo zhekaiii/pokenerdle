@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import express, { ErrorRequestHandler } from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { fileURLToPath } from "url";
 import { initializeBattleWsRoutes } from "./handlers/index.js";
 import "./lib/prisma.js";
 import {
@@ -16,7 +15,6 @@ import dataRouter from "./routes/data.routes.js";
 import pathfinderRouter from "./routes/pathfinder.routes.js";
 import { PokeNerdleServer } from "./utils/types.js";
 
-const __filename = fileURLToPath(import.meta.url);
 dotenv.config();
 
 const app = express();
@@ -45,7 +43,7 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization, If-Modified-Since"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization, If-Modified-Since, X-PostHog-Distinct-Id"
   );
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Credentials", "true");
@@ -59,6 +57,12 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json());
+app.use((req, res, next) => {
+  req.on("end", () => {
+    console.log(`[${res.statusCode}] ${req.method} ${req.url}`);
+  });
+  next();
+});
 
 initializeBattleWsRoutes(io);
 router.use(dataRouter);

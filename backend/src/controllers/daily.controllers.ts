@@ -5,7 +5,11 @@ import {
 import { Request, Response } from "express";
 import * as z from "zod";
 import { StatusCode } from "../data/const.js";
-import { AuthenticatedRequest } from "../middlewares/auth.js";
+import {
+  AuthenticatedRequest,
+  StrictAuthenticatedRequest,
+} from "../middlewares/auth.js";
+import { migrateUserGuesses } from "../repositories/daily.repository.js";
 import {
   getDailyPokemonAnswer,
   getUserGuessesForDateService,
@@ -13,6 +17,7 @@ import {
   submitGuess,
   syncUserGuesses,
 } from "../services/daily.service.js";
+import { getUserId } from "../utils/userIdentification.js";
 
 export const submitDailyPokemonGuessController = async (
   req: AuthenticatedRequest,
@@ -24,7 +29,8 @@ export const submitDailyPokemonGuessController = async (
     return;
   }
   const { pokemon_id, date } = parsed.data;
-  const userId = req.user?.id;
+  // User is guaranteed to exist due to middleware
+  const userId = getUserId(req)!;
 
   try {
     const results = await submitGuess(userId, pokemon_id, date);
@@ -37,12 +43,15 @@ export const submitDailyPokemonGuessController = async (
   }
 };
 
+// TODO: Handle the case where user_id and posthogDistinctId exists
+// and we need to merge the data
 export const getUserGuessesController = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
   const { date } = req.query;
-  const user_id = req.user!.id; // User is guaranteed to exist due to middleware
+  // User is guaranteed to exist due to middleware
+  const user_id = getUserId(req)!;
 
   if (!date || typeof date !== "string") {
     res.status(StatusCode.BAD_REQUEST).json({
@@ -96,10 +105,16 @@ export const syncUserGuessesController = async (
   }
 
   const { guesses, date } = parsed.data;
-  const user_id = req.user!.id; // User is guaranteed to exist due to middleware
+  const user_id = req.user?.id;
+  const posthogDistinctId = req.posthogDistinctId;
 
   try {
-    const results = await syncUserGuesses(user_id, guesses, date);
+    const results = await syncUserGuesses(
+      user_id,
+      posthogDistinctId,
+      guesses,
+      date
+    );
     res.json(results);
   } catch (error) {
     console.error("Error syncing user guesses:", error);
@@ -110,10 +125,10 @@ export const syncUserGuessesController = async (
 };
 
 export const getUserStatsController = async (
-  req: AuthenticatedRequest,
+  req: StrictAuthenticatedRequest,
   res: Response
 ) => {
-  const userId = req.user!.id;
+  const userId = getUserId(req)!;
 
   try {
     const stats = await getUserStats(userId);
@@ -122,6 +137,29 @@ export const getUserStatsController = async (
     console.error("Error getting user stats:", error);
     res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
       error: "Failed to get user stats",
+    });
+  }
+};
+
+export const migrateUserGuessesController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  const user_id = getUserId(req)!;
+  const posthogDistinctId = req.posthogDistinctId;
+  console.log("Migrating user guesses from", posthogDistinctId, "to", user_id);
+  if (!user_id || !posthogDistinctId) {
+    res.status(StatusCode.OK).end();
+    return;
+  }
+
+  try {
+    await migrateUserGuesses(posthogDistinctId, user_id);
+    res.status(StatusCode.OK).end();
+  } catch (error) {
+    console.error("Error migrating user guesses:", error);
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
+      error: "Failed to migrate user guesses",
     });
   }
 };

@@ -1,7 +1,8 @@
-import { sessionAtom } from "@/atoms/auth";
+import { posthogDistinctIdAtom, sessionAtom } from "@/atoms/auth";
 import { store } from "@/atoms/store";
 import axios, { AxiosInstance } from "axios";
 import { Store } from "jotai/vanilla/store";
+import posthog from "posthog-js";
 import battles from "./battles";
 import daily from "./daily";
 import data from "./data/data";
@@ -23,6 +24,15 @@ const createAxiosInstance = (store?: Store): AxiosInstance => {
       const session = store.get(sessionAtom);
       if (session?.access_token) {
         config.headers.Authorization = `Bearer ${session.access_token}`;
+      } else {
+        if (import.meta.env.SSR) {
+          const distinctId = store.get(posthogDistinctIdAtom);
+          if (distinctId) {
+            config.headers["X-PostHog-Distinct-Id"] = distinctId;
+          }
+        } else {
+          config.headers["X-PostHog-Distinct-Id"] = posthog.get_distinct_id();
+        }
       }
       return config;
     });

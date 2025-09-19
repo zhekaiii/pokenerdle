@@ -9,10 +9,12 @@ import { getOverallTypeEffectiveness } from "../lib/matchups.js";
 import { DailyPokemonToResponse } from "../mappers/daily.js";
 import {
   createDailyPokemon,
+  deleteUserGuessesForDate,
   getDailyPokemonFromDb,
   getUserDailyStatsData,
   getUserGuessCountForDate,
   getUserGuessesForDate,
+  migrateUserGuesses,
   saveUserGuess,
 } from "../repositories/daily.repository.js";
 import {
@@ -75,19 +77,17 @@ export const getDailyPokemon = async (date: string) => {
 };
 
 export const submitGuess = async (
-  userId: string | undefined,
+  userId: string,
   pokemonId: number,
   date: string
 ): Promise<DailyChallengeGuessResponse> => {
   let guessNumber: number | undefined;
-  if (userId) {
-    // Get the current guess number for this user and date
-    const currentGuessCount = await getUserGuessCountForDate(userId, date);
-    if (currentGuessCount === DAILY_CHALLENGE_GUESS_LIMIT) {
-      throw new Error("hit limit");
-    }
-    guessNumber = currentGuessCount + 1;
+  // Get the current guess number for this user and date
+  const currentGuessCount = await getUserGuessCountForDate(userId, date);
+  if (currentGuessCount === DAILY_CHALLENGE_GUESS_LIMIT) {
+    throw new Error("hit limit");
   }
+  guessNumber = currentGuessCount + 1;
 
   // Verify the guess
   const result = await verifyGuess(pokemonId, date);
@@ -296,15 +296,28 @@ export const getDailyPokemonAnswer = async (date: string) => {
 };
 
 export const syncUserGuesses = async (
-  userId: string,
+  userId: string | undefined,
+  posthogDistinctId: string | undefined,
   guesses: { pokemonId: number }[],
   date: string
 ) => {
+  if (!userId && !posthogDistinctId) {
+    throw new Error("User ID and Posthog Distinct ID are required");
+  }
+
   // First, get existing guesses for this user and date
-  const existingGuesses = await getUserGuessesForDateService(userId, date);
+  const existingGuesses = userId
+    ? await getUserGuessesForDateService(userId, date)
+    : [];
+  const existingGuessesForPh = posthogDistinctId
+    ? await getUserGuessesForDateService(posthogDistinctId, date)
+    : [];
 
   if (existingGuesses.length > 0) {
     // User already has data for this day
+    if (existingGuessesForPh.length > 0) {
+      await deleteUserGuessesForDate(posthogDistinctId!, date);
+    }
     return {
       syncedGuesses: [],
       existingGuesses,
@@ -312,12 +325,27 @@ export const syncUserGuesses = async (
     };
   }
 
-  // User has no existing data, proceed with syncing
+  // if posthog distinct id has data but user id does not, means user just logged in
+  if (existingGuessesForPh.length > 0) {
+    await migrateUserGuesses(posthogDistinctId!, userId!);
+    return {
+      syncedGuesses: existingGuessesForPh,
+      existingGuesses: [],
+      message: `Successfully synced ${existingGuessesForPh.length} guesses`,
+    };
+  }
+
+  // User has no existing data, means local storage has stuff but
+  // user_id and posthogDistinctId don't have data
   const syncedGuesses: DailyChallengeGuessResponse[] = [];
 
   for (const guess of guesses) {
     try {
-      const result = await submitGuess(userId, guess.pokemonId, date);
+      const result = await submitGuess(
+        userId ?? posthogDistinctId!,
+        guess.pokemonId,
+        date
+      );
       syncedGuesses.push(result);
     } catch (error) {
       console.error(

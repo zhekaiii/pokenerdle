@@ -149,6 +149,45 @@ export async function createServer(app) {
     if (session) {
       req.session = session;
     }
+
+    const posthogCookie = parseCookieHeader(req.headers.cookie ?? "").find(
+      ({ name }) => name === `ph_${process.env.VITE_PUBLIC_POSTHOG_KEY}_posthog`
+    )?.value;
+
+    try {
+      const posthogDistinctId = JSON.parse(posthogCookie ?? "{}").distinct_id;
+      await fetch(
+        "http://localhost:" +
+          (process.env.PORT ?? 3456) +
+          "/api/v1/daily/challenge/migrate",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+            "X-Posthog-Distinct-Id": posthogDistinctId,
+          },
+          body: JSON.stringify({}),
+        }
+      );
+    } catch (error) {
+      console.error("Error migrating user guesses:", error);
+    }
+
+    next();
+  });
+  app.use(async (req, res, next) => {
+    const cookies = parseCookieHeader(req.headers.cookie ?? "");
+    const posthogCookie = cookies.find(
+      ({ name }) => name === `ph_${process.env.VITE_PUBLIC_POSTHOG_KEY}_posthog`
+    );
+    if (posthogCookie) {
+      try {
+        req.posthogDistinctId = JSON.parse(posthogCookie.value).distinct_id;
+      } catch {
+        // ignore
+      }
+    }
     next();
   });
 

@@ -14,7 +14,8 @@ export const posthog = new PostHog(
 // Helper function to capture events with proper error handling
 export const captureEvent = (
   eventName: string,
-  properties?: Record<string, any>
+  properties?: Record<string, any>,
+  distinctId?: string
 ) => {
   try {
     posthog.capture({
@@ -23,7 +24,7 @@ export const captureEvent = (
         ...DEFAULT_POSTHOG_CONFIG,
         ...properties,
       },
-      distinctId: "server", // Server-side events don't have a specific user
+      distinctId: distinctId || "server", // Use provided distinctId or default to "server"
     });
   } catch (error) {
     console.error("Failed to capture PostHog event:", error);

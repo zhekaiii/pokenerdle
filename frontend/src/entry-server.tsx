@@ -10,7 +10,7 @@ import type { i18n } from "i18next";
 import { createStore } from "jotai";
 import { pipeline } from "node:stream/promises";
 import AppProviders from "./AppProviders";
-import { sessionAtom, userAtom } from "./atoms/auth";
+import { posthogAtom, sessionAtom, userAtom } from "./atoms/auth";
 import { themeAtom } from "./atoms/theme";
 import "./fetch-polyfill";
 import { createSocket } from "./hooks/useSocket";
@@ -29,7 +29,11 @@ export async function render({
   scripts,
 }: {
   head: string;
-  req: express.Request & { i18n: i18n; session: Session | null };
+  req: express.Request & {
+    i18n: i18n;
+    session: Session | null;
+    posthogDistinctId?: string;
+  };
   res: express.Response;
   links?: AnyRouteMatch["links"];
   scripts?: AnyRouteMatch["scripts"];
@@ -75,6 +79,7 @@ export async function render({
   store.set(themeAtom, theme);
   store.set(sessionAtom, req.session);
   store.set(userAtom, req.session?.user ?? null);
+  store.set(posthogAtom, { distinct_id: req.posthogDistinctId ?? null });
 
   // Let's use the default stream handler to create the response
   const response = await handler(({ responseHeaders, router }) =>

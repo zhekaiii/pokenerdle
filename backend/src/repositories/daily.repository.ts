@@ -79,6 +79,72 @@ export const getUserGuessesForDate = async (userId: string, date: string) => {
   });
 };
 
+export const deleteUserGuessesForDate = async (
+  userId: string,
+  date: string
+) => {
+  return pgClient.userDailyGuess.deleteMany({
+    where: {
+      userId,
+      dailyChallengeId: date,
+    },
+  });
+};
+
+export const migrateUserGuesses = async (
+  oldUserId: string,
+  newUserId: string
+) => {
+  await pgClient.$transaction(async (tx) => {
+    // Find days where both user and posthog distinct id have guesses
+    const oldUserGuessesDays = new Set(
+      await tx.userDailyGuess
+        .findMany({
+          where: {
+            userId: oldUserId,
+          },
+          distinct: ["dailyChallengeId"],
+          select: {
+            dailyChallengeId: true,
+          },
+        })
+        .then((result) =>
+          result.map(({ dailyChallengeId }) => dailyChallengeId)
+        )
+    );
+    const newUserGuessesDays = new Set(
+      await tx.userDailyGuess
+        .findMany({
+          where: {
+            userId: newUserId,
+          },
+          distinct: ["dailyChallengeId"],
+          select: {
+            dailyChallengeId: true,
+          },
+        })
+        .then((result) =>
+          result.map(({ dailyChallengeId }) => dailyChallengeId)
+        )
+    );
+    const daysToDelete = oldUserGuessesDays.intersection(newUserGuessesDays);
+    await tx.userDailyGuess.deleteMany({
+      where: {
+        userId: oldUserId,
+        dailyChallengeId: { in: Array.from(daysToDelete) },
+      },
+    });
+    await tx.userDailyGuess.updateMany({
+      where: {
+        userId: oldUserId,
+      },
+      data: {
+        userId: newUserId,
+      },
+    });
+  });
+};
+
 export const getUserGuessCountForDate = async (
   userId: string,
   date: string

@@ -1,6 +1,4 @@
 import { createApi } from "@/api";
-import { sessionAtom } from "@/atoms/auth";
-import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import DailyChallengeGameplay from "@/pages/DailyChallenge/components/Gameplay";
 import DailyChallengeIntroCard from "@/pages/DailyChallenge/components/IntroCard";
 import { FROZEN_DATE } from "@/pages/DailyChallenge/constants";
@@ -8,7 +6,6 @@ import {
   DailyChallenge,
   guessesAtom,
 } from "@/pages/DailyChallenge/hooks/useData";
-import { useSyncData } from "@/pages/DailyChallenge/hooks/useSyncData";
 import { TZDate } from "@date-fns/tz";
 import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import { createFileRoute } from "@tanstack/react-router";
@@ -41,7 +38,6 @@ const DailyChallengePage: React.FC = () => {
   const onStart = () => {
     setState(DailyChallengeState.Gameplay);
   };
-  const { isSyncing } = useSyncData();
   return (
     <>
       {state === DailyChallengeState.Intro ? (
@@ -49,7 +45,6 @@ const DailyChallengePage: React.FC = () => {
       ) : (
         <DailyChallengeGameplay />
       )}
-      <LoadingDialog open={isSyncing} />
     </>
   );
 };
@@ -76,8 +71,6 @@ export const Route = createFileRoute("/daily")({
     ],
   }),
   loader: async ({ context: { store } }): Promise<DailyChallenge | null> => {
-    const session = store.get(sessionAtom);
-    if (!session) return null;
     try {
       const today = import.meta.env.SSR
         ? format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd")
@@ -88,7 +81,6 @@ export const Route = createFileRoute("/daily")({
       return {
         date: today,
         guesses: userGuesses,
-        synced: true,
       };
     } catch (error) {
       console.error("Error getting user guesses:", error);

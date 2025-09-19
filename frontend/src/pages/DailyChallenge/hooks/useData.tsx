@@ -18,7 +18,6 @@ import { toast } from "sonner";
 export interface DailyChallenge {
   date: string;
   guesses: DailyChallengeGuessResponse[];
-  synced?: boolean;
 }
 
 export interface CorrectAnswer {
@@ -105,7 +104,6 @@ export const useDailyChallengeData = () => {
         const guess = {
           ...response,
           pokemonId: id,
-          synced: isAuthenticated,
         };
         if (guesses) {
           return {

@@ -1,6 +1,16 @@
 import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { supabase } from "../lib/supabase";
+
+export const posthogAtom = atomWithStorage<null | {
+  distinct_id: string | null;
+}>(`ph_${import.meta.env.VITE_PUBLIC_POSTHOG_KEY}_posthog`, null);
+
+export const posthogDistinctIdAtom = atom<string | null>((get) => {
+  const posthog = get(posthogAtom);
+  return posthog?.distinct_id ?? null;
+});
 
 const getInitialAuthState = () => {
   return { user: null, session: null };
@@ -20,6 +30,7 @@ export const isAuthenticatedAtom = atom((get) => get(userAtom) !== null);
 
 // Action atoms
 export const signInWithGoogle = async (redirectTo?: string) => {
+  console.log({ redirectTo });
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
