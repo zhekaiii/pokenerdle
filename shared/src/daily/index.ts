@@ -65,4 +65,5 @@ export type DailyChallengeStatsResponse = {
   win_rate: number;
   streak: number;
   max_streak: number;
+  histogram: Record<number, number>;
 };

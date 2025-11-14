@@ -365,6 +365,14 @@ export const syncUserGuesses = async (
 export const getUserStats = async (userId: string) => {
   const statsData = await getUserDailyStatsData(userId);
   const today = TZDate.tz(SINGAPORE_TIMEZONE);
+  const histogram: Record<number, number> = statsData.reduce((acc, day) => {
+    if (day.correct) {
+      acc[day.count] = (acc[day.count] || 0) + 1;
+    } else if (day.count === DAILY_CHALLENGE_GUESS_LIMIT) {
+      acc[-1] = (acc[-1] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<number, number>);
 
   if (statsData.length === 0) {
     return {
@@ -372,6 +380,7 @@ export const getUserStats = async (userId: string) => {
       win_rate: 0,
       streak: 0,
       max_streak: 0,
+      histogram: {},
     };
   }
 
@@ -420,5 +429,6 @@ export const getUserStats = async (userId: string) => {
     win_rate,
     streak,
     max_streak: maxStreak,
+    histogram,
   };
 };
