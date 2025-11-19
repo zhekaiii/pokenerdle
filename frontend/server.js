@@ -40,9 +40,10 @@ i18n
       escapeValue: false,
     },
     detection: {
-      order: ["cookie", "header"],
+      order: ["querystring", "cookie", "header"],
       caches: ["cookie"],
       cookieMinutes: 60 * 24 * 365 * 10, // 10 years,
+      lookupQuerystring: 'lang',
       convertDetectedLanguage: (code) => {
         if (["zh-TW", "zh-HK", "zh-MO", "zh-Hant"].includes(code)) {
           return "zh-Hant";
