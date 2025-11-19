@@ -54,22 +54,6 @@ export const Route = createFileRoute("/daily")({
   context: () => ({
     shouldShowRuleButton: true,
   }),
-  head: () => ({
-    meta: [
-      { title: "Daily Challenge – PokéNerdle" },
-      { property: "og:title", content: "Daily Challenge – PokéNerdle" },
-      {
-        name: "description",
-        content:
-          "Play the Daily Challenge and test your Pokémon knowledge! Guess the daily mystery Pokémon in 8 tries or less!",
-      },
-      {
-        property: "og:description",
-        content:
-          "Play the Daily Challenge and test your Pokémon knowledge! Guess the daily mystery Pokémon in 8 tries or less!",
-      },
-    ],
-  }),
   loader: async ({ context: { store } }): Promise<DailyChallenge | null> => {
     try {
       const today = import.meta.env.SSR
@@ -87,4 +71,20 @@ export const Route = createFileRoute("/daily")({
       return null;
     }
   },
+  head: ({ match }) => ({
+    meta: [
+      { title: match.context.t("meta:title.daily") },
+      { property: "og:title", content: match.context.t("meta:title.daily") },
+      {
+        name: "description",
+        content:
+          match.context.t("meta:description.daily"),
+      },
+      {
+        property: "og:description",
+        content:
+          match.context.t("meta:description.daily"),
+      },
+    ],
+  }),
 });

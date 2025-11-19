@@ -16,10 +16,11 @@ import { useTranslation } from "react-i18next";
 import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
 import PageContainer from "../layout/PageContainer";
+import { TFunction } from "i18next";
 
 type SearchParams = {
   v?: string;
-}
+};
 
 function RootLayout() {
   const { session, user } = Route.useLoaderData();
@@ -74,16 +75,8 @@ function RootLayout() {
         )}
 
         <meta
-          name="description"
-          content="PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!"
-        />
-        <meta
           name="keywords"
           content="Pokemon, Game, Puzzle, PokéNerdle, PokeChain, PokeNerdle"
-        />
-        <meta
-          property="og:description"
-          content="PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!"
         />
         <meta property="og:type" content="website" />
         {v !== "24678" && (
@@ -112,26 +105,35 @@ interface RootRouteContext {
   scripts?: AnyRouteMatch["headScripts"];
   links?: AnyRouteMatch["links"];
   store: Store;
+  t: TFunction;
 }
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({
-  loader: ({ context: { scripts = [], links = [], store } }) => {
+  loader: ({ context: { store } }) => {
     const session = store.get(sessionAtom);
     const user = store.get(userAtom);
     return {
       session,
       user,
-      scripts,
-      links,
     };
   },
-  head: ({ loaderData: { scripts = [], links = [] } = {} }) => ({
+  head: ({ match }) => ({
     meta: [
-      { title: "PokéNerdle" },
-      { property: "og:title", content: "PokéNerdle" },
+      { title: match.context.t("meta:title.root") },
+      { property: "og:title", content: match.context.t("meta:title.root") },
+      {
+        property: "og:description",
+        content:
+          match.context.t("meta:description.root"),
+      },
+      {
+        property: "description",
+        content:
+          match.context.t("meta:description.root"),
+      },
     ],
     scripts: [
-      ...(import.meta.env.SSR ? scripts : []),
+      ...(import.meta.env.SSR ? match.context.scripts ?? [] : []),
       ...(import.meta.env.PROD
         ? [
             {
@@ -154,7 +156,7 @@ window.__vite_plugin_react_preamble_installed__ = true`,
             },
           ]),
     ],
-    links: import.meta.env.SSR ? links : [],
+    links: import.meta.env.SSR ? match.context.links ?? [] : [],
   }),
   component: RootLayout,
   beforeLoad: ({ location }) => {

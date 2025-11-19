@@ -58,7 +58,7 @@ export async function render({
   const handler = createRequestHandler({
     request,
     createRouter: () => {
-      const router = createRouter(store);
+      const router = createRouter(store, req.i18n.t);
 
       // Update each router instance with the head info from vite
       router.update({
@@ -68,6 +68,7 @@ export async function render({
           store,
           links,
           scripts,
+          t: req.i18n.t,
         },
       });
       return router;
