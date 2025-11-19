@@ -17,8 +17,14 @@ import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
 import PageContainer from "../layout/PageContainer";
 
+type SearchParams = {
+  v?: string;
+}
+
 function RootLayout() {
   const { session, user } = Route.useLoaderData();
+  const { v } = Route.useSearch() as SearchParams;
+
   useHydrateAtoms([
     [sessionAtom, session],
     [userAtom, user],
@@ -79,10 +85,12 @@ function RootLayout() {
           content="PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!"
         />
         <meta property="og:type" content="website" />
-        <meta
-          property="og:image"
-          content="https://pokenerdle.app/ogimage.png"
-        />
+        {v !== "24678" && (
+          <meta
+            property="og:image"
+            content="https://pokenerdle.app/ogimage.png"
+          />
+        )}
         <meta name="twitter:card" content="summary_large_image" />
       </head>
       <body>
@@ -159,4 +167,12 @@ window.__vite_plugin_react_preamble_installed__ = true`,
     }
   },
   errorComponent: ErrorPage,
+  validateSearch: ({ v }): SearchParams => {
+    if (v) {
+      return {
+        v: String(v),
+      };
+    }
+    return {};
+  },
 });
