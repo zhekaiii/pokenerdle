@@ -73,17 +73,18 @@ export const Route = createFileRoute("/daily")({
   },
   head: ({ match }) => ({
     meta: [
-      { title: match.context.i18n.t("meta:title.daily") },
-      { property: "og:title", content: match.context.i18n.t("meta:title.daily") },
+      { title: match.context.i18n.t("title.daily", { ns: "meta" }) },
+      {
+        property: "og:title",
+        content: match.context.i18n.t("title.daily", { ns: "meta" }),
+      },
       {
         name: "description",
-        content:
-          match.context.i18n.t("meta:description.daily"),
+        content: match.context.i18n.t("description.daily", { ns: "meta" }),
       },
       {
         property: "og:description",
-        content:
-          match.context.i18n.t("meta:description.daily"),
+        content: match.context.i18n.t("description.daily", { ns: "meta" }),
       },
     ],
   }),
