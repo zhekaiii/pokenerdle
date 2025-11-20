@@ -9,6 +9,7 @@ import {
   redirect,
   Scripts,
 } from "@tanstack/react-router";
+import { i18n } from "i18next";
 import { useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { Store } from "jotai/vanilla/store";
@@ -16,7 +17,6 @@ import { useTranslation } from "react-i18next";
 import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
 import PageContainer from "../layout/PageContainer";
-import { TFunction } from "i18next";
 
 type SearchParams = {
   v?: string;
@@ -50,6 +50,10 @@ function RootLayout() {
         <meta charSet="UTF-8" />
         <HeadContent />
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="canonical" href="https://pokenerdle.app" />
+        <link rel="alternate" hrefLang="en" href="https://pokenerdle.app?lang=en" />
+        <link rel="alternate" hrefLang="zh-Hans" href="https://pokenerdle.app?lang=zh-Hans" />
+        <link rel="alternate" hrefLang="zh-Hant" href="https://pokenerdle.app?lang=zh-Hant" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"
@@ -104,7 +108,7 @@ interface RootRouteContext {
   scripts?: AnyRouteMatch["headScripts"];
   links?: AnyRouteMatch["links"];
   store: Store;
-  t: TFunction;
+  i18n: i18n;
 }
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({
@@ -118,18 +122,22 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
   },
   head: ({ match }) => ({
     meta: [
-      { title: match.context.t("meta:title.root") },
-      { property: "og:title", content: match.context.t("meta:title.root") },
+      { title: match.context.i18n.t("meta:title.root") },
+      { property: "og:title", content: match.context.i18n.t("meta:title.root") },
       {
         property: "og:description",
         content:
-          match.context.t("meta:description.root"),
+          match.context.i18n.t("meta:description.root"),
       },
       {
         property: "description",
         content:
-          match.context.t("meta:description.root"),
+          match.context.i18n.t("meta:description.root"),
       },
+      {
+        property: "og:url",
+        content: match.context.i18n.language === "en" ? "https://pokenerdle.app" : `https://pokenerdle.app?lang=${match.context.i18n.language}`,
+      }
     ],
     scripts: [
       ...(import.meta.env.SSR ? match.context.scripts ?? [] : []),

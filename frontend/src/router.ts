@@ -6,7 +6,7 @@ import { routeTree } from "./routeTree.gen";
 import { TFunction } from "i18next";
 import i18n from "./lib/i18n";
 
-export const createRouter = (store: Store, t: TFunction = i18n.t) => {
+export const createRouter = (store: Store, i18nInstance = i18n) => {
   return createTanstackRouter({
     routeTree,
     defaultPreload: "intent",
@@ -15,7 +15,7 @@ export const createRouter = (store: Store, t: TFunction = i18n.t) => {
     context: {
       head: "",
       store,
-      t
+      i18n
     },
   });
 };
