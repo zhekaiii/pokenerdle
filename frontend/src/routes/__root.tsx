@@ -50,7 +50,6 @@ function RootLayout() {
         <meta charSet="UTF-8" />
         <HeadContent />
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-        <link rel="canonical" href="https://pokenerdle.app" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"
