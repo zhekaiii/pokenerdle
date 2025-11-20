@@ -2,10 +2,10 @@ import api from "@/api";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import i18n from "i18next";
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 let globalSSRPokemonNames: Record<
   string,
@@ -50,30 +50,30 @@ export const usePokemonNames = () => {
   const [pokemonNames, setPokemonNames] = useAtom(pokemonNamesAtom);
   const [lastModified, setLastModified] = useAtom(lastModifiedAtom);
   const queryClient = useQueryClient();
+  const {
+    i18n: { language },
+  } = useTranslation();
 
   useEffect(() => {
     // Don't fetch in SSR - data is already available from global store
-    if (import.meta.env.SSR || !i18n.language) return;
+    if (import.meta.env.SSR || !language) return;
 
     queryClient
       .fetchQuery({
-        queryKey: ["pokemonNames", i18n.language],
+        queryKey: ["pokemonNames", language],
         queryFn: () =>
-          api.data.getPokemonNames(
-            i18n.language!,
-            lastModified[i18n.language!]
-          ),
+          api.data.getPokemonNames(language!, lastModified[language!]),
       })
       .then(({ data, lastModified }) => {
         setPokemonNames((prev) => ({
           ...prev,
-          [i18n.language!]: Object.fromEntries(
+          [language!]: Object.fromEntries(
             data.map((pokemon) => [pokemon.id, pokemon])
           ),
         }));
         setLastModified((prev) => ({
           ...prev,
-          [i18n.language!]: lastModified,
+          [language!]: lastModified,
         }));
       })
       .catch((error) => {
@@ -83,7 +83,7 @@ export const usePokemonNames = () => {
         throw error;
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to fetch when the language changes
-  }, [i18n.language]);
+  }, [language]);
 
-  return i18n.language ? pokemonNames[i18n.language] ?? {} : {};
+  return language ? pokemonNames[language] ?? {} : {};
 };
