@@ -9,8 +9,9 @@ if (!import.meta.env.SSR) {
     .use(initReactI18next)
     .use(HttpBackend)
     .init({
-      defaultNS: "common",
-      fallbackNS: "common",
+      defaultNS: false,
+      fallbackNS: false,
+      ns: [],
       backend: {
         loadPath: "/locales/{{ns}}/{{lng}}.json",
       },
@@ -23,10 +24,16 @@ if (!import.meta.env.SSR) {
       fallbackLng: "en",
 
       detection: {
-        order: ["querystring", "localStorage", "cookie", "navigator", "htmlTag"],
+        order: [
+          "querystring",
+          "localStorage",
+          "cookie",
+          "navigator",
+          "htmlTag",
+        ],
         caches: ["localStorage", "cookie"],
         cookieMinutes: 60 * 24 * 365 * 10, // 10 years,
-        lookupQuerystring: 'lang',
+        lookupQuerystring: "lang",
         convertDetectedLanguage: (code) => {
           if (code.startsWith("en")) return "en";
           if (["zh-TW", "zh-HK", "zh-MO", "zh-Hant"].includes(code)) {

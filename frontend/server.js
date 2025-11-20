@@ -43,7 +43,7 @@ i18n
       order: ["querystring", "cookie", "header"],
       caches: ["cookie"],
       cookieMinutes: 60 * 24 * 365 * 10, // 10 years,
-      lookupQuerystring: 'lang',
+      lookupQuerystring: "lang",
       convertDetectedLanguage: (code) => {
         if (["zh-TW", "zh-HK", "zh-MO", "zh-Hant"].includes(code)) {
           return "zh-Hant";

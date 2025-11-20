@@ -2,9 +2,8 @@ import { createRouter as createTanstackRouter } from "@tanstack/react-router";
 import { Store } from "jotai/vanilla/store";
 
 // Import the generated route tree
-import { routeTree } from "./routeTree.gen";
-import { TFunction } from "i18next";
 import i18n from "./lib/i18n";
+import { routeTree } from "./routeTree.gen";
 
 export const createRouter = (store: Store, i18nInstance = i18n) => {
   return createTanstackRouter({
@@ -15,7 +14,7 @@ export const createRouter = (store: Store, i18nInstance = i18n) => {
     context: {
       head: "",
       store,
-      i18n
+      i18n: i18nInstance,
     },
   });
 };

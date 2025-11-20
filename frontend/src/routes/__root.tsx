@@ -6,40 +6,50 @@ import {
   createRootRouteWithContext,
   HeadContent,
   Outlet,
-  redirect,
   Scripts,
   useLocation,
+  useRouter,
 } from "@tanstack/react-router";
 import { i18n } from "i18next";
 import { useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { Store } from "jotai/vanilla/store";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
 import PageContainer from "../layout/PageContainer";
 
-type SearchParams = {
+interface SearchParams {
   v?: string;
-};
+}
 
 function RootLayout() {
   const { session, user } = Route.useLoaderData();
   const { v } = Route.useSearch() as SearchParams;
   const location = useLocation();
+  const router = useRouter();
 
   useHydrateAtoms([
     [sessionAtom, session],
     [userAtom, user],
   ]);
   const theme = useAtomValue(themeAtom);
-  const {
-    i18n: { language },
-  } = useTranslation();
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    const handler = () => {
+      router.invalidate();
+    };
+    i18n.on("languageChanged", handler);
+    return () => {
+      i18n.off("languageChanged", handler);
+    };
+  }, [i18n, router]);
 
   return (
     <html
-      lang={language}
+      lang={i18n.language}
       className={
         theme === "dark"
           ? "tw:dark"
@@ -73,7 +83,7 @@ function RootLayout() {
         />
         <meta
           property="og:url"
-          content={`https://pokenerdle.app${location.pathname}?lang=${language}`}
+          content={`https://pokenerdle.app${location.pathname}?lang=${i18n.language}`}
         />
         <meta
           name="viewport"
@@ -141,59 +151,52 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
       user,
     };
   },
-  head: ({ match }) => ({
-    meta: [
-      { title: match.context.i18n.t("title.root", { ns: "meta" }) },
-      {
-        property: "og:title",
-        content: match.context.i18n.t("title.root", { ns: "meta" }),
-      },
-      {
-        property: "og:description",
-        content: match.context.i18n.t("description.root", { ns: "meta" }),
-      },
-      {
-        name: "description",
-        content: match.context.i18n.t("description.root", { ns: "meta" }),
-      },
-    ],
-    scripts: [
-      ...(import.meta.env.SSR ? match.context.scripts ?? [] : []),
-      ...(import.meta.env.PROD
-        ? [
-            {
-              type: "module",
-              src: "/assets/entry-client.js",
-            },
-          ]
-        : [
-            {
-              type: "module",
-              children: `import RefreshRuntime from "/@react-refresh"
-RefreshRuntime.injectIntoGlobalHook(window)
-window.$RefreshReg$ = () => {}
-window.$RefreshSig$ = () => (type) => type
-window.__vite_plugin_react_preamble_installed__ = true`,
-            },
-            {
-              type: "module",
-              src: "/src/entry-client.tsx",
-            },
-          ]),
-    ],
-    links: import.meta.env.SSR ? match.context.links ?? [] : [],
-  }),
-  component: RootLayout,
-  beforeLoad: ({ location }) => {
-    if (location.pathname === "/") {
-      throw redirect({
-        to: "/daily",
-        search: location.search,
-        hash: location.hash,
-        replace: true,
-      });
-    }
+  head: async ({ match }) => {
+    await match.context.i18n.loadNamespaces("metadata");
+    return {
+      meta: [
+        { title: match.context.i18n.t("metadata:title.root") },
+        {
+          property: "og:title",
+          content: match.context.i18n.t("metadata:title.root"),
+        },
+        {
+          property: "og:description",
+          content: match.context.i18n.t("metadata:description.root"),
+        },
+        {
+          name: "description",
+          content: match.context.i18n.t("metadata:description.root"),
+        },
+      ],
+      scripts: [
+        ...(import.meta.env.SSR ? match.context.scripts ?? [] : []),
+        ...(import.meta.env.PROD
+          ? [
+              {
+                type: "module",
+                src: "/assets/entry-client.js",
+              },
+            ]
+          : [
+              {
+                type: "module",
+                children: `import RefreshRuntime from "/@react-refresh"
+  RefreshRuntime.injectIntoGlobalHook(window)
+  window.$RefreshReg$ = () => {}
+  window.$RefreshSig$ = () => (type) => type
+  window.__vite_plugin_react_preamble_installed__ = true`,
+              },
+              {
+                type: "module",
+                src: "/src/entry-client.tsx",
+              },
+            ]),
+      ],
+      links: import.meta.env.SSR ? match.context.links ?? [] : [],
+    };
   },
+  component: RootLayout,
   errorComponent: ErrorPage,
   validateSearch: ({ v }): SearchParams => {
     if (v) {

@@ -71,21 +71,24 @@ export const Route = createFileRoute("/daily")({
       return null;
     }
   },
-  head: ({ match }) => ({
-    meta: [
-      { title: match.context.i18n.t("title.daily", { ns: "meta" }) },
-      {
-        property: "og:title",
-        content: match.context.i18n.t("title.daily", { ns: "meta" }),
-      },
-      {
-        name: "description",
-        content: match.context.i18n.t("description.daily", { ns: "meta" }),
-      },
-      {
-        property: "og:description",
-        content: match.context.i18n.t("description.daily", { ns: "meta" }),
-      },
-    ],
-  }),
+  head: async ({ match }) => {
+    await match.context.i18n.loadNamespaces("metadata");
+    return {
+      meta: [
+        { title: match.context.i18n.t("metadata:title.daily") },
+        {
+          property: "og:title",
+          content: match.context.i18n.t("metadata:title.daily"),
+        },
+        {
+          name: "description",
+          content: match.context.i18n.t("metadata:description.daily"),
+        },
+        {
+          property: "og:description",
+          content: match.context.i18n.t("metadata:description.daily"),
+        },
+      ],
+    };
+  },
 });
