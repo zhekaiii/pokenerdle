@@ -17,6 +17,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "@/pages/DailyChallenge/constants";
 import { DailyChallengeStatsResponse } from "@pokenerdle/shared/daily";
+import { sum } from "es-toolkit";
 import { TrendingUp } from "lucide-react";
 import posthog from "posthog-js";
 import React, { useEffect, useMemo, useState } from "react";
@@ -189,6 +190,14 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
                               }
                             )}
                           </div>
+                          <span>
+                            Average Guesses:{" "}
+                            {(Object.entries(stats.histogram).reduce(
+                              (acc, [guessCount, freq]) =>
+                                acc + Number(guessCount) * freq,
+                              0
+                            ) / sum(Object.values(stats.histogram))).toFixed(1)}
+                          </span>
                         </div>
                       </CarouselItem>
                     </CarouselContent>
