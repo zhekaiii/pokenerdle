@@ -1,3 +1,7 @@
+import { TZDate } from "@date-fns/tz";
+import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
+import { formatDate, subMonths } from "date-fns";
+import seedrandom from "seedrandom";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
 import { Prisma } from "../generated/prisma-pg/client.js";
 import { pgClient } from "../lib/pg.js";
@@ -8,10 +12,14 @@ export const getDailyPokemonFromDb = async (date: string) => {
   });
 };
 
-export const createDailyPokemon = async (date: string, pokemonId: number) => {
+export const createDailyPokemon = async (
+  date: string,
+  pokemonId: number,
+  rngState: string
+) => {
   try {
     return await pgClient.dailyChallenge.create({
-      data: { date, pokemonId },
+      data: { date, pokemonId, rngState },
     });
   } catch (error) {
     // Prisma error code for unique constraint violation is 'P2002'
@@ -182,4 +190,33 @@ export const getUserDailyStatsData = async (userId: string) => {
     ORDER BY
      "dailyChallengeId"
   `;
+};
+
+export const hasPokemonAppearedInLastMonth = async (pokemonId: number) => {
+  const today = TZDate.tz(SINGAPORE_TIMEZONE);
+  const oneMonthAgo = subMonths(today, 1);
+  const result = await pgClient.dailyChallenge.findFirst({
+    where: {
+      pokemonId,
+      date: {
+        gte: formatDate(oneMonthAgo, "yyyy-MM-dd"),
+      },
+    },
+  });
+  return result !== null;
+};
+
+export const getLastRngState = async () => {
+  const result = await pgClient.dailyChallenge.findFirst({
+    orderBy: {
+      date: "desc",
+    },
+    select: {
+      rngState: true,
+    },
+  });
+  if (result?.rngState) {
+    return JSON.parse(result.rngState) as seedrandom.State.Alea;
+  }
+  return null;
 };

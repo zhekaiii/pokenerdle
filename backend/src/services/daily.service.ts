@@ -11,9 +11,11 @@ import {
   createDailyPokemon,
   deleteUserGuessesForDate,
   getDailyPokemonFromDb,
+  getLastRngState,
   getUserDailyStatsData,
   getUserGuessCountForDate,
   getUserGuessesForDate,
+  hasPokemonAppearedInLastMonth,
   migrateUserGuesses,
   saveUserGuess,
 } from "../repositories/daily.repository.js";
@@ -53,17 +55,31 @@ export const getDailyPokemon = async (date: string) => {
     return pokemon;
   }
 
-  // If not in database, generate new daily pokemon
-  const rng = seedrandom.alea(process.env.RANDOM_SEED! + date);
   const numPokemon = await getNumDefaultPokemon();
-  const randomIndex = Math.floor(rng() * numPokemon);
-  let pokemon = await getPokemonForDaily({ offset: randomIndex });
+  const lastRngState = await getLastRngState();
+  const rng = seedrandom.alea(process.env.RANDOM_SEED! + date, {
+    state: lastRngState ?? true,
+  });
+  let pokemon: DailyPokemon | null = await (async () => {
+    // If not in database, generate new daily pokemon
+    while (true) {
+      const randomIndex = Math.floor(rng() * numPokemon);
+      const dailyPokemon = await getPokemonForDaily({ offset: randomIndex });
+      if (!dailyPokemon) {
+        throw new Error("unable to get daily pokemon");
+      }
+      if (await hasPokemonAppearedInLastMonth(dailyPokemon.id)) {
+        continue;
+      }
+      return dailyPokemon;
+    }
+  })();
 
-  if (!pokemon) {
-    throw new Error("unable to get daily pokemon");
-  }
-
-  const { pokemonId } = await createDailyPokemon(date, pokemon.id);
+  const { pokemonId } = await createDailyPokemon(
+    date,
+    pokemon.id,
+    JSON.stringify(rng.state())
+  );
   if (pokemonId != pokemon.id) {
     pokemon = await getPokemonForDaily({ id: pokemonId });
   }
