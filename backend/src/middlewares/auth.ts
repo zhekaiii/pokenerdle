@@ -1,11 +1,16 @@
 import { createClient } from "@supabase/supabase-js";
+import "dotenv/config";
 import { NextFunction, Request, Response } from "express";
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error("Missing Supabase environment variables");
+if (!supabaseUrl) {
+  throw new Error("Missing Supabase URL");
+}
+
+if (!supabaseServiceKey) {
+  throw new Error("Missing Supabase service role key");
 }
 
 export const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -61,7 +66,7 @@ const parsePosthogDistinctIdFromHeader = (req: AuthenticatedRequest) => {
 export const authenticateUser = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
@@ -105,7 +110,7 @@ export const authenticateUser = async (
 export const optionalAuthenticateUser = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   const authHeader = req.headers.authorization;
   parsePosthogDistinctIdFromHeader(req);
@@ -141,7 +146,7 @@ export const optionalAuthenticateUser = async (
 export const strictAuthenticateUser = async (
   req: StrictAuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   const authHeader = req.headers.authorization;
   parsePosthogDistinctIdFromHeader(req);

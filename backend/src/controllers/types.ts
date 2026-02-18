@@ -4,7 +4,7 @@ import {
   PokemonWithAbilities,
   WrongAnswerReason,
 } from "@pokenerdle/shared";
-import { pokemon_v2_pokemonspecies } from "@prisma/client";
+import { pokemon_v2_pokemonspecies } from "../generated/prisma-sqlite/client.js";
 
 export type BattleRoom = {
   players: [string] | [string, string];

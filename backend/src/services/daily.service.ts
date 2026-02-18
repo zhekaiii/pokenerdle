@@ -1,10 +1,10 @@
 import { TZDate } from "@date-fns/tz";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
-import { pokemon_v2_pokemontype } from "@prisma/client";
 import { isSameDay } from "date-fns";
 import seedrandom from "seedrandom";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
+import { pokemon_v2_pokemontype } from "../generated/prisma-sqlite/client.js";
 import { getOverallTypeEffectiveness } from "../lib/matchups.js";
 import { DailyPokemonToResponse } from "../mappers/daily.js";
 import {
@@ -78,7 +78,7 @@ export const getDailyPokemon = async (date: string) => {
   const { pokemonId } = await createDailyPokemon(
     date,
     pokemon.id,
-    JSON.stringify(rng.state())
+    JSON.stringify(rng.state()),
   );
   if (pokemonId != pokemon.id) {
     pokemon = await getPokemonForDaily({ id: pokemonId });
@@ -95,7 +95,7 @@ export const getDailyPokemon = async (date: string) => {
 export const submitGuess = async (
   userId: string,
   pokemonId: number,
-  date: string
+  date: string,
 ): Promise<DailyChallengeGuessResponse> => {
   let guessNumber: number | undefined;
   // Get the current guess number for this user and date
@@ -148,7 +148,7 @@ export const submitGuess = async (
 
 export const getUserGuessesForDateService = async (
   userId: string,
-  date: string
+  date: string,
 ) => {
   const guesses = await getUserGuessesForDate(userId, date);
 
@@ -186,7 +186,7 @@ export const getUserGuessesForDateService = async (
 
 export const verifyGuess = async (
   pokemonId: number,
-  date: string
+  date: string,
 ): Promise<DailyChallengeGuessResponse> => {
   const [targetPokemon, guessPokemon] = await Promise.all([
     getDailyPokemon(date),
@@ -259,7 +259,7 @@ export const verifyGuess = async (
       : await getOverallTypeEffectiveness(
           guessType1.type_id!,
           targetType1.type_id!,
-          targetType2?.type_id
+          targetType2?.type_id,
         );
 
   const type2Correctness =
@@ -267,12 +267,12 @@ export const verifyGuess = async (
     guessType2?.type_id === targetType1.type_id
       ? "="
       : guessType2
-      ? await getOverallTypeEffectiveness(
-          guessType2.type_id!,
-          targetType1.type_id!,
-          targetType2?.type_id
-        )
-      : "NA";
+        ? await getOverallTypeEffectiveness(
+            guessType2.type_id!,
+            targetType1.type_id!,
+            targetType2?.type_id,
+          )
+        : "NA";
 
   const genCorrectness: Comp =
     targetGen < guessGen ? "<" : guessGen == targetGen ? "=" : ">";
@@ -281,8 +281,8 @@ export const verifyGuess = async (
     targetPokemon.height! < guessPokemon.height!
       ? "<"
       : targetPokemon.height == guessPokemon.height
-      ? "="
-      : ">";
+        ? "="
+        : ">";
 
   const colorCorrectness =
     guessPokemon.pokemon_v2_pokemonspecies?.pokemon_color_id ==
@@ -315,7 +315,7 @@ export const syncUserGuesses = async (
   userId: string | undefined,
   posthogDistinctId: string | undefined,
   guesses: { pokemonId: number }[],
-  date: string
+  date: string,
 ) => {
   if (!userId && !posthogDistinctId) {
     throw new Error("User ID and Posthog Distinct ID are required");
@@ -360,13 +360,13 @@ export const syncUserGuesses = async (
       const result = await submitGuess(
         userId ?? posthogDistinctId!,
         guess.pokemonId,
-        date
+        date,
       );
       syncedGuesses.push(result);
     } catch (error) {
       console.error(
         `Failed to sync guess for pokemon ${guess.pokemonId}:`,
-        error
+        error,
       );
     }
   }
@@ -381,14 +381,17 @@ export const syncUserGuesses = async (
 export const getUserStats = async (userId: string) => {
   const statsData = await getUserDailyStatsData(userId);
   const today = TZDate.tz(SINGAPORE_TIMEZONE);
-  const histogram: Record<number, number> = statsData.reduce((acc, day) => {
-    if (day.correct) {
-      acc[day.count] = (acc[day.count] || 0) + 1;
-    } else if (day.count === DAILY_CHALLENGE_GUESS_LIMIT) {
-      acc[-1] = (acc[-1] || 0) + 1;
-    }
-    return acc;
-  }, {} as Record<number, number>);
+  const histogram: Record<number, number> = statsData.reduce(
+    (acc, day) => {
+      if (day.correct) {
+        acc[day.count] = (acc[day.count] || 0) + 1;
+      } else if (day.count === DAILY_CHALLENGE_GUESS_LIMIT) {
+        acc[-1] = (acc[-1] || 0) + 1;
+      }
+      return acc;
+    },
+    {} as Record<number, number>,
+  );
 
   if (statsData.length === 0) {
     return {

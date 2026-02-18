@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import "dotenv/config";
 import express, { ErrorRequestHandler } from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -14,8 +14,6 @@ import dailyRouter from "./routes/daily.routes.js";
 import dataRouter from "./routes/data.routes.js";
 import pathfinderRouter from "./routes/pathfinder.routes.js";
 import { PokeNerdleServer } from "./utils/types.js";
-
-dotenv.config();
 
 const app = express();
 app.set("trust proxy", true);
@@ -43,7 +41,7 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization, If-Modified-Since, X-PostHog-Distinct-Id"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization, If-Modified-Since, X-PostHog-Distinct-Id",
   );
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Credentials", "true");

@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "bun --watch run ./src/index.ts",
-    "prebuild": "prisma generate && prisma generate --schema=./prisma-pg/schema.prisma",
+    "prebuild": "prisma generate --schema=./prisma-sqlite/schema.prisma && prisma generate --schema=./prisma-pg/schema.prisma",
     "build": "tsc",
     "start": "NODE_ENV=production node --es-module-specifier-resolution=node dist/index.js",
     "build-db": "./build-db.sh"
@@ -17,24 +17,28 @@
   "dependencies": {
     "@date-fns/tz": "^1.4.1",
     "@pokenerdle/shared": "workspace:*",
-    "@prisma/client": "^6.13.0",
+    "@prisma/adapter-libsql": "^7.4.0",
+    "@prisma/adapter-pg": "^7.4.0",
+    "@prisma/client": "^7.4.0",
     "@supabase/supabase-js": "^2.55.0",
     "date-fns": "^4.1.0",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "heap-js": "^2.6.0",
     "http-proxy": "^1.18.1",
+    "pg": "^8.18.0",
     "posthog-node": "^5.7.0",
     "seedrandom": "^3.0.5",
     "socket.io": "^4.7.5",
     "zod": "^4.0.16"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^4.17.21",
     "@types/http-proxy": "^1.17.16",
     "@types/node": "^22.1.0",
     "@types/seedrandom": "^3.0.8",
-    "prisma": "^6.1.0",
+    "prisma": "^7.4.0",
     "typescript": "^5.9.2"
   }
 }

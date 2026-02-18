@@ -1,5 +1,20 @@
 packages:
-  - 'shared'
-  - 'frontend'
-  - 'backend'
+  - shared
+  - frontend
+  - backend
+
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@posthog/cli'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - '@swc/core'
+  - '@tailwindcss/oxide'
+  - core-js
+  - esbuild
+  - prisma
+
 link-workspace-packages: true
+
+onlyBuiltDependencies:
+  - better-sqlite3

@@ -1,5 +1,4 @@
 import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
-import { pokemon_v2_ability, pokemon_v2_pokemon } from "@prisma/client";
 import { readFileSync, writeFileSync } from "fs";
 import { Heap } from "heap-js";
 import {
@@ -7,6 +6,10 @@ import {
   ICON_SUFFIXES,
   MIN_PATHFINDER_LENGTH,
 } from "../constants/game.js";
+import {
+  pokemon_v2_ability,
+  pokemon_v2_pokemon,
+} from "../generated/prisma-sqlite/client.js";
 import { LanguageId } from "../lib/constants.js";
 import { Graph } from "../lib/graph.js";
 import { prisma } from "../lib/prisma.js";
@@ -42,7 +45,7 @@ export const getPokemonNames = async (lang: LanguageId) => {
 };
 
 export const getPokemonIdsByGeneration = async (
-  generation: number
+  generation: number,
 ): Promise<number[]> => {
   const result = await prisma.pokemon_v2_pokemon.findMany({
     where: {
@@ -81,9 +84,9 @@ export const prettifyQueriedPokemon = <
     }[];
     pokemon_v2_pokemonspecies: { name: string } | null;
     pokemon_v2_pokemonsprites: { sprites: string }[];
-  }
+  },
 >(
-  _pokemon: T
+  _pokemon: T,
 ): PokemonWithAbilities => {
   const {
     pokemon_v2_pokemonability,
@@ -144,7 +147,7 @@ export const getPokemonIcons = async (): Promise<Record<number, string>> => {
       const name = pokemon_v2_pokemon?.name;
 
       const suffix = ICON_SUFFIXES.find((region) =>
-        name?.toLowerCase().includes(region)
+        name?.toLowerCase().includes(region),
       );
 
       const filename = `${speciesId}${suffix ? `-${suffix}` : ""}.png`;
@@ -158,7 +161,7 @@ export const getPokemonIcons = async (): Promise<Record<number, string>> => {
           parsedSprites.versions["generation-vii"].icons.front_default ??
           fallbackUrl,
       ];
-    })
+    }),
   );
 };
 
@@ -207,7 +210,7 @@ export const findLargestConnectedComponent = () => {
   const graph = Graph.loadFromJsonString(readFileSync("./graph.json", "utf-8"));
   const components = graph.findConnectedComponents();
   const component = components.reduce((largest, current) =>
-    current.length > largest.length ? current : largest
+    current.length > largest.length ? current : largest,
   );
   writeFileSync("./component.json", JSON.stringify(component));
   return component;
@@ -215,7 +218,7 @@ export const findLargestConnectedComponent = () => {
 
 export const getRandomPokemonPath = () => {
   const component: number[] = JSON.parse(
-    readFileSync("./component.json", "utf-8")
+    readFileSync("./component.json", "utf-8"),
   );
   const graph = Graph.loadFromJsonString(readFileSync("./graph.json", "utf-8"));
   const paths: Record<number, number[][]> = {};
@@ -224,7 +227,7 @@ export const getRandomPokemonPath = () => {
 
   const visited = new Set<number>();
   const queue = new Heap<[node: number, distance: number, path: number[]]>(
-    (a, b) => a[1] - b[1]
+    (a, b) => a[1] - b[1],
   );
   queue.init([[startingNode, 1, [startingNode]]]);
 
@@ -247,7 +250,7 @@ export const getRandomPokemonPath = () => {
     Object.values(paths).flat(),
     Object.entries(paths)
       .map(([length]) => (+length - (MIN_PATHFINDER_LENGTH - 1)) ** 2)
-      .flat()
+      .flat(),
   );
 };
 
@@ -264,7 +267,7 @@ type GetPokemonParams =
     };
 
 export const getPokemonForDaily = async (
-  props: GetPokemonParams
+  props: GetPokemonParams,
 ): Promise<DailyPokemon | null> => {
   let pokemonId: number;
   if ("offset" in props) {
@@ -312,7 +315,7 @@ export const getPokemonForDaily = async (
  */
 export const getDamageFactor = async (
   attackType: number,
-  defendingType: number
+  defendingType: number,
 ) => {
   const result = await prisma.pokemon_v2_typeefficacy.findFirstOrThrow({
     where: {
