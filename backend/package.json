@@ -16,6 +16,7 @@
   "description": "",
   "dependencies": {
     "@date-fns/tz": "^1.4.1",
+    "@pokenerdle/shared": "workspace:*",
     "@prisma/client": "^6.13.0",
     "@supabase/supabase-js": "^2.55.0",
     "date-fns": "^4.1.0",
@@ -29,7 +30,6 @@
     "zod": "^4.0.16"
   },
   "devDependencies": {
-    "@pokenerdle/shared": "workspace:*",
     "@types/express": "^4.17.21",
     "@types/http-proxy": "^1.17.16",
     "@types/node": "^22.1.0",
