@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { debounce } from "es-toolkit";
 import { X } from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import classes from "./WaitingLobby.module.scss";
 
 interface Props {
@@ -18,10 +18,11 @@ const WaitingLobby: React.FC<Props> = ({ roomCode, exitRoom }) => {
     return url.toString();
   }, [roomCode]);
 
-  const resetButtonLabel = useCallback(
-    debounce(() => {
-      setButtonLabel("Copy invite link");
-    }, 4000),
+  const resetButtonLabel = useMemo(
+    () =>
+      debounce(() => {
+        setButtonLabel("Copy invite link");
+      }, 4000),
     []
   );
 

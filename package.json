@@ -21,5 +21,8 @@
     "shared",
     "frontend",
     "backend"
-  ]
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  }
 }

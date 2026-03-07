@@ -54,13 +54,11 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
     } as React.CSSProperties;
   }, [correctAnswer]);
 
-  const pokemonName = useMemo(() => {
-    const pokemonName =
-      correctAnswer?.pokemonId != undefined
-        ? pokemonNames[correctAnswer.pokemonId]
-        : undefined;
-    return pokemonName?.name || pokemonName?.speciesName;
-  }, [correctAnswer?.pokemonId, pokemonNames]);
+  const pokemonName =
+    correctAnswer?.pokemonId != undefined
+      ? pokemonNames[correctAnswer.pokemonId]?.name ||
+        pokemonNames[correctAnswer.pokemonId]?.speciesName
+      : undefined;
   const attempts = guesses?.guesses.length ?? 0;
 
   const subtitle = useMemo(() => {

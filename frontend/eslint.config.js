@@ -14,7 +14,7 @@ export default defineConfig([
   },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
-  pluginReactHooks.configs["recommended-latest"],
+  pluginReactHooks.configs.flat["recommended-latest"],
   {
     rules: {
       "no-unused-vars": "off",

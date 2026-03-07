@@ -6,7 +6,7 @@ import { PokemonWithAbilities } from "@pokenerdle/shared";
 import clsx from "clsx";
 import { uniqBy } from "es-toolkit";
 import { X } from "lucide-react";
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useState } from "react";
 import { formatAbilityName } from "../../../utils/formatters";
 import { Card, CardContent } from "../../ui/Card";
 import classes from "./index.module.scss";
@@ -30,18 +30,21 @@ const PokemonCard: React.FC<Props> = ({
 }) => {
   const pokemonNames = usePokemonNames();
   const pokemonName = pokemonNames[pokemon.id];
-  const { current: isShiny } = useRef(Math.random() <= SHINY_PROBABILITY);
+  const [isShiny] = useState(() => Math.random() <= SHINY_PROBABILITY);
   const abilities = useMemo(
     () => uniqBy(pokemon.abilities, (ability) => ability.name),
-    [pokemon]
+    [pokemon],
   );
-  const { current: timesUsed } = useRef(
-    abilities.reduce((acc, ability) => {
-      return {
-        ...acc,
-        [ability.name]: sharedLinks[ability.name] ?? 0,
-      };
-    }, {} as Record<string, number>)
+  const [timesUsed] = useState(() =>
+    abilities.reduce(
+      (acc, ability) => {
+        return {
+          ...acc,
+          [ability.name]: sharedLinks[ability.name] ?? 0,
+        };
+      },
+      {} as Record<string, number>,
+    ),
   );
   const pokemonNumber = pokemon.pokemon_species_id;
   const pokemonSpriteUrl = useMemo(() => {

@@ -84,7 +84,7 @@ const BattleScreen: React.FC<Props> = ({
   const [opponentStreak, setOpponentStreak] = useState(0);
 
   const [timerEndsAt, setTimerEndsAt] = useState(
-    Date.now() + settings.timer * 1000
+    () => Date.now() + settings.timer * 1000,
   );
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [guesses, setGuesses] = useState<number[]>([]);
@@ -106,13 +106,13 @@ const BattleScreen: React.FC<Props> = ({
       isGameEnded &&
       (playerPoints > opponentPoints ||
         (forfeitInfo?.forfeit && forfeitInfo.forfeitedBy != socket.id)),
-    [isGameEnded, playerPoints, opponentPoints, forfeitInfo, socket]
+    [isGameEnded, playerPoints, opponentPoints, forfeitInfo, socket],
   );
 
   const isDraw = useMemo(
     () =>
       isGameEnded && !forfeitInfo?.forfeit && playerPoints === opponentPoints,
-    [isGameEnded, playerPoints, opponentPoints, forfeitInfo]
+    [isGameEnded, playerPoints, opponentPoints, forfeitInfo],
   );
 
   useEffect(() => {
@@ -122,7 +122,7 @@ const BattleScreen: React.FC<Props> = ({
     const interval = setInterval(() => {
       const secondsLeft = Math.max(
         0,
-        Math.floor((timerEndsAt - Date.now()) / 100) / 10
+        Math.floor((timerEndsAt - Date.now()) / 100) / 10,
       );
       setSecondsLeft(secondsLeft);
       if (secondsLeft == 0) {
@@ -147,7 +147,7 @@ const BattleScreen: React.FC<Props> = ({
       setGuesses((guesses) => [...guesses, pokemon.id]);
       api.battles.validatePokemon(socket, pokemon, roomCode!);
     },
-    [isSubmittingAnswer, roomCode, socket]
+    [isSubmittingAnswer, roomCode, socket],
   );
 
   const onRematch = useCallback(() => {
@@ -188,7 +188,7 @@ const BattleScreen: React.FC<Props> = ({
         socketId: string,
         sameSpecies: number[],
         isSameEvoline: boolean,
-        points: number
+        points: number,
       ) => {
         if (pokemons.some((p) => p.id === pokemon.id)) {
           return;
@@ -238,7 +238,7 @@ const BattleScreen: React.FC<Props> = ({
         setGuesses([]);
         setIsSubmittingAnswer(false);
         setInput("");
-      }
+      },
     );
     socket.on("wrongAnswer", ({ pokemonId, points, player, reason }) => {
       const isPlayersTurn = player === socket.id;
@@ -260,11 +260,11 @@ const BattleScreen: React.FC<Props> = ({
                 reason === WrongAnswerReason.AbilityLinkDepleted
                   ? `${pronoun} cannot use the same ability as a link more than ${MAX_LINKS} times.`
                   : reason === WrongAnswerReason.EvolutionLinkDepleted
-                  ? `${pronoun} cannot guess Pokémon in the same evolution chain more than ${MAX_LINKS} times.`
-                  : `${pokemonName} does not share an ability with the previous Pokémon.`
+                    ? `${pronoun} cannot guess Pokémon in the same evolution chain more than ${MAX_LINKS} times.`
+                    : `${pokemonName} does not share an ability with the previous Pokémon.`
               }
             `,
-        }
+        },
       );
       if (isPlayersTurn) {
         setPlayerPoints(points);

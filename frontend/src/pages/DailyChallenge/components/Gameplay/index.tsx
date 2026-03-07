@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+import { NoSsr } from "@/components/NoSsr";
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
 import PokemonReferenceDialog from "@/components/recyclables/PokemonReferenceDialog";
@@ -46,11 +47,6 @@ const DailyChallengeGameplay: React.FC = () => {
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
     onGuess(pokemon).finally(() => setInput(""));
   };
-  const [rendered, setRendered] = useState(false);
-
-  useEffect(() => {
-    setRendered(true);
-  }, []);
 
   useEffect(() => {
     if (!isGameFinished) {
@@ -74,17 +70,17 @@ const DailyChallengeGameplay: React.FC = () => {
         {hasSolved
           ? t("gameplay.foundPokemon")
           : hasReachedLimit
-          ? t("gameplay.betterLuckTomorrow")
-          : t("gameplay.guessPrompt", {
-              count:
-                DAILY_CHALLENGE_GUESS_LIMIT - (guesses?.guesses.length ?? 0),
-            })}
+            ? t("gameplay.betterLuckTomorrow")
+            : t("gameplay.guessPrompt", {
+                count:
+                  DAILY_CHALLENGE_GUESS_LIMIT - (guesses?.guesses.length ?? 0),
+              })}
       </div>
 
       <div className="tw:grid tw:grid-flow-row tw:gap-2">
         {Array.from({
           length: isGameFinished
-            ? guesses?.guesses.length ?? 0
+            ? (guesses?.guesses.length ?? 0)
             : (guesses?.guesses.length ?? 0) + 1,
         }).map((_, i) => {
           const guess = guesses?.guesses[i];
@@ -148,7 +144,7 @@ const DailyChallengeGameplay: React.FC = () => {
                 className="tw:flex-1"
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    generateShareText(guesses?.guesses ?? [], t)
+                    generateShareText(guesses?.guesses ?? [], t),
                   );
                   posthog.capture("daily_challenge_copy_clicked");
                   toast(t("share.success"), {
@@ -158,21 +154,22 @@ const DailyChallengeGameplay: React.FC = () => {
               >
                 <Clipboard /> {t("buttons.copy")}
               </Button>
-              {rendered && "share" in navigator && (
-                <Button
-                  suppressHydrationWarning
-                  className="tw:flex-1"
-                  onClick={() => {
-                    posthog.capture("daily_challenge_share_clicked", {
-                      has_solved: hasSolved,
-                      num_guesses: guesses?.guesses.length ?? 0,
-                    });
-                    shareResults(guesses?.guesses ?? [], t);
-                  }}
-                >
-                  <Share2 /> {t("buttons.share")}
-                </Button>
-              )}
+              <NoSsr>
+                {"share" in navigator && (
+                  <Button
+                    className="tw:flex-1"
+                    onClick={() => {
+                      posthog.capture("daily_challenge_share_clicked", {
+                        has_solved: hasSolved,
+                        num_guesses: guesses?.guesses.length ?? 0,
+                      });
+                      shareResults(guesses?.guesses ?? [], t);
+                    }}
+                  >
+                    <Share2 /> {t("buttons.share")}
+                  </Button>
+                )}
+              </NoSsr>
             </div>
             {isAuthenticated ? (
               <Button

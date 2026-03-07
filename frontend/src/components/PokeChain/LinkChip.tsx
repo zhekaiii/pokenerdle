@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
 import { GitBranch, ShieldCheck, X } from "lucide-react";
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import { formatAbilityName } from "../../utils/formatters";
 import { Chip } from "../ui/Chip";
 
@@ -26,12 +26,12 @@ const LinkChip: React.FC<Props> = ({
   count = 0,
   ...props
 }) => {
-  const { current: frozenCount } = useRef(count ?? 0);
+  const [frozenCount] = useState(count ?? 0);
   return (
     <Chip
       className={cn(
         "tw:capitalize tw:self-center tw:my-1 tw:whitespace-nowrap tw:text-white",
-        className
+        className,
       )}
     >
       <div className="tw:inline-flex tw:items-center">
