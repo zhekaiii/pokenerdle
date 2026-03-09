@@ -12,7 +12,7 @@ let globalSSRLastModified: string | null = null;
 // Function to set global SSR data (called once at startup)
 export const setSSRPokemonIconsData = (
   data: Record<number, string | null>,
-  lastModified: string | null
+  lastModified: string | null,
 ) => {
   globalSSRPokemonIcons = data;
   globalSSRLastModified = lastModified;
@@ -24,7 +24,7 @@ const pokemonIconsAtom = import.meta.env.SSR
       () => globalSSRPokemonIcons,
       // In SSR, we don't need to set the value and this removes typescript errors
       // since it's no longer a ReadonlyAtom
-      () => {}
+      () => {},
     )
   : atomWithStorage<Record<number, string | null>>(
       "pokemonIcons",
@@ -32,7 +32,7 @@ const pokemonIconsAtom = import.meta.env.SSR
       undefined,
       {
         getOnInit: true,
-      }
+      },
     );
 
 const lastModifiedAtom = import.meta.env.SSR
@@ -43,7 +43,7 @@ const lastModifiedAtom = import.meta.env.SSR
       undefined,
       {
         getOnInit: true,
-      }
+      },
     );
 
 export const usePokemonIcons = () => {
@@ -53,12 +53,22 @@ export const usePokemonIcons = () => {
   const queryClient = useQueryClient();
 
   const getPokemonIcon = useCallback(
-    (pokemonId: number) =>
-      pokemonIcons?.[pokemonId] ??
-      `https://raw.githubusercontent.com/pokedextracker/pokesprite/refs/heads/master/images/${pokemonId
+    (pokemonId: number) => {
+      if (pokemonIcons?.[pokemonId]) {
+        // TEMP FIX because master branch is weird
+        if (pokemonIcons[pokemonId].includes("sprites/master/sprites")) {
+          return pokemonIcons[pokemonId].replace(
+            "sprites/master/sprites",
+            "sprites/4bcd17051efacd74966305ac87a0330b6131259a/sprites",
+          );
+        }
+        return pokemonIcons[pokemonId];
+      }
+      return `https://raw.githubusercontent.com/pokedextracker/pokesprite/refs/heads/master/images/${pokemonId
         .toString()
-        .padStart(3, "0")}.png`,
-    [pokemonIcons]
+        .padStart(3, "0")}.png`;
+    },
+    [pokemonIcons],
   );
 
   useEffect(() => {
