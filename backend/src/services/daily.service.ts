@@ -56,7 +56,7 @@ export const getDailyPokemon = async (date: string) => {
   }
 
   const numPokemon = await getNumDefaultPokemon();
-  const lastRngState = await getLastRngState();
+  const lastRngState = await getLastRngState(date);
   const rng = seedrandom.alea(process.env.RANDOM_SEED! + date, {
     state: lastRngState ?? true,
   });

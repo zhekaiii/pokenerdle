@@ -15,7 +15,7 @@ export const getDailyPokemonFromDb = async (date: string) => {
 export const createDailyPokemon = async (
   date: string,
   pokemonId: number,
-  rngState: string
+  rngState: string,
 ) => {
   try {
     return await pgClient.dailyChallenge.create({
@@ -89,7 +89,7 @@ export const getUserGuessesForDate = async (userId: string, date: string) => {
 
 export const deleteUserGuessesForDate = async (
   userId: string,
-  date: string
+  date: string,
 ) => {
   return pgClient.userDailyGuess.deleteMany({
     where: {
@@ -101,7 +101,7 @@ export const deleteUserGuessesForDate = async (
 
 export const migrateUserGuesses = async (
   oldUserId: string,
-  newUserId: string
+  newUserId: string,
 ) => {
   await pgClient.$transaction(async (tx) => {
     // Find days where both user and posthog distinct id have guesses
@@ -117,8 +117,8 @@ export const migrateUserGuesses = async (
           },
         })
         .then((result) =>
-          result.map(({ dailyChallengeId }) => dailyChallengeId)
-        )
+          result.map(({ dailyChallengeId }) => dailyChallengeId),
+        ),
     );
     const newUserGuessesDays = new Set(
       await tx.userDailyGuess
@@ -132,8 +132,8 @@ export const migrateUserGuesses = async (
           },
         })
         .then((result) =>
-          result.map(({ dailyChallengeId }) => dailyChallengeId)
-        )
+          result.map(({ dailyChallengeId }) => dailyChallengeId),
+        ),
     );
     const daysToDelete = oldUserGuessesDays.intersection(newUserGuessesDays);
     await tx.userDailyGuess.deleteMany({
@@ -155,7 +155,7 @@ export const migrateUserGuesses = async (
 
 export const getUserGuessCountForDate = async (
   userId: string,
-  date: string
+  date: string,
 ) => {
   const result = await pgClient.userDailyGuess.count({
     where: {
@@ -206,8 +206,13 @@ export const hasPokemonAppearedInLastMonth = async (pokemonId: number) => {
   return result !== null;
 };
 
-export const getLastRngState = async () => {
+export const getLastRngState = async (date: string) => {
   const result = await pgClient.dailyChallenge.findFirst({
+    where: {
+      date: {
+        lte: date,
+      },
+    },
     orderBy: {
       date: "desc",
     },
