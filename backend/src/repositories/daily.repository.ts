@@ -10,6 +10,14 @@ export const getDailyPokemonFromDb = async (date: string) => {
   });
 };
 
+export const dailyChallengeExists = async (date: string): Promise<boolean> => {
+  return (
+    (await pgClient.dailyChallenge.count({
+      where: { date },
+    })) > 0
+  );
+};
+
 export const createDailyPokemon = async (
   date: string,
   pokemonId: number,

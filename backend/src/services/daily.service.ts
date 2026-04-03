@@ -9,6 +9,7 @@ import { getOverallTypeEffectiveness } from "../lib/matchups.js";
 import { DailyPokemonToResponse } from "../mappers/daily.js";
 import {
   createDailyPokemon,
+  dailyChallengeExists,
   deleteUserGuessesForDate,
   getDailyPokemonFromDb,
   getLastRngState,
@@ -74,8 +75,15 @@ export const getDailyPokemon = async (date: string) => {
     }
   }
 
+  // If the next day is already in the DB, the chain has already committed a
+  // different path from the same predecessor state. Use a pure date-based seed
+  // so this isolated historical gap gets a unique pokemon instead of
+  // duplicating the candidate sequence of the next day.
+  const nextDate = addDays(new Date(date), 1).toISOString().slice(0, 10);
+  const nextDayExists = await dailyChallengeExists(nextDate);
+  const rngState = nextDayExists ? true : (lastRngEntry?.state ?? true);
   const rng = seedrandom.alea(process.env.RANDOM_SEED! + date, {
-    state: lastRngEntry?.state ?? true,
+    state: rngState,
   });
   let pokemon: DailyPokemon | null = await (async () => {
     // If not in database, generate new daily pokemon
