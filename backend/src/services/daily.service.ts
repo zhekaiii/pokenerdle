@@ -1,7 +1,7 @@
 import { TZDate } from "@date-fns/tz";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
-import { addDays, differenceInCalendarDays, isSameDay } from "date-fns";
+import { addDays, differenceInCalendarDays, format, isSameDay } from "date-fns";
 import seedrandom from "seedrandom";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
 import { pokemon_v2_pokemontype } from "../generated/prisma-sqlite/client.js";
@@ -12,6 +12,7 @@ import {
   dailyChallengeExists,
   deleteUserGuessesForDate,
   getDailyPokemonFromDb,
+  getCalendarData,
   getLastRngState,
   getUserDailyStatsData,
   getUserGuessCountForDate,
@@ -122,6 +123,23 @@ export const submitGuess = async (
   pokemonId: number,
   date: string,
 ): Promise<DailyChallengeGuessResponse> => {
+  // Archive validation
+  const today = format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd");
+  const isArchive = date !== today;
+
+  if (isArchive) {
+    if (date > today) {
+      throw new Error("cannot play future challenges");
+    }
+    // Check if user already completed this archive challenge
+    const existingGuesses = await getUserGuessesForDate(userId, date);
+    const alreadySolved = existingGuesses.some((g) => g.isCorrect);
+    const alreadyMaxed = existingGuesses.length >= DAILY_CHALLENGE_GUESS_LIMIT;
+    if (alreadySolved || alreadyMaxed) {
+      throw new Error("archive challenge already completed");
+    }
+  }
+
   let guessNumber: number | undefined;
   // Get the current guess number for this user and date
   const currentGuessCount = await getUserGuessCountForDate(userId, date);
@@ -144,6 +162,7 @@ export const submitGuess = async (
       pokemonId,
       guessNumber,
       isCorrect: true,
+      isArchive,
       type1Correctness: "=",
       type2Correctness: "=",
       genCorrectness: "=",
@@ -166,6 +185,7 @@ export const submitGuess = async (
     genCorrectness: result.genCorrectness,
     heightCorrectness: result.heightCorrectness,
     colorCorrectness: result.colorCorrectness,
+    isArchive,
   });
 
   return result;
@@ -475,4 +495,8 @@ export const getUserStats = async (userId: string) => {
     max_streak: maxStreak,
     histogram,
   };
+};
+
+export const getCalendarDataService = async (userId: string, month: string) => {
+  return { entries: await getCalendarData(userId, month) };
 };
