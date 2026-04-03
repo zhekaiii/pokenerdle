@@ -1,4 +1,5 @@
 import {
+  DailyChallengeCalendarRequestSchema,
   DailyChallengeSubmitGuessRequestSchema,
   DailyChallengeSyncGuessesRequestSchema,
 } from "@pokenerdle/shared/daily";
@@ -11,6 +12,7 @@ import {
 } from "../middlewares/auth.js";
 import { migrateUserGuesses } from "../repositories/daily.repository.js";
 import {
+  getCalendarDataService,
   getDailyPokemonAnswer,
   getUserGuessesForDateService,
   getUserStats,
@@ -36,6 +38,20 @@ export const submitDailyPokemonGuessController = async (
     const results = await submitGuess(userId, pokemon_id, date);
     res.json(results);
   } catch (error) {
+    if (error instanceof Error) {
+      if (error.message === "archive challenge already completed") {
+        res.status(409).json({ error: error.message });
+        return;
+      }
+      if (error.message === "cannot play future challenges") {
+        res.status(StatusCode.BAD_REQUEST).json({ error: error.message });
+        return;
+      }
+      if (error.message === "hit limit") {
+        res.status(StatusCode.BAD_REQUEST).json({ error: error.message });
+        return;
+      }
+    }
     console.error("Error submitting guess:", error);
     res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
       error: "Failed to submit guess",
@@ -160,6 +176,30 @@ export const migrateUserGuessesController = async (
     console.error("Error migrating user guesses:", error);
     res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
       error: "Failed to migrate user guesses",
+    });
+  }
+};
+
+export const getCalendarController = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  const parsed = DailyChallengeCalendarRequestSchema.safeParse(req.query);
+  if (parsed.error) {
+    res.status(StatusCode.BAD_REQUEST).json(z.treeifyError(parsed.error));
+    return;
+  }
+
+  const userId = getUserId(req)!;
+  const { month } = parsed.data;
+
+  try {
+    const result = await getCalendarDataService(userId, month);
+    res.json(result);
+  } catch (error) {
+    console.error("Error getting calendar data:", error);
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
+      error: "Failed to get calendar data",
     });
   }
 };
