@@ -11,6 +11,9 @@ export const challengeNumber =
   differenceInCalendarDays(new TZDate(FROZEN_DATE, SINGAPORE_TIMEZONE), DAY_1) +
   1;
 
+export const getChallengeNumber = (date: string) =>
+  differenceInCalendarDays(new TZDate(date, SINGAPORE_TIMEZONE), DAY_1) + 1;
+
 export const COLUMNS = [
   { label: "columns.type1", key: "type1Correctness" },
   { label: "columns.type2", key: "type2Correctness" },
