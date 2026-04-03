@@ -6,7 +6,9 @@
     "startGuessing": "Start Guessing",
     "continueGuessing": "Continue Guessing",
     "share": "Share",
-    "copy": "Copy Results"
+    "copy": "Copy Results",
+    "pastChallenges": "Past Challenges",
+    "backToToday": "Back to Today"
   },
   "messages": {
     "foundPokemon": "You have found the mystery Pokémon!",
@@ -126,5 +128,9 @@
   "sync": {
     "success": "Your guesses have been saved to your account!",
     "error": "Something went wrong while saving your guesses."
+  },
+  "calendar": {
+    "title": "Past Challenges",
+    "description": "Pick a date to play an old challenge"
   }
 }

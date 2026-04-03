@@ -6,7 +6,9 @@
     "startGuessing": "开始猜测",
     "continueGuessing": "继续猜测",
     "share": "分享",
-    "copy": "复制结果"
+    "copy": "复制结果",
+    "pastChallenges": "往期挑战",
+    "backToToday": "回到今天"
   },
   "messages": {
     "foundPokemon": "你找到了神秘的宝可梦！",
@@ -124,5 +126,9 @@
   "sync": {
     "success": "您的猜测已保存到您的帐户中！",
     "error": "保存您的猜测时出了问题。"
+  },
+  "calendar": {
+    "title": "往期挑战",
+    "description": "选择一个日期来玩往期挑战"
   }
 }
