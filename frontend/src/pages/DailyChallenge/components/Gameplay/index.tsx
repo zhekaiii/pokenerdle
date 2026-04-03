@@ -21,14 +21,24 @@ import {
 import posthog from "posthog-js";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { challengeNumber, DAILY_CHALLENGE_GUESS_LIMIT } from "../../constants";
+import {
+  challengeNumber,
+  DAILY_CHALLENGE_GUESS_LIMIT,
+  getChallengeNumber,
+} from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
 import { generateShareText, shareResults } from "../../utils/share";
+import ArchiveBanner from "../ArchiveBanner";
+import CalendarDrawer from "../CalendarDrawer";
 import CorrectAnswerCard from "./components/CorrectAnswerCard";
 import StatsDialog from "./components/StatsDialog";
 import styles from "./index.module.scss";
 
-const DailyChallengeGameplay: React.FC = () => {
+interface Props {
+  date?: string;
+}
+
+const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const {
     onGuess,
@@ -39,11 +49,17 @@ const DailyChallengeGameplay: React.FC = () => {
     isGameFinished,
     correctAnswer,
     isLoadingAnswer,
-  } = useDailyChallengeData();
+    isArchive,
+    activeDate,
+  } = useDailyChallengeData(date);
   const [input, setInput] = useState("");
   const [showPokemonReference, setShowPokemonReference] = useState(false);
   const [showStatsDialog, setShowStatsDialog] = useState(false);
   const { t } = useTranslation("daily");
+  const displayChallengeNumber = isArchive
+    ? getChallengeNumber(activeDate)
+    : challengeNumber;
+
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
     onGuess(pokemon).finally(() => setInput(""));
   };
@@ -63,9 +79,19 @@ const DailyChallengeGameplay: React.FC = () => {
   return (
     <div className="tw:flex tw:flex-col tw:flex-auto tw:max-w-[400px] tw:w-full">
       <LoadingDialog open={isLoading || isLoadingAnswer} />
-      <h2 className="tw:text-center tw:font-bold tw:text-lg">
-        {t("challengeNumber", { number: challengeNumber })}
-      </h2>
+
+      {isArchive && <ArchiveBanner date={activeDate} />}
+
+      <div className="tw:flex tw:items-center tw:justify-center tw:gap-2 tw:mb-1">
+        <h2 className="tw:text-center tw:font-bold tw:text-lg">
+          {t("challengeNumber", { number: displayChallengeNumber })}
+        </h2>
+      </div>
+
+      <div className="tw:flex tw:justify-center tw:mb-2">
+        <CalendarDrawer currentDate={date} />
+      </div>
+
       <div className="tw:text-center tw:text-muted-foreground tw:mb-2">
         {hasSolved
           ? t("gameplay.foundPokemon")
@@ -96,6 +122,7 @@ const DailyChallengeGameplay: React.FC = () => {
                   onSelect={(pokemon) => {
                     posthog.capture("daily_challenge_guess", {
                       from: "pokemon_combobox",
+                      isArchive,
                     });
                     onSelectPokemon(pokemon);
                   }}
@@ -139,38 +166,40 @@ const DailyChallengeGameplay: React.FC = () => {
             }
           />
           <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto">
-            <div className="tw:flex tw:gap-2 tw:mt-4">
-              <Button
-                className="tw:flex-1"
-                onClick={() => {
-                  navigator.clipboard.writeText(
-                    generateShareText(guesses?.guesses ?? [], t),
-                  );
-                  posthog.capture("daily_challenge_copy_clicked");
-                  toast(t("share.success"), {
-                    icon: <ClipboardCheck />,
-                  });
-                }}
-              >
-                <Clipboard /> {t("buttons.copy")}
-              </Button>
-              <NoSsr>
-                {"share" in navigator && (
-                  <Button
-                    className="tw:flex-1"
-                    onClick={() => {
-                      posthog.capture("daily_challenge_share_clicked", {
-                        has_solved: hasSolved,
-                        num_guesses: guesses?.guesses.length ?? 0,
-                      });
-                      shareResults(guesses?.guesses ?? [], t);
-                    }}
-                  >
-                    <Share2 /> {t("buttons.share")}
-                  </Button>
-                )}
-              </NoSsr>
-            </div>
+            {!isArchive && (
+              <div className="tw:flex tw:gap-2 tw:mt-4">
+                <Button
+                  className="tw:flex-1"
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      generateShareText(guesses?.guesses ?? [], t),
+                    );
+                    posthog.capture("daily_challenge_copy_clicked");
+                    toast(t("share.success"), {
+                      icon: <ClipboardCheck />,
+                    });
+                  }}
+                >
+                  <Clipboard /> {t("buttons.copy")}
+                </Button>
+                <NoSsr>
+                  {"share" in navigator && (
+                    <Button
+                      className="tw:flex-1"
+                      onClick={() => {
+                        posthog.capture("daily_challenge_share_clicked", {
+                          has_solved: hasSolved,
+                          num_guesses: guesses?.guesses.length ?? 0,
+                        });
+                        shareResults(guesses?.guesses ?? [], t);
+                      }}
+                    >
+                      <Share2 /> {t("buttons.share")}
+                    </Button>
+                  )}
+                </NoSsr>
+              </div>
+            )}
             {isAuthenticated ? (
               <Button
                 variant="outline"
