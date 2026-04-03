@@ -11,23 +11,25 @@ import {
 import { Link } from "@tanstack/react-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { challengeNumber } from "../constants";
+import { challengeNumber, getChallengeNumber } from "../constants";
 import { useDailyChallengeData } from "../hooks/useData";
 
 interface Props {
   onStart: () => void;
+  date?: string;
 }
 
-const DailyChallengeIntroCard: React.FC<Props> = ({ onStart }) => {
-  const { guesses, isGameFinished } = useDailyChallengeData();
+const DailyChallengeIntroCard: React.FC<Props> = ({ onStart, date }) => {
+  const { guesses, isGameFinished } = useDailyChallengeData(date);
   const { t } = useTranslation("daily");
+  const displayNumber = date ? getChallengeNumber(date) : challengeNumber;
 
   return (
     <Card className="tw:relative tw:w-[300px] tw:my-auto">
       <CardHeader className="tw:text-center">
         <CardTitle className="tw:text-2xl">{t("title")}</CardTitle>
         <CardDescription>
-          {t("challengeNumber", { number: challengeNumber })}
+          {t("challengeNumber", { number: displayNumber })}
         </CardDescription>
       </CardHeader>
       <CardContent className="tw:flex tw:flex-col tw:items-center">
