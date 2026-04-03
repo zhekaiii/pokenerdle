@@ -73,13 +73,14 @@ export const Route = createFileRoute("/daily")({
     if (search.date === today) {
       throw redirect({ to: "/daily", search: {}, replace: true });
     }
+    return { archiveDate: search.date };
   },
-  loader: async ({ context: { store }, search }): Promise<DailyChallenge | null> => {
+  loader: async ({ context: { store, archiveDate } }): Promise<DailyChallenge | null> => {
     try {
       const today = import.meta.env.SSR
         ? format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd")
         : FROZEN_DATE;
-      const date = search?.date ?? today;
+      const date = archiveDate ?? today;
       const api = createApi(store);
       const userGuesses = await api.daily.getUserGuesses(date);
       if (!userGuesses.length) return null;
