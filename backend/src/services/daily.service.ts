@@ -1,7 +1,7 @@
 import { TZDate } from "@date-fns/tz";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
-import { isSameDay } from "date-fns";
+import { addDays, differenceInCalendarDays, isSameDay } from "date-fns";
 import seedrandom from "seedrandom";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
 import { pokemon_v2_pokemontype } from "../generated/prisma-sqlite/client.js";
@@ -56,9 +56,26 @@ export const getDailyPokemon = async (date: string) => {
   }
 
   const numPokemon = await getNumDefaultPokemon();
-  const lastRngState = await getLastRngState(date);
+  let lastRngEntry = await getLastRngState(date);
+
+  // If there are skipped days between the last recorded date and this date,
+  // generate them in order so each day's RNG state chains correctly.
+  if (lastRngEntry) {
+    const lastDate = new Date(lastRngEntry.date);
+    const thisDate = new Date(date);
+    const gap = differenceInCalendarDays(thisDate, lastDate);
+    if (gap > 1) {
+      for (let i = 1; i < gap; i++) {
+        const missingDate = addDays(lastDate, i).toISOString().slice(0, 10);
+        await getDailyPokemon(missingDate);
+      }
+      // Re-fetch so we get the immediately preceding day's state.
+      lastRngEntry = await getLastRngState(date);
+    }
+  }
+
   const rng = seedrandom.alea(process.env.RANDOM_SEED! + date, {
-    state: lastRngState ?? true,
+    state: lastRngEntry?.state ?? true,
   });
   let pokemon: DailyPokemon | null = await (async () => {
     // If not in database, generate new daily pokemon
@@ -68,7 +85,7 @@ export const getDailyPokemon = async (date: string) => {
       if (!dailyPokemon) {
         throw new Error("unable to get daily pokemon");
       }
-      if (await hasPokemonAppearedInLastMonth(dailyPokemon.id)) {
+      if (await hasPokemonAppearedInLastMonth(dailyPokemon.id, date)) {
         continue;
       }
       return dailyPokemon;

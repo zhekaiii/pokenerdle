@@ -1,5 +1,3 @@
-import { TZDate } from "@date-fns/tz";
-import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import { formatDate, subMonths } from "date-fns";
 import seedrandom from "seedrandom";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
@@ -192,14 +190,17 @@ export const getUserDailyStatsData = async (userId: string) => {
   `;
 };
 
-export const hasPokemonAppearedInLastMonth = async (pokemonId: number) => {
-  const today = TZDate.tz(SINGAPORE_TIMEZONE);
-  const oneMonthAgo = subMonths(today, 1);
+export const hasPokemonAppearedInLastMonth = async (
+  pokemonId: number,
+  date: string,
+) => {
+  const oneMonthAgo = subMonths(new Date(date), 1);
   const result = await pgClient.dailyChallenge.findFirst({
     where: {
       pokemonId,
       date: {
         gte: formatDate(oneMonthAgo, "yyyy-MM-dd"),
+        lt: date,
       },
     },
   });
@@ -210,7 +211,7 @@ export const getLastRngState = async (date: string) => {
   const result = await pgClient.dailyChallenge.findFirst({
     where: {
       date: {
-        lte: date,
+        lt: date,
       },
     },
     orderBy: {
@@ -218,10 +219,14 @@ export const getLastRngState = async (date: string) => {
     },
     select: {
       rngState: true,
+      date: true,
     },
   });
   if (result?.rngState) {
-    return JSON.parse(result.rngState) as seedrandom.State.Alea;
+    return {
+      state: JSON.parse(result.rngState) as seedrandom.State.Alea,
+      date: result.date,
+    };
   }
   return null;
 };
