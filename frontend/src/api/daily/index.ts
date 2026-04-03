@@ -1,5 +1,6 @@
 import { FROZEN_DATE } from "@/pages/DailyChallenge/constants";
 import {
+  type DailyChallengeCalendarResponse,
   type DailyChallengeGuessResponse,
   type DailyChallengeStatsResponse,
   type DailyChallengeSyncGuessesResponse,
@@ -7,12 +8,12 @@ import {
 import { AxiosInstance } from "axios";
 
 export default (axiosInstance: AxiosInstance) => ({
-  submitGuess: async (id: number) => {
+  submitGuess: async (id: number, date?: string) => {
     const { data } = await axiosInstance.post<DailyChallengeGuessResponse>(
       "/v1/daily/challenge/submit",
       {
         pokemon_id: id,
-        date: FROZEN_DATE,
+        date: date ?? FROZEN_DATE,
       }
     );
     return data;
@@ -44,7 +45,7 @@ export default (axiosInstance: AxiosInstance) => ({
       throw error;
     }
   },
-  getAnswer: async () => {
+  getAnswer: async (date?: string) => {
     const { data } = await axiosInstance.get<{
       pokemonId: number;
       pokemon: {
@@ -56,7 +57,7 @@ export default (axiosInstance: AxiosInstance) => ({
       };
     }>("/v1/daily/challenge/answer", {
       params: {
-        date: FROZEN_DATE,
+        date: date ?? FROZEN_DATE,
       },
     });
     return data;
@@ -64,6 +65,15 @@ export default (axiosInstance: AxiosInstance) => ({
   getStats: async () => {
     const { data } = await axiosInstance.get<DailyChallengeStatsResponse>(
       "/v1/daily/challenge/stats"
+    );
+    return data;
+  },
+  getCalendar: async (month: string) => {
+    const { data } = await axiosInstance.get<DailyChallengeCalendarResponse>(
+      "/v1/daily/challenge/calendar",
+      {
+        params: { month },
+      }
     );
     return data;
   },
