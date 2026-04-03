@@ -1,15 +1,9 @@
 import api from "@/api";
-import {
-  DAILY_CHALLENGE_GUESS_LIMIT,
-  DAILY_CHALLENGE_KEY,
-  FROZEN_DATE,
-} from "../constants";
+import { DAILY_CHALLENGE_GUESS_LIMIT, FROZEN_DATE } from "../constants";
 
-import { useAuth } from "@/hooks/useAuth";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
-import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+import { atom, useAtom } from "jotai";
 import posthog from "posthog-js";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,17 +25,9 @@ export interface CorrectAnswer {
   };
 }
 
-export const guessesAtom = atomWithStorage<DailyChallenge | null>(
-  DAILY_CHALLENGE_KEY,
-  null,
-  undefined,
-  {
-    getOnInit: true,
-  }
-);
+export const guessesAtom = atom<DailyChallenge | null>(null);
 
-export const useDailyChallengeData = () => {
-  const { isAuthenticated } = useAuth();
+export const useDailyChallengeData = (date?: string) => {
   const [guesses, setGuesses] = useAtom(guessesAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState<CorrectAnswer | null>(
@@ -49,6 +35,9 @@ export const useDailyChallengeData = () => {
   );
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false);
   const { t } = useTranslation("daily");
+
+  const activeDate = date ?? FROZEN_DATE;
+  const isArchive = activeDate !== FROZEN_DATE;
 
   const hasSolved = useMemo(
     () =>
@@ -63,18 +52,6 @@ export const useDailyChallengeData = () => {
     guesses && guesses.guesses.length === DAILY_CHALLENGE_GUESS_LIMIT
   );
   const isGameFinished = hasReachedLimit || hasSolved;
-  const isNewDay = guesses?.date !== FROZEN_DATE;
-
-  useEffect(() => {
-    if (isNewDay) {
-      setGuesses({
-        date: FROZEN_DATE,
-        guesses: [],
-      });
-      setCorrectAnswer(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only want to run on new day
-  }, [isNewDay]);
 
   // Fetch correct answer when game is over and user hasn't solved it
   useEffect(() => {
@@ -82,7 +59,7 @@ export const useDailyChallengeData = () => {
       if (hasReachedLimit && !hasSolved && !correctAnswer && !isLoadingAnswer) {
         try {
           setIsLoadingAnswer(true);
-          const answer = await api.daily.getAnswer();
+          const answer = await api.daily.getAnswer(activeDate);
           setCorrectAnswer(answer);
         } catch (error) {
           console.error("Failed to fetch correct answer:", error);
@@ -93,13 +70,13 @@ export const useDailyChallengeData = () => {
     };
 
     fetchCorrectAnswer();
-  }, [hasReachedLimit, hasSolved, correctAnswer, isLoadingAnswer]);
+  }, [hasReachedLimit, hasSolved, correctAnswer, isLoadingAnswer, activeDate]);
 
   const onGuess = async ({ id }: PokemonNamesResponse) => {
     const numGuesses = (guesses?.guesses.length ?? 0) + 1;
     try {
       setIsLoading(true);
-      const response = await api.daily.submitGuess(id);
+      const response = await api.daily.submitGuess(id, activeDate);
       setGuesses(() => {
         const guess = {
           ...response,
@@ -112,7 +89,7 @@ export const useDailyChallengeData = () => {
           };
         }
         return {
-          date: FROZEN_DATE,
+          date: activeDate,
           guesses: [guess],
         };
       });
@@ -120,10 +97,11 @@ export const useDailyChallengeData = () => {
         toast.success(`${t("toast.correctGuess")}`);
         posthog.capture("daily_challenge_solved", {
           num_guesses: numGuesses,
+          isArchive,
         });
       } else if (numGuesses === DAILY_CHALLENGE_GUESS_LIMIT) {
         toast.error(t("toast.gameOver"));
-        posthog.capture("daily_challenge_gameover");
+        posthog.capture("daily_challenge_gameover", { isArchive });
       }
     } finally {
       setIsLoading(false);
@@ -131,7 +109,6 @@ export const useDailyChallengeData = () => {
   };
 
   return {
-    isNewDay,
     guesses,
     onGuess,
     isLoading,
@@ -140,5 +117,7 @@ export const useDailyChallengeData = () => {
     isGameFinished,
     correctAnswer,
     isLoadingAnswer,
+    isArchive,
+    activeDate,
   };
 };
