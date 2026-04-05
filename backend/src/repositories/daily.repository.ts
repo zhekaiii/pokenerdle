@@ -175,7 +175,25 @@ export const getUserGuessCountForDate = async (
   return result;
 };
 
-export const getUserDailyStatsData = async (userId: string) => {
+export const getUserDailyChallengeByDay = async (
+  userId: string,
+  {
+    startInclusive,
+    endExclusive,
+    includeArchive = false,
+  }: {
+    startInclusive?: string;
+    endExclusive?: string;
+    includeArchive?: boolean;
+  } = {},
+) => {
+  const whereClause = Prisma.sql`
+    WHERE
+      "userId" = ${userId}
+      ${includeArchive ? Prisma.sql`` : Prisma.sql`AND "isArchive" = false`}
+      ${startInclusive ? Prisma.sql`AND "dailyChallengeId" >= ${startInclusive}` : Prisma.sql``}
+      ${endExclusive ? Prisma.sql`AND "dailyChallengeId" < ${endExclusive}` : Prisma.sql``}
+  `;
   return pgClient.$queryRaw<
     {
       dailyChallengeId: string;
@@ -189,9 +207,7 @@ export const getUserDailyStatsData = async (userId: string) => {
       count(1)
     FROM
       user_daily_guesses
-    WHERE
-      "userId" = ${userId}
-      AND "isArchive" = false
+    ${whereClause}
     GROUP BY
       "dailyChallengeId"
     HAVING
@@ -246,20 +262,15 @@ export const getLastRngState = async (date: string) => {
 export const getCalendarData = async (userId: string, month: string) => {
   const startDate = `${month}-01`;
   const [year, monthNum] = month.split("-").map(Number);
-  const nextMonth = monthNum === 12 ? `${year + 1}-01-01` : `${year}-${String(monthNum + 1).padStart(2, "0")}-01`;
+  const nextMonth =
+    monthNum === 12
+      ? `${year + 1}-01-01`
+      : `${year}-${String(monthNum + 1).padStart(2, "0")}-01`;
 
-  const guesses = await pgClient.userDailyGuess.groupBy({
-    by: ["dailyChallengeId"],
-    where: {
-      userId,
-      dailyChallengeId: {
-        gte: startDate,
-        lt: nextMonth,
-      },
-    },
-    _max: {
-      isCorrect: true,
-    },
+  const guesses = await getUserDailyChallengeByDay(userId, {
+    startInclusive: startDate,
+    endExclusive: nextMonth,
+    includeArchive: true,
   });
 
   if (guesses.length === 0) return [];
@@ -280,7 +291,7 @@ export const getCalendarData = async (userId: string, month: string) => {
 
   return guesses.map((g) => ({
     date: g.dailyChallengeId,
-    solved: g._max.isCorrect ?? false,
+    solved: g.correct ?? false,
     pokemonId: challengeMap.get(g.dailyChallengeId) ?? 0,
   }));
 };

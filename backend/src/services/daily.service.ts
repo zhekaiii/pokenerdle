@@ -11,10 +11,10 @@ import {
   createDailyPokemon,
   dailyChallengeExists,
   deleteUserGuessesForDate,
-  getDailyPokemonFromDb,
   getCalendarData,
+  getDailyPokemonFromDb,
   getLastRngState,
-  getUserDailyStatsData,
+  getUserDailyChallengeByDay,
   getUserGuessCountForDate,
   getUserGuessesForDate,
   hasPokemonAppearedInLastMonth,
@@ -424,7 +424,7 @@ export const syncUserGuesses = async (
 };
 
 export const getUserStats = async (userId: string) => {
-  const statsData = await getUserDailyStatsData(userId);
+  const statsData = await getUserDailyChallengeByDay(userId);
   const today = TZDate.tz(SINGAPORE_TIMEZONE);
   const histogram: Record<number, number> = statsData.reduce(
     (acc, day) => {
