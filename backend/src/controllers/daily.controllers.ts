@@ -23,7 +23,7 @@ import { getUserId } from "../utils/userIdentification.js";
 
 export const submitDailyPokemonGuessController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   const parsed = DailyChallengeSubmitGuessRequestSchema.safeParse(req.body);
   if (parsed.error) {
@@ -40,7 +40,7 @@ export const submitDailyPokemonGuessController = async (
   } catch (error) {
     if (error instanceof Error) {
       if (error.message === "archive challenge already completed") {
-        res.status(409).json({ error: error.message });
+        res.status(StatusCode.CONFLICT).json({ error: error.message });
         return;
       }
       if (error.message === "cannot play future challenges") {
@@ -63,7 +63,7 @@ export const submitDailyPokemonGuessController = async (
 // and we need to merge the data
 export const getUserGuessesController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   const { date } = req.query;
   // User is guaranteed to exist due to middleware
@@ -89,7 +89,7 @@ export const getUserGuessesController = async (
 
 export const getDailyPokemonAnswerController = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   const { date } = req.query;
   if (!date || typeof date !== "string") {
@@ -112,7 +112,7 @@ export const getDailyPokemonAnswerController = async (
 
 export const syncUserGuessesController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   const parsed = DailyChallengeSyncGuessesRequestSchema.safeParse(req.body);
   if (parsed.error) {
@@ -129,7 +129,7 @@ export const syncUserGuessesController = async (
       user_id,
       posthogDistinctId,
       guesses,
-      date
+      date,
     );
     res.json(results);
   } catch (error) {
@@ -142,7 +142,7 @@ export const syncUserGuessesController = async (
 
 export const getUserStatsController = async (
   req: StrictAuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   const userId = getUserId(req)!;
 
@@ -159,7 +159,7 @@ export const getUserStatsController = async (
 
 export const migrateUserGuessesController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   const user_id = getUserId(req)!;
   const posthogDistinctId = req.posthogDistinctId;
@@ -182,7 +182,7 @@ export const migrateUserGuessesController = async (
 
 export const getCalendarController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   const parsed = DailyChallengeCalendarRequestSchema.safeParse(req.query);
   if (parsed.error) {
