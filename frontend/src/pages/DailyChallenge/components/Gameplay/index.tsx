@@ -28,8 +28,6 @@ import {
 } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
 import { generateShareText, shareResults } from "../../utils/share";
-import ArchiveBanner from "../ArchiveBanner";
-import CalendarDrawer from "../CalendarDrawer";
 import CorrectAnswerCard from "./components/CorrectAnswerCard";
 import StatsDialog from "./components/StatsDialog";
 import styles from "./index.module.scss";
@@ -80,17 +78,9 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
     <div className="tw:flex tw:flex-col tw:flex-auto tw:max-w-[400px] tw:w-full">
       <LoadingDialog open={isLoading || isLoadingAnswer} />
 
-      {isArchive && <ArchiveBanner date={activeDate} />}
-
-      <div className="tw:flex tw:items-center tw:justify-center tw:gap-2 tw:mb-1">
-        <h2 className="tw:text-center tw:font-bold tw:text-lg">
-          {t("challengeNumber", { number: displayChallengeNumber })}
-        </h2>
-      </div>
-
-      <div className="tw:flex tw:justify-center tw:mb-2">
-        <CalendarDrawer currentDate={date} />
-      </div>
+      <h2 className="tw:text-center tw:font-bold tw:text-lg">
+        {t("challengeNumber", { number: displayChallengeNumber })}
+      </h2>
 
       <div className="tw:text-center tw:text-muted-foreground tw:mb-2">
         {hasSolved

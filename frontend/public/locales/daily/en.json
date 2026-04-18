@@ -7,8 +7,7 @@
     "continueGuessing": "Continue Guessing",
     "share": "Share",
     "copy": "Copy Results",
-    "pastChallenges": "Past Challenges",
-    "backToToday": "Back to Today"
+    "pastChallenges": "Past Challenges"
   },
   "messages": {
     "foundPokemon": "You have found the mystery Pokémon!",
