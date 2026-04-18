@@ -34,7 +34,13 @@ import classes from "./index.module.scss";
 
 type CellKind =
   | { kind: "empty" }
-  | { kind: "day"; date: string; day: number; status: CellStatus };
+  | {
+      kind: "day";
+      date: string;
+      day: number;
+      status: CellStatus;
+      isToday: boolean;
+    };
 
 type CellStatus = "solved" | "failed" | "unplayed" | "today" | "future";
 
@@ -58,19 +64,23 @@ const buildCells = (
       d,
     );
     const dateStr = formatDate(dayDate);
+    const isToday = dateStr === today;
 
     let status: CellStatus;
     if (dateStr > today) {
       status = "future";
-    } else if (dateStr === today) {
-      status = "today";
     } else {
       const entry = entriesByDate.get(dateStr);
-      if (!entry) status = "unplayed";
-      else status = entry.solved ? "solved" : "failed";
+      if (entry) {
+        status = entry.solved ? "solved" : "failed";
+      } else if (isToday) {
+        status = "today";
+      } else {
+        status = "unplayed";
+      }
     }
 
-    cells.push({ kind: "day", day: d, date: dateStr, status });
+    cells.push({ kind: "day", day: d, date: dateStr, status, isToday });
   }
   return cells;
 };
@@ -234,6 +244,7 @@ const CalendarArchivePage: React.FC = () => {
               className={cn(
                 classes.Cell,
                 classes[`Cell--${cell.status}`],
+                cell.isToday && classes["Cell--today"],
                 isSelected && classes["Cell--selected"],
               )}
               onClick={() => handleCellClick(cell)}
