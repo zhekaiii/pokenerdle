@@ -411,12 +411,20 @@ export const getUserStats = async (userId: string) => {
     const isConsecutiveFromPrevious =
       !isFirstDay && isConsecutiveDay(formattedDays[i - 1].date, day.date);
 
-    if (day.isWin && (isFirstDay || isConsecutiveFromPrevious)) {
-      streak++;
-      maxStreak = Math.max(maxStreak, streak);
-    } else {
+    if (!day.isWin) {
+      // Losses always break the streak.
       streak = 0;
+      continue;
     }
+
+    if (isFirstDay || isConsecutiveFromPrevious) {
+      streak++;
+    } else {
+      // A gap in played days breaks the previous streak, but today's win
+      // starts a new streak of 1 rather than being ignored.
+      streak = 1;
+    }
+    maxStreak = Math.max(maxStreak, streak);
   }
 
   if (
