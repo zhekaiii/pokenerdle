@@ -11,7 +11,6 @@ import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { format, isValid, parseISO } from "date-fns";
 import { atom, useAtom } from "jotai";
-import { useHydrateAtoms } from "jotai/utils";
 
 enum DailyChallengeState {
   Intro,
@@ -42,17 +41,7 @@ const isValidChallengeDate = (date: string): boolean => {
 };
 
 const DailyChallengePage: React.FC = () => {
-  const loadedData = Route.useLoaderData();
   const { date } = Route.useSearch();
-  useHydrateAtoms([[guessesAtom, loadedData]]);
-  useHydrateAtoms([
-    [
-      dailyChallengeStateAtom,
-      loadedData?.guesses?.length
-        ? DailyChallengeState.Gameplay
-        : DailyChallengeState.Intro,
-    ],
-  ]);
   const [state, setState] = useAtom(dailyChallengeStateAtom);
   const onStart = () => {
     setState(DailyChallengeState.Gameplay);
@@ -92,19 +81,27 @@ export const Route = createFileRoute("/daily/")({
     context: { store },
     deps: { date: archiveDate },
   }): Promise<DailyChallenge | null> => {
+    const date = archiveDate ?? getToday();
+    let data: DailyChallenge | null = null;
     try {
-      const date = archiveDate ?? getToday();
       const api = createApi(store);
       const userGuesses = await api.daily.getUserGuesses(date);
-      if (!userGuesses.length) return null;
-      return {
-        date,
-        guesses: userGuesses,
-      };
+      if (userGuesses.length) {
+        data = { date, guesses: userGuesses };
+      }
     } catch (error) {
       console.error("Error getting user guesses:", error);
-      return null;
     }
+    // Write directly to the atoms so client-side navigations replace stale
+    // state instead of relying on first-render hydration via useHydrateAtoms.
+    store.set(guessesAtom, data);
+    store.set(
+      dailyChallengeStateAtom,
+      data?.guesses?.length
+        ? DailyChallengeState.Gameplay
+        : DailyChallengeState.Intro,
+    );
+    return data;
   },
   head: async ({ match }) => {
     await match.context.i18n.loadNamespaces("metadata");
