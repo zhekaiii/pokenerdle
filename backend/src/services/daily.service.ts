@@ -435,8 +435,8 @@ export const getUserStats = async (userId: string) => {
   const histogram: Record<number, number> = statsData.reduce(
     (acc, day) => {
       if (day.correct) {
-        acc[day.count] = (acc[day.count] || 0) + 1;
-      } else if (day.count === DAILY_CHALLENGE_GUESS_LIMIT) {
+        acc[Number(day.count)] = (acc[Number(day.count)] || 0) + 1;
+      } else if (Number(day.count) === DAILY_CHALLENGE_GUESS_LIMIT) {
         acc[-1] = (acc[-1] || 0) + 1;
       }
       return acc;

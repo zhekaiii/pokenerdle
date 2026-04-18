@@ -198,7 +198,7 @@ export const getUserDailyChallengeByDay = async (
     {
       dailyChallengeId: string;
       correct: boolean;
-      count: number;
+      count: bigint;
     }[]
   >`
     SELECT
