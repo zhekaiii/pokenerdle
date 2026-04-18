@@ -4,10 +4,6 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { initializeBattleWsRoutes } from "./handlers/index.js";
 import "./lib/prisma.js";
-import {
-  porygonMiddleware,
-  staticPorygonMiddleware,
-} from "./middlewares/porygon.js";
 import "./routes/battles.routes.js";
 import battlesRouter from "./routes/battles.routes.js";
 import dailyRouter from "./routes/daily.routes.js";
@@ -68,8 +64,6 @@ router.use(battlesRouter);
 router.use(pathfinderRouter);
 router.use(dailyRouter);
 
-app.use("/porygon", porygonMiddleware);
-app.use("/porygon/static", staticPorygonMiddleware);
 app.use("/api", router);
 app.use(errorHandler);
 
