@@ -13,6 +13,7 @@ import { DailyChallengeGuessBox } from "@/pages/DailyChallenge/components/Gamepl
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
+import { format } from "date-fns";
 import {
   BookOpen,
   CalendarDaysIcon,
@@ -83,9 +84,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
 
       <h2 className="tw:flex tw:items-center tw:justify-center tw:gap-2 tw:font-bold tw:text-lg">
         {t("challengeNumber", { number: displayChallengeNumber })}
-        {isArchive && (
-          <Badge variant="secondary">{t("archive.badge")}</Badge>
-        )}
+        {isArchive && <Badge variant="secondary">{t("archive.badge")}</Badge>}
       </h2>
 
       <div className="tw:text-center tw:text-muted-foreground tw:mb-2">
@@ -222,6 +221,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
 
       <Link
         to="/daily/archive"
+        search={{ month: format(new Date(activeDate), "yyyy-MM") }}
         className="tw:flex tw:gap-2 tw:items-center tw:mx-auto tw:mt-3 tw:text-[13px] tw:font-medium tw:text-muted-foreground tw:hover:text-foreground"
       >
         <CalendarDaysIcon /> {t("buttons.pastChallenges")}

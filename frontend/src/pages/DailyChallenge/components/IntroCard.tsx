@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/Card";
 import { Link } from "@tanstack/react-router";
+import { format } from "date-fns";
 import { CalendarDaysIcon } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +23,7 @@ interface Props {
 }
 
 const DailyChallengeIntroCard: React.FC<Props> = ({ onStart, date }) => {
-  const { guesses, isGameFinished } = useDailyChallengeData(date);
+  const { guesses, isGameFinished, activeDate } = useDailyChallengeData(date);
   const { t } = useTranslation("daily");
   const displayNumber = date ? getChallengeNumber(date) : challengeNumber;
 
@@ -55,6 +56,7 @@ const DailyChallengeIntroCard: React.FC<Props> = ({ onStart, date }) => {
         </Button>
         <Link
           to="/daily/archive"
+          search={{ month: format(new Date(activeDate), "yyyy-MM") }}
           className="tw:flex tw:gap-2 tw:items-center tw:mx-auto tw:mt-3 tw:text-[13px] tw:font-medium tw:text-muted-foreground tw:hover:text-foreground"
         >
           <CalendarDaysIcon /> {t("buttons.pastChallenges")}

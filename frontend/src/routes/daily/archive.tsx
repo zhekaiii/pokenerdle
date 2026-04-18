@@ -4,7 +4,7 @@ import { DAY_1, FROZEN_DATE } from "@/pages/DailyChallenge/constants";
 import { TZDate } from "@date-fns/tz";
 import { DailyChallengeCalendarResponse } from "@pokenerdle/shared/daily";
 import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { format } from "date-fns";
 
 export interface ArchiveLoaderData {
@@ -47,6 +47,11 @@ export const Route = createFileRoute("/daily/archive")({
     // Omit the param when it resolves to the current month so the URL stays clean.
     if (clamped === getCurrentMonth()) return {};
     return { month: clamped };
+  },
+  beforeLoad: ({ search }) => {
+    if (search.month === getCurrentMonth()) {
+      throw redirect({ to: "/daily/archive", search: {}, replace: true });
+    }
   },
   loaderDeps: ({ search: { month } }) => ({ month }),
   loader: async ({

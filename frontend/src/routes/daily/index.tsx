@@ -1,7 +1,7 @@
 import { createApi } from "@/api";
 import DailyChallengeGameplay from "@/pages/DailyChallenge/components/Gameplay";
 import DailyChallengeIntroCard from "@/pages/DailyChallenge/components/IntroCard";
-import { FROZEN_DATE } from "@/pages/DailyChallenge/constants";
+import { DAY_1, FROZEN_DATE } from "@/pages/DailyChallenge/constants";
 import {
   DailyChallenge,
   guessesAtom,
@@ -9,7 +9,7 @@ import {
 import { TZDate } from "@date-fns/tz";
 import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { format } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { atom, useAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 
@@ -25,6 +25,21 @@ const dailyChallengeStateAtom = atom<DailyChallengeState>(
 interface DailySearchParams {
   date?: string;
 }
+
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const FIRST_DATE = format(DAY_1, "yyyy-MM-dd");
+
+const getToday = () =>
+  import.meta.env.SSR
+    ? format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd")
+    : FROZEN_DATE;
+
+const isValidChallengeDate = (date: string): boolean => {
+  if (!DATE_PATTERN.test(date)) return false;
+  const parsed = parseISO(date);
+  if (!isValid(parsed) || format(parsed, "yyyy-MM-dd") !== date) return false;
+  return date >= FIRST_DATE && date <= getToday();
+};
 
 const DailyChallengePage: React.FC = () => {
   const loadedData = Route.useLoaderData();
@@ -60,27 +75,25 @@ export const Route = createFileRoute("/daily/")({
   }),
   validateSearch: (search: Record<string, unknown>): DailySearchParams => {
     const date = search.date;
-    if (date && typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      return { date };
+    if (typeof date !== "string" || !isValidChallengeDate(date)) {
+      return {};
     }
-    return {};
+    return { date };
   },
   beforeLoad: ({ search }) => {
     // Normalize: if date param equals today, redirect without it
-    const today = import.meta.env.SSR
-      ? format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd")
-      : FROZEN_DATE;
-    if (search.date === today) {
+    if (search.date === getToday()) {
       throw redirect({ to: "/daily", search: {}, replace: true });
     }
     return { archiveDate: search.date };
   },
-  loader: async ({ context: { store, archiveDate } }): Promise<DailyChallenge | null> => {
+  loaderDeps: ({ search: { date } }) => ({ date }),
+  loader: async ({
+    context: { store },
+    deps: { date: archiveDate },
+  }): Promise<DailyChallenge | null> => {
     try {
-      const today = import.meta.env.SSR
-        ? format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd")
-        : FROZEN_DATE;
-      const date = archiveDate ?? today;
+      const date = archiveDate ?? getToday();
       const api = createApi(store);
       const userGuesses = await api.daily.getUserGuesses(date);
       if (!userGuesses.length) return null;
