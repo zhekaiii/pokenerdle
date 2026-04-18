@@ -129,5 +129,25 @@
   "calendar": {
     "title": "往期挑战",
     "description": "选择一个日期来玩往期挑战"
+  },
+  "archive": {
+    "title": "你的宝可梦日历",
+    "subtitle": "猜中的日子会显示你猜出的那只宝可梦。",
+    "prevMonth": "上个月",
+    "nextMonth": "下个月",
+    "legend": {
+      "solved": "已猜中",
+      "failed": "未解出",
+      "unplayed": "未游玩"
+    },
+    "preview": {
+      "empty": "点击日期查看详情",
+      "unplayedTitle": "尚未挑战",
+      "todayTitle": "今日挑战",
+      "review": "查看",
+      "play": "游玩",
+      "retry": "重试",
+      "challengeNumber": "第 {{number}} 期"
+    }
   }
 }
