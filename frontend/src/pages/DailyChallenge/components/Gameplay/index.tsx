@@ -5,6 +5,7 @@ import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
 import PokemonReferenceDialog from "@/components/recyclables/PokemonReferenceDialog";
 import { TypeChecklist } from "@/components/recyclables/TypeChecklist/TypeChecklist";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
@@ -80,8 +81,11 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
     <div className="tw:flex tw:flex-col tw:flex-auto tw:max-w-[400px] tw:w-full">
       <LoadingDialog open={isLoading || isLoadingAnswer} />
 
-      <h2 className="tw:text-center tw:font-bold tw:text-lg">
+      <h2 className="tw:flex tw:items-center tw:justify-center tw:gap-2 tw:font-bold tw:text-lg">
         {t("challengeNumber", { number: displayChallengeNumber })}
+        {isArchive && (
+          <Badge variant="secondary">{t("archive.badge")}</Badge>
+        )}
       </h2>
 
       <div className="tw:text-center tw:text-muted-foreground tw:mb-2">
@@ -157,9 +161,9 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
                 : correctAnswer
             }
           />
-          <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto">
+          <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto tw:pt-4">
             {!isArchive && (
-              <div className="tw:flex tw:gap-2 tw:mt-4">
+              <div className="tw:flex tw:gap-2">
                 <Button
                   className="tw:flex-1"
                   onClick={() => {

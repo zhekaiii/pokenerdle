@@ -133,6 +133,7 @@
   "archive": {
     "title": "你的寶可夢日曆",
     "subtitle": "猜中的日子會顯示你猜出的那隻寶可夢。",
+    "badge": "往期",
     "prevMonth": "上個月",
     "nextMonth": "下個月",
     "legend": {

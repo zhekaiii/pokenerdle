@@ -1,4 +1,5 @@
 import questionMarkIcon from "@/assets/question_mark_big.png";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import {
   Card,
@@ -29,8 +30,9 @@ const DailyChallengeIntroCard: React.FC<Props> = ({ onStart, date }) => {
     <Card className="tw:relative tw:w-[300px] tw:my-auto">
       <CardHeader className="tw:text-center">
         <CardTitle className="tw:text-2xl">{t("title")}</CardTitle>
-        <CardDescription>
+        <CardDescription className="tw:flex tw:items-center tw:justify-center tw:gap-2">
           {t("challengeNumber", { number: displayNumber })}
+          {date && <Badge variant="secondary">{t("archive.badge")}</Badge>}
         </CardDescription>
       </CardHeader>
       <CardContent className="tw:flex tw:flex-col tw:items-center">

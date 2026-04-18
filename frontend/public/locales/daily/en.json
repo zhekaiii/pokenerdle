@@ -135,6 +135,7 @@
   "archive": {
     "title": "Your PokéNerdle calendar",
     "subtitle": "Each solved day shows the Pokémon you caught.",
+    "badge": "Archived",
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
     "legend": {
