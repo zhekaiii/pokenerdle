@@ -1,6 +1,9 @@
 import { TZDate } from "@date-fns/tz";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
-import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
+import {
+  DAILY_CHALLENGE_DAY_1,
+  SINGAPORE_TIMEZONE,
+} from "@pokenerdle/shared/date";
 import { addDays, differenceInCalendarDays, format, isSameDay } from "date-fns";
 import seedrandom from "seedrandom";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
@@ -130,6 +133,9 @@ export const submitGuess = async (
   if (isArchive) {
     if (date > today) {
       throw new Error("cannot play future challenges");
+    }
+    if (date < DAILY_CHALLENGE_DAY_1) {
+      throw new Error("challenge does not exist");
     }
     // Check if user already completed this archive challenge
     const existingGuesses = await getUserGuessesForDate(userId, date);

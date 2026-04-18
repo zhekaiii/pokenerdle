@@ -47,6 +47,10 @@ export const submitDailyPokemonGuessController = async (
         res.status(StatusCode.BAD_REQUEST).json({ error: error.message });
         return;
       }
+      if (error.message === "challenge does not exist") {
+        res.status(StatusCode.NOT_FOUND).json({ error: error.message });
+        return;
+      }
       if (error.message === "hit limit") {
         res.status(StatusCode.BAD_REQUEST).json({ error: error.message });
         return;
