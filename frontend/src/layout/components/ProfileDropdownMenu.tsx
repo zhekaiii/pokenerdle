@@ -40,8 +40,9 @@ export const ProfileDropdownMenu: React.FC<ProfileDropdownMenuProps> = ({
 
   const Icon = themeIcons[currentTheme];
 
-  const { loading: isRedirectingToGoogleLogin, handleSignIn } =
-    useGoogleSignIn();
+  const { loading: isRedirectingToGoogleLogin, handleSignIn } = useGoogleSignIn(
+    { source: "profile_dropdown" }
+  );
 
   return (
     <DropdownMenu>

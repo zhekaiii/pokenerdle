@@ -218,7 +218,10 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
             <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
               {t("auth.persistDisclaimer")}
             </p>
-            <GoogleSignInButton variant="outline" />
+            <GoogleSignInButton
+              variant="outline"
+              source="daily_challenge_stats_dialog"
+            />
           </div>
         )}
 

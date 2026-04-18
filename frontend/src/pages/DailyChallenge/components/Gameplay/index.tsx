@@ -206,7 +206,10 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
             </Button>
             {!isAuthenticated && !authLoading && (
               <>
-                <GoogleSignInButton variant="outline" />
+                <GoogleSignInButton
+                  variant="outline"
+                  source="daily_challenge_gameplay"
+                />
                 <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
                   {t("gameplay.signInPrompt")}
                 </p>

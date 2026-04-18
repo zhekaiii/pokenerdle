@@ -316,7 +316,10 @@ const CalendarArchivePage: React.FC = () => {
           <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
             {t("auth.persistDisclaimer")}
           </p>
-          <GoogleSignInButton variant="outline" />
+          <GoogleSignInButton
+            variant="outline"
+            source="daily_challenge_archive"
+          />
         </div>
       )}
     </div>

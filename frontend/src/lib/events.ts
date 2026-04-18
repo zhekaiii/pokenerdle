@@ -34,6 +34,17 @@ export interface RoomCreatedEvent {
   show_ability: boolean;
 }
 
+export type GoogleSignInSource =
+  | "daily_challenge_stats_dialog"
+  | "daily_challenge_archive"
+  | "daily_challenge_gameplay"
+  | "settings"
+  | "profile_dropdown";
+
+export interface GoogleSignInClickedEvent {
+  source: GoogleSignInSource;
+}
+
 export const trackPokemonGuessed = (event: PokemonGuessedEvent) => {
   posthog.capture("pokechain_pokemon_guessed", event);
 };
@@ -44,4 +55,8 @@ export const trackAbilityLinkUsed = (event: AbilityLinkUsedEvent) => {
 
 export const trackRoomCreated = (event: RoomCreatedEvent) => {
   posthog.capture("pokechain_room_created", event);
+};
+
+export const trackGoogleSignInClicked = (event: GoogleSignInClickedEvent) => {
+  posthog.capture("google_sign_in_clicked", event);
 };

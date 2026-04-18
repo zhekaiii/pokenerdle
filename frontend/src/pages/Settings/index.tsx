@@ -129,7 +129,7 @@ const Settings: React.FC = () => {
               <p className="tw:text-muted-foreground">
                 {t("account.signInPrompt")}
               </p>
-              <GoogleSignInButton className="tw:w-full" />
+              <GoogleSignInButton className="tw:w-full" source="settings" />
             </div>
           )}
         </CardContent>

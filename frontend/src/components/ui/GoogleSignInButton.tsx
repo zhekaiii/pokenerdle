@@ -1,20 +1,24 @@
 import GoogleIcon from "@/assets/google.svg?react";
 import { signInWithGoogle } from "@/atoms/auth";
+import { GoogleSignInSource, trackGoogleSignInClicked } from "@/lib/events";
 import { useState } from "react";
 import { Button, ButtonProps } from "./Button";
 
 interface UseGoogleSignInProps {
   redirectToPath?: string;
+  source: GoogleSignInSource;
 }
 
 export const useGoogleSignIn = ({
   redirectToPath = !import.meta.env.SSR ? location.pathname : "",
-}: UseGoogleSignInProps = {}) => {
+  source,
+}: UseGoogleSignInProps) => {
   const redirectToSearchParams = new URLSearchParams({ next: redirectToPath });
   const [loading, setLoading] = useState(false);
   const handleSignIn = async () => {
     try {
       setLoading(true);
+      trackGoogleSignInClicked({ source });
       await signInWithGoogle(
         new URL(
           location.origin +
@@ -49,9 +53,11 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
    * Path to redirect to after sign in
    */
   redirectToPath,
+  source,
 }) => {
   const { loading, handleSignIn } = useGoogleSignIn({
     redirectToPath,
+    source,
   });
 
   return (
