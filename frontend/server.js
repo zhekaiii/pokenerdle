@@ -216,12 +216,12 @@ export async function createServer(app) {
       .forEach((file) =>
         links.push({
           rel: "modulepreload",
-          href: file.file,
+          href: `/${file.file}`,
         })
       );
     links.push({
       rel: "stylesheet",
-      href: cssFile,
+      href: `/${cssFile}`,
     });
   }
 
