@@ -50,6 +50,12 @@ const DailyChallengeIntroCard: React.FC<Props> = ({ onStart, date }) => {
         <Button className="tw:w-full" variant="outline">
           <Link to="/how-to-play/daily">{t("nav:howToPlay")}</Link>
         </Button>
+        <Link
+          to="/daily/archive"
+          className="tw:block tw:w-full tw:py-1.5 tw:text-center tw:text-[13px] tw:font-medium tw:text-muted-foreground tw:no-underline tw:hover:text-foreground"
+        >
+          {t("buttons.pastChallenges")} →
+        </Link>
       </CardFooter>
     </Card>
   );

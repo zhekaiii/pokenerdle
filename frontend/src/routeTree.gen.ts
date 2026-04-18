@@ -12,13 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as PokechainRouteImport } from './routes/pokechain'
 import { Route as PathFinderRouteImport } from './routes/path-finder'
-import { Route as DailyRouteImport } from './routes/daily'
 import { Route as HowToPlayRouteRouteImport } from './routes/how-to-play/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DailyIndexRouteImport } from './routes/daily/index'
 import { Route as HowToPlayPokechainRouteImport } from './routes/how-to-play/pokechain'
 import { Route as HowToPlayPathFinderRouteImport } from './routes/how-to-play/path-finder'
 import { Route as HowToPlayDailyRouteImport } from './routes/how-to-play/daily'
 import { Route as HowToPlaySplatRouteImport } from './routes/how-to-play/$'
+import { Route as DailyArchiveRouteImport } from './routes/daily/archive'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -35,11 +36,6 @@ const PathFinderRoute = PathFinderRouteImport.update({
   path: '/path-finder',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DailyRoute = DailyRouteImport.update({
-  id: '/daily',
-  path: '/daily',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const HowToPlayRouteRoute = HowToPlayRouteRouteImport.update({
   id: '/how-to-play',
   path: '/how-to-play',
@@ -48,6 +44,11 @@ const HowToPlayRouteRoute = HowToPlayRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DailyIndexRoute = DailyIndexRouteImport.update({
+  id: '/daily/',
+  path: '/daily/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowToPlayPokechainRoute = HowToPlayPokechainRouteImport.update({
@@ -70,90 +71,102 @@ const HowToPlaySplatRoute = HowToPlaySplatRouteImport.update({
   path: '/$',
   getParentRoute: () => HowToPlayRouteRoute,
 } as any)
+const DailyArchiveRoute = DailyArchiveRouteImport.update({
+  id: '/daily/archive',
+  path: '/daily/archive',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/how-to-play': typeof HowToPlayRouteRouteWithChildren
-  '/daily': typeof DailyRoute
   '/path-finder': typeof PathFinderRoute
   '/pokechain': typeof PokechainRoute
   '/settings': typeof SettingsRoute
+  '/daily/archive': typeof DailyArchiveRoute
   '/how-to-play/$': typeof HowToPlaySplatRoute
   '/how-to-play/daily': typeof HowToPlayDailyRoute
   '/how-to-play/path-finder': typeof HowToPlayPathFinderRoute
   '/how-to-play/pokechain': typeof HowToPlayPokechainRoute
+  '/daily': typeof DailyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/how-to-play': typeof HowToPlayRouteRouteWithChildren
-  '/daily': typeof DailyRoute
   '/path-finder': typeof PathFinderRoute
   '/pokechain': typeof PokechainRoute
   '/settings': typeof SettingsRoute
+  '/daily/archive': typeof DailyArchiveRoute
   '/how-to-play/$': typeof HowToPlaySplatRoute
   '/how-to-play/daily': typeof HowToPlayDailyRoute
   '/how-to-play/path-finder': typeof HowToPlayPathFinderRoute
   '/how-to-play/pokechain': typeof HowToPlayPokechainRoute
+  '/daily': typeof DailyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/how-to-play': typeof HowToPlayRouteRouteWithChildren
-  '/daily': typeof DailyRoute
   '/path-finder': typeof PathFinderRoute
   '/pokechain': typeof PokechainRoute
   '/settings': typeof SettingsRoute
+  '/daily/archive': typeof DailyArchiveRoute
   '/how-to-play/$': typeof HowToPlaySplatRoute
   '/how-to-play/daily': typeof HowToPlayDailyRoute
   '/how-to-play/path-finder': typeof HowToPlayPathFinderRoute
   '/how-to-play/pokechain': typeof HowToPlayPokechainRoute
+  '/daily/': typeof DailyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/how-to-play'
-    | '/daily'
     | '/path-finder'
     | '/pokechain'
     | '/settings'
+    | '/daily/archive'
     | '/how-to-play/$'
     | '/how-to-play/daily'
     | '/how-to-play/path-finder'
     | '/how-to-play/pokechain'
+    | '/daily'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/how-to-play'
-    | '/daily'
     | '/path-finder'
     | '/pokechain'
     | '/settings'
+    | '/daily/archive'
     | '/how-to-play/$'
     | '/how-to-play/daily'
     | '/how-to-play/path-finder'
     | '/how-to-play/pokechain'
+    | '/daily'
   id:
     | '__root__'
     | '/'
     | '/how-to-play'
-    | '/daily'
     | '/path-finder'
     | '/pokechain'
     | '/settings'
+    | '/daily/archive'
     | '/how-to-play/$'
     | '/how-to-play/daily'
     | '/how-to-play/path-finder'
     | '/how-to-play/pokechain'
+    | '/daily/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HowToPlayRouteRoute: typeof HowToPlayRouteRouteWithChildren
-  DailyRoute: typeof DailyRoute
   PathFinderRoute: typeof PathFinderRoute
   PokechainRoute: typeof PokechainRoute
   SettingsRoute: typeof SettingsRoute
+  DailyArchiveRoute: typeof DailyArchiveRoute
+  DailyIndexRoute: typeof DailyIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -179,13 +192,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PathFinderRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/daily': {
-      id: '/daily'
-      path: '/daily'
-      fullPath: '/daily'
-      preLoaderRoute: typeof DailyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/how-to-play': {
       id: '/how-to-play'
       path: '/how-to-play'
@@ -198,6 +204,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/daily/': {
+      id: '/daily/'
+      path: '/daily'
+      fullPath: '/daily'
+      preLoaderRoute: typeof DailyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-to-play/pokechain': {
@@ -228,6 +241,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HowToPlaySplatRouteImport
       parentRoute: typeof HowToPlayRouteRoute
     }
+    '/daily/archive': {
+      id: '/daily/archive'
+      path: '/daily/archive'
+      fullPath: '/daily/archive'
+      preLoaderRoute: typeof DailyArchiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -252,10 +272,11 @@ const HowToPlayRouteRouteWithChildren = HowToPlayRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HowToPlayRouteRoute: HowToPlayRouteRouteWithChildren,
-  DailyRoute: DailyRoute,
   PathFinderRoute: PathFinderRoute,
   PokechainRoute: PokechainRoute,
   SettingsRoute: SettingsRoute,
+  DailyArchiveRoute: DailyArchiveRoute,
+  DailyIndexRoute: DailyIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

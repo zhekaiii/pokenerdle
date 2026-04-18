@@ -53,7 +53,7 @@ const DailyChallengePage: React.FC = () => {
   );
 };
 
-export const Route = createFileRoute("/daily")({
+export const Route = createFileRoute("/daily/")({
   component: DailyChallengePage,
   context: () => ({
     shouldShowRuleButton: true,
