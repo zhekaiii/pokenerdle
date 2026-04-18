@@ -80,6 +80,7 @@ export type DailyChallengeCalendarEntry = {
   date: string;
   solved: boolean;
   pokemonId: number;
+  attempts: number;
 };
 
 export type DailyChallengeCalendarResponse = {

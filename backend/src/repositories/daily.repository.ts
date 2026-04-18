@@ -293,5 +293,6 @@ export const getCalendarData = async (userId: string, month: string) => {
     date: g.dailyChallengeId,
     solved: g.correct ?? false,
     pokemonId: challengeMap.get(g.dailyChallengeId) ?? 0,
+    attempts: Number(g.count),
   }));
 };

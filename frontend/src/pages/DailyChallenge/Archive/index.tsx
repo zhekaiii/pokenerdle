@@ -24,7 +24,12 @@ import {
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DAY_1, FROZEN_DATE, getChallengeNumber } from "../constants";
+import {
+  DAILY_CHALLENGE_GUESS_LIMIT,
+  DAY_1,
+  FROZEN_DATE,
+  getChallengeNumber,
+} from "../constants";
 import classes from "./index.module.scss";
 
 type CellKind =
@@ -356,6 +361,11 @@ const SelectedPreview: React.FC<PreviewProps> = ({
       ? t("archive.preview.review")
       : t("archive.preview.retry");
 
+  const attemptsLabel = t("archive.preview.attempts", {
+    count: entry.attempts,
+    total: DAILY_CHALLENGE_GUESS_LIMIT,
+  });
+
   return (
     <div className={classes.Preview}>
       {spriteUrl && (
@@ -370,6 +380,7 @@ const SelectedPreview: React.FC<PreviewProps> = ({
           {pokemonName ?? `#${entry.pokemonId}`}
         </div>
         <div className={classes.PreviewSub}>{subLabel}</div>
+        <div className={classes.PreviewSub}>{attemptsLabel}</div>
       </div>
       <div className={classes.PreviewAction}>
         <Button

@@ -150,7 +150,9 @@
       "review": "Review",
       "play": "Play",
       "retry": "Retry",
-      "challengeNumber": "Challenge #{{number}}"
+      "challengeNumber": "Challenge #{{number}}",
+      "attempts_one": "{{count}}/{{total}} attempt",
+      "attempts_other": "{{count}}/{{total}} attempts"
     }
   }
 }
