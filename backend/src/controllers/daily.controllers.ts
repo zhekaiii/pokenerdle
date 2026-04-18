@@ -1,7 +1,6 @@
 import {
   DailyChallengeCalendarRequestSchema,
   DailyChallengeSubmitGuessRequestSchema,
-  DailyChallengeSyncGuessesRequestSchema,
 } from "@pokenerdle/shared/daily";
 import { Request, Response } from "express";
 import * as z from "zod";
@@ -17,7 +16,6 @@ import {
   getUserGuessesForDateService,
   getUserStats,
   submitGuess,
-  syncUserGuesses,
 } from "../services/daily.service.js";
 import { getUserId } from "../utils/userIdentification.js";
 
@@ -111,36 +109,6 @@ export const getDailyPokemonAnswerController = async (
     res
       .status(StatusCode.INTERNAL_SERVER_ERROR)
       .json({ error: "Failed to get answer" });
-  }
-};
-
-export const syncUserGuessesController = async (
-  req: AuthenticatedRequest,
-  res: Response,
-) => {
-  const parsed = DailyChallengeSyncGuessesRequestSchema.safeParse(req.body);
-  if (parsed.error) {
-    res.status(StatusCode.BAD_REQUEST).json(z.treeifyError(parsed.error));
-    return;
-  }
-
-  const { guesses, date } = parsed.data;
-  const user_id = req.user?.id;
-  const posthogDistinctId = req.posthogDistinctId;
-
-  try {
-    const results = await syncUserGuesses(
-      user_id,
-      posthogDistinctId,
-      guesses,
-      date,
-    );
-    res.json(results);
-  } catch (error) {
-    console.error("Error syncing user guesses:", error);
-    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
-      error: "Failed to sync user guesses",
-    });
   }
 };
 
