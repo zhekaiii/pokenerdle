@@ -6,7 +6,6 @@ import {
   getUserStatsController,
   migrateUserGuessesController,
   submitDailyPokemonGuessController,
-  syncUserGuessesController,
 } from "../controllers/daily.controllers.js";
 import { RouteNames } from "../data/const.js";
 import {
@@ -21,11 +20,6 @@ dailyRouter.post(
   "/challenge/submit",
   optionalAuthenticateUser,
   submitDailyPokemonGuessController
-);
-dailyRouter.post(
-  "/challenge/sync",
-  authenticateUser,
-  syncUserGuessesController
 );
 dailyRouter.get(
   "/challenge/guesses",

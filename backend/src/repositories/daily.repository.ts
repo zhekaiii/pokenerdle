@@ -96,18 +96,6 @@ export const getUserGuessesForDate = async (userId: string, date: string) => {
   });
 };
 
-export const deleteUserGuessesForDate = async (
-  userId: string,
-  date: string,
-) => {
-  return pgClient.userDailyGuess.deleteMany({
-    where: {
-      userId,
-      dailyChallengeId: date,
-    },
-  });
-};
-
 export const migrateUserGuesses = async (
   oldUserId: string,
   newUserId: string,

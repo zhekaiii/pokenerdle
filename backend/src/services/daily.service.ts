@@ -13,7 +13,6 @@ import { DailyPokemonToResponse } from "../mappers/daily.js";
 import {
   createDailyPokemon,
   dailyChallengeExists,
-  deleteUserGuessesForDate,
   getCalendarData,
   getDailyPokemonFromDb,
   getLastRngState,
@@ -359,73 +358,6 @@ export const getDailyPokemonAnswer = async (date: string) => {
   return {
     pokemonId: targetPokemon.id,
     pokemon: await DailyPokemonToResponse(targetPokemon),
-  };
-};
-
-export const syncUserGuesses = async (
-  userId: string | undefined,
-  posthogDistinctId: string | undefined,
-  guesses: { pokemonId: number }[],
-  date: string,
-) => {
-  if (!userId && !posthogDistinctId) {
-    throw new Error("User ID and Posthog Distinct ID are required");
-  }
-
-  // First, get existing guesses for this user and date
-  const existingGuesses = userId
-    ? await getUserGuessesForDateService(userId, date)
-    : [];
-  const existingGuessesForPh = posthogDistinctId
-    ? await getUserGuessesForDateService(posthogDistinctId, date)
-    : [];
-
-  if (existingGuesses.length > 0) {
-    // User already has data for this day
-    if (existingGuessesForPh.length > 0) {
-      await deleteUserGuessesForDate(posthogDistinctId!, date);
-    }
-    return {
-      syncedGuesses: [],
-      existingGuesses,
-      message: `User already has ${existingGuesses.length} guesses for this date`,
-    };
-  }
-
-  // if posthog distinct id has data but user id does not, means user just logged in
-  if (existingGuessesForPh.length > 0) {
-    await migrateUserGuesses(posthogDistinctId!, userId!);
-    return {
-      syncedGuesses: existingGuessesForPh,
-      existingGuesses: [],
-      message: `Successfully synced ${existingGuessesForPh.length} guesses`,
-    };
-  }
-
-  // User has no existing data, means local storage has stuff but
-  // user_id and posthogDistinctId don't have data
-  const syncedGuesses: DailyChallengeGuessResponse[] = [];
-
-  for (const guess of guesses) {
-    try {
-      const result = await submitGuess(
-        userId ?? posthogDistinctId!,
-        guess.pokemonId,
-        date,
-      );
-      syncedGuesses.push(result);
-    } catch (error) {
-      console.error(
-        `Failed to sync guess for pokemon ${guess.pokemonId}:`,
-        error,
-      );
-    }
-  }
-
-  return {
-    syncedGuesses,
-    existingGuesses: [],
-    message: `Successfully synced ${syncedGuesses.length} guesses`,
   };
 };
 
