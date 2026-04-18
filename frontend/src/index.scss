@@ -270,6 +270,9 @@
 }
 
 @layer base {
+  hr {
+    border-color: inherit !important;
+  }
   * {
     @apply tw:border-border;
   }

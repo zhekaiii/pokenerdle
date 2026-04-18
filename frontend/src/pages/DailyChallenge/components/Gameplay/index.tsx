@@ -10,9 +10,11 @@ import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 import { DailyChallengeGuessBox } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
+import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
 import {
   BookOpen,
+  CalendarDaysIcon,
   Clipboard,
   ClipboardCheck,
   Share2,
@@ -142,12 +144,12 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
       </div>
       {!hasReachedLimit && !hasSolved ? (
         <>
-          <hr className="tw:my-4" />
+          <hr className="tw:my-4!" />
           <TypeChecklist guesses={guesses?.guesses || []} />
         </>
       ) : (
         <>
-          <hr className="tw:my-4" />
+          <hr className="tw:my-4!" />
           <CorrectAnswerCard
             correctAnswer={
               hasSolved
@@ -213,6 +215,13 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
           </div>
         </>
       )}
+
+      <Link
+        to="/daily/archive"
+        className="tw:flex tw:gap-2 tw:items-center tw:mx-auto tw:mt-3 tw:text-[13px] tw:font-medium tw:text-muted-foreground tw:hover:text-foreground"
+      >
+        <CalendarDaysIcon /> {t("buttons.pastChallenges")}
+      </Link>
 
       <StatsDialog open={showStatsDialog} onOpenChange={setShowStatsDialog} />
 
