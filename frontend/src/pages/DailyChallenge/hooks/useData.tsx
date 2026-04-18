@@ -39,6 +39,13 @@ export const useDailyChallengeData = (date?: string) => {
   const activeDate = date ?? FROZEN_DATE;
   const isArchive = activeDate !== FROZEN_DATE;
 
+  // Reset the revealed answer when the active date changes so we don't leak
+  // the previous day's Pokémon into a different archive challenge.
+  useEffect(() => {
+    setCorrectAnswer(null);
+    setIsLoadingAnswer(false);
+  }, [activeDate]);
+
   const hasSolved = useMemo(
     () =>
       Boolean(
