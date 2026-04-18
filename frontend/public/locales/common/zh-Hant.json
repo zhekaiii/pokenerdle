@@ -1,4 +1,8 @@
 {
   "count_ordinal": "第{{count}}",
-  "close": "關閉"
+  "close": "關閉",
+  "footer": {
+    "privacyPolicy": "隱私政策",
+    "termsOfService": "服務條款"
+  }
 }

@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Header from "../layout/components/Header";
 import MobileFooter from "../layout/components/MobileFooter";
+import SiteFooter from "../layout/components/SiteFooter";
 import PageContainer from "../layout/PageContainer";
 
 interface SearchParams {
@@ -55,8 +56,8 @@ function RootLayout() {
         theme === "dark"
           ? "tw:dark"
           : theme === "light"
-          ? "tw:light"
-          : undefined
+            ? "tw:light"
+            : undefined
       }
     >
       <head>
@@ -126,6 +127,7 @@ function RootLayout() {
         <PageContainer>
           <Header />
           <Outlet />
+          <SiteFooter />
           <MobileFooter />
         </PageContainer>
         <Scripts />
@@ -171,7 +173,7 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
         },
       ],
       scripts: [
-        ...(import.meta.env.SSR ? match.context.scripts ?? [] : []),
+        ...(import.meta.env.SSR ? (match.context.scripts ?? []) : []),
         ...(import.meta.env.PROD
           ? [
               {
@@ -194,7 +196,7 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
               },
             ]),
       ],
-      links: import.meta.env.SSR ? match.context.links ?? [] : [],
+      links: import.meta.env.SSR ? (match.context.links ?? []) : [],
     };
   },
   component: RootLayout,

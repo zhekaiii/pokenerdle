@@ -1,0 +1,35 @@
+.SiteFooterWrapper {
+  width: calc(100% + var(--page-padding-x, 40px) * 2);
+  margin-top: auto;
+  padding-top: var(--page-padding-y);
+}
+
+.SiteFooter {
+  padding: 8px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+
+.Links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  a {
+    color: var(--muted-foreground);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: var(--foreground);
+    }
+  }
+}
+
+.Separator {
+  color: var(--muted-foreground);
+  opacity: 0.6;
+}

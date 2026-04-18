@@ -3,5 +3,9 @@
   "count_ordinal_two": "{{count}}nd",
   "count_ordinal_few": "{{count}}rd",
   "count_ordinal_other": "{{count}}th",
-  "close": "Close"
+  "close": "Close",
+  "footer": {
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  }
 }
