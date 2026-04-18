@@ -33,6 +33,9 @@
     "maxStreak": "最长连胜",
     "averageGuesses": "平均猜测次数"
   },
+  "auth": {
+    "persistDisclaimer": "登录以跨设备保存进度并确保数据安全。"
+  },
   "guessBox": {
     "placeholder": "输入宝可梦名称...",
     "noResults": "未找到宝可梦",

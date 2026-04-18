@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/Dialog";
+import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "@/pages/DailyChallenge/constants";
 import { DailyChallengeStatsResponse } from "@pokenerdle/shared/daily";
@@ -21,6 +22,7 @@ import { sum } from "es-toolkit";
 import { TrendingUp } from "lucide-react";
 import posthog from "posthog-js";
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   open?: boolean;
@@ -29,6 +31,7 @@ interface Props {
 
 const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
   const { loading: authLoading, isAuthenticated } = useAuth();
+  const { t } = useTranslation("daily");
   const [stats, setStats] = useState<DailyChallengeStatsResponse | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
   const maxGuessCount = useMemo(() => {
@@ -39,10 +42,12 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
     if (open) posthog.capture("daily_challenge_stats_dialog_opened");
   }, [open]);
 
-  // Fetch user stats when dialog opens and user is authenticated
+  // Fetch user stats when the dialog opens. The backend also accepts a
+  // PostHog distinct ID for anonymous users, so we can fetch regardless of
+  // auth state.
   useEffect(() => {
     const fetchStats = async () => {
-      if (open && isAuthenticated && !authLoading && !stats && !statsLoading) {
+      if (open && !authLoading && !stats && !statsLoading) {
         setStatsLoading(true);
         try {
           const userStats = await api.daily.getStats();
@@ -57,13 +62,9 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
 
     fetchStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only want to run on open change
-  }, [open, isAuthenticated, authLoading]);
+  }, [open, authLoading]);
 
-  if (!authLoading && !isAuthenticated) {
-    return null;
-  }
-
-  const getStatBox = ({
+  const StatBox = ({
     label,
     value,
     subtitle,
@@ -91,7 +92,7 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="tw:flex tw:flex-col tw:overflow-hidden">
         <DialogHeader>
           <DialogTitle className="tw:flex tw:items-center tw:gap-2">
             <TrendingUp className="tw:w-5 tw:h-5 tw:text-primary" />
@@ -99,53 +100,49 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="tw:space-y-4">
-          {!isAuthenticated && !authLoading && (
-            <div className="tw:text-center tw:text-muted-foreground">
-              Sign in to view your stats!
-            </div>
-          )}
-
-          {isAuthenticated && !authLoading && (
-            <div>
+        <div className="tw:space-y-4 tw:flex-1 tw:min-h-0 tw:overflow-y-auto tw:-mx-6 tw:px-6">
+          {!authLoading && (
+            <>
               {statsLoading ? (
-                <div className="tw:text-center tw:text-sm tw:text-muted-foreground tw:py-8">
+                <div className="tw:text-center tw:flex tw:items-center tw:justify-center tw:text-sm tw:h-[352px] tw:max-h-full">
                   Loading your stats...
                 </div>
               ) : stats && stats.num_played > 0 ? (
-                <div className="tw:relative">
+                <div className="tw:relative tw:max-h-full">
                   <Carousel className="tw:w-full" opts={{ loop: true }}>
                     <CarouselContent>
                       <CarouselItem>
                         <div className="tw:grid tw:grid-cols-2 tw:auto-rows-fr tw:gap-4 tw:text-center tw:h-full">
-                          {getStatBox({
-                            label: "Games Played",
-                            value: stats.num_played,
-                          })}
+                          <StatBox
+                            label="Games Played"
+                            value={stats.num_played}
+                          />
 
-                          {getStatBox({
-                            label: "Win Rate",
-                            value: `${stats.win_rate}%`,
-                          })}
+                          <StatBox
+                            label="Win Rate"
+                            value={`${stats.win_rate}%`}
+                          />
 
-                          {getStatBox({
-                            label: "Current Streak",
-                            value: stats.streak,
-                            subtitle:
+                          <StatBox
+                            label="Current Streak"
+                            value={stats.streak}
+                            subtitle={
                               stats.streak > 0
                                 ? "🔥 Keep it going!"
-                                : "💪 Start your streak today!",
-                          })}
+                                : "💪 Start your streak today!"
+                            }
+                          />
 
-                          {getStatBox({
-                            label: "Best Streak",
-                            value: stats.max_streak,
-                            subtitle:
+                          <StatBox
+                            label="Best Streak"
+                            value={stats.max_streak}
+                            subtitle={
                               stats.max_streak > 0 &&
                               stats.max_streak === stats.streak
                                 ? "🏆 Personal record!"
-                                : undefined,
-                          })}
+                                : undefined
+                            }
+                          />
                         </div>
                       </CarouselItem>
                       <CarouselItem>
@@ -174,7 +171,7 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
                                     </div>
                                     <div className="tw:flex-1 tw:relative">
                                       <div
-                                        className="tw:h-8 tw:bg-primary tw:rounded tw:transition-all tw:duration-300"
+                                        className="tw:h-6 tw:bg-primary tw:rounded tw:transition-all tw:duration-300"
                                         style={{
                                           width: `${percentage}%`,
                                         }}
@@ -187,16 +184,18 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
                                     </div>
                                   </div>
                                 );
-                              }
+                              },
                             )}
                           </div>
                           <span>
                             Average Guesses:{" "}
-                            {(Object.entries(stats.histogram).reduce(
-                              (acc, [guessCount, freq]) =>
-                                acc + Number(guessCount) * freq,
-                              0
-                            ) / sum(Object.values(stats.histogram))).toFixed(1)}
+                            {(
+                              Object.entries(stats.histogram).reduce(
+                                (acc, [guessCount, freq]) =>
+                                  acc + Number(guessCount) * freq,
+                                0,
+                              ) / sum(Object.values(stats.histogram))
+                            ).toFixed(1)}
                           </span>
                         </div>
                       </CarouselItem>
@@ -210,13 +209,22 @@ const StatsDialog: React.FC<Props> = ({ open, onOpenChange }) => {
                   No games played yet. Start your PokéNerdle journey today!
                 </div>
               )}
-            </div>
+            </>
           )}
-
-          <Button onClick={() => onOpenChange?.(false)} className="tw:w-full">
-            Close
-          </Button>
         </div>
+
+        {!authLoading && !isAuthenticated && (
+          <div className="tw:flex tw:flex-col tw:gap-2 tw:pt-2 tw:border-t">
+            <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
+              {t("auth.persistDisclaimer")}
+            </p>
+            <GoogleSignInButton variant="outline" />
+          </div>
+        )}
+
+        <Button onClick={() => onOpenChange?.(false)} className="tw:w-full">
+          Close
+        </Button>
       </DialogContent>
     </Dialog>
   );

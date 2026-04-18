@@ -195,25 +195,22 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
                 </NoSsr>
               </div>
             )}
-            {isAuthenticated ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="tw:w-full"
-                onClick={() => setShowStatsDialog(true)}
-              >
-                <TrendingUp />
-                {t("gameplay.viewStats")}
-              </Button>
-            ) : (
-              !authLoading && (
-                <>
-                  <GoogleSignInButton variant="outline" />
-                  <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
-                    {t("gameplay.signInPrompt")}
-                  </p>
-                </>
-              )
+            <Button
+              variant="outline"
+              size="sm"
+              className="tw:w-full"
+              onClick={() => setShowStatsDialog(true)}
+            >
+              <TrendingUp />
+              {t("gameplay.viewStats")}
+            </Button>
+            {!isAuthenticated && !authLoading && (
+              <>
+                <GoogleSignInButton variant="outline" />
+                <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
+                  {t("gameplay.signInPrompt")}
+                </p>
+              </>
             )}
           </div>
         </>

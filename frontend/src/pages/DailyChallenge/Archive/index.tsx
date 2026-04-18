@@ -3,6 +3,8 @@ import placeholderIcon from "@/assets/question_mark.png";
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import { ImageWithPlaceholder } from "@/components/recyclables/PokemonReferenceDialog/ImageWithPlaceholder";
 import { Button } from "@/components/ui/Button";
+import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
+import { useAuth } from "@/hooks/useAuth";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { cn } from "@/lib/utils";
@@ -89,6 +91,7 @@ const CalendarArchivePage: React.FC = () => {
   const { t } = useTranslation("daily");
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
   const { month: initialMonth, data: initialData } =
     ArchiveRoute.useLoaderData();
@@ -307,6 +310,15 @@ const CalendarArchivePage: React.FC = () => {
           {t("archive.legend.unplayed")}
         </span>
       </div>
+
+      {!authLoading && !isAuthenticated && (
+        <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-4">
+          <p className="tw:text-sm tw:text-muted-foreground tw:text-center">
+            {t("auth.persistDisclaimer")}
+          </p>
+          <GoogleSignInButton variant="outline" />
+        </div>
+      )}
     </div>
   );
 };

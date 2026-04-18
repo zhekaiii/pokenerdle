@@ -5,10 +5,7 @@ import {
 import { Request, Response } from "express";
 import * as z from "zod";
 import { StatusCode } from "../data/const.js";
-import {
-  AuthenticatedRequest,
-  StrictAuthenticatedRequest,
-} from "../middlewares/auth.js";
+import { AuthenticatedRequest } from "../middlewares/auth.js";
 import { migrateUserGuesses } from "../repositories/daily.repository.js";
 import {
   getCalendarDataService,
@@ -113,7 +110,7 @@ export const getDailyPokemonAnswerController = async (
 };
 
 export const getUserStatsController = async (
-  req: StrictAuthenticatedRequest,
+  req: AuthenticatedRequest,
   res: Response,
 ) => {
   const userId = getUserId(req)!;

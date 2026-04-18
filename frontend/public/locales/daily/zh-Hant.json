@@ -33,6 +33,9 @@
     "maxStreak": "最長連勝",
     "averageGuesses": "平均猜測次數"
   },
+  "auth": {
+    "persistDisclaimer": "登入以跨裝置保存進度並確保資料安全。"
+  },
   "guessBox": {
     "placeholder": "輸入寶可夢名稱...",
     "noResults": "未找到寶可夢",

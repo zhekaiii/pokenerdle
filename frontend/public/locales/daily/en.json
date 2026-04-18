@@ -35,6 +35,9 @@
     "maxStreak": "Max Streak",
     "averageGuesses": "Average Guesses"
   },
+  "auth": {
+    "persistDisclaimer": "Sign in to save your progress across devices and keep your data safe."
+  },
   "guessBox": {
     "placeholder": "Enter Pokémon name...",
     "noResults": "No Pokémon found",

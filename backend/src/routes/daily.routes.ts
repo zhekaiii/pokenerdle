@@ -11,7 +11,6 @@ import { RouteNames } from "../data/const.js";
 import {
   authenticateUser,
   optionalAuthenticateUser,
-  strictAuthenticateUser,
 } from "../middlewares/auth.js";
 
 const dailyRouter = Router();
@@ -32,11 +31,7 @@ dailyRouter.get(
   authenticateUser,
   getCalendarController
 );
-dailyRouter.get(
-  "/challenge/stats",
-  strictAuthenticateUser,
-  getUserStatsController
-);
+dailyRouter.get("/challenge/stats", authenticateUser, getUserStatsController);
 dailyRouter.post(
   "/challenge/migrate",
   authenticateUser,
