@@ -77,15 +77,21 @@ export const Route = createFileRoute("/daily/archive")({
     }
   },
   head: async ({ match }) => {
-    await match.context.i18n.loadNamespaces(["daily", "metadata"]);
-    const title = `${match.context.i18n.t("daily:calendar.title")} – PokéNerdle`;
+    await match.context.i18n.loadNamespaces("metadata");
     return {
       meta: [
-        { title },
-        { property: "og:title", content: title },
+        { title: match.context.i18n.t("metadata:title.archive") },
+        {
+          property: "og:title",
+          content: match.context.i18n.t("metadata:title.archive"),
+        },
         {
           name: "description",
-          content: match.context.i18n.t("daily:calendar.description"),
+          content: match.context.i18n.t("metadata:description.archive"),
+        },
+        {
+          property: "og:description",
+          content: match.context.i18n.t("metadata:description.archive"),
         },
       ],
     };

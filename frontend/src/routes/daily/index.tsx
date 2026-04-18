@@ -10,7 +10,7 @@ import { TZDate } from "@date-fns/tz";
 import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { format, isValid, parseISO } from "date-fns";
-import { atom, useAtom, useStore } from "jotai";
+import { atom, useAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 
 enum DailyChallengeState {
@@ -43,7 +43,6 @@ const isValidChallengeDate = (date: string): boolean => {
 
 const DailyChallengePage: React.FC = () => {
   const loadedData = Route.useLoaderData();
-  const store = useStore();
   useHydrateAtoms([[guessesAtom, loadedData]]);
   useHydrateAtoms([
     [
