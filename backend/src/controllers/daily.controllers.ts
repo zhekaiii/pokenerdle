@@ -1,4 +1,5 @@
 import {
+  DailyChallengeCalendarRequestSchema,
   DailyChallengeSubmitGuessRequestSchema,
   DailyChallengeSyncGuessesRequestSchema,
 } from "@pokenerdle/shared/daily";
@@ -11,6 +12,7 @@ import {
 } from "../middlewares/auth.js";
 import { migrateUserGuesses } from "../repositories/daily.repository.js";
 import {
+  getCalendarDataService,
   getDailyPokemonAnswer,
   getUserGuessesForDateService,
   getUserStats,
@@ -21,7 +23,7 @@ import { getUserId } from "../utils/userIdentification.js";
 
 export const submitDailyPokemonGuessController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   const parsed = DailyChallengeSubmitGuessRequestSchema.safeParse(req.body);
   if (parsed.error) {
@@ -36,6 +38,24 @@ export const submitDailyPokemonGuessController = async (
     const results = await submitGuess(userId, pokemon_id, date);
     res.json(results);
   } catch (error) {
+    if (error instanceof Error) {
+      if (error.message === "archive challenge already completed") {
+        res.status(StatusCode.CONFLICT).json({ error: error.message });
+        return;
+      }
+      if (error.message === "cannot play future challenges") {
+        res.status(StatusCode.BAD_REQUEST).json({ error: error.message });
+        return;
+      }
+      if (error.message === "challenge does not exist") {
+        res.status(StatusCode.NOT_FOUND).json({ error: error.message });
+        return;
+      }
+      if (error.message === "hit limit") {
+        res.status(StatusCode.BAD_REQUEST).json({ error: error.message });
+        return;
+      }
+    }
     console.error("Error submitting guess:", error);
     res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
       error: "Failed to submit guess",
@@ -47,7 +67,7 @@ export const submitDailyPokemonGuessController = async (
 // and we need to merge the data
 export const getUserGuessesController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   const { date } = req.query;
   // User is guaranteed to exist due to middleware
@@ -73,7 +93,7 @@ export const getUserGuessesController = async (
 
 export const getDailyPokemonAnswerController = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   const { date } = req.query;
   if (!date || typeof date !== "string") {
@@ -96,7 +116,7 @@ export const getDailyPokemonAnswerController = async (
 
 export const syncUserGuessesController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   const parsed = DailyChallengeSyncGuessesRequestSchema.safeParse(req.body);
   if (parsed.error) {
@@ -113,7 +133,7 @@ export const syncUserGuessesController = async (
       user_id,
       posthogDistinctId,
       guesses,
-      date
+      date,
     );
     res.json(results);
   } catch (error) {
@@ -126,7 +146,7 @@ export const syncUserGuessesController = async (
 
 export const getUserStatsController = async (
   req: StrictAuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   const userId = getUserId(req)!;
 
@@ -143,7 +163,7 @@ export const getUserStatsController = async (
 
 export const migrateUserGuessesController = async (
   req: AuthenticatedRequest,
-  res: Response
+  res: Response,
 ) => {
   const user_id = getUserId(req)!;
   const posthogDistinctId = req.posthogDistinctId;
@@ -160,6 +180,30 @@ export const migrateUserGuessesController = async (
     console.error("Error migrating user guesses:", error);
     res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
       error: "Failed to migrate user guesses",
+    });
+  }
+};
+
+export const getCalendarController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const parsed = DailyChallengeCalendarRequestSchema.safeParse(req.query);
+  if (parsed.error) {
+    res.status(StatusCode.BAD_REQUEST).json(z.treeifyError(parsed.error));
+    return;
+  }
+
+  const userId = getUserId(req)!;
+  const { month } = parsed.data;
+
+  try {
+    const result = await getCalendarDataService(userId, month);
+    res.json(result);
+  } catch (error) {
+    console.error("Error getting calendar data:", error);
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
+      error: "Failed to get calendar data",
     });
   }
 };

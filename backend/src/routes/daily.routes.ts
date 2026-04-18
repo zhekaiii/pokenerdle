@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getCalendarController,
   getDailyPokemonAnswerController,
   getUserGuessesController,
   getUserStatsController,
@@ -32,6 +33,11 @@ dailyRouter.get(
   getUserGuessesController
 );
 dailyRouter.get("/challenge/answer", getDailyPokemonAnswerController);
+dailyRouter.get(
+  "/challenge/calendar",
+  authenticateUser,
+  getCalendarController
+);
 dailyRouter.get(
   "/challenge/stats",
   strictAuthenticateUser,

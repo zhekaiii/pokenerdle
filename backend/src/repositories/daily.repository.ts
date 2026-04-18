@@ -53,6 +53,7 @@ export const saveUserGuess = async ({
   genCorrectness,
   heightCorrectness,
   colorCorrectness,
+  isArchive,
 }: {
   userId: string;
   date: string;
@@ -64,6 +65,7 @@ export const saveUserGuess = async ({
   genCorrectness: string;
   heightCorrectness: string;
   colorCorrectness: boolean;
+  isArchive?: boolean;
 }) => {
   return await pgClient.userDailyGuess.create({
     data: {
@@ -77,6 +79,7 @@ export const saveUserGuess = async ({
       genCorrectness,
       heightCorrectness,
       colorCorrectness,
+      isArchive: isArchive ?? false,
     },
   });
 };
@@ -172,12 +175,30 @@ export const getUserGuessCountForDate = async (
   return result;
 };
 
-export const getUserDailyStatsData = async (userId: string) => {
+export const getUserDailyChallengeByDay = async (
+  userId: string,
+  {
+    startInclusive,
+    endExclusive,
+    includeArchive = false,
+  }: {
+    startInclusive?: string;
+    endExclusive?: string;
+    includeArchive?: boolean;
+  } = {},
+) => {
+  const whereClause = Prisma.sql`
+    WHERE
+      "userId" = ${userId}
+      ${includeArchive ? Prisma.sql`` : Prisma.sql`AND "isArchive" = false`}
+      ${startInclusive ? Prisma.sql`AND "dailyChallengeId" >= ${startInclusive}` : Prisma.sql``}
+      ${endExclusive ? Prisma.sql`AND "dailyChallengeId" < ${endExclusive}` : Prisma.sql``}
+  `;
   return pgClient.$queryRaw<
     {
       dailyChallengeId: string;
       correct: boolean;
-      count: number;
+      count: bigint;
     }[]
   >`
     SELECT
@@ -186,8 +207,7 @@ export const getUserDailyStatsData = async (userId: string) => {
       count(1)
     FROM
       user_daily_guesses
-    WHERE
-      "userId" = ${userId}
+    ${whereClause}
     GROUP BY
       "dailyChallengeId"
     HAVING
@@ -237,4 +257,42 @@ export const getLastRngState = async (date: string) => {
     };
   }
   return null;
+};
+
+export const getCalendarData = async (userId: string, month: string) => {
+  const startDate = `${month}-01`;
+  const [year, monthNum] = month.split("-").map(Number);
+  const nextMonth =
+    monthNum === 12
+      ? `${year + 1}-01-01`
+      : `${year}-${String(monthNum + 1).padStart(2, "0")}-01`;
+
+  const guesses = await getUserDailyChallengeByDay(userId, {
+    startInclusive: startDate,
+    endExclusive: nextMonth,
+    includeArchive: true,
+  });
+
+  if (guesses.length === 0) return [];
+
+  const challenges = await pgClient.dailyChallenge.findMany({
+    where: {
+      date: {
+        in: guesses.map((g) => g.dailyChallengeId),
+      },
+    },
+    select: {
+      date: true,
+      pokemonId: true,
+    },
+  });
+
+  const challengeMap = new Map(challenges.map((c) => [c.date, c.pokemonId]));
+
+  return guesses.map((g) => ({
+    date: g.dailyChallengeId,
+    solved: g.correct ?? false,
+    pokemonId: challengeMap.get(g.dailyChallengeId) ?? 0,
+    attempts: Number(g.count),
+  }));
 };

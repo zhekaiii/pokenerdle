@@ -31,6 +31,7 @@ model UserDailyGuess {
   genCorrectness    String // "=", ">", "<"
   heightCorrectness String // "=", ">", "<"
   colorCorrectness  Boolean
+  isArchive         Boolean  @default(false)
   createdAt         DateTime @default(now())
 
   // Relations

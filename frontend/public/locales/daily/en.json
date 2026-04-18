@@ -6,7 +6,8 @@
     "startGuessing": "Start Guessing",
     "continueGuessing": "Continue Guessing",
     "share": "Share",
-    "copy": "Copy Results"
+    "copy": "Copy Results",
+    "pastChallenges": "Past Challenges"
   },
   "messages": {
     "foundPokemon": "You have found the mystery Pokémon!",
@@ -126,5 +127,32 @@
   "sync": {
     "success": "Your guesses have been saved to your account!",
     "error": "Something went wrong while saving your guesses."
+  },
+  "calendar": {
+    "title": "Past Challenges",
+    "description": "Pick a date to play an old challenge"
+  },
+  "archive": {
+    "title": "Your PokéNerdle calendar",
+    "subtitle": "Each solved day shows the Pokémon you caught.",
+    "badge": "Archived",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "legend": {
+      "solved": "Solved",
+      "failed": "Failed",
+      "unplayed": "Unplayed"
+    },
+    "preview": {
+      "empty": "Tap a day to see details",
+      "unplayedTitle": "Not played yet",
+      "todayTitle": "Today's challenge",
+      "review": "Review",
+      "play": "Play",
+      "retry": "Retry",
+      "challengeNumber": "Challenge #{{number}}",
+      "attempts_one": "{{count}}/{{total}} attempt",
+      "attempts_other": "{{count}}/{{total}} attempts"
+    }
   }
 }

@@ -67,3 +67,22 @@ export type DailyChallengeStatsResponse = {
   max_streak: number;
   histogram: Record<number, number>;
 };
+
+export const DailyChallengeCalendarRequestSchema = z.object({
+  month: z.string().regex(/^\d{4}-\d{2}$/),
+});
+
+export type DailyChallengeCalendarRequest = z.infer<
+  typeof DailyChallengeCalendarRequestSchema
+>;
+
+export type DailyChallengeCalendarEntry = {
+  date: string;
+  solved: boolean;
+  pokemonId: number;
+  attempts: number;
+};
+
+export type DailyChallengeCalendarResponse = {
+  entries: DailyChallengeCalendarEntry[];
+};

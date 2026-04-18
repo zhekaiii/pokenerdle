@@ -6,7 +6,8 @@
     "startGuessing": "開始猜測",
     "continueGuessing": "繼續猜測",
     "share": "分享",
-    "copy": "複製結果"
+    "copy": "複製結果",
+    "pastChallenges": "往期挑戰"
   },
   "messages": {
     "foundPokemon": "你找到了神秘的寶可夢！",
@@ -124,5 +125,31 @@
   "sync": {
     "success": "您的猜測已保存到您的帳戶中！",
     "error": "保存您的猜測時出了問題。"
+  },
+  "calendar": {
+    "title": "往期挑戰",
+    "description": "選擇一個日期來玩往期挑戰"
+  },
+  "archive": {
+    "title": "你的寶可夢日曆",
+    "subtitle": "猜中的日子會顯示你猜出的那隻寶可夢。",
+    "badge": "往期",
+    "prevMonth": "上個月",
+    "nextMonth": "下個月",
+    "legend": {
+      "solved": "已猜中",
+      "failed": "未解出",
+      "unplayed": "未遊玩"
+    },
+    "preview": {
+      "empty": "點擊日期查看詳情",
+      "unplayedTitle": "尚未挑戰",
+      "todayTitle": "今日挑戰",
+      "review": "查看",
+      "play": "遊玩",
+      "retry": "重試",
+      "challengeNumber": "第 {{number}} 期",
+      "attempts_other": "{{count}}/{{total}} 次嘗試"
+    }
   }
 }
