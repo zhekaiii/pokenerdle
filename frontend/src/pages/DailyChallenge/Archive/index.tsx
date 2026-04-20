@@ -44,7 +44,7 @@ type CellKind =
       isToday: boolean;
     };
 
-type CellStatus = "solved" | "failed" | "unplayed" | "today" | "future";
+type CellStatus = "solved" | "failed" | "unplayed" | "today" | "disabled";
 
 const formatMonth = (d: Date) => format(d, "yyyy-MM");
 const formatDate = (d: Date) => format(d, "yyyy-MM-dd");
@@ -71,7 +71,7 @@ const buildCells = (
 
     let status: CellStatus;
     if (dateStr > today || dateStr < DAY_1_STR) {
-      status = "future";
+      status = "disabled";
     } else {
       const entry = entriesByDate.get(dateStr);
       if (entry) {
@@ -175,7 +175,7 @@ const CalendarArchivePage: React.FC = () => {
   }, [cells, selectedDate]);
 
   const handleCellClick = (cell: CellKind) => {
-    if (cell.kind !== "day" || cell.status === "future") return;
+    if (cell.kind !== "day" || cell.status === "disabled") return;
     setSelectedDate((prev) => (prev === cell.date ? null : cell.date));
   };
 
@@ -252,7 +252,7 @@ const CalendarArchivePage: React.FC = () => {
                 isSelected && classes["Cell--selected"],
               )}
               onClick={() => handleCellClick(cell)}
-              disabled={cell.status === "future"}
+              disabled={cell.status === "disabled"}
               aria-label={cell.date}
             >
               {isResult && spriteUrl ? (
@@ -344,7 +344,7 @@ const SelectedPreview: React.FC<PreviewProps> = ({
 }) => {
   const { t } = useTranslation("daily");
 
-  if (!selectedDate || status === null || status === "future") {
+  if (!selectedDate || status === null || status === "disabled") {
     return (
       <div className={clsx(classes.Preview, classes["Preview--empty"])}>
         {t("archive.preview.empty")}

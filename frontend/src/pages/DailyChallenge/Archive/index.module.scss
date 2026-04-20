@@ -111,11 +111,11 @@
   pointer-events: none;
 }
 
-.Cell--future {
+.Cell--disabled {
   background: transparent;
   border-color: transparent;
   color: color-mix(in oklab, var(--muted-foreground) 40%, transparent);
-  cursor: default;
+  cursor: not-allowed;
   font-weight: 400;
 }
 
