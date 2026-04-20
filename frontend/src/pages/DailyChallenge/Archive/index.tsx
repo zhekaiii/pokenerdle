@@ -48,6 +48,7 @@ type CellStatus = "solved" | "failed" | "unplayed" | "today" | "future";
 
 const formatMonth = (d: Date) => format(d, "yyyy-MM");
 const formatDate = (d: Date) => format(d, "yyyy-MM-dd");
+const DAY_1_STR = format(DAY_1, "yyyy-MM-dd");
 
 const buildCells = (
   monthStart: Date,
@@ -69,7 +70,7 @@ const buildCells = (
     const isToday = dateStr === today;
 
     let status: CellStatus;
-    if (dateStr > today) {
+    if (dateStr > today || dateStr < DAY_1_STR) {
       status = "future";
     } else {
       const entry = entriesByDate.get(dateStr);
