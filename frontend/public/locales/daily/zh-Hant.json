@@ -150,7 +150,6 @@
       "todayTitle": "今日挑戰",
       "review": "查看",
       "play": "遊玩",
-      "retry": "重試",
       "challengeNumber": "第 {{number}} 期",
       "attempts_other": "{{count}}/{{total}} 次嘗試"
     }

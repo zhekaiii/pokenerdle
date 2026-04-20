@@ -383,11 +383,6 @@ const SelectedPreview: React.FC<PreviewProps> = ({
 
   if (!entry) return null;
 
-  const ctaLabel =
-    status === "solved"
-      ? t("archive.preview.review")
-      : t("archive.preview.retry");
-
   const attemptsLabel = t("archive.preview.attempts", {
     count: entry.attempts,
     total: DAILY_CHALLENGE_GUESS_LIMIT,
@@ -410,13 +405,9 @@ const SelectedPreview: React.FC<PreviewProps> = ({
         <div className={classes.PreviewSub}>{attemptsLabel}</div>
       </div>
       <div className={classes.PreviewAction}>
-        <Button
-          asChild
-          size="sm"
-          variant={status === "solved" ? "outline" : "default"}
-        >
+        <Button asChild size="sm" variant="outline">
           <Link to="/daily" search={{ date: selectedDate }}>
-            {ctaLabel}
+            {t("archive.preview.review")}
           </Link>
         </Button>
       </div>

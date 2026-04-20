@@ -152,7 +152,6 @@
       "todayTitle": "Today's challenge",
       "review": "Review",
       "play": "Play",
-      "retry": "Retry",
       "challengeNumber": "Challenge #{{number}}",
       "attempts_one": "{{count}}/{{total}} attempt",
       "attempts_other": "{{count}}/{{total}} attempts"
