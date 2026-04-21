@@ -5,6 +5,8 @@ import { differenceInCalendarDays, format } from "date-fns";
 export const DAILY_CHALLENGE_KEY = "daily_challenge";
 export const DAILY_CHALLENGE_GUESS_LIMIT = 8;
 
+export const DAILY_CALENDAR_QUERY_KEY = "dailyCalendar";
+
 export const DAY_1 = new TZDate(DAILY_CHALLENGE_DAY_1, SINGAPORE_TIMEZONE);
 export const FROZEN_DATE = format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd");
 export const challengeNumber =

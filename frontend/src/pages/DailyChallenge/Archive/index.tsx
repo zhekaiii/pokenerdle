@@ -27,6 +27,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  DAILY_CALENDAR_QUERY_KEY,
   DAILY_CHALLENGE_GUESS_LIMIT,
   DAY_1,
   FROZEN_DATE,
@@ -135,7 +136,7 @@ const CalendarArchivePage: React.FC = () => {
   };
 
   const { data: calendarData, isFetching } = useQuery({
-    queryKey: ["dailyCalendar", monthKey],
+    queryKey: [DAILY_CALENDAR_QUERY_KEY, monthKey],
     queryFn: () => api.daily.getCalendar(monthKey),
     staleTime: 1000 * 60 * 5,
     initialData:

@@ -1,8 +1,13 @@
 import api from "@/api";
-import { DAILY_CHALLENGE_GUESS_LIMIT, FROZEN_DATE } from "../constants";
+import {
+  DAILY_CALENDAR_QUERY_KEY,
+  DAILY_CHALLENGE_GUESS_LIMIT,
+  FROZEN_DATE,
+} from "../constants";
 
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
+import { useQueryClient } from "@tanstack/react-query";
 import { atom, useAtom } from "jotai";
 import posthog from "posthog-js";
 import { useEffect, useMemo, useState } from "react";
@@ -35,6 +40,7 @@ export const useDailyChallengeData = (date?: string) => {
   );
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false);
   const { t } = useTranslation("daily");
+  const queryClient = useQueryClient();
 
   const activeDate = date ?? FROZEN_DATE;
   const isArchive = activeDate !== FROZEN_DATE;
@@ -99,6 +105,9 @@ export const useDailyChallengeData = (date?: string) => {
           date: activeDate,
           guesses: [guess],
         };
+      });
+      void queryClient.invalidateQueries({
+        queryKey: [DAILY_CALENDAR_QUERY_KEY],
       });
       if (response.correct) {
         toast.success(`${t("toast.correctGuess")}`);
