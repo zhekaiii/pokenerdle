@@ -5,6 +5,7 @@ import {
 import { Request, Response } from "express";
 import * as z from "zod";
 import { StatusCode } from "../data/const.js";
+import { posthog } from "../lib/posthog.js";
 import { AuthenticatedRequest } from "../middlewares/auth.js";
 import { migrateUserGuesses } from "../repositories/daily.repository.js";
 import {
@@ -132,6 +133,10 @@ export const migrateUserGuessesController = async (
 ) => {
   const user_id = getUserId(req)!;
   const posthogDistinctId = req.posthogDistinctId;
+  if (posthogDistinctId?.endsWith(user_id)) {
+    res.status(StatusCode.OK).end();
+    return;
+  }
   console.log("Migrating user guesses from", posthogDistinctId, "to", user_id);
   if (!user_id || !posthogDistinctId) {
     res.status(StatusCode.OK).end();
@@ -140,6 +145,24 @@ export const migrateUserGuessesController = async (
 
   try {
     await migrateUserGuesses(posthogDistinctId, user_id);
+
+    // Only alias when we actually have an authenticated user distinct from the
+    // anonymous posthog id. posthogDistinctId carries a `posthog_` prefix from
+    // auth middleware; strip it so PostHog sees the raw browser distinct_id.
+    if (req.user?.id) {
+      const rawPosthogDistinctId = posthogDistinctId.replace(/^posthog_/, "");
+      console.log(
+        "PostHog alias: linking",
+        rawPosthogDistinctId,
+        "→",
+        req.user.id,
+      );
+      posthog.alias({
+        distinctId: req.user.id,
+        alias: rawPosthogDistinctId,
+      });
+    }
+
     res.status(StatusCode.OK).end();
   } catch (error) {
     console.error("Error migrating user guesses:", error);

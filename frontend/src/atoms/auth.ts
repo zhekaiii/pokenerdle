@@ -1,6 +1,7 @@
 import { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
+import posthog from "posthog-js";
 import { supabase } from "../lib/supabase";
 
 export const posthogAtom = atomWithStorage<null | {
@@ -21,7 +22,7 @@ const initialAuthState = getInitialAuthState();
 // Base atoms
 export const userAtom = atom<User | null>(initialAuthState.user as User | null);
 export const sessionAtom = atom<Session | null>(
-  initialAuthState.session as Session | null
+  initialAuthState.session as Session | null,
 );
 export const authLoadingAtom = atom<boolean>(false);
 
@@ -52,6 +53,8 @@ export const signOutAtom = atom(null, async (get, set) => {
   supabase.auth.signOut().catch((error) => {
     console.error("Error signing out:", error);
   });
+  console.log("PostHog reset: clearing identified user");
+  posthog.reset();
   set(userAtom, null);
   set(sessionAtom, null);
 });
@@ -68,6 +71,10 @@ export const initAuthAtom = atom(null, async (get, set) => {
     set(userAtom, session?.user ?? null);
     set(authLoadingAtom, false);
 
+    if (session?.user) {
+      posthog.identify(session.user.id, { email: session.user.email });
+    }
+
     // Listen for auth changes
     const {
       data: { subscription },
@@ -76,7 +83,18 @@ export const initAuthAtom = atom(null, async (get, set) => {
         set(sessionAtom, session);
         set(userAtom, session?.user ?? null);
         set(authLoadingAtom, false);
-      }
+
+        if (
+          (event === "SIGNED_IN" ||
+            event === "TOKEN_REFRESHED" ||
+            event === "USER_UPDATED") &&
+          session?.user
+        ) {
+          posthog.identify(session.user.id, { email: session.user.email });
+        } else if (event === "SIGNED_OUT") {
+          posthog.reset();
+        }
+      },
     );
 
     return () => subscription.unsubscribe();
