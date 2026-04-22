@@ -78,3 +78,4 @@ Exports via subpath: `@pokenerdle/shared`, `@pokenerdle/shared/utils`, `@pokener
 - Deployment target is Heroku (see `Procfile`) with PostHog source map upload
 - The SQLite database is generated from the PokeAPI submodule and is read-only at runtime
 - Backend uses Node.js in production (`node --es-module-specifier-resolution=node`) but Bun in development
+- When running tsc for type checking purposes, do `pnpm tsc` rather than `npx tsc`
