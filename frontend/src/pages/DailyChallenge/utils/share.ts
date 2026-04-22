@@ -2,9 +2,9 @@ import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { TFunction } from "i18next";
 import { toast } from "sonner";
 import {
-  challengeNumber,
   COLUMNS,
   DAILY_CHALLENGE_GUESS_LIMIT,
+  getCurrentChallengeNumber,
 } from "../constants";
 
 const generateGridEmojis = (guesses: DailyChallengeGuessResponse[]) => {
@@ -14,7 +14,7 @@ const generateGridEmojis = (guesses: DailyChallengeGuessResponse[]) => {
         return COLUMNS.map(() => "🟩").join("");
       }
       return COLUMNS.map((column) =>
-        guess[column.key] === true || guess[column.key] === "=" ? "🟩" : "🟧"
+        guess[column.key] === true || guess[column.key] === "=" ? "🟩" : "🟧",
       ).join("");
     })
     .join("\n");
@@ -22,11 +22,11 @@ const generateGridEmojis = (guesses: DailyChallengeGuessResponse[]) => {
 
 export const generateShareText = (
   guesses: DailyChallengeGuessResponse[],
-  t: TFunction
+  t: TFunction,
 ) => {
   const solved = guesses[guesses.length - 1].correct;
   const grid = generateGridEmojis(guesses);
-  let text = `${t("daily:share.title", { number: challengeNumber })}\n\n`;
+  let text = `${t("daily:share.title", { number: getCurrentChallengeNumber() })}\n\n`;
   if (solved) {
     text +=
       guesses.length == 1
@@ -39,14 +39,14 @@ export const generateShareText = (
     text += `${t("daily:share.challengeFailed")}\n\n`;
   }
   text += `${grid}\n\n${t(
-    "daily:share.challengePrompt"
+    "daily:share.challengePrompt",
   )} https://pokenerdle.app/daily`;
   return text;
 };
 
 export const shareResults = async (
   guesses: DailyChallengeGuessResponse[],
-  t: TFunction
+  t: TFunction,
 ) => {
   const shareText = generateShareText(guesses, t);
   if (navigator.share) {

@@ -14,7 +14,7 @@ import { format } from "date-fns";
 import { CalendarDaysIcon } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { challengeNumber, getChallengeNumber } from "../constants";
+import { getChallengeNumber, getCurrentChallengeNumber } from "../constants";
 import { useDailyChallengeData } from "../hooks/useData";
 
 interface Props {
@@ -25,7 +25,9 @@ interface Props {
 const DailyChallengeIntroCard: React.FC<Props> = ({ onStart, date }) => {
   const { guesses, isGameFinished, activeDate } = useDailyChallengeData(date);
   const { t } = useTranslation("daily");
-  const displayNumber = date ? getChallengeNumber(date) : challengeNumber;
+  const displayNumber = date
+    ? getChallengeNumber(date)
+    : getCurrentChallengeNumber();
 
   return (
     <Card className="tw:relative tw:w-[300px] tw:my-auto">

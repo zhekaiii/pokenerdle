@@ -26,9 +26,9 @@ import posthog from "posthog-js";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
-  challengeNumber,
   DAILY_CHALLENGE_GUESS_LIMIT,
   getChallengeNumber,
+  getCurrentChallengeNumber,
 } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
 import { generateShareText, shareResults } from "../../utils/share";
@@ -60,7 +60,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
   const { t } = useTranslation("daily");
   const displayChallengeNumber = isArchive
     ? getChallengeNumber(activeDate)
-    : challengeNumber;
+    : getCurrentChallengeNumber();
 
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
     onGuess(pokemon).finally(() => setInput(""));
