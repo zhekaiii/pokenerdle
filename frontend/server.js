@@ -32,7 +32,7 @@ i18n
     backend: {
       loadPath: path.join(
         import.meta.dirname,
-        "./public/locales/{{ns}}/{{lng}}.json"
+        "./public/locales/{{ns}}/{{lng}}.json",
       ),
     },
     fallbackLng: "en",
@@ -115,7 +115,7 @@ export async function createServer(app) {
           flush: zlib.constants.BROTLI_OPERATION_FLUSH,
         },
         flush: zlib.constants.Z_SYNC_FLUSH,
-      })
+      }),
     );
   }
 
@@ -136,12 +136,12 @@ export async function createServer(app) {
             cookiesToSet.forEach(({ name, value, options }) =>
               res.appendHeader(
                 "Set-Cookie",
-                serializeCookieHeader(name, value, options)
-              )
+                serializeCookieHeader(name, value, options),
+              ),
             );
           },
         },
-      }
+      },
     );
     req.supabase = supabase;
     const {
@@ -152,25 +152,28 @@ export async function createServer(app) {
     }
 
     const posthogCookie = parseCookieHeader(req.headers.cookie ?? "").find(
-      ({ name }) => name === `ph_${process.env.VITE_PUBLIC_POSTHOG_KEY}_posthog`
+      ({ name }) =>
+        name === `ph_${process.env.VITE_PUBLIC_POSTHOG_KEY}_posthog`,
     )?.value;
 
     try {
       const posthogDistinctId = JSON.parse(posthogCookie ?? "{}").distinct_id;
-      await fetch(
-        "http://localhost:" +
-          (process.env.PORT ?? 3456) +
-          "/api/v1/daily/challenge/migrate",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.access_token}`,
-            "X-Posthog-Distinct-Id": posthogDistinctId,
+      if (req.session.user.id !== posthogDistinctId) {
+        await fetch(
+          "http://localhost:" +
+            (process.env.PORT ?? 3456) +
+            "/api/v1/daily/challenge/migrate",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.access_token}`,
+              "X-Posthog-Distinct-Id": posthogDistinctId,
+            },
+            body: JSON.stringify({}),
           },
-          body: JSON.stringify({}),
-        }
-      );
+        );
+      }
     } catch (error) {
       console.error("Error migrating user guesses:", error);
     }
@@ -180,7 +183,8 @@ export async function createServer(app) {
   app.use(async (req, res, next) => {
     const cookies = parseCookieHeader(req.headers.cookie ?? "");
     const posthogCookie = cookies.find(
-      ({ name }) => name === `ph_${process.env.VITE_PUBLIC_POSTHOG_KEY}_posthog`
+      ({ name }) =>
+        name === `ph_${process.env.VITE_PUBLIC_POSTHOG_KEY}_posthog`,
     );
     if (posthogCookie) {
       try {
@@ -200,8 +204,8 @@ export async function createServer(app) {
     const manifest = JSON.parse(
       await fs.promises.readFile(
         path.join(import.meta.dirname, "./dist/client/.vite/manifest.json"),
-        "utf-8"
-      )
+        "utf-8",
+      ),
     );
     cssFile = manifest["style.css"].file;
     Object.values(manifest)
@@ -211,13 +215,13 @@ export async function createServer(app) {
           "vendor-router",
           "vendor-i18n",
           "vendor-posthog",
-        ].includes(file.name)
+        ].includes(file.name),
       )
       .forEach((file) =>
         links.push({
           rel: "modulepreload",
           href: `/${file.file}`,
-        })
+        }),
       );
     links.push({
       rel: "stylesheet",
@@ -240,13 +244,13 @@ export async function createServer(app) {
       let viteHead = !isProd
         ? await vite.transformIndexHtml(
             url,
-            `<html><head></head><body></body></html>`
+            `<html><head></head><body></body></html>`,
           )
         : "";
 
       viteHead = viteHead.substring(
         viteHead.indexOf("<head>") + 6,
-        viteHead.indexOf("</head>")
+        viteHead.indexOf("</head>"),
       );
 
       const entry = await (async () => {
