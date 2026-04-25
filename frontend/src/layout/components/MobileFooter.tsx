@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Button";
 import useDetectKeyboardOpen from "@/hooks/useDetectKeyboardOpen";
 import { Link, useLocation } from "@tanstack/react-router";
 import clsx from "clsx";
-import { Calendar, LinkIcon, MapPin } from "lucide-react";
+import { Calendar, LinkIcon, MapPin, SlidersHorizontal } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import classes from "./index.module.scss";
@@ -28,6 +28,11 @@ const MobileFooter: React.FC = () => {
       to: "/path-finder",
       icon: MapPin,
       label: t("pathFinder"),
+    },
+    {
+      to: "/stat-guess",
+      icon: SlidersHorizontal,
+      label: t("statGuess"),
     },
   ];
 
