@@ -52,16 +52,19 @@ const PokemonReveal: React.FC<PokemonRevealProps> = ({
         <div className="tw:min-w-0 tw:truncate tw:text-2xl tw:font-semibold tw:capitalize">
           {displayName}
         </div>
-        {typeof accuracyPercent === "number" && (
-          <div className="tw:shrink-0 tw:text-2xl tw:font-bold tw:tabular-nums">
-            {accuracyPercent}%
-          </div>
-        )}
       </div>
       {!isLoading ? (
         pokemon && (
-          <div className="tw:text-sm tw:text-muted-foreground">
-            #{pokemon.pokemon_species_id}
+          <div className="tw:flex tw:items-center tw:gap-1 tw:text-sm tw:text-muted-foreground">
+            <span>#{pokemon.pokemon_species_id}</span>
+            {typeof accuracyPercent === "number" && (
+              <>
+                <span>⋅</span>
+                <span className="tw:font-semibold tw:tabular-nums">
+                  Accuracy: {accuracyPercent}%
+                </span>
+              </>
+            )}
           </div>
         )
       ) : (
