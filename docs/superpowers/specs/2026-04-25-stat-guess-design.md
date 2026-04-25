@@ -47,9 +47,15 @@ A new card on `HomePage.tsx`, alongside Daily Challenge / PokéChain / Path Find
 
 ### Filters
 
-- **Format dropdown** — none selected by default. Options: "Pokémon Champions · Reg M-A" (and any other formats curated later).
-- **Generation multi-select chips** — all selected by default.
-- **Reset filters** button when any filter is non-default.
+Format and generation are **mutually exclusive** scoping mechanisms — both are alternative ways to narrow the Pokémon pool, and combining them produces awkwardly tiny intersections (e.g. "Reg M-A ∩ Gen 4" might be 5 Pokémon). The UI enforces the exclusivity, and the API rejects requests with both.
+
+A segmented control at the top: **`[ All ]  [ By Generation ]  [ By Format ]`**.
+
+- **All** — full default-form Pokémon pool (the same `DAILY_WHITELISTED_POKEMON_WHERE` base used elsewhere). Default selection.
+- **By Generation** — reveals a row of generation chips (1–9, multi-select; at least one must stay selected).
+- **By Format** — reveals a format dropdown ("Pokémon Champions · Reg M-A", and any future formats).
+
+Switching segments discards the previous segment's sub-selection (i.e. switching from "By Format" to "By Generation" doesn't preserve a hidden format choice). A "Reset" link appears when the segment is not "All".
 
 Filter selections persist in `localStorage` under the key `statGuess.filters`. Not synced to URL.
 
@@ -169,14 +175,18 @@ Returns the list of available metagame formats.
 
 Cacheable: `Cache-Control: public, max-age=3600`. Format display names are stored as English-only in the table for v1; localizing them is deferred (see "Out of scope").
 
-**`GET /stat-guess/round?format=champions-reg-ma&gen=1,4,9&excludeIds=395,400`**
+**`GET /stat-guess/round?format=champions-reg-ma&excludeIds=395,400`**
+**`GET /stat-guess/round?gen=1,4,9&excludeIds=395,400`**
+**`GET /stat-guess/round?excludeIds=395,400`**
 
-Returns one random Pokémon respecting the filters.
+Returns one random Pokémon respecting the filter (if any).
 
-Query params (all optional):
-- `format` — format id
-- `gen` — comma-separated generation ids
+Query params:
+- `format` — format id (mutually exclusive with `gen`)
+- `gen` — comma-separated generation ids (mutually exclusive with `format`)
 - `excludeIds` — comma-separated Pokémon IDs to exclude (the frontend tracks the last 3 to prevent immediate duplicates)
+
+All optional, but `format` and `gen` cannot both be present in the same request.
 
 Note: no `lang` param. The response only carries the Pokémon ID; the frontend renders the localized name and sprite via existing hooks (`usePokemonNames`, `usePokemonIcons`).
 
@@ -197,36 +207,47 @@ Response:
 
 Errors:
 - `400 invalid_format` — format id not in the table
-- `400 invalid_query` — malformed `gen` or `excludeIds`
-- `404 no_pokemon_match_filter` — the format/generation intersection itself is empty. `excludeIds` never causes a 404 because the service retries without exclusions if the with-exclusions query returns nothing (see "Service" below).
+- `400 invalid_query` — malformed `gen` or `excludeIds`, OR both `format` and `gen` were supplied
+- `404 no_pokemon_match_filter` — the selected scope (a format with no rows yet, or a generation list that's empty) yields no Pokémon. With "All" or with the curated formats / valid gens, this should never trigger in practice. `excludeIds` never causes a 404 because the service retries without exclusions if the with-exclusions query returns nothing (see "Service" below).
 - `500` — unexpected
 
-Validation: Zod schemas in `shared/src/statGuess.ts`, used by both backend and frontend.
+Validation: Zod schemas in `shared/src/statGuess.ts`, used by both backend and frontend. The mutual-exclusion rule is encoded as a Zod `refine` on the request schema, so both the controller and any frontend client share the constraint.
 
 ### Backend internals
 
-**Repository — `getRandomPokemonWithStats({ generations?, formatId?, excludeIds? })`:**
+**Repository — `getRandomPokemonWithStats({ scope, excludeIds? })`:**
+
+The `scope` parameter is a discriminated union enforcing the mutual exclusion at the type level:
+
+```typescript
+type StatGuessScope =
+  | { kind: "all" }
+  | { kind: "format"; formatId: string }
+  | { kind: "generations"; generations: number[] };
+```
 
 Uses the same "count + random offset" trick as `getPokemonForDaily`. Builds a `where` clause that AND's together:
 - The existing `DAILY_WHITELISTED_POKEMON_WHERE` base (default forms only)
-- `formatId`: `metagame_format_pokemon: { some: { format_id: formatId } }`
-- `generations`: `pokemon_v2_pokemonform: { some: { pokemon_v2_versiongroup: { generation_id: { in: generations } } } }`
-- `excludeIds`: `id: { notIn: excludeIds }`
+- One scope filter:
+  - `kind: "all"` → no extra filter
+  - `kind: "format"` → `metagame_format_pokemon: { some: { format_id: scope.formatId } }`
+  - `kind: "generations"` → `pokemon_v2_pokemonform: { some: { pokemon_v2_versiongroup: { generation_id: { in: scope.generations } } } }`
+- `excludeIds`: `id: { notIn: excludeIds }` (when non-empty)
 
 Returns `null` if `count === 0`. The service handles fallback retry logic before deciding whether to 404.
 
 Selects only `id` plus `pokemon_v2_pokemonstat` (no need to include type/form/species since the response is just `pokemonId` + stats).
 
-**Service — `getRound(filters)`:**
+**Service — `getRound({ scope, excludeIds })`:**
 
-1. Calls `getRandomPokemonWithStats({ ...filters, excludeIds })`.
+1. Calls `getRandomPokemonWithStats({ scope, excludeIds })`.
 2. If the result is null AND `excludeIds` was non-empty, retries once with `excludeIds = []` (so a small filtered pool — e.g. 3 Pokémon all in the exclude list — never 404s the user; we accept an immediate repeat instead).
 3. If still null, throws `NoMatchingPokemonError` → controller maps to `404 no_pokemon_match_filter`.
 4. Maps the Prisma result to the API response shape: just `pokemonId` plus the 6 stats extracted by `stat_id`. Name and sprite are rendered client-side via existing global hooks.
 
 **Controller:**
 
-Standard pattern matching `pathfinder.controllers.ts`. Validates query with Zod, calls service, sends response. Maps domain errors to HTTP statuses.
+Standard pattern matching `pathfinder.controllers.ts`. Validates query with Zod (the schema's `refine` rejects requests where both `format` and `gen` are present), constructs a `StatGuessScope` from the validated query, calls the service, sends the response. Maps domain errors to HTTP statuses.
 
 **Routes:**
 
@@ -238,6 +259,17 @@ router.get("/round", getRoundController);
 Mounted in `index.ts` at `/stat-guess`.
 
 ### Frontend internals
+
+**Filter model** (in `shared/src/statGuess.ts`, used by both UI and API client):
+
+```typescript
+type StatGuessFilter =
+  | { kind: "all" }
+  | { kind: "format"; formatId: string }
+  | { kind: "generations"; generations: number[] };
+```
+
+The same shape is used as the local component state (the segmented control writes one of these), the `localStorage` payload, and the input to the API client (which serializes it into the appropriate query string). Mutual exclusion is enforced at the type level — there is no representable state where both `format` and `generations` are set.
 
 **State machine** (in `useStatGuess.ts`):
 
@@ -258,7 +290,7 @@ Transitions:
 **Data fetching (TanStack Query):**
 
 - `useFormats()` — `queryKey: ["statGuess", "formats"]`, `staleTime: Infinity`. Locale-independent for v1 (display names are English-only).
-- `useRandomRound(filters, roundIndex)` — `queryKey: ["statGuess", "round", filters, roundIndex]`, `staleTime: 0`
+- `useRandomRound(filter, roundIndex)` — `queryKey: ["statGuess", "round", filter, roundIndex]`, `staleTime: 0`. `filter` is the `StatGuessFilter` discriminated union; the API client serializes it into either `?format=…`, `?gen=…`, or no scope param.
   - Bumping `roundIndex` triggers refetch
   - Filter change resets `roundIndex` and changes the key
   - Locale-independent (response is just `pokemonId` + stats; rendering uses `usePokemonNames`/`usePokemonIcons` which already handle language).
@@ -314,8 +346,12 @@ New namespace `statGuess` with three files. Keys (English):
   "title": "Stat Guess",
   "howToPlay": "How to play",
   "filters": {
+    "scope": {
+      "all": "All",
+      "byGeneration": "By Generation",
+      "byFormat": "By Format"
+    },
     "format": "Format",
-    "format.none": "All Pokémon",
     "generation": "Generation",
     "reset": "Reset"
   },
@@ -360,7 +396,7 @@ New rules page: `frontend/src/pages/HowToPlay/StatGuessRules.tsx`. Registered in
 
 ## Edge cases
 
-- **Empty filter intersection** → backend returns 404 → frontend shows "No Pokémon match these filters" with reset button
+- **Empty scope** → shouldn't happen with curated formats and valid gen lists, but if it does (e.g. a format file with zero Pokémon), backend returns 404 → frontend shows "No Pokémon match these filters" with reset button
 - **Backend error / network failure** → TanStack Query error state → "Couldn't load. [Retry]"
 - **User submits without adjusting sliders** → allowed, treated as a (bad) guess
 - **Page refresh mid-round** → restarts cleanly with a new round, session stats lost
