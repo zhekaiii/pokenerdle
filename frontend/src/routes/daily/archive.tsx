@@ -1,4 +1,5 @@
 import { createApi } from "@/api";
+import { posthogDistinctIdAtom } from "@/atoms/auth";
 import CalendarArchivePage from "@/pages/DailyChallenge/Archive";
 import { DAY_1, FROZEN_DATE } from "@/pages/DailyChallenge/constants";
 import { TZDate } from "@date-fns/tz";
@@ -58,6 +59,8 @@ export const Route = createFileRoute("/daily/archive")({
     context: { store },
     deps: { month: monthParam },
   }): Promise<ArchiveLoaderData> => {
+    if (!store.get(posthogDistinctIdAtom))
+      return { month: getCurrentMonth(), data: null };
     const month = monthParam ?? getCurrentMonth();
 
     // Only block on the API during SSR so the initial HTML is populated.

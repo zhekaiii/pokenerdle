@@ -39,7 +39,8 @@ export type GoogleSignInSource =
   | "daily_challenge_archive"
   | "daily_challenge_gameplay"
   | "settings"
-  | "profile_dropdown";
+  | "profile_dropdown"
+  | "homepage";
 
 export interface GoogleSignInClickedEvent {
   source: GoogleSignInSource;

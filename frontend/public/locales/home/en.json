@@ -1,0 +1,40 @@
+{
+  "greeting": {
+    "signedIn": "Welcome back,",
+    "signedOut": "Welcome to PokéNerdle,"
+  },
+  "guestName": "Trainer",
+  "modes": {
+    "daily": {
+      "title": "Daily Challenge",
+      "challengeLabel": "Challenge #{{number}} · Today",
+      "shortDesc": "Guess the mystery Pokémon in 8 tries. New puzzle every day.",
+      "ctaPlay": "Play today",
+      "ctaResume": "Resume",
+      "ctaResults": "View results",
+      "ctaArchive": "Archive"
+    },
+    "pokeChain": {
+      "title": "PokéChain",
+      "subtitle": "Multiplayer battle",
+      "shortDesc": "Real-time multiplayer. Build the longest chain via shared abilities.",
+      "ctaFindMatch": "Find a match"
+    },
+    "pathFinder": {
+      "title": "Path Finder",
+      "subtitle": "Solo puzzle",
+      "shortDesc": "Solo puzzle. Connect two Pokémon in the fewest ability-links.",
+      "ctaStart": "Start"
+    }
+  },
+  "stats": {
+    "dayStreak": "day streak",
+    "todaysTries": "today's tries",
+    "winRate": "win rate"
+  },
+  "status": {
+    "solved": "Solved",
+    "inProgress": "In progress",
+    "notPlayed": "Not played"
+  }
+}

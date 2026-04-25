@@ -1,0 +1,40 @@
+{
+  "greeting": {
+    "signedIn": "欢迎回来，",
+    "signedOut": "欢迎来到 PokéNerdle，"
+  },
+  "guestName": "训练师",
+  "modes": {
+    "daily": {
+      "title": "每日挑战",
+      "challengeLabel": "第 {{number}} 期 · 今日",
+      "shortDesc": "8 次机会内猜出今日神秘宝可梦。每天都是新谜题。",
+      "ctaPlay": "立即挑战",
+      "ctaResume": "继续",
+      "ctaResults": "查看结果",
+      "ctaArchive": "往期挑战"
+    },
+    "pokeChain": {
+      "title": "宝可梦链",
+      "subtitle": "多人对战",
+      "shortDesc": "实时多人对战。利用共同特性构筑最长的宝可梦链。",
+      "ctaFindMatch": "寻找对手"
+    },
+    "pathFinder": {
+      "title": "路径寻找",
+      "subtitle": "单人解谜",
+      "shortDesc": "单人解谜。用最少的特性连结串起两只宝可梦。",
+      "ctaStart": "开始"
+    }
+  },
+  "stats": {
+    "dayStreak": "连胜天数",
+    "todaysTries": "今日次数",
+    "winRate": "胜率"
+  },
+  "status": {
+    "solved": "已通关",
+    "inProgress": "进行中",
+    "notPlayed": "尚未游玩"
+  }
+}

@@ -6,7 +6,6 @@ import {
   createRootRouteWithContext,
   HeadContent,
   Outlet,
-  redirect,
   Scripts,
   useLocation,
   useRouter,
@@ -200,16 +199,6 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
     };
   },
   component: RootLayout,
-  beforeLoad: ({ location }) => {
-    if (location.pathname === "/") {
-      throw redirect({
-        to: "/daily",
-        search: location.search,
-        hash: location.hash,
-        replace: true,
-      });
-    }
-  },
   errorComponent: ErrorPage,
   validateSearch: ({ v }): SearchParams => {
     if (v) {

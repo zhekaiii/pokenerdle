@@ -1,0 +1,40 @@
+{
+  "greeting": {
+    "signedIn": "歡迎回來，",
+    "signedOut": "歡迎來到 PokéNerdle，"
+  },
+  "guestName": "訓練家",
+  "modes": {
+    "daily": {
+      "title": "每日挑戰",
+      "challengeLabel": "第 {{number}} 期 · 今日",
+      "shortDesc": "8 次機會內猜出今日神秘寶可夢。每天都是新謎題。",
+      "ctaPlay": "立即挑戰",
+      "ctaResume": "繼續",
+      "ctaResults": "查看結果",
+      "ctaArchive": "往期挑戰"
+    },
+    "pokeChain": {
+      "title": "寶可夢鏈",
+      "subtitle": "多人對戰",
+      "shortDesc": "即時多人對戰。利用共同特性構築最長的寶可夢鏈。",
+      "ctaFindMatch": "尋找對手"
+    },
+    "pathFinder": {
+      "title": "路徑尋找",
+      "subtitle": "單人解謎",
+      "shortDesc": "單人解謎。用最少的特性連結串起兩隻寶可夢。",
+      "ctaStart": "開始"
+    }
+  },
+  "stats": {
+    "dayStreak": "連勝天數",
+    "todaysTries": "今日次數",
+    "winRate": "勝率"
+  },
+  "status": {
+    "solved": "已通關",
+    "inProgress": "進行中",
+    "notPlayed": "尚未遊玩"
+  }
+}

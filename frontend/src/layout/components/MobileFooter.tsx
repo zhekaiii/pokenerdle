@@ -49,7 +49,7 @@ const MobileFooter: React.FC = () => {
               variant="transparent"
               className={clsx(
                 classes.NavButton,
-                isActive && classes["NavButton--active"]
+                isActive && classes["NavButton--active"],
               )}
             >
               <Link to={to}>
