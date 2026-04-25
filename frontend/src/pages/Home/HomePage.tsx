@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Link as LinkIcon,
   MapPin,
+  SlidersHorizontal,
 } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -30,6 +31,7 @@ const TYPE_COLORS = {
   daily: "var(--water-type)",
   pokeChain: "var(--fighting-type)",
   pathFinder: "var(--grass-type)",
+  statGuess: "var(--psychic-type)",
 } as const;
 
 const getDailyStatus = (
@@ -257,6 +259,20 @@ const HomePage: React.FC = () => {
           body={
             <div className={classes.CardDescription}>
               {t("modes.pathFinder.shortDesc")}
+            </div>
+          }
+        />
+
+        <ModeCard
+          color={TYPE_COLORS.statGuess}
+          icon={<SlidersHorizontal className="tw:size-5 tw:text-white" />}
+          title={t("modes.statGuess.title")}
+          subtitle={t("modes.statGuess.subtitle")}
+          to="/stat-guess"
+          cta={t("modes.statGuess.ctaStart")}
+          body={
+            <div className={classes.CardDescription}>
+              {t("modes.statGuess.shortDesc")}
             </div>
           }
         />

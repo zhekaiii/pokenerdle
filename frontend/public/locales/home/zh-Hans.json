@@ -25,6 +25,12 @@
       "subtitle": "单人解谜",
       "shortDesc": "单人解谜。用最少的特性连结串起两只宝可梦。",
       "ctaStart": "开始"
+    },
+    "statGuess": {
+      "title": "种族值挑战",
+      "subtitle": "单人小游戏",
+      "shortDesc": "用滑块猜测宝可梦的六项种族值。无限轮次。",
+      "ctaStart": "开始"
     }
   },
   "stats": {

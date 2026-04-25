@@ -25,6 +25,12 @@
       "subtitle": "Solo puzzle",
       "shortDesc": "Solo puzzle. Connect two Pokémon in the fewest ability-links.",
       "ctaStart": "Start"
+    },
+    "statGuess": {
+      "title": "Stat Guess",
+      "subtitle": "Solo trivia",
+      "shortDesc": "Guess a Pokémon's six base stats with sliders. Endless rounds.",
+      "ctaStart": "Start"
     }
   },
   "stats": {

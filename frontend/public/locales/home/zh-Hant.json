@@ -25,6 +25,12 @@
       "subtitle": "單人解謎",
       "shortDesc": "單人解謎。用最少的特性連結串起兩隻寶可夢。",
       "ctaStart": "開始"
+    },
+    "statGuess": {
+      "title": "種族值挑戰",
+      "subtitle": "單人小遊戲",
+      "shortDesc": "用滑桿猜測寶可夢的六項種族值。無限輪次。",
+      "ctaStart": "開始"
     }
   },
   "stats": {
