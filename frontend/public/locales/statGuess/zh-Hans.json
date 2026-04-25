@@ -1,6 +1,7 @@
 {
   "title": "种族值挑战",
   "howToPlay": "玩法",
+  "loading": "加载中…",
   "filters": {
     "scope": {
       "all": "全部",

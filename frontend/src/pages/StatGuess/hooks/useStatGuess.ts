@@ -10,8 +10,11 @@ import { useEffect, useRef, useState } from "react";
 
 import { computeScore, StatGuessScore } from "../scoring";
 
+export type StatGuessErrorKind = "noMatch" | "loadFailed";
+
 export type StatGuessState =
-  | { phase: "loading"; pokemonId?: number }
+  | { phase: "loading" }
+  | { phase: "error"; kind: StatGuessErrorKind }
   | {
       phase: "guessing";
       round: StatGuessRoundResponse;
@@ -52,10 +55,15 @@ export const useStatGuess = (filter: StatGuessFilter) => {
 
   const recentIdsRef = useRef<number[]>([]);
 
-  const { data: round } = useQuery<StatGuessRoundResponse>({
+  const {
+    data: round,
+    error: roundError,
+    refetch,
+  } = useQuery<StatGuessRoundResponse>({
     queryKey: ["statGuess", "round", filter, roundIndex],
     queryFn: () => api.statGuess.getRound(filter, recentIdsRef.current),
     staleTime: 0,
+    retry: false,
   });
 
   // Append the new Pokémon to the recent list, keeping the last 3.
@@ -114,11 +122,38 @@ export const useStatGuess = (filter: StatGuessFilter) => {
     setRoundIndex((i) => i + 1);
   };
 
-  const state: StatGuessState = !round
-    ? { phase: "loading" }
-    : phase === "guessing"
-      ? { phase: "guessing", round, guesses }
-      : { phase: "result", round, guesses, score: score! };
+  const retry = () => {
+    void refetch();
+  };
 
-  return { state, setGuess, submit, next, session };
+  // Map an axios error to a UI error kind. A 404 with the documented
+  // `no_pokemon_match_filter` body means the filter pool is empty; everything
+  // else is a generic load failure.
+  const errorKind = (err: unknown): StatGuessErrorKind => {
+    if (
+      err &&
+      typeof err === "object" &&
+      "response" in err &&
+      err.response &&
+      typeof err.response === "object" &&
+      "data" in err.response &&
+      err.response.data &&
+      typeof err.response.data === "object" &&
+      "error" in err.response.data &&
+      err.response.data.error === "no_pokemon_match_filter"
+    ) {
+      return "noMatch";
+    }
+    return "loadFailed";
+  };
+
+  const state: StatGuessState = round
+    ? phase === "guessing"
+      ? { phase: "guessing", round, guesses }
+      : { phase: "result", round, guesses, score: score! }
+    : roundError
+      ? { phase: "error", kind: errorKind(roundError) }
+      : { phase: "loading" };
+
+  return { state, setGuess, submit, next, retry, session };
 };

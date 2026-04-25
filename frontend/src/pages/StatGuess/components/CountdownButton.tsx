@@ -6,6 +6,7 @@ type CountdownButtonProps = {
   progress: number; // 0..1
   onClick: () => void;
   children: React.ReactNode;
+  ariaLabel?: string;
 };
 
 const SIZE = 56;
@@ -17,6 +18,7 @@ const CountdownButton: React.FC<CountdownButtonProps> = ({
   progress,
   onClick,
   children,
+  ariaLabel,
 }) => {
   return (
     <div className="tw:relative tw:inline-flex">
@@ -50,6 +52,7 @@ const CountdownButton: React.FC<CountdownButtonProps> = ({
         onClick={onClick}
         className="tw:rounded-full"
         style={{ width: SIZE, height: SIZE }}
+        aria-label={ariaLabel}
       >
         {children}
       </Button>

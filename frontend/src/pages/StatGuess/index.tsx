@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { STAT_KEYS } from "@pokenerdle/shared";
 import { Link } from "@tanstack/react-router";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, LoaderCircle } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -19,7 +19,8 @@ const StatGuessPage: React.FC = () => {
   const { t } = useTranslation("statGuess");
   const { filter, setScope, setFormat, toggleGeneration, reset } =
     useStatGuessFilter();
-  const { state, setGuess, submit, next, session } = useStatGuess(filter);
+  const { state, setGuess, submit, next, retry, session } =
+    useStatGuess(filter);
 
   return (
     <div className={classes.StatGuess}>
@@ -47,9 +48,38 @@ const StatGuessPage: React.FC = () => {
             onReset={reset}
           />
           {state.phase === "loading" && (
-            <p className="tw:text-center">Loading…</p>
+            <div
+              className="tw:flex tw:justify-center tw:py-12"
+              role="status"
+              aria-label={t("loading")}
+            >
+              <LoaderCircle
+                className="tw:size-8 tw:animate-spin tw:text-muted-foreground"
+                aria-hidden
+              />
+            </div>
           )}
-          {state.phase !== "loading" && (
+          {state.phase === "error" && (
+            <div
+              className="tw:flex tw:flex-col tw:items-center tw:gap-3 tw:py-8 tw:text-center"
+              role="alert"
+            >
+              <p>
+                {state.kind === "noMatch"
+                  ? t("errors.noMatch")
+                  : t("errors.loadFailed")}
+              </p>
+              <div className="tw:flex tw:gap-2">
+                {state.kind === "loadFailed" && (
+                  <Button onClick={retry}>{t("errors.retry")}</Button>
+                )}
+                <Button variant="outline" onClick={reset}>
+                  {t("errors.resetFilters")}
+                </Button>
+              </div>
+            </div>
+          )}
+          {(state.phase === "guessing" || state.phase === "result") && (
             <>
               <PokemonReveal pokemonId={state.round.pokemonId} />
               <div className="tw:flex tw:flex-col tw:gap-3">

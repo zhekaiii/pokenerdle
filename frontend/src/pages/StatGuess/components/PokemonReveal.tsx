@@ -39,7 +39,7 @@ const PokemonReveal: React.FC<PokemonRevealProps> = ({ pokemonId }) => {
         {displayName}
       </div>
       <div className="tw:text-sm tw:text-muted-foreground">
-        #{pokemon?.pokemon_species_id?.toString()}
+        #{(pokemon?.pokemon_species_id ?? pokemonId).toString().padStart(4, "0")}
       </div>
     </div>
   );

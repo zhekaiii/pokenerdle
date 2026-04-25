@@ -53,8 +53,14 @@ const ResultPanel: React.FC<ResultPanelProps> = ({ score, onAdvance }) => {
         ))}
       </div>
       <div className="tw:flex tw:justify-center tw:pt-2">
-        <CountdownButton progress={progress} onClick={onAdvance}>
-          ▶
+        <CountdownButton
+          progress={progress}
+          onClick={onAdvance}
+          ariaLabel={t("actions.nextIn", {
+            seconds: Math.ceil((1 - progress) * (COUNTDOWN_MS / 1000)),
+          })}
+        >
+          <span aria-hidden>▶</span>
         </CountdownButton>
       </div>
     </div>

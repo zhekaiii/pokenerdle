@@ -1,6 +1,7 @@
 {
   "title": "Stat Guess",
   "howToPlay": "How to play",
+  "loading": "Loading…",
   "filters": {
     "scope": {
       "all": "All",
