@@ -24,6 +24,23 @@ export const SLIDER_MIN = 1;
 export const SLIDER_MAX = 255;
 export const SLIDER_DEFAULT = 100;
 
+// Mirrors PokemonDB's `barchart-rank-N` stat coloring:
+// rank 1: 1–29, rank 2: 30–59, rank 3: 60–89, rank 4: 90–119,
+// rank 5: 120–149, rank 6: 150+.
+export const STAT_RANK_COLORS = [
+  "#f34444",
+  "#ff7f0f",
+  "#ffdd57",
+  "#a0e515",
+  "#23cd5e",
+  "#00c2b8",
+] as const;
+
+export const statRankColor = (value: number): string => {
+  const rank = Math.min(6, Math.max(1, Math.floor(value / 30) + 1));
+  return STAT_RANK_COLORS[rank - 1];
+};
+
 // Scope is the discriminated union enforcing mutual exclusion between
 // "filter by generations" and "filter by format" at the type level.
 export const StatGuessScopeSchema = z.discriminatedUnion("kind", [

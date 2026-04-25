@@ -19,7 +19,8 @@
     "specialAttack": "特攻",
     "specialDefense": "特防",
     "speed": "速度",
-    "ariaLabel": "{{stat}} 数值,1 到 200",
+    "ariaLabel": "{{stat}} 数值,1 到 255",
+    "inputAriaLabel": "{{stat}} 输入框,1 到 255",
     "total": "合计:{{value}}"
   },
   "actions": {

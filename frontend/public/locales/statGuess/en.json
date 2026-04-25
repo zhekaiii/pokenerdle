@@ -19,7 +19,8 @@
     "specialAttack": "Sp. Atk",
     "specialDefense": "Sp. Def",
     "speed": "Speed",
-    "ariaLabel": "{{stat}} guess, 1 to 200",
+    "ariaLabel": "{{stat}} guess, 1 to 255",
+    "inputAriaLabel": "{{stat}} value, 1 to 255",
     "total": "Total: {{value}}"
   },
   "actions": {
