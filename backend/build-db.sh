@@ -5,6 +5,7 @@ make build-db
 mv db.sqlite3 ../prisma-sqlite
 cd ../prisma-sqlite
 sqlite3 db.sqlite3 < preprocess.sql
+pnpm prisma db pull --schema=./prisma-sqlite/schema.prisma --config=./prisma-sqlite/prisma.config.js
 pnpm prisma generate --schema=./prisma-sqlite/schema.prisma
 cd ..
 bun run ./src/refreshGraph.ts
