@@ -1,10 +1,22 @@
 import { StatGuessFilter } from "@pokenerdle/shared";
-import { useState } from "react";
+import { atom, useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
 export const DEFAULT_FILTER: StatGuessFilter = { kind: "all" };
 
+const filterAtom = import.meta.env.SSR
+  ? atom<StatGuessFilter>(DEFAULT_FILTER)
+  : atomWithStorage<StatGuessFilter>(
+      "statGuess.filters",
+      DEFAULT_FILTER,
+      undefined,
+      {
+        getOnInit: true,
+      },
+    );
+
 export const useStatGuessFilter = () => {
-  const [filter, setFilter] = useState<StatGuessFilter>(DEFAULT_FILTER);
+  const [filter, setFilter] = useAtom(filterAtom);
 
   const setScope = (kind: StatGuessFilter["kind"]) => {
     if (kind === "all") setFilter({ kind: "all" });
