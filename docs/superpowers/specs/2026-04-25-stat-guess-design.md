@@ -153,7 +153,7 @@ JSON file shape:
 }
 ```
 
-For v1, `champions-reg-ma.json` is hand-curated from the published Reg M-A rules (186 Pokémon).
+For v1, `champions-reg-ma.json` is hand-curated from the published Reg M-A rules (272 Pokémon).
 
 ### API contract
 
@@ -168,7 +168,7 @@ Returns the list of available metagame formats.
   formats: Array<{
     id: string;          // "champions-reg-ma"
     displayName: string; // "Pokémon Champions · Reg M-A"
-    pokemonCount: number;// 186
+    pokemonCount: number;// 272
   }>;
 }
 ```
