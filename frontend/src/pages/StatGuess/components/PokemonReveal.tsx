@@ -1,5 +1,9 @@
+import api from "@/api";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
+import { QUERY_KEY } from "@/lib/query";
+import { resolveSpriteUrl } from "@/utils/pokemonSprites";
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- prefer type aliases
@@ -13,10 +17,20 @@ const PokemonReveal: React.FC<PokemonRevealProps> = ({ pokemonId }) => {
   const entry = pokemonNames[pokemonId];
   const displayName = entry?.name || entry?.speciesName || `#${pokemonId}`;
 
+  const { data: pokemon } = useQuery({
+    queryKey: [QUERY_KEY.POKEMON, pokemonId],
+    queryFn: () => api.data.getPokemonWithAbilities(pokemonId),
+    staleTime: Infinity,
+  });
+
+  const spriteUrl = pokemon
+    ? resolveSpriteUrl(pokemon)
+    : getPokemonIcon(pokemonId);
+
   return (
     <div className="tw:flex tw:flex-col tw:items-center tw:gap-2 tw:py-4">
       <img
-        src={getPokemonIcon(pokemonId)}
+        src={spriteUrl}
         alt={displayName}
         className="tw:w-32 tw:h-32 tw:object-contain"
         loading="eager"
@@ -25,7 +39,7 @@ const PokemonReveal: React.FC<PokemonRevealProps> = ({ pokemonId }) => {
         {displayName}
       </div>
       <div className="tw:text-sm tw:text-muted-foreground">
-        #{pokemonId.toString().padStart(4, "0")}
+        #{pokemon?.pokemon_species_id?.toString()}
       </div>
     </div>
   );

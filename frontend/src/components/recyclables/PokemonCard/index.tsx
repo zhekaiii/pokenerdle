@@ -1,7 +1,7 @@
-import questionMarkIcon from "@/assets/question_mark_big.png";
 import { Button } from "@/components/ui/Button";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { MAX_LINKS } from "@/utils/pokeChainUtils";
+import { resolveSpriteUrl } from "@/utils/pokemonSprites";
 import { PokemonWithAbilities } from "@pokenerdle/shared";
 import clsx from "clsx";
 import { uniqBy } from "es-toolkit";
@@ -47,31 +47,10 @@ const PokemonCard: React.FC<Props> = ({
     ),
   );
   const pokemonNumber = pokemon.pokemon_species_id;
-  const pokemonSpriteUrl = useMemo(() => {
-    if (isShiny) {
-      if (typeof pokemon.sprites.front_shiny == "string") {
-        return pokemon.sprites.front_shiny;
-      }
-      if (
-        typeof pokemon.sprites.other == "object" &&
-        pokemon.sprites.other?.home &&
-        typeof pokemon.sprites.other.home.front_shiny === "string"
-      ) {
-        return pokemon.sprites.other.home.front_shiny;
-      }
-    }
-    if (pokemon.sprites.front_default) {
-      return pokemon.sprites.front_default;
-    }
-    if (
-      typeof pokemon.sprites.other == "object" &&
-      pokemon.sprites.other?.home &&
-      typeof pokemon.sprites.other.home.front_default === "string"
-    ) {
-      return pokemon.sprites.other.home.front_default;
-    }
-    return questionMarkIcon;
-  }, [isShiny, pokemon]);
+  const pokemonSpriteUrl = useMemo(
+    () => resolveSpriteUrl(pokemon, isShiny),
+    [isShiny, pokemon],
+  );
   return (
     <Card className={classes["PokemonCard"]}>
       <CardContent className={classes["PokemonCard__Content"]}>
