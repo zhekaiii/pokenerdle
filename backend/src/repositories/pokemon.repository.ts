@@ -346,9 +346,17 @@ const buildScopeWhere = (
         },
       };
     case "generations":
+      // Filter by the version group that introduced each form (matching
+      // `getPokemonIdsByGeneration` used elsewhere in the app), so that e.g.
+      // Mega Charizard X — a Gen 6 form of a Gen 1 species — is returned
+      // when the player selects Gen 6, not Gen 1.
       return {
-        pokemon_v2_pokemonspecies: {
-          generation_id: { in: scope.generations },
+        pokemon_v2_pokemonform: {
+          some: {
+            pokemon_v2_versiongroup: {
+              generation_id: { in: scope.generations },
+            },
+          },
         },
       };
   }
