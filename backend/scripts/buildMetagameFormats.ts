@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-// @ts-nocheck — Bun `bun:sqlite`; this file is executed by Bun at build-db time, not the Node tsc build.
 // Runs at build-db time. Reads each JSON in backend/data/metagame-formats/,
 // creates the metagame_format and metagame_format_pokemon tables, validates
 // every pokemonId exists in pokemon_v2_pokemon, and inserts the data.
