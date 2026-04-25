@@ -6,7 +6,9 @@ import { supabase } from "../lib/supabase";
 
 export const posthogAtom = atomWithStorage<null | {
   distinct_id: string | null;
-}>(`ph_${import.meta.env.VITE_PUBLIC_POSTHOG_KEY}_posthog`, null);
+}>(`ph_${import.meta.env.VITE_PUBLIC_POSTHOG_KEY}_posthog`, null, undefined, {
+  getOnInit: true,
+});
 
 export const posthogDistinctIdAtom = atom<string | null>((get) => {
   const posthog = get(posthogAtom);
