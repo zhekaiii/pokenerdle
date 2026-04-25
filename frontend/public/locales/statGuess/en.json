@@ -1,5 +1,6 @@
 {
   "title": "Stat Guess",
+  "howToPlay": "How to play",
   "filters": {
     "scope": {
       "all": "All",
@@ -19,6 +20,11 @@
     "total": "Total: {{value}}"
   },
   "actions": {
-    "submit": "Submit"
+    "submit": "Submit",
+    "next": "Next"
+  },
+  "result": {
+    "accuracy": "{{percent}}%",
+    "perStat": "You: {{guess}} · Actual: {{actual}} · Δ{{delta}}"
   }
 }
