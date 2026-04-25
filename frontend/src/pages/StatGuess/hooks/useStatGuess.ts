@@ -6,7 +6,7 @@ import {
   StatGuessStats,
 } from "@pokenerdle/shared";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { computeScore, StatGuessScore } from "../scoring";
 
@@ -39,11 +39,30 @@ export const useStatGuess = (filter: StatGuessFilter) => {
   const [guesses, setGuesses] = useState<StatGuessStats>(initialGuesses);
   const [score, setScore] = useState<StatGuessScore | null>(null);
 
+  const recentIdsRef = useRef<number[]>([]);
+
   const { data: round } = useQuery<StatGuessRoundResponse>({
     queryKey: ["statGuess", "round", filter, roundIndex],
-    queryFn: () => api.statGuess.getRound(filter, []),
+    queryFn: () => api.statGuess.getRound(filter, recentIdsRef.current),
     staleTime: 0,
   });
+
+  // Append the new Pokémon to the recent list, keeping the last 3.
+  useEffect(() => {
+    if (round) {
+      recentIdsRef.current = [...recentIdsRef.current, round.pokemonId].slice(
+        -3,
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to pokemon id changing
+  }, [round?.pokemonId]);
+
+  // Clear the recent list when filter changes — exclude lists are
+  // pool-specific, so a different scope shouldn't be constrained by IDs from
+  // the previous scope.
+  useEffect(() => {
+    recentIdsRef.current = [];
+  }, [filter]);
 
   // Reset to "guessing" when a new round arrives.
   useEffect(() => {
