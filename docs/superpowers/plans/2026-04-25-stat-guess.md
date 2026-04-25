@@ -512,12 +512,10 @@ Now that the shared types compile and the SQLite tables exist, build out the bac
 
 Append to `backend/src/repositories/pokemon.repository.ts` (after the existing `getDamageFactor`):
 
-```typescript
-import { StatGuessScope, StatGuessStats } from "@pokenerdle/shared";
-import { Prisma } from "../generated/prisma-sqlite/client.js";
+Add `STAT_ID` to `backend/src/constants/game.ts`:
 
-// Instruction to sub-agent: SHIFT THIS TO A CONSTANT FILE
-const STAT_ID = {
+```typescript
+export const STAT_ID = {
   hp: 1,
   attack: 2,
   defense: 3,
@@ -525,6 +523,14 @@ const STAT_ID = {
   specialDefense: 5,
   speed: 6,
 } as const;
+```
+
+Then in `backend/src/repositories/pokemon.repository.ts` (merge into existing imports where applicable):
+
+```typescript
+import { StatGuessScope, StatGuessStats } from "@pokenerdle/shared";
+import { STAT_ID } from "../constants/game.js";
+import { Prisma } from "../generated/prisma-sqlite/client.js";
 
 const buildScopeWhere = (
   scope: StatGuessScope,
@@ -556,6 +562,10 @@ export type RandomPokemonWithStats = {
  * Returns one random Pokémon (matching scope + exclusions) with its 6 base
  * stats, or null if the scoped pool is empty. The service handles the
  * exclude-list fallback before deciding whether to surface a 404.
+ *
+ * Note: Stat Guess intentionally does NOT apply DAILY_WHITELISTED_POKEMON_WHERE.
+ * The format scope already curates which Pokémon appear, and "all"/"generations"
+ * scopes draw from the full `pokemon_v2_pokemon` table for variety.
  */
 export const getRandomPokemonWithStats = async ({
   scope,
@@ -566,7 +576,6 @@ export const getRandomPokemonWithStats = async ({
 }): Promise<RandomPokemonWithStats | null> => {
   const where: Prisma.pokemon_v2_pokemonWhereInput = {
     AND: [
-      ...(DAILY_WHITELISTED_POKEMON_WHERE.where.AND as Prisma.pokemon_v2_pokemonWhereInput[]),
       buildScopeWhere(scope),
       ...(excludeIds && excludeIds.length > 0
         ? [{ id: { notIn: excludeIds } }]
