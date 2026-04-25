@@ -38,6 +38,17 @@ export const useStatGuess = (filter: StatGuessFilter) => {
   const [phase, setPhase] = useState<"guessing" | "result">("guessing");
   const [guesses, setGuesses] = useState<StatGuessStats>(initialGuesses);
   const [score, setScore] = useState<StatGuessScore | null>(null);
+  const [session, setSession] = useState<{
+    completed: number;
+    sumPercent: number;
+    bestPercent: number;
+    bestPokemonId: number | null;
+  }>({
+    completed: 0,
+    sumPercent: 0,
+    bestPercent: 0,
+    bestPokemonId: null,
+  });
 
   const recentIdsRef = useRef<number[]>([]);
 
@@ -85,8 +96,18 @@ export const useStatGuess = (filter: StatGuessFilter) => {
 
   const submit = () => {
     if (!round) return;
-    setScore(computeScore(guesses, round.stats));
+    const newScore = computeScore(guesses, round.stats);
+    setScore(newScore);
     setPhase("result");
+    setSession((s) => ({
+      completed: s.completed + 1,
+      sumPercent: s.sumPercent + newScore.overallPercent,
+      bestPercent: Math.max(s.bestPercent, newScore.overallPercent),
+      bestPokemonId:
+        newScore.overallPercent > s.bestPercent
+          ? round.pokemonId
+          : s.bestPokemonId,
+    }));
   };
 
   const next = () => {
@@ -99,5 +120,5 @@ export const useStatGuess = (filter: StatGuessFilter) => {
       ? { phase: "guessing", round, guesses }
       : { phase: "result", round, guesses, score: score! };
 
-  return { state, setGuess, submit, next };
+  return { state, setGuess, submit, next, session };
 };

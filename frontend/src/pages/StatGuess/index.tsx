@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import FilterBar from "./components/FilterBar";
 import PokemonReveal from "./components/PokemonReveal";
 import ResultPanel from "./components/ResultPanel";
+import SessionFooter from "./components/SessionFooter";
 import StatSliderRow from "./components/StatSliderRow";
 import { useStatGuess } from "./hooks/useStatGuess";
 import { useStatGuessFilter } from "./hooks/useStatGuessFilter";
@@ -18,7 +19,7 @@ const StatGuessPage: React.FC = () => {
   const { t } = useTranslation("statGuess");
   const { filter, setScope, setFormat, toggleGeneration, reset } =
     useStatGuessFilter();
-  const { state, setGuess, submit, next } = useStatGuess(filter);
+  const { state, setGuess, submit, next, session } = useStatGuess(filter);
 
   return (
     <div className={classes.StatGuess}>
@@ -82,6 +83,9 @@ const StatGuessPage: React.FC = () => {
           )}
         </CardContent>
       </Card>
+      <div className="tw:max-w-2xl tw:mx-auto">
+        <SessionFooter {...session} />
+      </div>
     </div>
   );
 };

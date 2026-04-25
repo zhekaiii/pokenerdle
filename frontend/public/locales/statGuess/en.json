@@ -26,5 +26,10 @@
   "result": {
     "accuracy": "{{percent}}%",
     "perStat": "You: {{guess}} · Actual: {{actual}} · Δ{{delta}}"
+  },
+  "session": {
+    "round": "Round {{n}}",
+    "average": "Avg {{percent}}%",
+    "best": "Best {{percent}}% on {{name}}"
   }
 }
