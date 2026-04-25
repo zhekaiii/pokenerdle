@@ -60,6 +60,23 @@ const main = () => {
       process.exit(1);
     }
 
+    if (raw.pokemonIds.length === 0) {
+      console.error(
+        `[buildMetagameFormats] format "${raw.id}" has empty pokemonIds`,
+      );
+      process.exit(1);
+    }
+
+    const duplicates = raw.pokemonIds.filter(
+      (id, i) => raw.pokemonIds.indexOf(id) !== i,
+    );
+    if (duplicates.length > 0) {
+      console.error(
+        `[buildMetagameFormats] format "${raw.id}" has duplicate Pokémon IDs: ${[...new Set(duplicates)].join(", ")}`,
+      );
+      process.exit(1);
+    }
+
     // Validate every Pokémon ID exists.
     const placeholders = raw.pokemonIds.map(() => "?").join(",");
     const found = db
