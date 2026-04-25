@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StatGuessRouteImport } from './routes/stat-guess'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as PokechainRouteImport } from './routes/pokechain'
 import { Route as PathFinderRouteImport } from './routes/path-finder'
@@ -21,6 +22,11 @@ import { Route as HowToPlayDailyRouteImport } from './routes/how-to-play/daily'
 import { Route as HowToPlaySplatRouteImport } from './routes/how-to-play/$'
 import { Route as DailyArchiveRouteImport } from './routes/daily/archive'
 
+const StatGuessRoute = StatGuessRouteImport.update({
+  id: '/stat-guess',
+  path: '/stat-guess',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/path-finder': typeof PathFinderRoute
   '/pokechain': typeof PokechainRoute
   '/settings': typeof SettingsRoute
+  '/stat-guess': typeof StatGuessRoute
   '/daily/archive': typeof DailyArchiveRoute
   '/how-to-play/$': typeof HowToPlaySplatRoute
   '/how-to-play/daily': typeof HowToPlayDailyRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/path-finder': typeof PathFinderRoute
   '/pokechain': typeof PokechainRoute
   '/settings': typeof SettingsRoute
+  '/stat-guess': typeof StatGuessRoute
   '/daily/archive': typeof DailyArchiveRoute
   '/how-to-play/$': typeof HowToPlaySplatRoute
   '/how-to-play/daily': typeof HowToPlayDailyRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/path-finder': typeof PathFinderRoute
   '/pokechain': typeof PokechainRoute
   '/settings': typeof SettingsRoute
+  '/stat-guess': typeof StatGuessRoute
   '/daily/archive': typeof DailyArchiveRoute
   '/how-to-play/$': typeof HowToPlaySplatRoute
   '/how-to-play/daily': typeof HowToPlayDailyRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/path-finder'
     | '/pokechain'
     | '/settings'
+    | '/stat-guess'
     | '/daily/archive'
     | '/how-to-play/$'
     | '/how-to-play/daily'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/path-finder'
     | '/pokechain'
     | '/settings'
+    | '/stat-guess'
     | '/daily/archive'
     | '/how-to-play/$'
     | '/how-to-play/daily'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/path-finder'
     | '/pokechain'
     | '/settings'
+    | '/stat-guess'
     | '/daily/archive'
     | '/how-to-play/$'
     | '/how-to-play/daily'
@@ -165,12 +177,20 @@ export interface RootRouteChildren {
   PathFinderRoute: typeof PathFinderRoute
   PokechainRoute: typeof PokechainRoute
   SettingsRoute: typeof SettingsRoute
+  StatGuessRoute: typeof StatGuessRoute
   DailyArchiveRoute: typeof DailyArchiveRoute
   DailyIndexRoute: typeof DailyIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stat-guess': {
+      id: '/stat-guess'
+      path: '/stat-guess'
+      fullPath: '/stat-guess'
+      preLoaderRoute: typeof StatGuessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -275,6 +295,7 @@ const rootRouteChildren: RootRouteChildren = {
   PathFinderRoute: PathFinderRoute,
   PokechainRoute: PokechainRoute,
   SettingsRoute: SettingsRoute,
+  StatGuessRoute: StatGuessRoute,
   DailyArchiveRoute: DailyArchiveRoute,
   DailyIndexRoute: DailyIndexRoute,
 }
