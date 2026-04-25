@@ -25,8 +25,7 @@
   },
   "actions": {
     "submit": "提交",
-    "next": "下一只",
-    "nextIn": "{{seconds}} 秒后继续"
+    "next": "下一只"
   },
   "result": {
     "accuracy": "{{percent}}%",
