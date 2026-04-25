@@ -1,15 +1,28 @@
-import { StatGuessFilter } from "@pokenerdle/shared";
+import { StatGuessFilter, StatGuessFilterSchema } from "@pokenerdle/shared";
 import { atom, useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
 
 export const DEFAULT_FILTER: StatGuessFilter = { kind: "all" };
+
+// Wrap the default JSON storage with a schema-validated reader so an outdated
+// or hand-edited persisted value can never crash the page or feed an invalid
+// filter to the backend; instead we silently fall back to the default.
+const safeStorage = createJSONStorage<StatGuessFilter>(() => localStorage);
+const validatingStorage = {
+  ...safeStorage,
+  getItem: (key: string, initialValue: StatGuessFilter): StatGuessFilter => {
+    const stored = safeStorage.getItem(key, initialValue);
+    const parsed = StatGuessFilterSchema.safeParse(stored);
+    return parsed.success ? parsed.data : initialValue;
+  },
+};
 
 const filterAtom = import.meta.env.SSR
   ? atom<StatGuessFilter>(DEFAULT_FILTER)
   : atomWithStorage<StatGuessFilter>(
       "statGuess.filters",
       DEFAULT_FILTER,
-      undefined,
+      validatingStorage,
       {
         getOnInit: true,
       },
