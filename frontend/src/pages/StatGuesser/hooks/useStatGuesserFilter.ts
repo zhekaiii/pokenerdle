@@ -23,9 +23,6 @@ const filterAtom = import.meta.env.SSR
       "statGuesser.filters",
       DEFAULT_FILTER,
       validatingStorage,
-      {
-        getOnInit: true,
-      },
     );
 
 export const useStatGuesserFilter = () => {
