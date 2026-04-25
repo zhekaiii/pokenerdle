@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- prefer type aliases
 type FilterBarProps = {
   filter: StatGuessFilter;
   onScopeChange: (kind: StatGuessFilter["kind"]) => void;

@@ -2,6 +2,7 @@ import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import React from "react";
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- prefer type aliases
 type PokemonRevealProps = {
   pokemonId: number;
 };

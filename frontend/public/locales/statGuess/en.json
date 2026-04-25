@@ -1,0 +1,24 @@
+{
+  "title": "Stat Guess",
+  "filters": {
+    "scope": {
+      "all": "All",
+      "byGeneration": "By Generation",
+      "byFormat": "By Format"
+    },
+    "reset": "Reset"
+  },
+  "sliders": {
+    "hp": "HP",
+    "attack": "Attack",
+    "defense": "Defense",
+    "specialAttack": "Sp. Atk",
+    "specialDefense": "Sp. Def",
+    "speed": "Speed",
+    "ariaLabel": "{{stat}} guess, 1 to 200",
+    "total": "Total: {{value}}"
+  },
+  "actions": {
+    "submit": "Submit"
+  }
+}
