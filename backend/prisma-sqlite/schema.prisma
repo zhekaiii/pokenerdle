@@ -1588,6 +1588,7 @@ model pokemon_v2_pokemon {
   is_default                    Boolean
   pokemon_species_id            Int?
   name                          String
+  metagame_format_pokemon       metagame_format_pokemon[]
   pokemon_v2_encounter          pokemon_v2_encounter[]
   pokemon_v2_pokemonspecies     pokemon_v2_pokemonspecies?      @relation(fields: [pokemon_species_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   pokemon_v2_pokemonability     pokemon_v2_pokemonability[]
@@ -2318,4 +2319,20 @@ model pokemon_v2_pokemonstatpast {
   @@index([stat_id], map: "pokemon_v2_pokemonstatpast_stat_id_055ba550")
   @@index([pokemon_id], map: "pokemon_v2_pokemonstatpast_pokemon_id_ec8a0102")
   @@index([generation_id], map: "pokemon_v2_pokemonstatpast_generation_id_a799e6a3")
+}
+
+model metagame_format {
+  id                      String                    @id
+  display_name            String
+  metagame_format_pokemon metagame_format_pokemon[]
+}
+
+model metagame_format_pokemon {
+  format_id          String
+  pokemon_id         Int
+  pokemon_v2_pokemon pokemon_v2_pokemon @relation(fields: [pokemon_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  metagame_format    metagame_format    @relation(fields: [format_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([format_id, pokemon_id])
+  @@index([format_id])
 }

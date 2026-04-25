@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @ts-nocheck — Bun `bun:sqlite`; this file is executed by Bun at build-db time, not the Node tsc build.
 // Runs at build-db time. Reads each JSON in backend/data/metagame-formats/,
 // creates the metagame_format and metagame_format_pokemon tables, validates
 // every pokemonId exists in pokemon_v2_pokemon, and inserts the data.
@@ -31,12 +32,18 @@ const main = () => {
   const db = new Database(DB_PATH);
   db.exec("PRAGMA foreign_keys = ON");
 
+  // Drop so CREATE matches current DDL (idempotency: tables are re-created every build).
   db.exec(`
-    CREATE TABLE IF NOT EXISTS metagame_format (
-      id TEXT PRIMARY KEY,
+    DROP TABLE IF EXISTS metagame_format_pokemon;
+    DROP TABLE IF EXISTS metagame_format;
+  `);
+
+  db.exec(`
+    CREATE TABLE metagame_format (
+      id TEXT NOT NULL PRIMARY KEY,
       display_name TEXT NOT NULL
     );
-    CREATE TABLE IF NOT EXISTS metagame_format_pokemon (
+    CREATE TABLE metagame_format_pokemon (
       format_id TEXT NOT NULL,
       pokemon_id INTEGER NOT NULL,
       PRIMARY KEY (format_id, pokemon_id),
