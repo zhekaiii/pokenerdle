@@ -30,7 +30,10 @@
   },
   "result": {
     "accuracy": "{{percent}}%",
-    "perStat": "You: {{guess}} · Actual: {{actual}} · Δ{{delta}}"
+    "perStat": "You: {{guess}} · Actual: {{actual}} · Δ{{delta}}",
+    "statAriaTooLow": "{{stat}}: actual {{actual}}, your guess {{guess}}, {{delta}} too low.",
+    "statAriaTooHigh": "{{stat}}: actual {{actual}}, your guess {{guess}}, {{delta}} too high.",
+    "statAriaExact": "{{stat}}: actual {{actual}}, your guess was exact."
   },
   "session": {
     "round": "Round {{n}}",

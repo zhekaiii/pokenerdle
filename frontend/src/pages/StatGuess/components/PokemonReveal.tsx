@@ -1,5 +1,4 @@
 import api from "@/api";
-import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { QUERY_KEY } from "@/lib/query";
 import { resolveSpriteUrl } from "@/utils/pokemonSprites";
@@ -9,38 +8,65 @@ import React from "react";
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- prefer type aliases
 type PokemonRevealProps = {
   pokemonId: number;
+  accuracyPercent?: number;
 };
 
-const PokemonReveal: React.FC<PokemonRevealProps> = ({ pokemonId }) => {
-  const { getPokemonIcon } = usePokemonIcons();
+const PokemonReveal: React.FC<PokemonRevealProps> = ({
+  pokemonId,
+  accuracyPercent,
+}) => {
   const pokemonNames = usePokemonNames();
   const entry = pokemonNames[pokemonId];
   const displayName = entry?.name || entry?.speciesName || `#${pokemonId}`;
 
-  const { data: pokemon } = useQuery({
+  const { data: pokemon, isLoading } = useQuery({
     queryKey: [QUERY_KEY.POKEMON, pokemonId],
     queryFn: () => api.data.getPokemonWithAbilities(pokemonId),
     staleTime: Infinity,
   });
 
-  const spriteUrl = pokemon
-    ? resolveSpriteUrl(pokemon)
-    : getPokemonIcon(pokemonId);
+  const spriteUrl = pokemon && resolveSpriteUrl(pokemon);
+  const [imageLoaded, setImageLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    setImageLoaded(false);
+  }, [spriteUrl]);
 
   return (
     <div className="tw:flex tw:flex-col tw:items-center tw:gap-2 tw:py-4">
-      <img
-        src={spriteUrl}
-        alt={displayName}
-        className="tw:w-32 tw:h-32 tw:object-contain"
-        loading="eager"
-      />
-      <div className="tw:text-2xl tw:font-semibold tw:capitalize">
-        {displayName}
+      <div className="tw:relative tw:size-32">
+        {(isLoading || !imageLoaded) && (
+          <div className="tw:absolute tw:inset-0 tw:animate-pulse tw:rounded-full tw:bg-muted" />
+        )}
+        {spriteUrl && (
+          <img
+            src={spriteUrl}
+            alt={displayName}
+            className="tw:size-32 tw:object-contain"
+            loading="eager"
+            onLoad={() => setImageLoaded(true)}
+          />
+        )}
       </div>
-      <div className="tw:text-sm tw:text-muted-foreground">
-        #{(pokemon?.pokemon_species_id ?? pokemonId).toString().padStart(4, "0")}
+      <div className="tw:flex tw:max-w-full tw:items-center tw:justify-center tw:gap-3">
+        <div className="tw:min-w-0 tw:truncate tw:text-2xl tw:font-semibold tw:capitalize">
+          {displayName}
+        </div>
+        {typeof accuracyPercent === "number" && (
+          <div className="tw:shrink-0 tw:text-2xl tw:font-bold tw:tabular-nums">
+            {accuracyPercent}%
+          </div>
+        )}
       </div>
+      {!isLoading ? (
+        pokemon && (
+          <div className="tw:text-sm tw:text-muted-foreground">
+            #{pokemon.pokemon_species_id}
+          </div>
+        )
+      ) : (
+        <div className="tw:h-5 tw:w-16 tw:animate-pulse tw:rounded-md tw:bg-muted" />
+      )}
     </div>
   );
 };

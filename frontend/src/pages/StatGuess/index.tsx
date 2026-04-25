@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { STAT_KEYS } from "@pokenerdle/shared";
+import { SLIDER_DEFAULT, STAT_KEYS } from "@pokenerdle/shared";
 import { Link } from "@tanstack/react-router";
-import { HelpCircle, LoaderCircle } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -15,12 +15,49 @@ import { useStatGuess } from "./hooks/useStatGuess";
 import { useStatGuessFilter } from "./hooks/useStatGuessFilter";
 import classes from "./StatGuess.module.scss";
 
+const StatGuessLoadingPlaceholder: React.FC = () => {
+  const { t } = useTranslation("statGuess");
+  return (
+    <div className="tw:flex tw:flex-col tw:gap-4" aria-hidden>
+      <div className="tw:flex tw:flex-col tw:items-center tw:gap-2 tw:py-4">
+        <div className="tw:h-32 tw:w-32 tw:animate-pulse tw:rounded-full tw:bg-muted" />
+        <div className="tw:h-8 tw:w-36 tw:animate-pulse tw:rounded-md tw:bg-muted" />
+        <div className="tw:h-5 tw:w-16 tw:animate-pulse tw:rounded-md tw:bg-muted" />
+      </div>
+      <div className="tw:flex tw:flex-col tw:gap-3">
+        {STAT_KEYS.map((stat) => (
+          <StatSliderRow
+            key={stat}
+            stat={stat}
+            value={SLIDER_DEFAULT}
+            onChange={() => undefined}
+            disabled
+          />
+        ))}
+        <div className="tw:text-right tw:text-sm">
+          <span className="tw:invisible">
+            {STAT_KEYS.reduce((sum) => sum + SLIDER_DEFAULT, 0)}
+          </span>
+        </div>
+      </div>
+      <div className="tw:flex tw:justify-center">
+        <Button disabled>{t("actions.submit")}</Button>
+      </div>
+    </div>
+  );
+};
+
 const StatGuessPage: React.FC = () => {
   const { t } = useTranslation("statGuess");
   const { filter, setScope, setFormat, toggleGeneration, reset } =
     useStatGuessFilter();
   const { state, setGuess, submit, next, retry, session } =
     useStatGuess(filter);
+
+  const scoreByStat = React.useMemo(() => {
+    if (state.phase !== "result") return undefined;
+    return new Map(state.score.perStat.map((s) => [s.stat, s]));
+  }, [state]);
 
   return (
     <div className={classes.StatGuess}>
@@ -48,15 +85,8 @@ const StatGuessPage: React.FC = () => {
             onReset={reset}
           />
           {state.phase === "loading" && (
-            <div
-              className="tw:flex tw:justify-center tw:py-12"
-              role="status"
-              aria-label={t("loading")}
-            >
-              <LoaderCircle
-                className="tw:size-8 tw:animate-spin tw:text-muted-foreground"
-                aria-hidden
-              />
+            <div role="status" aria-label={t("loading")}>
+              <StatGuessLoadingPlaceholder />
             </div>
           )}
           {state.phase === "error" && (
@@ -81,7 +111,14 @@ const StatGuessPage: React.FC = () => {
           )}
           {(state.phase === "guessing" || state.phase === "result") && (
             <>
-              <PokemonReveal pokemonId={state.round.pokemonId} />
+              <PokemonReveal
+                pokemonId={state.round.pokemonId}
+                accuracyPercent={
+                  state.phase === "result"
+                    ? state.score.overallPercent
+                    : undefined
+                }
+              />
               <div className="tw:flex tw:flex-col tw:gap-3">
                 {STAT_KEYS.map((stat) => (
                   <StatSliderRow
@@ -90,25 +127,26 @@ const StatGuessPage: React.FC = () => {
                     value={state.guesses[stat]}
                     onChange={(v) => setGuess(stat, v)}
                     disabled={state.phase === "result"}
+                    result={scoreByStat?.get(stat)}
                   />
                 ))}
-                <div className="tw:text-right tw:text-sm">
-                  {t("sliders.total", {
-                    value: STAT_KEYS.reduce(
-                      (sum, k) => sum + state.guesses[k],
-                      0,
-                    ),
-                  })}
-                </div>
+                {state.phase === "guessing" && (
+                  <div className="tw:text-right tw:text-sm">
+                    {t("sliders.total", {
+                      value: STAT_KEYS.reduce(
+                        (sum, k) => sum + state.guesses[k],
+                        0,
+                      ),
+                    })}
+                  </div>
+                )}
               </div>
               {state.phase === "guessing" && (
                 <div className="tw:flex tw:justify-center">
                   <Button onClick={submit}>{t("actions.submit")}</Button>
                 </div>
               )}
-              {state.phase === "result" && (
-                <ResultPanel score={state.score} onAdvance={next} />
-              )}
+              {state.phase === "result" && <ResultPanel onAdvance={next} />}
             </>
           )}
         </CardContent>

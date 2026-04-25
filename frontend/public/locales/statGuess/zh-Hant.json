@@ -30,7 +30,10 @@
   },
   "result": {
     "accuracy": "{{percent}}%",
-    "perStat": "你猜:{{guess}} · 實際:{{actual}} · 差 {{delta}}"
+    "perStat": "你猜:{{guess}} · 實際:{{actual}} · 差 {{delta}}",
+    "statAriaTooLow": "{{stat}}: 實際 {{actual}}, 你猜 {{guess}}, 低了 {{delta}}。",
+    "statAriaTooHigh": "{{stat}}: 實際 {{actual}}, 你猜 {{guess}}, 高了 {{delta}}。",
+    "statAriaExact": "{{stat}}: 實際 {{actual}}, 你猜中了。"
   },
   "session": {
     "round": "第 {{n}} 輪",
