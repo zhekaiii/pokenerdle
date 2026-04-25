@@ -9,7 +9,7 @@ import battlesRouter from "./routes/battles.routes.js";
 import dailyRouter from "./routes/daily.routes.js";
 import dataRouter from "./routes/data.routes.js";
 import pathfinderRouter from "./routes/pathfinder.routes.js";
-import statGuessRouter from "./routes/statGuess.routes.js";
+import statGuesserRouter from "./routes/statGuesser.routes.js";
 import { PokeNerdleServer } from "./utils/types.js";
 
 const app = express();
@@ -64,7 +64,7 @@ router.use(dataRouter);
 router.use(battlesRouter);
 router.use(pathfinderRouter);
 router.use(dailyRouter);
-router.use(statGuessRouter);
+router.use(statGuesserRouter);
 
 app.use("/api", router);
 app.use(errorHandler);

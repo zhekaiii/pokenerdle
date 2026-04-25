@@ -7,7 +7,7 @@ import battles from "./battles";
 import daily from "./daily";
 import data from "./data/data";
 import pathfinder from "./pathfinder/pathfinder";
-import statGuess from "./statGuess";
+import statGuesser from "./statGuesser";
 
 export const BACKEND_URL = import.meta.env.SSR
   ? `http://localhost:${process.env.PORT || 3456}`
@@ -50,7 +50,7 @@ export const createApi = (store?: Store) => {
     data: data(axiosInstance),
     battles: battles(axiosInstance),
     pathfinder: pathfinder(axiosInstance),
-    statGuess: statGuess(axiosInstance),
+    statGuesser: statGuesser(axiosInstance),
   };
 };
 

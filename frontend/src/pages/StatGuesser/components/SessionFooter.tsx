@@ -16,7 +16,7 @@ const SessionFooter: React.FC<SessionFooterProps> = ({
   bestPercent,
   bestPokemonId,
 }) => {
-  const { t } = useTranslation("statGuess");
+  const { t } = useTranslation("statGuesser");
   const pokemonNames = usePokemonNames();
 
   if (completed === 0) return null;

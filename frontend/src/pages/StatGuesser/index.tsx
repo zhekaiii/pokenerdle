@@ -11,12 +11,12 @@ import PokemonReveal from "./components/PokemonReveal";
 import ResultPanel from "./components/ResultPanel";
 import SessionFooter from "./components/SessionFooter";
 import StatSliderRow from "./components/StatSliderRow";
-import { useStatGuess } from "./hooks/useStatGuess";
-import { useStatGuessFilter } from "./hooks/useStatGuessFilter";
-import classes from "./StatGuess.module.scss";
+import { useStatGuesser } from "./hooks/useStatGuesser";
+import { useStatGuesserFilter } from "./hooks/useStatGuesserFilter";
+import classes from "./StatGuesser.module.scss";
 
-const StatGuessLoadingPlaceholder: React.FC = () => {
-  const { t } = useTranslation("statGuess");
+const StatGuesserLoadingPlaceholder: React.FC = () => {
+  const { t } = useTranslation("statGuesser");
   return (
     <div className="tw:flex tw:flex-col tw:gap-4" aria-hidden>
       <div className="tw:flex tw:flex-col tw:items-center tw:gap-2 tw:py-4">
@@ -47,12 +47,12 @@ const StatGuessLoadingPlaceholder: React.FC = () => {
   );
 };
 
-const StatGuessPage: React.FC = () => {
-  const { t } = useTranslation("statGuess");
+const StatGuesserPage: React.FC = () => {
+  const { t } = useTranslation("statGuesser");
   const { filter, setScope, setFormat, toggleGeneration, reset } =
-    useStatGuessFilter();
+    useStatGuesserFilter();
   const { state, setGuess, submit, next, retry, session } =
-    useStatGuess(filter);
+    useStatGuesser(filter);
 
   const scoreByStat = React.useMemo(() => {
     if (state.phase !== "result") return undefined;
@@ -60,7 +60,7 @@ const StatGuessPage: React.FC = () => {
   }, [state]);
 
   return (
-    <div className={classes.StatGuess}>
+    <div className={classes.StatGuesser}>
       <Card className="tw:max-w-2xl tw:mx-auto tw:relative">
         <Button
           asChild
@@ -69,7 +69,7 @@ const StatGuessPage: React.FC = () => {
           size="icon"
           aria-label={t("howToPlay")}
         >
-          <Link to="/how-to-play/stat-guess">
+          <Link to="/how-to-play/stat-guesser">
             <HelpCircle className="tw:size-6" />
           </Link>
         </Button>
@@ -86,7 +86,7 @@ const StatGuessPage: React.FC = () => {
           />
           {state.phase === "loading" && (
             <div role="status" aria-label={t("loading")}>
-              <StatGuessLoadingPlaceholder />
+              <StatGuesserLoadingPlaceholder />
             </div>
           )}
           {state.phase === "error" && (
@@ -158,4 +158,4 @@ const StatGuessPage: React.FC = () => {
   );
 };
 
-export default StatGuessPage;
+export default StatGuesserPage;

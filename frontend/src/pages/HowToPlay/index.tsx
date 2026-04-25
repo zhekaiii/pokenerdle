@@ -24,8 +24,8 @@ const OPTIONS = [
     value: "/how-to-play/path-finder",
   },
   {
-    label: "statGuess",
-    value: "/how-to-play/stat-guess",
+    label: "statGuesser",
+    value: "/how-to-play/stat-guesser",
   },
 ];
 

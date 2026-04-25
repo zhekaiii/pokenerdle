@@ -31,7 +31,7 @@ const TYPE_COLORS = {
   daily: "var(--water-type)",
   pokeChain: "var(--fighting-type)",
   pathFinder: "var(--grass-type)",
-  statGuess: "var(--psychic-type)",
+  statGuesser: "var(--psychic-type)",
 } as const;
 
 const getDailyStatus = (
@@ -264,15 +264,15 @@ const HomePage: React.FC = () => {
         />
 
         <ModeCard
-          color={TYPE_COLORS.statGuess}
+          color={TYPE_COLORS.statGuesser}
           icon={<SlidersHorizontal className="tw:size-5 tw:text-white" />}
-          title={t("modes.statGuess.title")}
-          subtitle={t("modes.statGuess.subtitle")}
-          to="/stat-guess"
-          cta={t("modes.statGuess.ctaStart")}
+          title={t("modes.statGuesser.title")}
+          subtitle={t("modes.statGuesser.subtitle")}
+          to="/stat-guesser"
+          cta={t("modes.statGuesser.ctaStart")}
           body={
             <div className={classes.CardDescription}>
-              {t("modes.statGuess.shortDesc")}
+              {t("modes.statGuesser.shortDesc")}
             </div>
           }
         />

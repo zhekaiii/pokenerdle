@@ -30,9 +30,9 @@ const MobileFooter: React.FC = () => {
       label: t("pathFinder"),
     },
     {
-      to: "/stat-guess",
+      to: "/stat-guesser",
       icon: SlidersHorizontal,
-      label: t("statGuess"),
+      label: t("statGuesser"),
     },
   ];
 

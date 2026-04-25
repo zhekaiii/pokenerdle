@@ -1,12 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import StatGuessRules from "../../pages/HowToPlay/StatGuessRules";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/how-to-play/stat-guess")({
-  component: StatGuessRules,
-  head: () => ({
-    meta: [
-      { title: "Stat Guess Rules – PokéNerdle" },
-      { property: "og:title", content: "Stat Guess Rules – PokéNerdle" },
-    ],
-  }),
+  beforeLoad: () => {
+    throw redirect({ to: "/how-to-play/stat-guesser", replace: true });
+  },
 });

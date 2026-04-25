@@ -36,7 +36,7 @@ const initialGuesses = (): StatGuessStats => ({
   speed: SLIDER_DEFAULT,
 });
 
-export const useStatGuess = (filter: StatGuessFilter) => {
+export const useStatGuesser = (filter: StatGuessFilter) => {
   const [roundIndex, setRoundIndex] = useState(0);
   const [phase, setPhase] = useState<"guessing" | "result">("guessing");
   const [guesses, setGuesses] = useState<StatGuessStats>(initialGuesses);
@@ -60,8 +60,8 @@ export const useStatGuess = (filter: StatGuessFilter) => {
     error: roundError,
     refetch,
   } = useQuery<StatGuessRoundResponse>({
-    queryKey: ["statGuess", "round", filter, roundIndex],
-    queryFn: () => api.statGuess.getRound(filter, recentIdsRef.current),
+    queryKey: ["statGuesser", "round", filter, roundIndex],
+    queryFn: () => api.statGuesser.getRound(filter, recentIdsRef.current),
     staleTime: 0,
     retry: false,
   });

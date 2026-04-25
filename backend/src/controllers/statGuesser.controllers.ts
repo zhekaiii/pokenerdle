@@ -9,7 +9,7 @@ import {
   NoMatchingPokemonError,
   getFormats,
   getRound,
-} from "../services/statGuess.service.js";
+} from "../services/statGuesser.service.js";
 
 export const getFormatsController = async (_req: Request, res: Response) => {
   const data = await getFormats();

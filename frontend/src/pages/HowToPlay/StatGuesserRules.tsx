@@ -3,19 +3,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Link } from "@tanstack/react-router";
 import React from "react";
 
-const StatGuessRules: React.FC = () => {
+const StatGuesserRules: React.FC = () => {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="tw:text-3xl tw:text-center">
-          Rules of Stat Guess
+          Rules of Stat Guesser
         </CardTitle>
       </CardHeader>
       <CardContent className="tw:space-y-6">
         <section>
           <h2 className="tw:text-xl tw:font-semibold tw:mb-3">🎯 Objective</h2>
           <p>
-            In <strong>Stat Guess</strong>, your goal is to recall a Pokémon’s
+            In <strong>Stat Guesser</strong>, your goal is to recall a Pokémon’s
             six base stats — HP, Attack, Defense, Sp. Atk, Sp. Def, and Speed —
             as accurately as you can.
           </p>
@@ -53,14 +53,14 @@ const StatGuessRules: React.FC = () => {
         </section>
 
         <Button asChild className="tw:flex">
-          <Link to="/stat-guess">Play Now</Link>
+          <Link to="/stat-guesser">Play Now</Link>
         </Button>
       </CardContent>
     </Card>
   );
 };
 
-export const Component = StatGuessRules;
-Component.displayName = "StatGuessRules";
+export const Component = StatGuesserRules;
+Component.displayName = "StatGuesserRules";
 
 export default Component;

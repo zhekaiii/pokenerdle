@@ -9,7 +9,7 @@ import { AxiosInstance } from "axios";
 export default (axiosInstance: AxiosInstance) => ({
   getFormats: async () => {
     const { data } = await axiosInstance.get<StatGuessFormatsResponse>(
-      "/v1/stat-guess/formats",
+      "/v1/stat-guesser/formats",
     );
     return data;
   },
@@ -20,7 +20,7 @@ export default (axiosInstance: AxiosInstance) => ({
     }
     const qs = params.toString();
     const { data } = await axiosInstance.get<StatGuessRoundResponse>(
-      `/v1/stat-guess/round${qs ? `?${qs}` : ""}`,
+      `/v1/stat-guesser/round${qs ? `?${qs}` : ""}`,
     );
     return data;
   },

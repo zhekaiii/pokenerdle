@@ -28,6 +28,7 @@ const Header: React.FC = () => {
         <LinkButton to="/daily">{t("dailyChallenge")}</LinkButton>
         <LinkButton to="/pokechain">{t("pokeChain")}</LinkButton>
         <LinkButton to="/path-finder">{t("pathFinder")}</LinkButton>
+        <LinkButton to="/stat-guesser">{t("statGuesser")}</LinkButton>
       </div>
       {shouldShowRuleButton && <RulePageButton className="tw:mr-2" />}
       <div className={classes.DesktopProfile}>

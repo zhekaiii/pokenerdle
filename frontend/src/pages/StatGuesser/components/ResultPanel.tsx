@@ -8,7 +8,7 @@ type ResultPanelProps = {
 };
 
 const ResultPanel: React.FC<ResultPanelProps> = ({ onAdvance }) => {
-  const { t } = useTranslation("statGuess");
+  const { t } = useTranslation("statGuesser");
 
   return (
     <div className="tw:flex tw:justify-center tw:pt-2">

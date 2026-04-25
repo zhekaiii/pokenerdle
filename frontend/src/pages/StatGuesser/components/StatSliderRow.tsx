@@ -49,7 +49,7 @@ const StatSliderRow: React.FC<StatSliderRowProps> = ({
   disabled,
   result,
 }) => {
-  const { t } = useTranslation("statGuess");
+  const { t } = useTranslation("statGuesser");
   const label = t(`sliders.${stat}`);
   const ariaLabel = t("sliders.ariaLabel", { stat: label });
   const inputAriaLabel = t("sliders.inputAriaLabel", { stat: label });

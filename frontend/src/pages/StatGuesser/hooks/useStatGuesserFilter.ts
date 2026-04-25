@@ -20,7 +20,7 @@ const validatingStorage = {
 const filterAtom = import.meta.env.SSR
   ? atom<StatGuessFilter>(DEFAULT_FILTER)
   : atomWithStorage<StatGuessFilter>(
-      "statGuess.filters",
+      "statGuesser.filters",
       DEFAULT_FILTER,
       validatingStorage,
       {
@@ -28,7 +28,7 @@ const filterAtom = import.meta.env.SSR
       },
     );
 
-export const useStatGuessFilter = () => {
+export const useStatGuesserFilter = () => {
   const [filter, setFilter] = useAtom(filterAtom);
 
   const setScope = (kind: StatGuessFilter["kind"]) => {

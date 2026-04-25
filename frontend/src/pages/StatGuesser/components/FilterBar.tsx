@@ -31,10 +31,10 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onGenerationToggle,
   onReset,
 }) => {
-  const { t } = useTranslation("statGuess");
+  const { t } = useTranslation("statGuesser");
   const { data: formatsData } = useQuery({
-    queryKey: ["statGuess", "formats"],
-    queryFn: () => api.statGuess.getFormats(),
+    queryKey: ["statGuesser", "formats"],
+    queryFn: () => api.statGuesser.getFormats(),
     staleTime: Infinity,
   });
 
