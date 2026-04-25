@@ -5,7 +5,9 @@
 
 ## Overview
 
-Stat Guess is a new solo gamemode for Pokénerdle. The user is shown a Pokémon (sprite, name, types, generation) and guesses its 6 base stats by adjusting sliders. After submitting, the user sees a percentage score and per-stat closeness feedback, then auto-advances to the next Pokémon. Endless / on-demand — no daily lock, no streaks, no leaderboards.
+Stat Guess is a new solo gamemode for Pokénerdle. The user is shown a Pokémon (sprite, name, dex number) and guesses its 6 base stats by adjusting sliders. After submitting, the user sees a percentage score and per-stat closeness feedback, then auto-advances to the next Pokémon. Endless / on-demand — no daily lock, no streaks, no leaderboards.
+
+The reveal intentionally hides type and generation — the challenge is purely about recalling base stats from the Pokémon's identity, not deducing them from typing or era.
 
 The mode complements the existing three modes (Daily Challenge, PokéChain, Path Finder) as a casual, replayable practice/trivia experience.
 
@@ -33,7 +35,7 @@ A new card on `HomePage.tsx`, alongside Daily Challenge / PokéChain / Path Find
 ### Game flow
 
 1. User lands on `/stat-guess`. A round loads.
-2. The Pokémon's sprite, name, types, and generation are revealed at the top.
+2. The Pokémon's sprite, name, and dex number are revealed at the top. Type and generation are intentionally not shown — the challenge is recall, not deduction.
 3. Six sliders below — HP, Attack, Defense, Sp. Atk, Sp. Def, Speed — each ranges 1–200, default 100 (the slider midpoint). A live "Total: N" displays the running sum. The default value is intentionally a neutral starting point; users can submit without adjusting (a "lazy guess"), and they'll occasionally luck into perfect closeness on stats that actually equal 100 — accepted behavior for a practice mode.
 4. User adjusts sliders, clicks Submit.
 5. Result panel replaces the submit button:
@@ -151,7 +153,7 @@ For v1, `champions-reg-ma.json` is hand-curated from the published Reg M-A rules
 
 Both endpoints unauthenticated, both stateless.
 
-**`GET /stat-guess/formats?lang=en`**
+**`GET /stat-guess/formats`**
 
 Returns the list of available metagame formats.
 
@@ -165,9 +167,9 @@ Returns the list of available metagame formats.
 }
 ```
 
-Cacheable: `Cache-Control: public, max-age=3600`.
+Cacheable: `Cache-Control: public, max-age=3600`. Format display names are stored as English-only in the table for v1; localizing them is deferred (see "Out of scope").
 
-**`GET /stat-guess/round?format=champions-reg-ma&gen=1,4,9&excludeIds=395,400&lang=en`**
+**`GET /stat-guess/round?format=champions-reg-ma&gen=1,4,9&excludeIds=395,400`**
 
 Returns one random Pokémon respecting the filters.
 
@@ -175,19 +177,13 @@ Query params (all optional):
 - `format` — format id
 - `gen` — comma-separated generation ids
 - `excludeIds` — comma-separated Pokémon IDs to exclude (the frontend tracks the last 3 to prevent immediate duplicates)
-- `lang` — language code (`en` / `zh-Hans` / `zh-Hant`), default `en`
+
+Note: no `lang` param. The response only carries the Pokémon ID; the frontend renders the localized name and sprite via existing hooks (`usePokemonNames`, `usePokemonIcons`).
 
 Response:
 ```typescript
 {
-  pokemon: {
-    id: number;
-    name: string;        // localized
-    speciesName: string;
-    sprite: string;      // sprite URL with fallback chain
-    types: Array<{ id: number; name: string }>;
-    generation: number;
-  };
+  pokemonId: number;
   stats: {
     hp: number;
     attack: number;
@@ -219,14 +215,14 @@ Uses the same "count + random offset" trick as `getPokemonForDaily`. Builds a `w
 
 Returns `null` if `count === 0`. The service handles fallback retry logic before deciding whether to 404.
 
-Includes `pokemon_v2_pokemonstat` so the service can shape stats into the response.
+Selects only `id` plus `pokemon_v2_pokemonstat` (no need to include type/form/species since the response is just `pokemonId` + stats).
 
 **Service — `getRound(filters)`:**
 
 1. Calls `getRandomPokemonWithStats({ ...filters, excludeIds })`.
 2. If the result is null AND `excludeIds` was non-empty, retries once with `excludeIds = []` (so a small filtered pool — e.g. 3 Pokémon all in the exclude list — never 404s the user; we accept an immediate repeat instead).
 3. If still null, throws `NoMatchingPokemonError` → controller maps to `404 no_pokemon_match_filter`.
-4. Maps the Prisma result to the API response shape (extracts each of the 6 stats by `stat_id`, picks the right localized name, picks the sprite via the same fallback chain as `getPokemonIcons`).
+4. Maps the Prisma result to the API response shape: just `pokemonId` plus the 6 stats extracted by `stat_id`. Name and sprite are rendered client-side via existing global hooks.
 
 **Controller:**
 
@@ -261,10 +257,11 @@ Transitions:
 
 **Data fetching (TanStack Query):**
 
-- `useFormats()` — `queryKey: ["statGuess", "formats", lang]`, `staleTime: Infinity`
-- `useRandomRound(filters, roundIndex, lang)` — `queryKey: ["statGuess", "round", filters, roundIndex, lang]`, `staleTime: 0`
+- `useFormats()` — `queryKey: ["statGuess", "formats"]`, `staleTime: Infinity`. Locale-independent for v1 (display names are English-only).
+- `useRandomRound(filters, roundIndex)` — `queryKey: ["statGuess", "round", filters, roundIndex]`, `staleTime: 0`
   - Bumping `roundIndex` triggers refetch
   - Filter change resets `roundIndex` and changes the key
+  - Locale-independent (response is just `pokemonId` + stats; rendering uses `usePokemonNames`/`usePokemonIcons` which already handle language).
 
 The frontend tracks the last 3 Pokémon IDs shown in component state and passes them to the backend as `excludeIds` to avoid back-to-back duplicates.
 
@@ -279,7 +276,7 @@ Use Radix UI Slider (already in the codebase). Each slider:
 **Page sections (top to bottom):**
 1. Title strip with How-to-Play link
 2. Filter bar (collapsible on mobile)
-3. Pokémon reveal card (sprite, name, dex no., type chips, gen badge)
+3. Pokémon reveal card (sprite + name + dex no. — sourced from `usePokemonIcons`/`usePokemonNames`; no type chips, no gen badge by design)
 4. Six stat slider rows + live total
 5. Submit button OR result panel
 6. Session footer (Round N · Avg X% · Best Y% on Z)
