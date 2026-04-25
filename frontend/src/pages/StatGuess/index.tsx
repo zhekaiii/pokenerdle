@@ -1,54 +1,39 @@
-import api from "@/api";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import {
-  STAT_KEYS,
-  SLIDER_DEFAULT,
-  StatGuessRoundResponse,
-  StatGuessStats,
-} from "@pokenerdle/shared";
-import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import { STAT_KEYS } from "@pokenerdle/shared";
+import { Link } from "@tanstack/react-router";
+import { HelpCircle } from "lucide-react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 
 import FilterBar from "./components/FilterBar";
 import PokemonReveal from "./components/PokemonReveal";
+import ResultPanel from "./components/ResultPanel";
 import StatSliderRow from "./components/StatSliderRow";
+import { useStatGuess } from "./hooks/useStatGuess";
 import { useStatGuessFilter } from "./hooks/useStatGuessFilter";
 import classes from "./StatGuess.module.scss";
-
-const initialGuesses = (): StatGuessStats => ({
-  hp: SLIDER_DEFAULT,
-  attack: SLIDER_DEFAULT,
-  defense: SLIDER_DEFAULT,
-  specialAttack: SLIDER_DEFAULT,
-  specialDefense: SLIDER_DEFAULT,
-  speed: SLIDER_DEFAULT,
-});
 
 const StatGuessPage: React.FC = () => {
   const { t } = useTranslation("statGuess");
   const { filter, setScope, setFormat, toggleGeneration, reset } =
     useStatGuessFilter();
-  const [roundIndex, setRoundIndex] = useState(0);
-  const [guesses, setGuesses] = useState<StatGuessStats>(initialGuesses);
-
-  const { data, isLoading } = useQuery<StatGuessRoundResponse>({
-    queryKey: ["statGuess", "round", filter, roundIndex],
-    queryFn: () => api.statGuess.getRound(filter, []),
-    staleTime: 0,
-  });
-
-  useEffect(() => {
-    if (data) setGuesses(initialGuesses());
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- depend on pokemonId only
-  }, [data?.pokemonId]);
-
-  const total = STAT_KEYS.reduce((sum, k) => sum + guesses[k], 0);
+  const { state, setGuess, submit, next } = useStatGuess(filter);
 
   return (
     <div className={classes.StatGuess}>
-      <Card className="tw:max-w-2xl tw:mx-auto">
+      <Card className="tw:max-w-2xl tw:mx-auto tw:relative">
+        <Button
+          asChild
+          className="tw:absolute tw:top-2 tw:end-2"
+          variant="transparent"
+          size="icon"
+          aria-label={t("howToPlay")}
+        >
+          <Link to="/how-to-play/stat-guess">
+            <HelpCircle className="tw:size-6" />
+          </Link>
+        </Button>
         <CardHeader>
           <CardTitle className="tw:text-center">{t("title")}</CardTitle>
         </CardHeader>
@@ -60,31 +45,39 @@ const StatGuessPage: React.FC = () => {
             onGenerationToggle={toggleGeneration}
             onReset={reset}
           />
-          {isLoading || !data ? (
+          {state.phase === "loading" && (
             <p className="tw:text-center">Loading…</p>
-          ) : (
+          )}
+          {state.phase !== "loading" && (
             <>
-              <PokemonReveal pokemonId={data.pokemonId} />
+              <PokemonReveal pokemonId={state.round.pokemonId} />
               <div className="tw:flex tw:flex-col tw:gap-3">
                 {STAT_KEYS.map((stat) => (
                   <StatSliderRow
                     key={stat}
                     stat={stat}
-                    value={guesses[stat]}
-                    onChange={(v) =>
-                      setGuesses((g) => ({ ...g, [stat]: v }))
-                    }
+                    value={state.guesses[stat]}
+                    onChange={(v) => setGuess(stat, v)}
+                    disabled={state.phase === "result"}
                   />
                 ))}
                 <div className="tw:text-right tw:text-sm">
-                  {t("sliders.total", { value: total })}
+                  {t("sliders.total", {
+                    value: STAT_KEYS.reduce(
+                      (sum, k) => sum + state.guesses[k],
+                      0,
+                    ),
+                  })}
                 </div>
               </div>
-              <div className="tw:flex tw:justify-center">
-                <Button onClick={() => setRoundIndex((i) => i + 1)}>
-                  {t("actions.submit")}
-                </Button>
-              </div>
+              {state.phase === "guessing" && (
+                <div className="tw:flex tw:justify-center">
+                  <Button onClick={submit}>{t("actions.submit")}</Button>
+                </div>
+              )}
+              {state.phase === "result" && (
+                <ResultPanel score={state.score} onAdvance={next} />
+              )}
             </>
           )}
         </CardContent>

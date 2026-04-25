@@ -16,6 +16,7 @@ import { Route as PathFinderRouteImport } from './routes/path-finder'
 import { Route as HowToPlayRouteRouteImport } from './routes/how-to-play/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DailyIndexRouteImport } from './routes/daily/index'
+import { Route as HowToPlayStatGuessRouteImport } from './routes/how-to-play/stat-guess'
 import { Route as HowToPlayPokechainRouteImport } from './routes/how-to-play/pokechain'
 import { Route as HowToPlayPathFinderRouteImport } from './routes/how-to-play/path-finder'
 import { Route as HowToPlayDailyRouteImport } from './routes/how-to-play/daily'
@@ -57,6 +58,11 @@ const DailyIndexRoute = DailyIndexRouteImport.update({
   path: '/daily/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HowToPlayStatGuessRoute = HowToPlayStatGuessRouteImport.update({
+  id: '/stat-guess',
+  path: '/stat-guess',
+  getParentRoute: () => HowToPlayRouteRoute,
+} as any)
 const HowToPlayPokechainRoute = HowToPlayPokechainRouteImport.update({
   id: '/pokechain',
   path: '/pokechain',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/how-to-play/daily': typeof HowToPlayDailyRoute
   '/how-to-play/path-finder': typeof HowToPlayPathFinderRoute
   '/how-to-play/pokechain': typeof HowToPlayPokechainRoute
+  '/how-to-play/stat-guess': typeof HowToPlayStatGuessRoute
   '/daily': typeof DailyIndexRoute
 }
 export interface FileRoutesByTo {
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/how-to-play/daily': typeof HowToPlayDailyRoute
   '/how-to-play/path-finder': typeof HowToPlayPathFinderRoute
   '/how-to-play/pokechain': typeof HowToPlayPokechainRoute
+  '/how-to-play/stat-guess': typeof HowToPlayStatGuessRoute
   '/daily': typeof DailyIndexRoute
 }
 export interface FileRoutesById {
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/how-to-play/daily': typeof HowToPlayDailyRoute
   '/how-to-play/path-finder': typeof HowToPlayPathFinderRoute
   '/how-to-play/pokechain': typeof HowToPlayPokechainRoute
+  '/how-to-play/stat-guess': typeof HowToPlayStatGuessRoute
   '/daily/': typeof DailyIndexRoute
 }
 export interface FileRouteTypes {
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/how-to-play/daily'
     | '/how-to-play/path-finder'
     | '/how-to-play/pokechain'
+    | '/how-to-play/stat-guess'
     | '/daily'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/how-to-play/daily'
     | '/how-to-play/path-finder'
     | '/how-to-play/pokechain'
+    | '/how-to-play/stat-guess'
     | '/daily'
   id:
     | '__root__'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/how-to-play/daily'
     | '/how-to-play/path-finder'
     | '/how-to-play/pokechain'
+    | '/how-to-play/stat-guess'
     | '/daily/'
   fileRoutesById: FileRoutesById
 }
@@ -233,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DailyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/how-to-play/stat-guess': {
+      id: '/how-to-play/stat-guess'
+      path: '/stat-guess'
+      fullPath: '/how-to-play/stat-guess'
+      preLoaderRoute: typeof HowToPlayStatGuessRouteImport
+      parentRoute: typeof HowToPlayRouteRoute
+    }
     '/how-to-play/pokechain': {
       id: '/how-to-play/pokechain'
       path: '/pokechain'
@@ -276,6 +295,7 @@ interface HowToPlayRouteRouteChildren {
   HowToPlayDailyRoute: typeof HowToPlayDailyRoute
   HowToPlayPathFinderRoute: typeof HowToPlayPathFinderRoute
   HowToPlayPokechainRoute: typeof HowToPlayPokechainRoute
+  HowToPlayStatGuessRoute: typeof HowToPlayStatGuessRoute
 }
 
 const HowToPlayRouteRouteChildren: HowToPlayRouteRouteChildren = {
@@ -283,6 +303,7 @@ const HowToPlayRouteRouteChildren: HowToPlayRouteRouteChildren = {
   HowToPlayDailyRoute: HowToPlayDailyRoute,
   HowToPlayPathFinderRoute: HowToPlayPathFinderRoute,
   HowToPlayPokechainRoute: HowToPlayPokechainRoute,
+  HowToPlayStatGuessRoute: HowToPlayStatGuessRoute,
 }
 
 const HowToPlayRouteRouteWithChildren = HowToPlayRouteRoute._addFileChildren(
