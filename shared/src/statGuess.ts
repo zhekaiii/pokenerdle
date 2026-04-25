@@ -21,19 +21,26 @@ export const STAT_KEYS = [
 export type StatKey = (typeof STAT_KEYS)[number];
 
 export const SLIDER_MIN = 1;
-export const SLIDER_MAX = 200;
+export const SLIDER_MAX = 255;
 export const SLIDER_DEFAULT = 100;
 
 // Scope is the discriminated union enforcing mutual exclusion between
 // "filter by generations" and "filter by format" at the type level.
-export type StatGuessScope =
-  | { kind: "all" }
-  | { kind: "format"; formatId: string }
-  | { kind: "generations"; generations: number[] };
+export const StatGuessScopeSchema = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("all") }),
+  z.object({ kind: z.literal("format"), formatId: z.string().min(1) }),
+  z.object({
+    kind: z.literal("generations"),
+    generations: z.array(z.number().int().min(1)).min(1),
+  }),
+]);
+
+export type StatGuessScope = z.infer<typeof StatGuessScopeSchema>;
 
 // `StatGuessFilter` is currently identical to `StatGuessScope`.
 // Kept as a separate alias so future UI-only filter state (e.g. exclude
 // previously-seen Pokémon) can be added without changing the API scope shape.
+export const StatGuessFilterSchema = StatGuessScopeSchema;
 export type StatGuessFilter = StatGuessScope;
 
 // ───── /v1/stat-guess/formats ─────
