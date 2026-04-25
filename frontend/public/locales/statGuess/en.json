@@ -7,6 +7,8 @@
       "byGeneration": "By Generation",
       "byFormat": "By Format"
     },
+    "format": "Format",
+    "generation": "Generation",
     "reset": "Reset"
   },
   "sliders": {
@@ -21,7 +23,8 @@
   },
   "actions": {
     "submit": "Submit",
-    "next": "Next"
+    "next": "Next",
+    "nextIn": "Next in {{seconds}}s"
   },
   "result": {
     "accuracy": "{{percent}}%",
@@ -31,5 +34,11 @@
     "round": "Round {{n}}",
     "average": "Avg {{percent}}%",
     "best": "Best {{percent}}% on {{name}}"
+  },
+  "errors": {
+    "noMatch": "No Pokémon match these filters.",
+    "loadFailed": "Couldn't load the next Pokémon.",
+    "retry": "Retry",
+    "resetFilters": "Reset filters"
   }
 }
