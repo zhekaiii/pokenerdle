@@ -1,5 +1,4 @@
 import api from "@/api";
-import placeholderIcon from "@/assets/question_mark.png";
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import { ImageWithPlaceholder } from "@/components/recyclables/PokemonReferenceDialog/ImageWithPlaceholder";
 import { Button } from "@/components/ui/Button";
@@ -260,13 +259,7 @@ const CalendarArchivePage: React.FC = () => {
                 <>
                   <span className={classes.DayNum}>{cell.day}</span>
                   <div className={classes.Pkmn}>
-                    <ImageWithPlaceholder
-                      src={spriteUrl}
-                      loading="lazy"
-                      onError={(e) => {
-                        e.currentTarget.src = placeholderIcon;
-                      }}
-                    />
+                    <ImageWithPlaceholder src={spriteUrl} loading="lazy" />
                   </div>
                   {cell.status === "failed" && (
                     <div className={classes.CornerX}>

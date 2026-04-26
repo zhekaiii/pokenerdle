@@ -1,4 +1,3 @@
-import placeholderIcon from "@/assets/question_mark.png";
 import { ImageWithPlaceholder } from "@/components/recyclables/PokemonReferenceDialog/ImageWithPlaceholder";
 import {
   AlertDialog,
@@ -174,9 +173,6 @@ const PokemonReferenceDialog: React.FC<Props> = ({
                               alt={pokemon.name || pokemon.speciesName}
                               className={styles.PokemonIcon}
                               loading="lazy"
-                              onError={(e) => {
-                                e.currentTarget.src = placeholderIcon;
-                              }}
                             />
                           </div>
                           <span className={styles.PokemonName}>

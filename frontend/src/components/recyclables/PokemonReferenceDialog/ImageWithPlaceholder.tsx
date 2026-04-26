@@ -1,16 +1,20 @@
+import questionMarkIcon from "@/assets/question_mark.png";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface Props extends React.ImgHTMLAttributes<HTMLImageElement> {
   placeholder?: React.ReactNode;
+  fallbackSrc?: string;
 }
 
 export const ImageWithPlaceholder: React.FC<Props> = ({
   className,
   placeholder = <Loader2 className="tw:animate-spin" />,
+  fallbackSrc = questionMarkIcon,
   ...props
 }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const handleLoad = () => {
     setIsLoading(false);
   };
@@ -19,6 +23,11 @@ export const ImageWithPlaceholder: React.FC<Props> = ({
       setIsLoading(true);
       const img = new Image();
       img.onload = handleLoad;
+      img.onerror = () => {
+        console.log("error");
+        setIsError(true);
+        setIsLoading(false);
+      };
       img.src = props.src;
       if (img.complete) {
         handleLoad();
@@ -31,7 +40,7 @@ export const ImageWithPlaceholder: React.FC<Props> = ({
       {isLoading ? (
         <div className="tw:h-14 tw:flex tw:items-end">{placeholder}</div>
       ) : (
-        <img {...props} />
+        <img {...props} src={isError ? fallbackSrc : props.src} />
       )}
     </>
   );
