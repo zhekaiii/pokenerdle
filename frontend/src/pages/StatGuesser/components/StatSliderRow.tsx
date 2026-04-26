@@ -152,7 +152,7 @@ const StatSliderRow: React.FC<StatSliderRowProps> = ({
         </div>
       ) : (
         <Input
-          type="text"
+          type="number"
           inputMode="numeric"
           pattern="[0-9]*"
           value={text}
@@ -167,7 +167,7 @@ const StatSliderRow: React.FC<StatSliderRowProps> = ({
           }}
           disabled={disabled}
           aria-label={inputAriaLabel}
-          className="tw:h-7 tw:w-14 tw:px-2 tw:text-right tw:tabular-nums"
+          className="tw:h-7 tw:w-16 tw:px-2 tw:text-right tw:tabular-nums"
         />
       )}
     </>

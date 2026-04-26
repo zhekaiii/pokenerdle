@@ -24,7 +24,7 @@ const StatGuesserLoadingPlaceholder: React.FC = () => {
         <div className="tw:h-5 tw:w-16 tw:animate-pulse tw:rounded-md tw:bg-muted" />
       </div>
       <div className="tw:flex tw:flex-col tw:gap-3">
-        <div className="tw:grid tw:grid-cols-[auto_1fr_3.5rem] tw:auto-rows-[28px] tw:items-center tw:gap-3">
+        <div className="tw:grid tw:grid-cols-[auto_1fr_4rem] tw:auto-rows-[28px] tw:items-center tw:gap-3">
           {STAT_KEYS.map((stat) => (
             <StatSliderRow
               key={stat}
@@ -121,7 +121,7 @@ const StatGuesserPage: React.FC = () => {
                 }
               />
               <div className="tw:flex tw:flex-col tw:gap-3">
-                <div className="tw:grid tw:grid-cols-[auto_1fr_3.5rem] tw:auto-rows-[28px] tw:items-center tw:gap-3">
+                <div className="tw:grid tw:grid-cols-[auto_1fr_4rem] tw:auto-rows-[28px] tw:items-center tw:gap-3">
                   {STAT_KEYS.map((stat) => (
                     <StatSliderRow
                       key={stat}
