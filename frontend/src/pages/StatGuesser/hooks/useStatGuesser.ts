@@ -62,7 +62,7 @@ export const useStatGuesser = (filter: StatGuessFilter) => {
   } = useQuery<StatGuessRoundResponse>({
     queryKey: ["statGuesser", "round", filter, roundIndex],
     queryFn: () => api.statGuesser.getRound(filter, recentIdsRef.current),
-    staleTime: 0,
+    staleTime: Infinity,
     retry: false,
   });
 

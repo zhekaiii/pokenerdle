@@ -1,5 +1,5 @@
 import { StatGuessFilter, StatGuessFilterSchema } from "@pokenerdle/shared";
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 
 export const DEFAULT_FILTER: StatGuessFilter = { kind: "all" };
@@ -17,13 +17,11 @@ const validatingStorage = {
   },
 };
 
-const filterAtom = import.meta.env.SSR
-  ? atom<StatGuessFilter>(DEFAULT_FILTER)
-  : atomWithStorage<StatGuessFilter>(
-      "statGuesser.filters",
-      DEFAULT_FILTER,
-      validatingStorage,
-    );
+const filterAtom = atomWithStorage<StatGuessFilter>(
+  "statGuesser.filters",
+  DEFAULT_FILTER,
+  validatingStorage,
+);
 
 export const useStatGuesserFilter = () => {
   const [filter, setFilter] = useAtom(filterAtom);
