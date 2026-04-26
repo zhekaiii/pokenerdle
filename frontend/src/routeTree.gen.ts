@@ -17,7 +17,6 @@ import { Route as HowToPlayRouteRouteImport } from './routes/how-to-play/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DailyIndexRouteImport } from './routes/daily/index'
 import { Route as HowToPlayStatGuesserRouteImport } from './routes/how-to-play/stat-guesser'
-import { Route as HowToPlayStatGuessRouteImport } from './routes/how-to-play/stat-guess'
 import { Route as HowToPlayPokechainRouteImport } from './routes/how-to-play/pokechain'
 import { Route as HowToPlayPathFinderRouteImport } from './routes/how-to-play/path-finder'
 import { Route as HowToPlayDailyRouteImport } from './routes/how-to-play/daily'
@@ -64,11 +63,6 @@ const HowToPlayStatGuesserRoute = HowToPlayStatGuesserRouteImport.update({
   path: '/stat-guesser',
   getParentRoute: () => HowToPlayRouteRoute,
 } as any)
-const HowToPlayStatGuessRoute = HowToPlayStatGuessRouteImport.update({
-  id: '/stat-guess',
-  path: '/stat-guess',
-  getParentRoute: () => HowToPlayRouteRoute,
-} as any)
 const HowToPlayPokechainRoute = HowToPlayPokechainRouteImport.update({
   id: '/pokechain',
   path: '/pokechain',
@@ -107,7 +101,6 @@ export interface FileRoutesByFullPath {
   '/how-to-play/daily': typeof HowToPlayDailyRoute
   '/how-to-play/path-finder': typeof HowToPlayPathFinderRoute
   '/how-to-play/pokechain': typeof HowToPlayPokechainRoute
-  '/how-to-play/stat-guess': typeof HowToPlayStatGuessRoute
   '/how-to-play/stat-guesser': typeof HowToPlayStatGuesserRoute
   '/daily': typeof DailyIndexRoute
 }
@@ -123,7 +116,6 @@ export interface FileRoutesByTo {
   '/how-to-play/daily': typeof HowToPlayDailyRoute
   '/how-to-play/path-finder': typeof HowToPlayPathFinderRoute
   '/how-to-play/pokechain': typeof HowToPlayPokechainRoute
-  '/how-to-play/stat-guess': typeof HowToPlayStatGuessRoute
   '/how-to-play/stat-guesser': typeof HowToPlayStatGuesserRoute
   '/daily': typeof DailyIndexRoute
 }
@@ -140,7 +132,6 @@ export interface FileRoutesById {
   '/how-to-play/daily': typeof HowToPlayDailyRoute
   '/how-to-play/path-finder': typeof HowToPlayPathFinderRoute
   '/how-to-play/pokechain': typeof HowToPlayPokechainRoute
-  '/how-to-play/stat-guess': typeof HowToPlayStatGuessRoute
   '/how-to-play/stat-guesser': typeof HowToPlayStatGuesserRoute
   '/daily/': typeof DailyIndexRoute
 }
@@ -158,7 +149,6 @@ export interface FileRouteTypes {
     | '/how-to-play/daily'
     | '/how-to-play/path-finder'
     | '/how-to-play/pokechain'
-    | '/how-to-play/stat-guess'
     | '/how-to-play/stat-guesser'
     | '/daily'
   fileRoutesByTo: FileRoutesByTo
@@ -174,7 +164,6 @@ export interface FileRouteTypes {
     | '/how-to-play/daily'
     | '/how-to-play/path-finder'
     | '/how-to-play/pokechain'
-    | '/how-to-play/stat-guess'
     | '/how-to-play/stat-guesser'
     | '/daily'
   id:
@@ -190,7 +179,6 @@ export interface FileRouteTypes {
     | '/how-to-play/daily'
     | '/how-to-play/path-finder'
     | '/how-to-play/pokechain'
-    | '/how-to-play/stat-guess'
     | '/how-to-play/stat-guesser'
     | '/daily/'
   fileRoutesById: FileRoutesById
@@ -264,13 +252,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HowToPlayStatGuesserRouteImport
       parentRoute: typeof HowToPlayRouteRoute
     }
-    '/how-to-play/stat-guess': {
-      id: '/how-to-play/stat-guess'
-      path: '/stat-guess'
-      fullPath: '/how-to-play/stat-guess'
-      preLoaderRoute: typeof HowToPlayStatGuessRouteImport
-      parentRoute: typeof HowToPlayRouteRoute
-    }
     '/how-to-play/pokechain': {
       id: '/how-to-play/pokechain'
       path: '/pokechain'
@@ -314,7 +295,6 @@ interface HowToPlayRouteRouteChildren {
   HowToPlayDailyRoute: typeof HowToPlayDailyRoute
   HowToPlayPathFinderRoute: typeof HowToPlayPathFinderRoute
   HowToPlayPokechainRoute: typeof HowToPlayPokechainRoute
-  HowToPlayStatGuessRoute: typeof HowToPlayStatGuessRoute
   HowToPlayStatGuesserRoute: typeof HowToPlayStatGuesserRoute
 }
 
@@ -323,7 +303,6 @@ const HowToPlayRouteRouteChildren: HowToPlayRouteRouteChildren = {
   HowToPlayDailyRoute: HowToPlayDailyRoute,
   HowToPlayPathFinderRoute: HowToPlayPathFinderRoute,
   HowToPlayPokechainRoute: HowToPlayPokechainRoute,
-  HowToPlayStatGuessRoute: HowToPlayStatGuessRoute,
   HowToPlayStatGuesserRoute: HowToPlayStatGuesserRoute,
 }
 
