@@ -13,13 +13,13 @@ import { StatGuessFilter } from "@pokenerdle/shared";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import styles from "./FilterBar.module.scss";
 
 interface FilterBarProps {
   filter: StatGuessFilter;
   onScopeChange: (kind: StatGuessFilter["kind"]) => void;
   onFormatChange: (formatId: string) => void;
   onGenerationToggle: (gen: number) => void;
-  onReset: () => void;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
@@ -27,7 +27,6 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onScopeChange,
   onFormatChange,
   onGenerationToggle,
-  onReset,
 }) => {
   const { t } = useTranslation("statGuesser");
   const { data: formatsData } = useQuery({
@@ -53,11 +52,6 @@ const FilterBar: React.FC<FilterBarProps> = ({
             </TabsTrigger>
           </TabsList>
         </Tabs>
-        {filter.kind !== "all" && (
-          <Button variant="ghost" size="sm" onClick={onReset}>
-            {t("filters.reset")}
-          </Button>
-        )}
       </div>
 
       {filter.kind === "generations" && (
@@ -81,7 +75,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
       {filter.kind === "format" && (
         <Select value={filter.formatId} onValueChange={onFormatChange}>
-          <SelectTrigger>
+          <SelectTrigger className={styles.FilterBar}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

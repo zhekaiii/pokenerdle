@@ -50,7 +50,7 @@ const StatGuesserLoadingPlaceholder: React.FC = () => {
 
 const StatGuesserPage: React.FC = () => {
   const { t } = useTranslation("statGuesser");
-  const { filter, setScope, setFormat, toggleGeneration, reset } =
+  const { filter, setScope, setFormat, toggleGeneration } =
     useStatGuesserFilter();
   const { state, setGuess, submit, next, retry, session } =
     useStatGuesser(filter);
@@ -83,7 +83,6 @@ const StatGuesserPage: React.FC = () => {
             onScopeChange={setScope}
             onFormatChange={setFormat}
             onGenerationToggle={toggleGeneration}
-            onReset={reset}
           />
           {state.phase === "loading" && (
             <div role="status" aria-label={t("loading")}>
@@ -104,9 +103,6 @@ const StatGuesserPage: React.FC = () => {
                 {state.kind === "loadFailed" && (
                   <Button onClick={retry}>{t("errors.retry")}</Button>
                 )}
-                <Button variant="outline" onClick={reset}>
-                  {t("errors.resetFilters")}
-                </Button>
               </div>
             </div>
           )}

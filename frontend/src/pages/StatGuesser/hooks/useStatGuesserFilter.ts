@@ -49,7 +49,5 @@ export const useStatGuesserFilter = () => {
     setFilter({ kind: "generations", generations: next });
   };
 
-  const reset = () => setFilter(DEFAULT_FILTER);
-
-  return { filter, setScope, setFormat, toggleGeneration, reset };
+  return { filter, setScope, setFormat, toggleGeneration };
 };
