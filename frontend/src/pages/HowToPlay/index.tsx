@@ -23,6 +23,10 @@ const OPTIONS = [
     label: "pathFinder",
     value: "/how-to-play/path-finder",
   },
+  {
+    label: "statGuesser",
+    value: "/how-to-play/stat-guesser",
+  },
 ];
 
 const HowToPlayPage: React.FC = () => {

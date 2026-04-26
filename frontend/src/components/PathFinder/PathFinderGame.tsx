@@ -27,7 +27,9 @@ import PathBoard from "./PathBoard";
 import { useEventTracking } from "./hooks/useEventTracking";
 
 const PathFinderGame: React.FC = () => {
-  const initialChallenge = useLoaderData({ from: "/path-finder" });
+  const initialChallenge: PathFinderResponse = useLoaderData({
+    from: "/path-finder",
+  });
   const [challenge, setChallenge] =
     useState<PathFinderResponse>(initialChallenge);
   const [input, setInput] = useState("");
@@ -73,7 +75,7 @@ const PathFinderGame: React.FC = () => {
     } catch (error) {
       console.error("Error fetching Path Finder challenge:", error);
       toast.error(
-        "Failed to fetch Path Finder challenge. Please try again later."
+        "Failed to fetch Path Finder challenge. Please try again later.",
       );
     } finally {
       setIsLoading(false);
@@ -93,7 +95,7 @@ const PathFinderGame: React.FC = () => {
           <div>Time taken: {Math.floor(timeTaken / 1000)} seconds</div>
           <div>Chain length: {fullPath.length}</div>
           <div>Number of guesses: {numGuesses}</div>
-        </div>
+        </div>,
       );
       posthog.capture("pathfinder_solved", {
         time_taken_ms: timeTaken,
@@ -122,7 +124,7 @@ const PathFinderGame: React.FC = () => {
         : challenge.startPokemon;
       const previousPokemonName = pokemonNames[previousPokemon.id];
       const isAbilityShared = previousPokemon.abilities.some((ability) =>
-        pokemonWithAbilities.abilities.some((a) => a.id === ability.id)
+        pokemonWithAbilities.abilities.some((a) => a.id === ability.id),
       );
       if (!isAbilityShared) {
         toast.error(
@@ -130,7 +132,7 @@ const PathFinderGame: React.FC = () => {
             pokemonName?.name || pokemonName?.speciesName
           } does not share an ability with ${
             previousPokemonName?.name || previousPokemonName?.speciesName
-          }`
+          }`,
         );
         return;
       }

@@ -44,3 +44,12 @@ export const DAILY_WHITELISTED_POKEMON_WHERE = {
     ],
   },
 };
+
+export const STAT_ID = {
+  hp: 1,
+  attack: 2,
+  defense: 3,
+  specialAttack: 4,
+  specialDefense: 5,
+  speed: 6,
+} as const;

@@ -1,0 +1,48 @@
+{
+  "title": "Stat Guesser",
+  "howToPlay": "How to play",
+  "loading": "Loading…",
+  "filters": {
+    "scope": {
+      "all": "All",
+      "byGeneration": "By Generation",
+      "byFormat": "By Format"
+    },
+    "format": "Format",
+    "generation": "Generation",
+    "reset": "Reset"
+  },
+  "sliders": {
+    "hp": "HP",
+    "attack": "Attack",
+    "defense": "Defense",
+    "specialAttack": "Sp. Atk",
+    "specialDefense": "Sp. Def",
+    "speed": "Speed",
+    "ariaLabel": "{{stat}} guess, 1 to 255",
+    "inputAriaLabel": "{{stat}} value, 1 to 255",
+    "total": "Total: {{value}}"
+  },
+  "actions": {
+    "submit": "Submit",
+    "next": "Next"
+  },
+  "result": {
+    "accuracy": "{{percent}}%",
+    "perStat": "You: {{guess}} · Actual: {{actual}} · Δ{{delta}}",
+    "statAriaTooLow": "{{stat}}: actual {{actual}}, your guess {{guess}}, {{delta}} too low.",
+    "statAriaTooHigh": "{{stat}}: actual {{actual}}, your guess {{guess}}, {{delta}} too high.",
+    "statAriaExact": "{{stat}}: actual {{actual}}, your guess was exact."
+  },
+  "session": {
+    "round": "Round {{n}}",
+    "average": "Avg {{percent}}%",
+    "best": "Best {{percent}}% on {{name}}"
+  },
+  "errors": {
+    "noMatch": "No Pokémon match these filters.",
+    "loadFailed": "Couldn't load the next Pokémon.",
+    "retry": "Retry",
+    "resetFilters": "Reset filters"
+  }
+}

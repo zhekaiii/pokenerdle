@@ -1,12 +1,19 @@
-import { PokemonNamesResponse, PokemonWithAbilities } from "@pokenerdle/shared";
+import {
+  PokemonNamesResponse,
+  PokemonWithAbilities,
+  StatGuessScope,
+  StatGuessStats,
+} from "@pokenerdle/shared";
 import { readFileSync, writeFileSync } from "fs";
 import { Heap } from "heap-js";
 import {
   DAILY_WHITELISTED_POKEMON_WHERE,
   ICON_SUFFIXES,
   MIN_PATHFINDER_LENGTH,
+  STAT_ID,
 } from "../constants/game.js";
 import {
+  Prisma,
   pokemon_v2_ability,
   pokemon_v2_pokemon,
 } from "../generated/prisma-sqlite/client.js";
@@ -324,4 +331,107 @@ export const getDamageFactor = async (
     },
   });
   return result.damage_factor / 100;
+};
+
+const buildScopeWhere = (
+  scope: StatGuessScope,
+): Prisma.pokemon_v2_pokemonWhereInput => {
+  switch (scope.kind) {
+    case "all":
+      return {};
+    case "format":
+      return {
+        metagame_format_pokemon: {
+          some: { format_id: scope.formatId },
+        },
+      };
+    case "generations":
+      // Filter by the version group that introduced each form (matching
+      // `getPokemonIdsByGeneration` used elsewhere in the app), so that e.g.
+      // Mega Charizard X — a Gen 6 form of a Gen 1 species — is returned
+      // when the player selects Gen 6, not Gen 1.
+      return {
+        pokemon_v2_pokemonform: {
+          some: {
+            pokemon_v2_versiongroup: {
+              generation_id: { in: scope.generations },
+            },
+          },
+        },
+      };
+  }
+};
+
+export type RandomPokemonWithStats = {
+  pokemonId: number;
+  stats: StatGuessStats;
+};
+
+/**
+ * Returns one random Pokémon (matching scope + exclusions) with its 6 base
+ * stats, or null if the scoped pool is empty. The service handles the
+ * exclude-list fallback before deciding whether to surface a 404.
+ */
+export const getRandomPokemonWithStats = async ({
+  scope,
+  excludeIds,
+}: {
+  scope: StatGuessScope;
+  excludeIds?: number[];
+}): Promise<RandomPokemonWithStats | null> => {
+  const where: Prisma.pokemon_v2_pokemonWhereInput = {
+    AND: [
+      buildScopeWhere(scope),
+      ...(excludeIds && excludeIds.length > 0
+        ? [{ id: { notIn: excludeIds } }]
+        : []),
+    ],
+  };
+
+  const count = await prisma.pokemon_v2_pokemon.count({ where });
+  if (count === 0) return null;
+
+  const offset = Math.floor(Math.random() * count);
+  const result = await prisma.pokemon_v2_pokemon.findFirst({
+    where,
+    skip: offset,
+    select: {
+      id: true,
+      pokemon_v2_pokemonstat: {
+        select: { stat_id: true, base_stat: true },
+      },
+    },
+  });
+  if (!result) return null;
+
+  const byStatId = new Map(
+    result.pokemon_v2_pokemonstat.map((s) => [s.stat_id, s.base_stat]),
+  );
+  return {
+    pokemonId: result.id,
+    stats: {
+      hp: byStatId.get(STAT_ID.hp) ?? 0,
+      attack: byStatId.get(STAT_ID.attack) ?? 0,
+      defense: byStatId.get(STAT_ID.defense) ?? 0,
+      specialAttack: byStatId.get(STAT_ID.specialAttack) ?? 0,
+      specialDefense: byStatId.get(STAT_ID.specialDefense) ?? 0,
+      speed: byStatId.get(STAT_ID.speed) ?? 0,
+    },
+  };
+};
+
+export const getMetagameFormats = async () => {
+  const rows = await prisma.metagame_format.findMany({
+    select: {
+      id: true,
+      display_name: true,
+      _count: { select: { metagame_format_pokemon: true } },
+    },
+    orderBy: { id: "asc" },
+  });
+  return rows.map((r) => ({
+    id: r.id,
+    displayName: r.display_name,
+    pokemonCount: r._count.metagame_format_pokemon,
+  }));
 };

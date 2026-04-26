@@ -6,10 +6,24 @@ export const Route = createFileRoute("/pokechain")({
   context: () => ({
     shouldShowRuleButton: true,
   }),
-  head: () => ({
-    meta: [
-      { title: "PokéChain – PokéNerdle" },
-      { property: "og:title", content: "PokéChain – PokéNerdle" },
-    ],
-  }),
+  head: async ({ match }) => {
+    await match.context.i18n.loadNamespaces("metadata");
+    return {
+      meta: [
+        { title: match.context.i18n.t("metadata:title.pokechain") },
+        {
+          property: "og:title",
+          content: match.context.i18n.t("metadata:title.pokechain"),
+        },
+        {
+          name: "description",
+          content: match.context.i18n.t("metadata:description.pokechain"),
+        },
+        {
+          property: "og:description",
+          content: match.context.i18n.t("metadata:description.pokechain"),
+        },
+      ],
+    };
+  },
 });

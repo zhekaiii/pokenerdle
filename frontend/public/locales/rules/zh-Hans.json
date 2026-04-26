@@ -115,5 +115,29 @@
     "buttons": {
       "playNow": "立即游玩"
     }
+  },
+  "statGuesser": {
+    "title": "种族值挑战规则",
+    "objective": {
+      "title": "🎯 目标",
+      "description": "在 <strong>种族值挑战</strong> 中，你的目标是尽可能准确地回忆宝可梦的六项基础能力值：HP、攻击、防御、特攻、特防和速度。"
+    },
+    "howToPlay": {
+      "title": "🎮 玩法",
+      "steps": {
+        "revealed": "系统会显示一只随机宝可梦（图片、名称和图鉴编号）。",
+        "sliders": "移动每个滑块（1-255）来猜测对应能力值。调整时合计值会实时更新。",
+        "submit": "点击<em>提交</em>为本轮计分。",
+        "feedback": "你会看到百分比准确率，以及每项能力值的颜色反馈（绿色 = 非常接近，黄色 = 接近，灰色 = 偏差较大）。",
+        "next": "下一轮会在 8 秒后自动加载，也可以点击播放按钮直接跳到下一只。"
+      }
+    },
+    "filters": {
+      "title": "🔍 筛选",
+      "description": "使用筛选栏将范围缩小到指定世代区间，或选择 Pokémon Champions Regulation M-A 等竞技规则。"
+    },
+    "buttons": {
+      "playNow": "立即游玩"
+    }
   }
 }

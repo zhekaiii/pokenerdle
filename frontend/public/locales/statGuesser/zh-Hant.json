@@ -1,0 +1,48 @@
+{
+  "title": "種族值挑戰",
+  "howToPlay": "玩法",
+  "loading": "載入中…",
+  "filters": {
+    "scope": {
+      "all": "全部",
+      "byGeneration": "按世代",
+      "byFormat": "按規則"
+    },
+    "format": "規則",
+    "generation": "世代",
+    "reset": "重置"
+  },
+  "sliders": {
+    "hp": "HP",
+    "attack": "攻擊",
+    "defense": "防禦",
+    "specialAttack": "特攻",
+    "specialDefense": "特防",
+    "speed": "速度",
+    "ariaLabel": "{{stat}} 數值,1 到 255",
+    "inputAriaLabel": "{{stat}} 輸入框,1 到 255",
+    "total": "合計:{{value}}"
+  },
+  "actions": {
+    "submit": "提交",
+    "next": "下一隻"
+  },
+  "result": {
+    "accuracy": "{{percent}}%",
+    "perStat": "你猜:{{guess}} · 實際:{{actual}} · 差 {{delta}}",
+    "statAriaTooLow": "{{stat}}: 實際 {{actual}}, 你猜 {{guess}}, 低了 {{delta}}。",
+    "statAriaTooHigh": "{{stat}}: 實際 {{actual}}, 你猜 {{guess}}, 高了 {{delta}}。",
+    "statAriaExact": "{{stat}}: 實際 {{actual}}, 你猜中了。"
+  },
+  "session": {
+    "round": "第 {{n}} 輪",
+    "average": "平均 {{percent}}%",
+    "best": "最佳 {{percent}}%({{name}})"
+  },
+  "errors": {
+    "noMatch": "沒有符合篩選條件的寶可夢。",
+    "loadFailed": "無法載入下一隻寶可夢。",
+    "retry": "重試",
+    "resetFilters": "重置篩選"
+  }
+}

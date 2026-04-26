@@ -4,7 +4,7 @@ import { StatusCode } from "../data/const.js";
 import * as dataService from "../services/data.services.js";
 import { getLanguageId } from "../utils/lang.js";
 
-const POKEMON_NAMES_LAST_UPDATED = new Date("2025-08-29").toUTCString();
+const POKEMON_NAMES_LAST_UPDATED = new Date("2026-04-25").toUTCString();
 export const getPokemonNames = async (req: Request, res: Response) => {
   const ifModifiedSince = req.headers["if-modified-since"];
   if (ifModifiedSince && ifModifiedSince === POKEMON_NAMES_LAST_UPDATED) {
@@ -14,12 +14,12 @@ export const getPokemonNames = async (req: Request, res: Response) => {
 
   res.setHeader("last-modified", POKEMON_NAMES_LAST_UPDATED);
   const data = await dataService.getPokemonNames(
-    getLanguageId(String(req.query.lang) ?? "en")
+    getLanguageId(String(req.query.lang) ?? "en"),
   );
   res.json(data);
 };
 
-const POKEMON_ICONS_LAST_UPDATED = new Date("2025-08-24").toUTCString();
+const POKEMON_ICONS_LAST_UPDATED = new Date("2026-04-25").toUTCString();
 export const getPokemonIcons = async (req: Request, res: Response) => {
   const ifModifiedSince = req.headers["if-modified-since"];
   if (ifModifiedSince && ifModifiedSince === POKEMON_ICONS_LAST_UPDATED) {
@@ -41,10 +41,10 @@ export const getPokemonWithAbilities = async (req: Request, res: Response) => {
   res.json(await dataService.getPokemonWithAbilities(id));
 };
 
-const POKEMON_GENERATIONS_LAST_UPDATED = new Date("2025-08-29").toUTCString();
+const POKEMON_GENERATIONS_LAST_UPDATED = new Date("2026-04-25").toUTCString();
 export const getPokemonIdsByGeneration = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   const ifModifiedSince = req.headers["if-modified-since"];
   if (ifModifiedSince && ifModifiedSince === POKEMON_GENERATIONS_LAST_UPDATED) {
@@ -68,7 +68,7 @@ export const getPokemonIdsByGeneration = async (
     res
       .status(StatusCode.BAD_REQUEST)
       .send(
-        `Invalid generation. Must be between ${MIN_GENERATION} and ${MAX_GENERATION}.`
+        `Invalid generation. Must be between ${MIN_GENERATION} and ${MAX_GENERATION}.`,
       );
     return;
   }

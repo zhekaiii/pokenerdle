@@ -5,6 +5,11 @@ make build-db
 mv db.sqlite3 ../prisma-sqlite
 cd ../prisma-sqlite
 sqlite3 db.sqlite3 < preprocess.sql
+cd ..
+bun run ./scripts/buildMetagameFormats.ts
+cd prisma-sqlite
+pnpm prisma db pull --schema=./prisma-sqlite/schema.prisma --config=./prisma-sqlite/prisma.config.js
+sed -i '' 's/Unsupported("bool")/Boolean/g' schema.prisma
 pnpm prisma generate --schema=./prisma-sqlite/schema.prisma
 cd ..
 bun run ./src/refreshGraph.ts
