@@ -115,5 +115,29 @@
     "buttons": {
       "playNow": "立即遊玩"
     }
+  },
+  "statGuesser": {
+    "title": "種族值挑戰規則",
+    "objective": {
+      "title": "🎯 目標",
+      "description": "在 <strong>種族值挑戰</strong> 中，你的目標是盡可能準確地回憶寶可夢的六項基礎能力值：HP、攻擊、防禦、特攻、特防和速度。"
+    },
+    "howToPlay": {
+      "title": "🎮 玩法",
+      "steps": {
+        "revealed": "系統會顯示一隻隨機寶可夢（圖片、名稱和圖鑑編號）。",
+        "sliders": "移動每個滑桿（1-255）來猜測對應能力值。調整時合計值會即時更新。",
+        "submit": "點擊<em>提交</em>為本輪計分。",
+        "feedback": "你會看到百分比準確率，以及每項能力值的顏色回饋（綠色 = 非常接近，黃色 = 接近，灰色 = 偏差較大）。",
+        "next": "下一輪會在 8 秒後自動載入，也可以點擊播放按鈕直接跳到下一隻。"
+      }
+    },
+    "filters": {
+      "title": "🔍 篩選",
+      "description": "使用篩選列將範圍縮小到指定世代區間，或選擇 Pokémon Champions Regulation M-A 等競技規則。"
+    },
+    "buttons": {
+      "playNow": "立即遊玩"
+    }
   }
 }

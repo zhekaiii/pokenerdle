@@ -115,5 +115,29 @@
     "buttons": {
       "playNow": "Play Now"
     }
+  },
+  "statGuesser": {
+    "title": "Rules of Stat Guesser",
+    "objective": {
+      "title": "🎯 Objective",
+      "description": "In <strong>Stat Guesser</strong>, your goal is to recall a Pokémon's six base stats: HP, Attack, Defense, Sp. Atk, Sp. Def, and Speed, as accurately as you can."
+    },
+    "howToPlay": {
+      "title": "🎮 How to Play",
+      "steps": {
+        "revealed": "A random Pokémon is revealed (sprite, name, dex number).",
+        "sliders": "Move each slider (1-255) to your guess for that stat. The total updates live as you adjust.",
+        "submit": "Click <em>Submit</em> to score your round.",
+        "feedback": "You'll see your accuracy as a percentage and per-stat color feedback (green = very close, yellow = close, gray = far).",
+        "next": "The next round loads automatically after 8 seconds, or click the play button to skip ahead."
+      }
+    },
+    "filters": {
+      "title": "🔍 Filters",
+      "description": "Use the filter bar to narrow the pool to a specific generation range or to a competitive metagame format like Pokémon Champions Regulation M-A."
+    },
+    "buttons": {
+      "playNow": "Play Now"
+    }
   }
 }

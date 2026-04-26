@@ -2,60 +2,66 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Link } from "@tanstack/react-router";
 import React from "react";
+import { Trans, useTranslation } from "react-i18next";
+
+const HOW_TO_PLAY_STEPS = [
+  "revealed",
+  "sliders",
+  "submit",
+  "feedback",
+  "next",
+] as const;
 
 const StatGuesserRules: React.FC = () => {
+  const { t } = useTranslation("rules");
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="tw:text-3xl tw:text-center">
-          Rules of Stat Guesser
+          {t("statGuesser.title")}
         </CardTitle>
       </CardHeader>
       <CardContent className="tw:space-y-6">
         <section>
-          <h2 className="tw:text-xl tw:font-semibold tw:mb-3">🎯 Objective</h2>
+          <h2 className="tw:text-xl tw:font-semibold tw:mb-3">
+            {t("statGuesser.objective.title")}
+          </h2>
           <p>
-            In <strong>Stat Guesser</strong>, your goal is to recall a Pokémon’s
-            six base stats — HP, Attack, Defense, Sp. Atk, Sp. Def, and Speed —
-            as accurately as you can.
+            <Trans
+              ns="rules"
+              i18nKey="statGuesser.objective.description"
+              components={{ strong: <strong /> }}
+            />
           </p>
         </section>
 
         <section>
           <h2 className="tw:text-xl tw:font-semibold tw:mb-3">
-            🎮 How to Play
+            {t("statGuesser.howToPlay.title")}
           </h2>
           <ol className="tw:list-decimal tw:ms-4 tw:space-y-2">
-            <li>A random Pokémon is revealed (sprite, name, dex number).</li>
-            <li>
-              Move each slider (1–200) to your guess for that stat. The total
-              updates live as you adjust.
-            </li>
-            <li>
-              Click <em>Submit</em> to score your round.
-            </li>
-            <li>
-              You’ll see your accuracy as a percentage and per-stat colour
-              feedback (green = very close, yellow = close, gray = far).
-            </li>
-            <li>
-              The next round loads automatically after 8 seconds, or click the
-              play button to skip ahead.
-            </li>
+            {HOW_TO_PLAY_STEPS.map((step) => (
+              <li key={step}>
+                <Trans
+                  ns="rules"
+                  i18nKey={`statGuesser.howToPlay.steps.${step}`}
+                  components={{ em: <em /> }}
+                />
+              </li>
+            ))}
           </ol>
         </section>
 
         <section>
-          <h2 className="tw:text-xl tw:font-semibold tw:mb-3">🔍 Filters</h2>
-          <p>
-            Use the filter bar to narrow the pool to a specific generation range
-            or to a competitive metagame format like Pokémon Champions
-            Regulation M-A.
-          </p>
+          <h2 className="tw:text-xl tw:font-semibold tw:mb-3">
+            {t("statGuesser.filters.title")}
+          </h2>
+          <p>{t("statGuesser.filters.description")}</p>
         </section>
 
         <Button asChild className="tw:flex">
-          <Link to="/stat-guesser">Play Now</Link>
+          <Link to="/stat-guesser">{t("statGuesser.buttons.playNow")}</Link>
         </Button>
       </CardContent>
     </Card>
