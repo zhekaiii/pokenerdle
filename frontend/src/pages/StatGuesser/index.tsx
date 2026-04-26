@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 
 import FilterBar from "./components/FilterBar";
 import PokemonReveal from "./components/PokemonReveal";
-import ResultPanel from "./components/ResultPanel";
 import SessionFooter from "./components/SessionFooter";
 import StatSliderRow from "./components/StatSliderRow";
 import { useStatGuesser } from "./hooks/useStatGuesser";
@@ -142,11 +141,15 @@ const StatGuesserPage: React.FC = () => {
                 )}
               </div>
               {state.phase === "guessing" && (
-                <div className="tw:flex tw:justify-center">
-                  <Button onClick={submit}>{t("actions.submit")}</Button>
-                </div>
+                <Button className="tw:mx-auto tw:flex" onClick={submit}>
+                  {t("actions.submit")}
+                </Button>
               )}
-              {state.phase === "result" && <ResultPanel onAdvance={next} />}
+              {state.phase === "result" && (
+                <Button className="tw:mx-auto tw:flex" onClick={next}>
+                  {t("actions.next")}
+                </Button>
+              )}
             </>
           )}
         </CardContent>
