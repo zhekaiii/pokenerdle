@@ -18,9 +18,9 @@ export default (axiosInstance: AxiosInstance) => ({
     if (excludeIds.length > 0) {
       params.set("excludeIds", excludeIds.join(","));
     }
-    const qs = params.toString();
     const { data } = await axiosInstance.get<StatGuessRoundResponse>(
-      `/v1/stat-guesser/round${qs ? `?${qs}` : ""}`,
+      `/v1/stat-guesser/round`,
+      { params },
     );
     return data;
   },
