@@ -31,14 +31,16 @@ const StatGuesserRules: React.FC = () => {
               Move each slider (1–200) to your guess for that stat. The total
               updates live as you adjust.
             </li>
-            <li>Click <em>Submit</em> to score your round.</li>
+            <li>
+              Click <em>Submit</em> to score your round.
+            </li>
             <li>
               You’ll see your accuracy as a percentage and per-stat colour
               feedback (green = very close, yellow = close, gray = far).
             </li>
             <li>
-              The next round loads automatically after 8 seconds, or click
-              the play button to skip ahead.
+              The next round loads automatically after 8 seconds, or click the
+              play button to skip ahead.
             </li>
           </ol>
         </section>
@@ -46,9 +48,9 @@ const StatGuesserRules: React.FC = () => {
         <section>
           <h2 className="tw:text-xl tw:font-semibold tw:mb-3">🔍 Filters</h2>
           <p>
-            Use the filter bar to narrow the pool to a specific generation
-            range or to a competitive metagame format like Pokémon Champions
-            Reg M-A.
+            Use the filter bar to narrow the pool to a specific generation range
+            or to a competitive metagame format like Pokémon Champions
+            Regulation M-A.
           </p>
         </section>
 
