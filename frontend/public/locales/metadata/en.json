@@ -2,11 +2,17 @@
   "title": {
     "root": "PokéNerdle",
     "daily": "Daily Challenge – PokéNerdle",
-    "archive": "Past Challenges – PokéNerdle"
+    "archive": "Past Challenges – PokéNerdle",
+    "statGuesser": "Stat Guesser – PokéNerdle",
+    "pokechain": "PokéChain – PokéNerdle",
+    "pathFinder": "Path Finder – PokéNerdle"
   },
   "description": {
     "root": "PokéNerdle is a Pokémon-themed web game packed with fun, challenge, and evolving game modes. Play solo or with friends and prove you're a true Pokénerd!",
     "daily": "Play the Daily Challenge and test your Pokémon knowledge! Guess the daily mystery Pokémon in 8 tries or less!",
-    "archive": "Browse past PokéNerdle Daily Challenges and replay any day you missed."
+    "archive": "Browse past PokéNerdle Daily Challenges and replay any day you missed.",
+    "statGuesser": "Guess the Pokemon by its stats in this PokéNerdle challenge.",
+    "pokechain": "Build a chain of Pokemon connections in PokéNerdle.",
+    "pathFinder": "Connect two Pokemon through shared traits in PokéNerdle."
   }
 }

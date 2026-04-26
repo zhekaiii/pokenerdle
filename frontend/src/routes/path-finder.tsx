@@ -7,12 +7,26 @@ export const Route = createFileRoute("/path-finder")({
   context: () => ({
     shouldShowRuleButton: true,
   }),
-  head: () => ({
-    meta: [
-      { title: "Path Finder – PokéNerdle" },
-      { property: "og:title", content: "Path Finder – PokéNerdle" },
-    ],
-  }),
+  head: async ({ match }) => {
+    await match.context.i18n.loadNamespaces("metadata");
+    return {
+      meta: [
+        { title: match.context.i18n.t("metadata:title.pathFinder") },
+        {
+          property: "og:title",
+          content: match.context.i18n.t("metadata:title.pathFinder"),
+        },
+        {
+          name: "description",
+          content: match.context.i18n.t("metadata:description.pathFinder"),
+        },
+        {
+          property: "og:description",
+          content: match.context.i18n.t("metadata:description.pathFinder"),
+        },
+      ],
+    };
+  },
   loader: async ({ context: { store } }) => {
     const api = createApi(store);
     return await api.pathfinder.getChallenge();

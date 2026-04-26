@@ -2,11 +2,17 @@
   "title": {
     "root": "PokéNerdle",
     "daily": "每日挑战 – PokéNerdle",
-    "archive": "往期挑战 – PokéNerdle"
+    "archive": "往期挑战 – PokéNerdle",
+    "statGuesser": "种族值挑战 – PokéNerdle",
+    "pokechain": "宝可梦链 – PokéNerdle",
+    "pathFinder": "路径寻找 – PokéNerdle"
   },
   "description": {
     "root": "PokéNerdle 是一款以宝可梦为主题的网页游戏，充满乐趣、挑战和不断演变的游戏模式。单人游玩或与朋友一起挑战，证明你是真正的宝可梦迷！",
     "daily": "参加每日挑战，测试你的宝可梦知识！在 8 次尝试内猜出每日的神秘宝可梦！",
-    "archive": "浏览往期 PokéNerdle 每日挑战，挑战任何你错过的日子！"
+    "archive": "浏览往期 PokéNerdle 每日挑战，挑战任何你错过的日子！",
+    "statGuesser": "用滑块猜测宝可梦的六项种族值。无限轮次。",
+    "pokechain": "实时多人对战。利用共同特性构筑最长的宝可梦链。",
+    "pathFinder": "单人解谜。用最少的特性连结串起两只宝可梦。"
   }
 }
