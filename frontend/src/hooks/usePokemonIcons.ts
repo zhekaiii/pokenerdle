@@ -55,13 +55,6 @@ export const usePokemonIcons = () => {
   const getPokemonIcon = useCallback(
     (pokemonId: number) => {
       if (pokemonIcons?.[pokemonId]) {
-        // TEMP FIX because master branch is weird
-        if (pokemonIcons[pokemonId].includes("sprites/master/sprites")) {
-          return pokemonIcons[pokemonId].replace(
-            "sprites/master/sprites",
-            "sprites/4bcd17051efacd74966305ac87a0330b6131259a/sprites",
-          );
-        }
         return pokemonIcons[pokemonId];
       }
       return `https://raw.githubusercontent.com/pokedextracker/pokesprite/refs/heads/master/images/${pokemonId
