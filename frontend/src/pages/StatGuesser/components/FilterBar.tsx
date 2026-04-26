@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/Select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
+import { GENERATIONS } from "@/lib/constants";
 import { StatGuessFilter } from "@pokenerdle/shared";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
@@ -20,8 +21,6 @@ interface FilterBarProps {
   onGenerationToggle: (gen: number) => void;
   onReset: () => void;
 }
-
-const GENERATIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const FilterBar: React.FC<FilterBarProps> = ({
   filter,

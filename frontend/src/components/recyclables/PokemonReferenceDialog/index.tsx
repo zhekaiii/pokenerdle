@@ -20,7 +20,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonByGeneration } from "@/hooks/usePokemonIdsByGeneration";
-import { MAX_GENERATION, MIN_GENERATION } from "@/lib/constants";
+import { GENERATIONS, MIN_GENERATION } from "@/lib/constants";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import clsx from "clsx";
 import { atom, useAtom } from "jotai";
@@ -31,11 +31,6 @@ import styles from "./index.module.scss";
 
 const dialogScrollPositionsAtom = atom<Record<string, number>>({});
 const tabAtom = atom(MIN_GENERATION);
-
-const generations = Array.from(
-  { length: MAX_GENERATION },
-  (_, i) => MIN_GENERATION + i
-);
 
 interface Props {
   open: boolean;
@@ -53,7 +48,7 @@ const PokemonReferenceDialog: React.FC<Props> = ({
   const { t } = useTranslation("daily");
   const { getPokemonIcon } = usePokemonIcons();
   const scrollContainerRef = useRef<Record<number, HTMLDivElement | null>>(
-    Object.fromEntries(generations.map((gen) => [gen, null]))
+    Object.fromEntries(GENERATIONS.map((gen) => [gen, null])),
   );
   const [confirmGuessOpen, setConfirmGuessOpen] = React.useState(false);
   const [selectedPokemon, setSelectedPokemon] =
@@ -78,7 +73,7 @@ const PokemonReferenceDialog: React.FC<Props> = ({
   };
 
   const [savedScrollPositions, setSavedScrollPositions] = useAtom(
-    dialogScrollPositionsAtom
+    dialogScrollPositionsAtom,
   );
 
   const [activeGeneration, setActiveGeneration] = useAtom(tabAtom);
@@ -125,14 +120,14 @@ const PokemonReferenceDialog: React.FC<Props> = ({
           className="tw:flex-1 tw:flex tw:flex-col tw:min-h-0"
         >
           <TabsList className="tw:grid tw:w-full tw:grid-cols-9">
-            {generations.map((gen) => (
+            {GENERATIONS.map((gen) => (
               <TabsTrigger key={gen} value={gen.toString()}>
                 {gen}
               </TabsTrigger>
             ))}
           </TabsList>
 
-          {generations.map((gen) => {
+          {GENERATIONS.map((gen) => {
             return (
               <TabsContent
                 key={gen}
@@ -161,7 +156,7 @@ const PokemonReferenceDialog: React.FC<Props> = ({
                           key={pokemon.id}
                           className={clsx(
                             styles.PokemonItem,
-                            isDisabled && styles["PokemonItem--disabled"]
+                            isDisabled && styles["PokemonItem--disabled"],
                           )}
                           title={pokemon.name || pokemon.speciesName}
                           onClick={() =>
