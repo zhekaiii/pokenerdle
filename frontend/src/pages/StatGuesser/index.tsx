@@ -129,16 +129,18 @@ const StatGuesserPage: React.FC = () => {
                     />
                   ))}
                 </div>
-                {state.phase === "guessing" && (
-                  <div className="tw:text-right tw:text-sm">
-                    {t("sliders.total", {
-                      value: STAT_KEYS.reduce(
-                        (sum, k) => sum + state.guesses[k],
-                        0,
-                      ),
-                    })}
-                  </div>
-                )}
+                <div className="tw:text-right tw:text-sm">
+                  {t("sliders.total", {
+                    value: STAT_KEYS.reduce(
+                      (sum, k) =>
+                        sum +
+                        (state.phase === "guessing"
+                          ? state.guesses
+                          : state.round.stats)[k],
+                      0,
+                    ),
+                  })}
+                </div>
               </div>
               {state.phase === "guessing" && (
                 <Button className="tw:mx-auto tw:flex" onClick={submit}>
