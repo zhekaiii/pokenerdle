@@ -11,14 +11,13 @@ import { useTranslation } from "react-i18next";
 
 import type { StatBreakdown } from "../scoring";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- prefer type aliases
-type StatSliderRowProps = {
+interface StatSliderRowProps {
   stat: StatKey;
   value: number;
   onChange: (value: number) => void;
   disabled?: boolean;
   result?: StatBreakdown;
-};
+}
 
 const percentForValue = (value: number): number => {
   const clamped = Math.min(SLIDER_MAX, Math.max(SLIDER_MIN, value));

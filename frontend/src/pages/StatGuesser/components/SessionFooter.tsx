@@ -2,13 +2,12 @@ import { usePokemonNames } from "@/hooks/usePokemonNames";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- prefer type aliases
-type SessionFooterProps = {
+interface SessionFooterProps {
   completed: number;
   sumPercent: number;
   bestPercent: number;
   bestPokemonId: number | null;
-};
+}
 
 const SessionFooter: React.FC<SessionFooterProps> = ({
   completed,

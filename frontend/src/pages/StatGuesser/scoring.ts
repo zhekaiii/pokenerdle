@@ -4,21 +4,19 @@ export const TOLERANCE = 60;
 
 export type StatColor = "green" | "yellow" | "gray";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- prefer type aliases
-export type StatBreakdown = {
+export interface StatBreakdown {
   stat: StatKey;
   guess: number;
   actual: number;
   delta: number;
   closeness: number; // 0..1
   color: StatColor;
-};
+}
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- prefer type aliases
-export type StatGuessScore = {
+export interface StatGuessScore {
   overallPercent: number;
   perStat: StatBreakdown[];
-};
+}
 
 export const closenessForStat = (guess: number, actual: number): number => {
   const delta = Math.abs(guess - actual);
@@ -49,8 +47,7 @@ export const computeScore = (
       color: colorForCloseness(closeness),
     };
   });
-  const avg =
-    perStat.reduce((sum, s) => sum + s.closeness, 0) / perStat.length;
+  const avg = perStat.reduce((sum, s) => sum + s.closeness, 0) / perStat.length;
   return {
     overallPercent: Math.round(avg * 100),
     perStat,

@@ -5,11 +5,10 @@ import { resolveSpriteUrl } from "@/utils/pokemonSprites";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- prefer type aliases
-type PokemonRevealProps = {
+interface PokemonRevealProps {
   pokemonId: number;
   accuracyPercent?: number;
-};
+}
 
 const PokemonReveal: React.FC<PokemonRevealProps> = ({
   pokemonId,

@@ -2,10 +2,9 @@ import { Button } from "@/components/ui/Button";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions -- prefer type aliases
-type ResultPanelProps = {
+interface ResultPanelProps {
   onAdvance: () => void;
-};
+}
 
 const ResultPanel: React.FC<ResultPanelProps> = ({ onAdvance }) => {
   const { t } = useTranslation("statGuesser");
