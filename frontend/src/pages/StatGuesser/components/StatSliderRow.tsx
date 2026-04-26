@@ -104,7 +104,7 @@ const StatSliderRow: React.FC<StatSliderRowProps> = ({
     });
 
   return (
-    <div className="tw:grid tw:min-h-7 tw:grid-cols-[6rem_1fr_3.5rem] tw:items-center tw:gap-3 tw:h-7">
+    <>
       <div className="tw:text-sm tw:font-medium">{label}</div>
       {isResult && result ? (
         <div
@@ -170,7 +170,7 @@ const StatSliderRow: React.FC<StatSliderRowProps> = ({
           className="tw:h-7 tw:w-14 tw:px-2 tw:text-right tw:tabular-nums"
         />
       )}
-    </div>
+    </>
   );
 };
 

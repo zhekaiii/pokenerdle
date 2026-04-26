@@ -24,15 +24,17 @@ const StatGuesserLoadingPlaceholder: React.FC = () => {
         <div className="tw:h-5 tw:w-16 tw:animate-pulse tw:rounded-md tw:bg-muted" />
       </div>
       <div className="tw:flex tw:flex-col tw:gap-3">
-        {STAT_KEYS.map((stat) => (
-          <StatSliderRow
-            key={stat}
-            stat={stat}
-            value={SLIDER_DEFAULT}
-            onChange={() => undefined}
-            disabled
-          />
-        ))}
+        <div className="tw:grid tw:grid-cols-[auto_1fr_3.5rem] tw:auto-rows-[28px] tw:items-center tw:gap-3">
+          {STAT_KEYS.map((stat) => (
+            <StatSliderRow
+              key={stat}
+              stat={stat}
+              value={SLIDER_DEFAULT}
+              onChange={() => undefined}
+              disabled
+            />
+          ))}
+        </div>
         <div className="tw:text-right tw:text-sm">
           <span className="tw:invisible">
             {STAT_KEYS.reduce((sum) => sum + SLIDER_DEFAULT, 0)}
@@ -60,7 +62,7 @@ const StatGuesserPage: React.FC = () => {
 
   return (
     <div className={classes.StatGuesser}>
-      <Card className="tw:max-w-2xl tw:mx-auto tw:relative">
+      <Card responsive className="tw:max-w-full tw:w-md tw:mx-auto tw:relative">
         <Button
           asChild
           className="tw:absolute tw:top-2 tw:end-2"
@@ -119,16 +121,18 @@ const StatGuesserPage: React.FC = () => {
                 }
               />
               <div className="tw:flex tw:flex-col tw:gap-3">
-                {STAT_KEYS.map((stat) => (
-                  <StatSliderRow
-                    key={stat}
-                    stat={stat}
-                    value={state.guesses[stat]}
-                    onChange={(v) => setGuess(stat, v)}
-                    disabled={state.phase === "result"}
-                    result={scoreByStat?.get(stat)}
-                  />
-                ))}
+                <div className="tw:grid tw:grid-cols-[auto_1fr_3.5rem] tw:auto-rows-[28px] tw:items-center tw:gap-3">
+                  {STAT_KEYS.map((stat) => (
+                    <StatSliderRow
+                      key={stat}
+                      stat={stat}
+                      value={state.guesses[stat]}
+                      onChange={(v) => setGuess(stat, v)}
+                      disabled={state.phase === "result"}
+                      result={scoreByStat?.get(stat)}
+                    />
+                  ))}
+                </div>
                 {state.phase === "guessing" && (
                   <div className="tw:text-right tw:text-sm">
                     {t("sliders.total", {
