@@ -37,7 +37,13 @@ const initialGuesses = (): StatGuessStats => ({
 });
 
 export const useStatGuesser = (filter: StatGuessFilter) => {
-  const [roundIndex, setRoundIndex] = useState(0);
+  const [roundIndex, setRoundIndex] = useState<
+    Record<StatGuessFilter["kind"], number>
+  >({
+    all: 0,
+    format: 0,
+    generations: 0,
+  });
   const [phase, setPhase] = useState<"guessing" | "result">("guessing");
   const [guesses, setGuesses] = useState<StatGuessStats>(initialGuesses);
   const [score, setScore] = useState<StatGuessScore | null>(null);
@@ -60,7 +66,7 @@ export const useStatGuesser = (filter: StatGuessFilter) => {
     error: roundError,
     refetch,
   } = useQuery<StatGuessRoundResponse>({
-    queryKey: ["statGuesser", "round", filter, roundIndex],
+    queryKey: ["statGuesser", "round", filter, roundIndex[filter.kind]],
     queryFn: () => api.statGuesser.getRound(filter, recentIdsRef.current),
     staleTime: Infinity,
     retry: false,
@@ -93,11 +99,6 @@ export const useStatGuesser = (filter: StatGuessFilter) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to pokemon id changing
   }, [round?.pokemonId]);
 
-  // Reset roundIndex when filter changes.
-  useEffect(() => {
-    setRoundIndex(0);
-  }, [filter]);
-
   const setGuess = (stat: keyof StatGuessStats, value: number) => {
     setGuesses((g) => ({ ...g, [stat]: value }));
   };
@@ -119,7 +120,7 @@ export const useStatGuesser = (filter: StatGuessFilter) => {
   };
 
   const next = () => {
-    setRoundIndex((i) => i + 1);
+    setRoundIndex((i) => ({ ...i, [filter.kind]: i[filter.kind] + 1 }));
   };
 
   const retry = () => {
