@@ -3,12 +3,13 @@ import {
   type DailyChallengeCalendarResponse,
   type DailyChallengeGuessResponse,
   type DailyChallengeStatsResponse,
+  type DailyChallengeSubmitGuessResponse,
 } from "@pokenerdle/shared/daily";
 import { AxiosInstance } from "axios";
 
 export default (axiosInstance: AxiosInstance) => ({
   submitGuess: async (id: number, date?: string) => {
-    const { data } = await axiosInstance.post<DailyChallengeGuessResponse>(
+    const { data } = await axiosInstance.post<DailyChallengeSubmitGuessResponse>(
       "/v1/daily/challenge/submit",
       {
         pokemon_id: id,

@@ -163,6 +163,16 @@ export const getUserGuessCountForDate = async (
   return result;
 };
 
+export const hasUserSubmittedAnyDailyChallengeGuess = async (
+  userId: string,
+) => {
+  const result = await pgClient.userDailyGuess.findFirst({
+    where: { userId },
+    select: { userId: true },
+  });
+  return result !== null;
+};
+
 export const getUserDailyChallengeByDay = async (
   userId: string,
   {

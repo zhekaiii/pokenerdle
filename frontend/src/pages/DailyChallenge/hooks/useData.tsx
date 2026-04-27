@@ -19,6 +19,10 @@ export interface DailyChallenge {
   guesses: DailyChallengeGuessResponse[];
 }
 
+export interface DailyChallengeGuessSubmitResult {
+  isFirstDailyChallengeGuess: boolean;
+}
+
 export interface CorrectAnswer {
   pokemonId: number;
   pokemon: {
@@ -85,14 +89,16 @@ export const useDailyChallengeData = (date?: string) => {
     fetchCorrectAnswer();
   }, [hasReachedLimit, hasSolved, correctAnswer, isLoadingAnswer, activeDate]);
 
-  const onGuess = async ({ id }: PokemonNamesResponse) => {
+  const onGuess = async ({
+    id,
+  }: PokemonNamesResponse): Promise<DailyChallengeGuessSubmitResult> => {
     const numGuesses = (guesses?.guesses.length ?? 0) + 1;
     try {
       setIsLoading(true);
       const response = await api.daily.submitGuess(id, activeDate);
       setGuesses(() => {
         const guess = {
-          ...response,
+          ...response.guess,
           pokemonId: id,
         };
         if (guesses) {
@@ -109,7 +115,7 @@ export const useDailyChallengeData = (date?: string) => {
       void queryClient.invalidateQueries({
         queryKey: [DAILY_CALENDAR_QUERY_KEY],
       });
-      if (response.correct) {
+      if (response.guess.correct) {
         toast.success(`${t("toast.correctGuess")}`);
         posthog.capture("daily_challenge_solved", {
           num_guesses: numGuesses,
@@ -119,6 +125,9 @@ export const useDailyChallengeData = (date?: string) => {
         toast.error(t("toast.gameOver"));
         posthog.capture("daily_challenge_gameover", { isArchive });
       }
+      return {
+        isFirstDailyChallengeGuess: response.isFirstDailyChallengeGuess,
+      };
     } finally {
       setIsLoading(false);
     }
