@@ -13,5 +13,6 @@
   "dark": "Dark",
   "light": "Light",
   "system": "Automatic",
-  "backToGame": "Back to Game"
+  "backToGame": "Back to Game",
+  "loggingIn": "Logging in..."
 }

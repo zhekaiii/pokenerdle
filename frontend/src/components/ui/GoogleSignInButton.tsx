@@ -2,6 +2,7 @@ import GoogleIcon from "@/assets/google.svg?react";
 import { signInWithGoogle } from "@/atoms/auth";
 import { GoogleSignInSource, trackGoogleSignInClicked } from "@/lib/events";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, ButtonProps } from "./Button";
 
 interface UseGoogleSignInProps {
@@ -23,8 +24,8 @@ export const useGoogleSignIn = ({
         new URL(
           location.origin +
             "/auth/callback?" +
-            redirectToSearchParams.toString()
-        ).toString()
+            redirectToSearchParams.toString(),
+        ).toString(),
       );
     } catch (error) {
       console.error("Sign in failed:", error);
@@ -55,6 +56,7 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
   redirectToPath,
   source,
 }) => {
+  const { t } = useTranslation("nav");
   const { loading, handleSignIn } = useGoogleSignIn({
     redirectToPath,
     source,
@@ -69,7 +71,7 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
       className={className}
     >
       <GoogleIcon className="tw:size-4" />
-      {loading ? "Logging in..." : "Login with Google"}
+      {loading ? t("loggingIn") : t("loginWithGoogle")}
     </Button>
   );
 };

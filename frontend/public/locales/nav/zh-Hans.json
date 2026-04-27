@@ -13,5 +13,6 @@
   "dark": "深色",
   "light": "浅色",
   "system": "自动",
-  "backToGame": "返回游戏"
+  "backToGame": "返回游戏",
+  "loggingIn": "正在登录..."
 }
