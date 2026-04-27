@@ -1,5 +1,8 @@
 import { TZDate } from "@date-fns/tz";
-import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
+import {
+  DailyChallengeGuessResponse,
+  DailyChallengeSubmitGuessResponse,
+} from "@pokenerdle/shared/daily";
 import {
   DAILY_CHALLENGE_DAY_1,
   SINGAPORE_TIMEZONE,
@@ -20,7 +23,7 @@ import {
   getUserGuessCountForDate,
   getUserGuessesForDate,
   hasPokemonAppearedInLastMonth,
-  migrateUserGuesses,
+  hasUserSubmittedAnyDailyChallengeGuess,
   saveUserGuess,
 } from "../repositories/daily.repository.js";
 import {
@@ -124,7 +127,7 @@ export const submitGuess = async (
   userId: string,
   pokemonId: number,
   date: string,
-): Promise<DailyChallengeGuessResponse> => {
+): Promise<DailyChallengeSubmitGuessResponse> => {
   // Archive validation
   const today = format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd");
   const isArchive = date !== today;
@@ -152,11 +155,14 @@ export const submitGuess = async (
     throw new Error("hit limit");
   }
   guessNumber = currentGuessCount + 1;
+  const isFirstDailyChallengeGuess =
+    guessNumber === 1 &&
+    !(await hasUserSubmittedAnyDailyChallengeGuess(userId));
 
   // Verify the guess
   const result = await verifyGuess(pokemonId, date);
   if (!userId || guessNumber === undefined) {
-    return result;
+    return { guess: result, isFirstDailyChallengeGuess };
   }
 
   if (result.correct) {
@@ -175,7 +181,7 @@ export const submitGuess = async (
       colorCorrectness: true,
     });
 
-    return result;
+    return { guess: result, isFirstDailyChallengeGuess };
   }
 
   // Save the incorrect guess
@@ -193,7 +199,7 @@ export const submitGuess = async (
     isArchive,
   });
 
-  return result;
+  return { guess: result, isFirstDailyChallengeGuess };
 };
 
 export const getUserGuessesForDateService = async (

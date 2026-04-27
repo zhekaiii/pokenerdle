@@ -41,6 +41,11 @@ export type DailyChallengeGuessResponse = {
     }
 );
 
+export interface DailyChallengeSubmitGuessResponse {
+  guess: DailyChallengeGuessResponse;
+  isFirstDailyChallengeGuess: boolean;
+}
+
 export type DailyChallengeStatsResponse = {
   num_played: number;
   win_rate: number;

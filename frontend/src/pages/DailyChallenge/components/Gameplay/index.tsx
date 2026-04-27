@@ -57,13 +57,20 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
   const [input, setInput] = useState("");
   const [showPokemonReference, setShowPokemonReference] = useState(false);
   const [showStatsDialog, setShowStatsDialog] = useState(false);
+  const [forceExpandedGuess, setForceExpandedGuess] = useState(false);
   const { t } = useTranslation("daily");
   const displayChallengeNumber = isArchive
     ? getChallengeNumber(activeDate)
     : getCurrentChallengeNumber();
 
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
-    onGuess(pokemon).finally(() => setInput(""));
+    onGuess(pokemon)
+      .then(({ isFirstDailyChallengeGuess }) => {
+        if (isFirstDailyChallengeGuess) {
+          setForceExpandedGuess(true);
+        }
+      })
+      .finally(() => setInput(""));
   };
 
   useEffect(() => {
@@ -106,7 +113,12 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
         }).map((_, i) => {
           const guess = guesses?.guesses[i];
           return (
-            <DailyChallengeGuessBox key={i} guess={guess} guessNumber={i + 1}>
+            <DailyChallengeGuessBox
+              key={i}
+              guess={guess}
+              guessNumber={i + 1}
+              forceOpen={i === 0 && forceExpandedGuess}
+            >
               <div className={clsx(styles.DailyChallengeInputContainer)}>
                 <PokemonCombobox
                   className="tw:bg-background"
