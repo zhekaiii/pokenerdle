@@ -19,7 +19,7 @@ export const TypeChart: React.FC = () => {
   const isMobile = useMedia("(pointer:coarse)");
   const [highlightedRow, setHighlightedRow] = useState<number | null>(null);
   const [highlightedColumn, setHighlightedColumn] = useState<number | null>(
-    null
+    null,
   );
 
   const shouldDimCell = (attackingType: number, defendingType: number) => {
@@ -84,7 +84,7 @@ export const TypeChart: React.FC = () => {
                 key={type.id}
                 {...(isMobile
                   ? {
-                      onClick: () => setHighlightedColumn(type.id),
+                      onClick: () => toggleHighlightColumn(type.id),
                     }
                   : {
                       onMouseEnter: () => setHighlightedColumn(type.id),
@@ -96,7 +96,7 @@ export const TypeChart: React.FC = () => {
                     "tw:flex tw:h-full",
                     highlightedColumn &&
                       highlightedColumn !== type.id &&
-                      "tw:opacity-30"
+                      "tw:opacity-30",
                   )}
                 >
                   <TypeChip type={type.name} />
@@ -122,7 +122,7 @@ export const TypeChart: React.FC = () => {
                   className={clsx(
                     highlightedRow &&
                       highlightedRow !== attackingType.id &&
-                      "tw:opacity-30"
+                      "tw:opacity-30",
                   )}
                   type={attackingType.name}
                 />
@@ -141,7 +141,7 @@ export const TypeChart: React.FC = () => {
                       effectiveness > 1 &&
                         "tw:bg-positive tw:text-positive-foreground",
                       shouldDimCell(attackingType.id, defendingType.id) &&
-                        "tw:opacity-30"
+                        "tw:opacity-30",
                     )}
                     {...(isMobile
                       ? {
