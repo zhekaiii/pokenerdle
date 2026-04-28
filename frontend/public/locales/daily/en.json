@@ -65,7 +65,9 @@
       "correct": "Target is also {{height}}!",
       "shorter": "Target is shorter than {{height}}!",
       "taller": "Target is taller than {{height}}!"
-    }
+    },
+    "lessDetails": "Less details",
+    "moreDetails": "More details"
   },
   "gameplay": {
     "foundPokemon": "You have found the mystery Pokémon!",

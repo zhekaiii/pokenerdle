@@ -70,8 +70,8 @@ export const DailyChallengeGuessBox: React.FC<Props> = ({
           : "tw:hover:bg-muted tw:transition-colors tw:cursor-pointer"
       }
     >
-      <CardHeader className="tw:flex tw:items-center">
-        <div className="tw:grow">
+      <CardHeader className="tw:flex tw:flex-col tw:items-stretch">
+        <div>
           <div className="tw:flex tw:items-center">
             <img
               src={getPokemonIcon(guess.pokemonId)}
@@ -125,14 +125,6 @@ export const DailyChallengeGuessBox: React.FC<Props> = ({
             ))}
           </div>
         </div>
-        {!forceOpen && (
-          <ChevronDown
-            className={clsx(
-              "tw:sm:ms-1 tw:-me-3 tw:transition-transform",
-              isExpanded && "tw:-rotate-180",
-            )}
-          />
-        )}
       </CardHeader>
       {isOpen && (
         <CardContent className="tw:text-muted-foreground">
@@ -238,6 +230,22 @@ export const DailyChallengeGuessBox: React.FC<Props> = ({
             )}
           </ul>
         </CardContent>
+      )}
+
+      {!forceOpen && (
+        <div className="tw:flex tw:items-center tw:justify-center tw:text-sm tw:text-muted-foreground tw:-my-[calc(var(--card-spacing)/2)]">
+          <span>
+            {isExpanded
+              ? t("guessDetails.lessDetails")
+              : t("guessDetails.moreDetails")}
+          </span>
+          <ChevronDown
+            className={clsx(
+              "tw:sm:ms-1 tw:transition-transform tw:size-[1.5em]",
+              isExpanded && "tw:-rotate-180",
+            )}
+          />
+        </div>
       )}
     </Card>
   );

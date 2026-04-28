@@ -34,8 +34,8 @@ const HowToPlayPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const value = OPTIONS.find((option) =>
-    location.pathname.includes(option.value)
-  )!.value;
+    location.pathname.includes(option.value),
+  )?.value;
 
   return (
     <div className="tw:max-w-3xl tw:mx-auto tw:w-full">

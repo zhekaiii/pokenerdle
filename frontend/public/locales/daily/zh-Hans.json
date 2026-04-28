@@ -63,7 +63,9 @@
       "correct": "目标也是{{height}}米高！",
       "shorter": "目标比{{height}}米矮！",
       "taller": "目标比{{height}}米高！"
-    }
+    },
+    "lessDetails": "收起详情",
+    "moreDetails": "展开详情"
   },
   "gameplay": {
     "foundPokemon": "你找到了神秘的宝可梦！",
