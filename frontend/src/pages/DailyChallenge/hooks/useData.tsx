@@ -35,12 +35,13 @@ export interface CorrectAnswer {
 }
 
 export const guessesAtom = atom<DailyChallenge | null>(null);
+export const correctAnswerAtom = atom<CorrectAnswer | null>(null);
 
 export const useDailyChallengeData = (date?: string) => {
   const [guesses, setGuesses] = useAtom(guessesAtom);
   const [isLoading, setIsLoading] = useState(false);
-  const [correctAnswer, setCorrectAnswer] = useState<CorrectAnswer | null>(
-    null,
+  const [correctAnswer, setCorrectAnswer] = useAtom<CorrectAnswer | null>(
+    correctAnswerAtom,
   );
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false);
   const { t } = useTranslation("daily");
@@ -48,13 +49,6 @@ export const useDailyChallengeData = (date?: string) => {
 
   const activeDate = useMemo(() => date ?? FROZEN_DATE, [date]);
   const isArchive = useMemo(() => activeDate !== FROZEN_DATE, [activeDate]);
-
-  // Reset the revealed answer when the active date changes so we don't leak
-  // the previous day's Pokémon into a different archive challenge.
-  useEffect(() => {
-    setCorrectAnswer(null);
-    setIsLoadingAnswer(false);
-  }, [activeDate]);
 
   const hasSolved = useMemo(
     () =>
@@ -72,8 +66,15 @@ export const useDailyChallengeData = (date?: string) => {
 
   // Fetch correct answer when game is over and user hasn't solved it
   useEffect(() => {
+    if (hasSolved) {
+      setCorrectAnswer(guesses!.guesses.find((guess) => guess.correct)!);
+      return;
+    }
+
+    if (!hasReachedLimit) return;
+
     const fetchCorrectAnswer = async () => {
-      if (hasReachedLimit && !hasSolved && !correctAnswer && !isLoadingAnswer) {
+      if (!correctAnswer && !isLoadingAnswer) {
         try {
           setIsLoadingAnswer(true);
           const answer = await api.daily.getAnswer(activeDate);
@@ -87,7 +88,13 @@ export const useDailyChallengeData = (date?: string) => {
     };
 
     fetchCorrectAnswer();
-  }, [hasReachedLimit, hasSolved, correctAnswer, isLoadingAnswer, activeDate]);
+  }, [
+    hasReachedLimit,
+    hasSolved,
+    isLoadingAnswer,
+    activeDate,
+    setCorrectAnswer,
+  ]);
 
   const onGuess = async ({
     id,

@@ -1,8 +1,14 @@
 import { createApi } from "@/api";
 import DailyChallengeGameplay from "@/pages/DailyChallenge/components/Gameplay";
 import DailyChallengeIntroCard from "@/pages/DailyChallenge/components/IntroCard";
-import { DAY_1, FROZEN_DATE } from "@/pages/DailyChallenge/constants";
 import {
+  DAILY_CHALLENGE_GUESS_LIMIT,
+  DAY_1,
+  FROZEN_DATE,
+} from "@/pages/DailyChallenge/constants";
+import {
+  CorrectAnswer,
+  correctAnswerAtom,
   DailyChallenge,
   guessesAtom,
 } from "@/pages/DailyChallenge/hooks/useData";
@@ -43,11 +49,12 @@ const isValidChallengeDate = (date: string): boolean => {
 
 const DailyChallengePage: React.FC = () => {
   const loadedData = Route.useLoaderData();
-  useHydrateAtoms([[guessesAtom, loadedData]]);
   useHydrateAtoms([
+    [guessesAtom, loadedData.guesses],
+    [correctAnswerAtom, loadedData.correctAnswer],
     [
       dailyChallengeStateAtom,
-      loadedData?.guesses?.length
+      loadedData.guesses?.guesses?.length
         ? DailyChallengeState.Gameplay
         : DailyChallengeState.Intro,
     ],
@@ -91,11 +98,15 @@ export const Route = createFileRoute("/daily/")({
   loader: async ({
     context: { store },
     deps: { date: archiveDate },
-  }): Promise<DailyChallenge | null> => {
+  }): Promise<{
+    guesses: DailyChallenge | null;
+    correctAnswer: CorrectAnswer | null;
+  }> => {
     const date = archiveDate ?? getToday();
     let data: DailyChallenge | null = null;
+    let correctAnswer: CorrectAnswer | null = null;
+    const api = createApi(store);
     try {
-      const api = createApi(store);
       const userGuesses = await api.daily.getUserGuesses(date);
       if (userGuesses.length) {
         data = { date, guesses: userGuesses };
@@ -103,8 +114,13 @@ export const Route = createFileRoute("/daily/")({
     } catch (error) {
       console.error("Error getting user guesses:", error);
     }
-    // Write directly to the atoms so client-side navigations replace stale
-    // state instead of relying on first-render hydration via useHydrateAtoms.
+    if (data?.guesses.some((guess) => guess.correct)) {
+      correctAnswer = data.guesses.find((guess) => guess.correct)!;
+    } else if (data?.guesses.length === DAILY_CHALLENGE_GUESS_LIMIT) {
+      correctAnswer = await api.daily.getAnswer(date);
+    }
+    // Write directly to the atoms so client-side navigations replace stale state
+    store.set(correctAnswerAtom, correctAnswer);
     store.set(guessesAtom, data);
     store.set(
       dailyChallengeStateAtom,
@@ -112,7 +128,10 @@ export const Route = createFileRoute("/daily/")({
         ? DailyChallengeState.Gameplay
         : DailyChallengeState.Intro,
     );
-    return data;
+    return {
+      guesses: data,
+      correctAnswer,
+    };
   },
   head: async ({ match }) => {
     await match.context.i18n.loadNamespaces("metadata");

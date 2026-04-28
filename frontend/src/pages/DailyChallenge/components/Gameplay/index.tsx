@@ -157,7 +157,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
           );
         })}
       </div>
-      {!hasReachedLimit && !hasSolved ? (
+      {!isGameFinished ? (
         <>
           <hr className="tw:my-4!" />
           <TypeChecklist guesses={guesses?.guesses || []} />
