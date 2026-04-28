@@ -5,10 +5,16 @@ import {
   CardDescription,
   CardTitle,
 } from "@/components/ui/Card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/Dialog";
 import { FROZEN_DATE } from "@/pages/DailyChallenge/constants";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { POKEMON_TYPES } from "@pokenerdle/shared/pokemon";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import clsx from "clsx";
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
@@ -39,7 +45,7 @@ const disabledTypesAtom = atom(
       date: FROZEN_DATE,
       types: value,
     });
-  }
+  },
 );
 
 const MONO_DUAL_TYPES = [
@@ -68,7 +74,7 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
     setDisabledTypes(
       disabledTypes.includes(id)
         ? disabledTypes.filter((type) => type !== id)
-        : [...disabledTypes, id]
+        : [...disabledTypes, id],
     );
   };
 
@@ -84,7 +90,7 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
             key={index}
             className={clsx(
               "tw:flex tw:flex-wrap tw:gap-2 tw:justify-center",
-              index === 0 && "tw:mb-2 tw:pointer-coarse:mb-3"
+              index === 0 && "tw:mb-2 tw:pointer-coarse:mb-3",
             )}
           >
             {arr.map(({ id, name }) => {
@@ -93,7 +99,7 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
                   <TypeChip
                     clickable
                     className={clsx(
-                      disabledTypes.includes(id) && "tw:opacity-30"
+                      disabledTypes.includes(id) && "tw:opacity-30",
                     )}
                     onClick={() => toggleDisabledType(id)}
                     type={name}
@@ -109,6 +115,9 @@ export const TypeChecklist: React.FC<TypeChecklistProps> = ({
         <div className="tw:flex tw:flex-wrap tw:gap-2 tw:justify-center tw:mt-4">
           <Dialog open={showTypeChart} onOpenChange={setShowTypeChart}>
             <DialogContent showCloseButton={false} className="tw:p-1">
+              <VisuallyHidden>
+                <DialogTitle>{t("typeChecklist.typeChart")}</DialogTitle>
+              </VisuallyHidden>
               <TypeChart />
               <Button onClick={() => setShowTypeChart(false)}>
                 {t("common:close")}
