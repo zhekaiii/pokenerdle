@@ -57,7 +57,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
   const [input, setInput] = useState("");
   const [showPokemonReference, setShowPokemonReference] = useState(false);
   const [showStatsDialog, setShowStatsDialog] = useState(false);
-  const [forceExpandedGuess, setForceExpandedGuess] = useState(false);
+  const [isFirstGuessExpanded, setIsFirstGuessExpanded] = useState(false);
   const { t } = useTranslation("daily");
   const displayChallengeNumber = isArchive
     ? getChallengeNumber(activeDate)
@@ -67,7 +67,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
     onGuess(pokemon)
       .then(({ isFirstDailyChallengeGuess }) => {
         if (isFirstDailyChallengeGuess) {
-          setForceExpandedGuess(true);
+          setIsFirstGuessExpanded(true);
         }
       })
       .finally(() => setInput(""));
@@ -117,7 +117,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
               key={i}
               guess={guess}
               guessNumber={i + 1}
-              forceOpen={i === 0 && forceExpandedGuess}
+              isExpandedOnDefault={i === 0 && isFirstGuessExpanded}
             >
               <div className={clsx(styles.DailyChallengeInputContainer)}>
                 <PokemonCombobox

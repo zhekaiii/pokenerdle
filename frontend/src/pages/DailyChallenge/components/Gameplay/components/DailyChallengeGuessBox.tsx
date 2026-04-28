@@ -23,6 +23,7 @@ interface Props {
   forceOpen?: boolean;
   guessNumber?: number;
   children?: React.ReactNode;
+  isExpandedOnDefault?: boolean;
 }
 
 export const DailyChallengeGuessBox: React.FC<Props> = ({
@@ -30,13 +31,14 @@ export const DailyChallengeGuessBox: React.FC<Props> = ({
   forceOpen,
   guessNumber,
   children,
+  isExpandedOnDefault = false,
 }) => {
   const { t } = useTranslation(["daily", "pokemon", "common"]);
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
   const pokemonName =
     guess?.pokemonId != undefined ? pokemonNames[guess.pokemonId] : undefined;
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(isExpandedOnDefault);
   const isOpen = isExpanded || forceOpen;
   const pokemonHeight = formatPokemonHeight(guess?.pokemon.height ?? 0);
 
@@ -112,7 +114,7 @@ export const DailyChallengeGuessBox: React.FC<Props> = ({
                     guess[column.key] === "=" ||
                     guess[column.key] === true
                     ? styles["DailyChallengeGameplay__GridItem--correct"]
-                    : styles["DailyChallengeGameplay__GridItem--incorrect"]
+                    : styles["DailyChallengeGameplay__GridItem--incorrect"],
                 )}
               >
                 <span className={styles["DailyChallengeGameplay__GridHeader"]}>
@@ -127,7 +129,7 @@ export const DailyChallengeGuessBox: React.FC<Props> = ({
           <ChevronDown
             className={clsx(
               "tw:sm:ms-1 tw:-me-3 tw:transition-transform",
-              isExpanded && "tw:-rotate-180"
+              isExpanded && "tw:-rotate-180",
             )}
           />
         )}
@@ -249,5 +251,5 @@ export default DailyChallengeGuessBox;
  */
 export const DailyChallengeGuessBoxMemo = memo(
   DailyChallengeGuessBox,
-  (prev, next) => prev.guess?.pokemonId === next.guess?.pokemonId
+  (prev, next) => prev.guess?.pokemonId === next.guess?.pokemonId,
 );
