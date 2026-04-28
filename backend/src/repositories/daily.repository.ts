@@ -1,3 +1,5 @@
+import { TZDate } from "@date-fns/tz";
+import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import { formatDate, subMonths } from "date-fns";
 import seedrandom from "seedrandom";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
@@ -293,4 +295,18 @@ export const getCalendarData = async (userId: string, month: string) => {
     pokemonId: challengeMap.get(g.dailyChallengeId) ?? 0,
     attempts: Number(g.count),
   }));
+};
+
+export const hasUserCompletedToday = async (userId: string) => {
+  const today = formatDate(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd");
+  const result = await pgClient.userDailyGuess.findMany({
+    where: {
+      userId,
+      dailyChallengeId: today,
+    },
+  });
+  return (
+    result.length === DAILY_CHALLENGE_GUESS_LIMIT ||
+    result.some((guess) => guess.isCorrect)
+  );
 };

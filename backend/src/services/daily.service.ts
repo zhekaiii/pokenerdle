@@ -23,6 +23,7 @@ import {
   getUserGuessCountForDate,
   getUserGuessesForDate,
   hasPokemonAppearedInLastMonth,
+  hasUserCompletedToday,
   hasUserSubmittedAnyDailyChallengeGuess,
   saveUserGuess,
 } from "../repositories/daily.repository.js";
@@ -435,6 +436,7 @@ export const getUserStats = async (userId: string) => {
 
   if (
     formattedDays.length > 0 &&
+    (await hasUserCompletedToday(userId)) &&
     !isSameDay(today, formattedDays[formattedDays.length - 1].date)
   ) {
     streak = 0;
