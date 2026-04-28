@@ -144,10 +144,19 @@ export async function createServer(app) {
       },
     );
     req.supabase = supabase;
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (session) {
+    const [
+      {
+        data: { user },
+      },
+      {
+        data: { session },
+      },
+    ] = await Promise.all([
+      supabase.auth.getUser(),
+      supabase.auth.getSession(),
+    ]);
+    if (user) {
+      req.user = user;
       req.session = session;
     }
 
@@ -158,7 +167,11 @@ export async function createServer(app) {
 
     try {
       const posthogDistinctId = JSON.parse(posthogCookie ?? "{}").distinct_id;
-      if (req.session.user.id !== posthogDistinctId) {
+      if (
+        posthogDistinctId &&
+        user?.id !== posthogDistinctId &&
+        session?.access_token
+      ) {
         await fetch(
           "http://localhost:" +
             (process.env.PORT ?? 3456) +
@@ -167,7 +180,7 @@ export async function createServer(app) {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.access_token}`,
+              Authorization: `Bearer ${session.access_token}`,
               "X-Posthog-Distinct-Id": posthogDistinctId,
             },
             body: JSON.stringify({}),

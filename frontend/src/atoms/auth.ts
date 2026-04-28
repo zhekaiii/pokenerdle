@@ -33,7 +33,6 @@ export const isAuthenticatedAtom = atom((get) => get(userAtom) !== null);
 
 // Action atoms
 export const signInWithGoogle = async (redirectTo?: string) => {
-  console.log({ redirectTo });
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
@@ -55,7 +54,6 @@ export const signOutAtom = atom(null, async (get, set) => {
   supabase.auth.signOut().catch((error) => {
     console.error("Error signing out:", error);
   });
-  console.log("PostHog reset: clearing identified user");
   posthog.reset();
   set(userAtom, null);
   set(sessionAtom, null);
@@ -64,37 +62,28 @@ export const signOutAtom = atom(null, async (get, set) => {
 // Auth state management atom
 export const initAuthAtom = atom(null, async (get, set) => {
   try {
-    // Get initial session
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    set(sessionAtom, session);
-    set(userAtom, session?.user ?? null);
-    set(authLoadingAtom, false);
-
-    if (session?.user) {
-      posthog.identify(session.user.id, { email: session.user.email });
-    }
-
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(
       async (event: AuthChangeEvent, session: Session | null) => {
         set(sessionAtom, session);
-        set(userAtom, session?.user ?? null);
         set(authLoadingAtom, false);
 
-        if (
-          (event === "SIGNED_IN" ||
-            event === "TOKEN_REFRESHED" ||
-            event === "USER_UPDATED") &&
-          session?.user
-        ) {
-          posthog.identify(session.user.id, { email: session.user.email });
-        } else if (event === "SIGNED_OUT") {
+        if (event === "SIGNED_OUT") {
+          set(userAtom, null);
           posthog.reset();
+          return;
+        }
+
+        if (
+          event === "SIGNED_IN" ||
+          event === "INITIAL_SESSION" ||
+          event === "USER_UPDATED"
+        ) {
+          set(userAtom, session?.user ?? null);
+          if (session?.user) {
+            posthog.identify(session.user.id, { email: session.user.email });
+          }
         }
       },
     );

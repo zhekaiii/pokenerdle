@@ -1,4 +1,4 @@
-import { sessionAtom, userAtom } from "@/atoms/auth";
+import { userAtom } from "@/atoms/auth";
 import { themeAtom } from "@/atoms/theme";
 import { ErrorPage } from "@/layout/ErrorPage";
 import {
@@ -26,15 +26,12 @@ interface SearchParams {
 }
 
 function RootLayout() {
-  const { session, user } = Route.useLoaderData();
+  const { user } = Route.useLoaderData();
   const { v } = Route.useSearch() as SearchParams;
   const location = useLocation();
   const router = useRouter();
 
-  useHydrateAtoms([
-    [sessionAtom, session],
-    [userAtom, user],
-  ]);
+  useHydrateAtoms([[userAtom, user]]);
   const theme = useAtomValue(themeAtom);
   const { i18n } = useTranslation();
 
@@ -146,10 +143,8 @@ interface RootRouteContext {
 
 export const Route = createRootRouteWithContext<RootRouteContext>()({
   loader: ({ context: { store } }) => {
-    const session = store.get(sessionAtom);
     const user = store.get(userAtom);
     return {
-      session,
       user,
     };
   },

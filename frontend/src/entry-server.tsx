@@ -1,4 +1,4 @@
-import { Session } from "@supabase/supabase-js";
+import { Session, User } from "@supabase/supabase-js";
 import { AnyRouteMatch } from "@tanstack/react-router";
 import {
   RouterServer,
@@ -31,7 +31,8 @@ export async function render({
   head: string;
   req: express.Request & {
     i18n: i18n;
-    session: Session | null;
+    session?: Session | null;
+    user?: User | null;
     posthogDistinctId?: string;
   };
   res: express.Response;
@@ -78,8 +79,8 @@ export async function render({
   const theme = getThemeFromCookies(req.headers.cookie);
   const store = createStore();
   store.set(themeAtom, theme);
-  store.set(sessionAtom, req.session);
-  store.set(userAtom, req.session?.user ?? null);
+  store.set(sessionAtom, req.session ?? null);
+  store.set(userAtom, req.user ?? null);
   store.set(posthogAtom, { distinct_id: req.posthogDistinctId ?? null });
 
   // Let's use the default stream handler to create the response
@@ -98,7 +99,7 @@ export async function render({
           <RouterServer router={router} />
         </AppProviders>
       ),
-    })
+    }),
   );
 
   // Convert the fetch response back to an express response
