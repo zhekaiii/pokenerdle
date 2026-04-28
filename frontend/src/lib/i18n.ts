@@ -9,9 +9,9 @@ if (!import.meta.env.SSR) {
     .use(initReactI18next)
     .use(HttpBackend)
     .init({
-      defaultNS: false,
-      fallbackNS: false,
-      ns: [],
+      defaultNS: "common",
+      fallbackNS: "common",
+      ns: ["common"],
       backend: {
         loadPath: "/locales/{{ns}}/{{lng}}.json",
       },
