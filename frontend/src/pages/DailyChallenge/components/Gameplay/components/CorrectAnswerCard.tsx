@@ -3,10 +3,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "@/pages/DailyChallenge/constants";
-import {
-  CorrectAnswer,
-  useDailyChallengeData,
-} from "@/pages/DailyChallenge/hooks/useData";
+import { CorrectAnswer } from "@/pages/DailyChallenge/hooks/useData";
 import { formatPokemonHeight } from "@/utils/formatters";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,10 +15,15 @@ const NEUTRAL_COLOURS = ["normal", "dark", "rock"];
 
 interface Props {
   correctAnswer: CorrectAnswer | null;
+  hasSolved: boolean;
+  attempts: number;
 }
 
-const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
-  const { hasSolved, guesses } = useDailyChallengeData();
+const CorrectAnswerCard: React.FC<Props> = ({
+  correctAnswer,
+  hasSolved,
+  attempts,
+}) => {
   const { getPokemonIcon } = usePokemonIcons();
   const pokemonNames = usePokemonNames();
   const { t } = useTranslation(["daily", "pokemon"]);
@@ -59,7 +61,6 @@ const CorrectAnswerCard: React.FC<Props> = ({ correctAnswer }) => {
       ? pokemonNames[correctAnswer.pokemonId]?.name ||
         pokemonNames[correctAnswer.pokemonId]?.speciesName
       : undefined;
-  const attempts = guesses?.guesses.length ?? 0;
 
   const subtitle = useMemo(() => {
     if (hasSolved) {

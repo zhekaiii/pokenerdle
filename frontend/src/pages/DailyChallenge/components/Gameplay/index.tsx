@@ -171,6 +171,8 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
                 ? guesses!.guesses[guesses!.guesses.length - 1]
                 : correctAnswer
             }
+            hasSolved={hasSolved}
+            attempts={guesses?.guesses.length ?? 0}
           />
           <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto tw:pt-4">
             {!isArchive && (

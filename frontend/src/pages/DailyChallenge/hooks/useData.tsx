@@ -40,14 +40,14 @@ export const useDailyChallengeData = (date?: string) => {
   const [guesses, setGuesses] = useAtom(guessesAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState<CorrectAnswer | null>(
-    null
+    null,
   );
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false);
   const { t } = useTranslation("daily");
   const queryClient = useQueryClient();
 
-  const activeDate = date ?? FROZEN_DATE;
-  const isArchive = activeDate !== FROZEN_DATE;
+  const activeDate = useMemo(() => date ?? FROZEN_DATE, [date]);
+  const isArchive = useMemo(() => activeDate !== FROZEN_DATE, [activeDate]);
 
   // Reset the revealed answer when the active date changes so we don't leak
   // the previous day's Pokémon into a different archive challenge.
@@ -60,13 +60,13 @@ export const useDailyChallengeData = (date?: string) => {
     () =>
       Boolean(
         guesses &&
-          guesses.guesses.length &&
-          guesses.guesses[guesses.guesses.length - 1].correct
+        guesses.guesses.length &&
+        guesses.guesses[guesses.guesses.length - 1].correct,
       ),
-    [guesses]
+    [guesses],
   );
   const hasReachedLimit = Boolean(
-    guesses && guesses.guesses.length === DAILY_CHALLENGE_GUESS_LIMIT
+    guesses && guesses.guesses.length === DAILY_CHALLENGE_GUESS_LIMIT,
   );
   const isGameFinished = hasReachedLimit || hasSolved;
 

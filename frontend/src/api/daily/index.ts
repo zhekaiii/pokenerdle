@@ -9,13 +9,14 @@ import { AxiosInstance } from "axios";
 
 export default (axiosInstance: AxiosInstance) => ({
   submitGuess: async (id: number, date?: string) => {
-    const { data } = await axiosInstance.post<DailyChallengeSubmitGuessResponse>(
-      "/v1/daily/challenge/submit",
-      {
-        pokemon_id: id,
-        date: date ?? FROZEN_DATE,
-      }
-    );
+    const { data } =
+      await axiosInstance.post<DailyChallengeSubmitGuessResponse>(
+        "/v1/daily/challenge/submit",
+        {
+          pokemon_id: id,
+          date: date ?? FROZEN_DATE,
+        },
+      );
     return data;
   },
   getUserGuesses: async (date?: string) => {
@@ -25,7 +26,7 @@ export default (axiosInstance: AxiosInstance) => ({
         params: {
           date: date || FROZEN_DATE,
         },
-      }
+      },
     );
     return data;
   },
@@ -48,7 +49,7 @@ export default (axiosInstance: AxiosInstance) => ({
   },
   getStats: async () => {
     const { data } = await axiosInstance.get<DailyChallengeStatsResponse>(
-      "/v1/daily/challenge/stats"
+      "/v1/daily/challenge/stats",
     );
     return data;
   },
@@ -57,7 +58,7 @@ export default (axiosInstance: AxiosInstance) => ({
       "/v1/daily/challenge/calendar",
       {
         params: { month },
-      }
+      },
     );
     return data;
   },
