@@ -23,7 +23,6 @@ import {
   getUserGuessCountForDate,
   getUserGuessesForDate,
   hasPokemonAppearedInLastMonth,
-  hasUserCompletedToday,
   hasUserSubmittedAnyDailyChallengeGuess,
   saveUserGuess,
 } from "../repositories/daily.repository.js";
@@ -241,6 +240,17 @@ export const getUserGuessesForDateService = async (
   return results;
 };
 
+export const hasUserCompletedDailyChallenge = async (
+  userId: string,
+  date: string,
+) => {
+  const guesses = await getUserGuessesForDate(userId, date);
+  return (
+    guesses.length >= DAILY_CHALLENGE_GUESS_LIMIT ||
+    guesses.some((guess) => guess.isCorrect)
+  );
+};
+
 export const verifyGuess = async (
   pokemonId: number,
   date: string,
@@ -371,6 +381,7 @@ export const getDailyPokemonAnswer = async (date: string) => {
 export const getUserStats = async (userId: string) => {
   const statsData = await getUserDailyChallengeByDay(userId);
   const today = TZDate.tz(SINGAPORE_TIMEZONE);
+  const todayDate = format(today, "yyyy-MM-dd");
   const histogram: Record<number, number> = statsData.reduce(
     (acc, day) => {
       if (day.correct) {
@@ -436,7 +447,7 @@ export const getUserStats = async (userId: string) => {
 
   if (
     formattedDays.length > 0 &&
-    (await hasUserCompletedToday(userId)) &&
+    (await hasUserCompletedDailyChallenge(userId, todayDate)) &&
     !isSameDay(today, formattedDays[formattedDays.length - 1].date)
   ) {
     streak = 0;

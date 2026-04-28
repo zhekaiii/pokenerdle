@@ -2,7 +2,7 @@ import {
   DailyChallengeCalendarRequestSchema,
   DailyChallengeSubmitGuessRequestSchema,
 } from "@pokenerdle/shared/daily";
-import { Request, Response } from "express";
+import { Response } from "express";
 import * as z from "zod";
 import { StatusCode } from "../data/const.js";
 import { posthog } from "../lib/posthog.js";
@@ -13,6 +13,7 @@ import {
   getDailyPokemonAnswer,
   getUserGuessesForDateService,
   getUserStats,
+  hasUserCompletedDailyChallenge,
   submitGuess,
 } from "../services/daily.service.js";
 import { getUserId } from "../utils/userIdentification.js";
@@ -88,9 +89,10 @@ export const getUserGuessesController = async (
 };
 
 export const getDailyPokemonAnswerController = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
 ) => {
+  const userId = getUserId(req)!;
   const { date } = req.query;
   if (!date || typeof date !== "string") {
     res
@@ -100,6 +102,17 @@ export const getDailyPokemonAnswerController = async (
   }
 
   try {
+    const hasCompletedChallenge = await hasUserCompletedDailyChallenge(
+      userId,
+      date,
+    );
+    if (!hasCompletedChallenge) {
+      res
+        .status(StatusCode.FORBIDDEN)
+        .json({ error: "Daily challenge is not completed" });
+      return;
+    }
+
     const answer = await getDailyPokemonAnswer(date);
     res.json(answer);
   } catch (error) {
