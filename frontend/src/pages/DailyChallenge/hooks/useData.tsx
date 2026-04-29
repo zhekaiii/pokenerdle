@@ -7,7 +7,8 @@ import {
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouteContext } from "@tanstack/react-router";
+import { useRouteContext, useRouter } from "@tanstack/react-router";
+import axios, { HttpStatusCode } from "axios";
 import { atom, useAtom } from "jotai";
 import posthog from "posthog-js";
 import { useEffect, useMemo, useState } from "react";
@@ -47,6 +48,7 @@ export const useDailyChallengeData = (date: string) => {
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false);
   const { t } = useTranslation("daily");
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const isArchive = useMemo(() => date !== today, [date, today]);
 
@@ -129,9 +131,19 @@ export const useDailyChallengeData = (date: string) => {
       return {
         isFirstDailyChallengeGuess: response.isFirstDailyChallengeGuess,
       };
+    } catch (e) {
+      if (
+        axios.isAxiosError(e) &&
+        e.response?.status === HttpStatusCode.Conflict
+      ) {
+        router.invalidate();
+      }
     } finally {
       setIsLoading(false);
     }
+    return {
+      isFirstDailyChallengeGuess: false,
+    };
   };
 
   return {
