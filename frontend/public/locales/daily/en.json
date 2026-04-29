@@ -118,7 +118,9 @@
   },
   "toast": {
     "correctGuess": "You got it! Well done!",
-    "gameOver": "Game Over! Better luck tomorrow!"
+    "gameOver": "Game Over! Better luck tomorrow!",
+    "newDayAvailable": "A new daily challenge is available.",
+    "refresh": "Refresh"
   },
   "typeChecklist": {
     "title": "Type Checklist",

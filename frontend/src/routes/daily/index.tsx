@@ -5,6 +5,7 @@ import {
   DAILY_CHALLENGE_GUESS_LIMIT,
   DAY_1,
 } from "@/pages/DailyChallenge/constants";
+import { useDailyNewDayToast } from "@/pages/DailyChallenge/hooks/useDailyNewDayToast";
 import {
   CorrectAnswer,
   correctAnswerAtom,
@@ -56,7 +57,12 @@ const DailyChallengePage: React.FC = () => {
     ],
   ]);
   const { today } = Route.useRouteContext();
-  const { date = today } = Route.useSearch();
+  const search = Route.useSearch();
+  const { date = today } = search;
+  useDailyNewDayToast({
+    enabled: !search.date,
+    today,
+  });
   const [state, setState] = useAtom(dailyChallengeStateAtom);
   const onStart = () => {
     setState(DailyChallengeState.Gameplay);
@@ -76,7 +82,6 @@ export const Route = createFileRoute("/daily/")({
   component: DailyChallengePage,
   context: () => ({
     shouldShowRuleButton: true,
-    today: getToday(),
   }),
   validateSearch: (search: Record<string, unknown>): DailySearchParams => {
     const date = search.date;
@@ -86,16 +91,17 @@ export const Route = createFileRoute("/daily/")({
     return { date };
   },
   beforeLoad: ({ search }) => {
+    const today = getToday();
     // Normalize: if date param equals today, redirect without it
-    if (search.date === getToday()) {
+    if (search.date === today) {
       throw redirect({ to: "/daily", search: {}, replace: true });
     }
-    return { archiveDate: search.date };
+    return { today };
   },
   loaderDeps: ({ search: { date } }) => ({ date }),
   loader: async ({
-    context: { store },
-    deps: { date = getToday() },
+    context: { store, today },
+    deps: { date = today },
   }): Promise<{
     guesses: DailyChallenge | null;
     correctAnswer: CorrectAnswer | null;
@@ -119,12 +125,12 @@ export const Route = createFileRoute("/daily/")({
     // Write directly to the atoms so client-side navigations replace stale state
     store.set(correctAnswerAtom, correctAnswer);
     store.set(guessesAtom, data);
-    store.set(
-      dailyChallengeStateAtom,
+    if (
+      store.get(dailyChallengeStateAtom) === DailyChallengeState.Intro &&
       data?.guesses?.length
-        ? DailyChallengeState.Gameplay
-        : DailyChallengeState.Intro,
-    );
+    ) {
+      store.set(dailyChallengeStateAtom, DailyChallengeState.Gameplay);
+    }
     return {
       guesses: data,
       correctAnswer,

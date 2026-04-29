@@ -280,11 +280,9 @@ const CalendarArchivePage: React.FC = () => {
         status={selectedStatus}
         entry={selectedEntry}
         pokemonName={
-          selectedEntry
-            ? (pokemonNames[selectedEntry.pokemonId]?.name ??
-              pokemonNames[selectedEntry.pokemonId]?.speciesName ??
-              undefined)
-            : undefined
+          selectedEntry &&
+          (pokemonNames[selectedEntry.pokemonId]?.name ??
+            pokemonNames[selectedEntry.pokemonId]?.speciesName)
         }
         spriteUrl={
           selectedEntry ? getPokemonIcon(selectedEntry.pokemonId) : undefined

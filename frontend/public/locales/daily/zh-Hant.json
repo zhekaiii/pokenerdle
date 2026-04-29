@@ -116,7 +116,9 @@
   },
   "toast": {
     "correctGuess": "你猜對了！幹得好！",
-    "gameOver": "你沒猜到！明天再試吧！"
+    "gameOver": "你沒猜到！明天再試吧！",
+    "newDayAvailable": "新的每日挑戰已上線。",
+    "refresh": "重新整理"
   },
   "typeChecklist": {
     "title": "屬性清單",
