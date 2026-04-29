@@ -8,7 +8,9 @@ import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
 import { cn } from "@/lib/utils";
 import { Route as ArchiveRoute } from "@/routes/daily/archive";
+import { TZDate } from "@date-fns/tz";
 import { DailyChallengeCalendarEntry } from "@pokenerdle/shared/daily";
+import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import clsx from "clsx";
@@ -29,7 +31,6 @@ import {
   DAILY_CALENDAR_QUERY_KEY,
   DAILY_CHALLENGE_GUESS_LIMIT,
   DAY_1,
-  FROZEN_DATE,
   getChallengeNumber,
 } from "../constants";
 import classes from "./index.module.scss";
@@ -99,13 +100,12 @@ const CalendarArchivePage: React.FC = () => {
   const search = ArchiveRoute.useSearch();
   const navigate = useNavigate({ from: ArchiveRoute.fullPath });
 
-  const today = FROZEN_DATE;
-  const todayDate = useMemo(() => new Date(today), [today]);
+  const today = useMemo(() => formatDate(TZDate.tz(SINGAPORE_TIMEZONE)), []);
   const firstMonth = useMemo(
     () => startOfMonth(new Date(DAY_1.getFullYear(), DAY_1.getMonth(), 1)),
     [],
   );
-  const currentMonthStart = useMemo(() => startOfMonth(todayDate), [todayDate]);
+  const currentMonthStart = useMemo(() => startOfMonth(today), [today]);
 
   const viewMonth = useMemo(() => {
     if (search.month) {
@@ -156,7 +156,7 @@ const CalendarArchivePage: React.FC = () => {
   );
 
   const canGoPrev = isAfter(viewMonth, firstMonth);
-  const canGoNext = isBefore(viewMonth, startOfMonth(todayDate));
+  const canGoNext = isBefore(viewMonth, startOfMonth(today));
 
   const goPrev = () => {
     if (canGoPrev) setViewMonth(addMonths(viewMonth, -1));

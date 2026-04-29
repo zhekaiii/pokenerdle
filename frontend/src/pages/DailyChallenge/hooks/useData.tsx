@@ -2,12 +2,12 @@ import api from "@/api";
 import {
   DAILY_CALENDAR_QUERY_KEY,
   DAILY_CHALLENGE_GUESS_LIMIT,
-  FROZEN_DATE,
 } from "../constants";
 
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouteContext } from "@tanstack/react-router";
 import { atom, useAtom } from "jotai";
 import posthog from "posthog-js";
 import { useEffect, useMemo, useState } from "react";
@@ -37,7 +37,8 @@ export interface CorrectAnswer {
 export const guessesAtom = atom<DailyChallenge | null>(null);
 export const correctAnswerAtom = atom<CorrectAnswer | null>(null);
 
-export const useDailyChallengeData = (date?: string) => {
+export const useDailyChallengeData = (date: string) => {
+  const { today } = useRouteContext({ from: "/daily/" });
   const [guesses, setGuesses] = useAtom(guessesAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useAtom<CorrectAnswer | null>(
@@ -47,8 +48,7 @@ export const useDailyChallengeData = (date?: string) => {
   const { t } = useTranslation("daily");
   const queryClient = useQueryClient();
 
-  const activeDate = useMemo(() => date ?? FROZEN_DATE, [date]);
-  const isArchive = useMemo(() => activeDate !== FROZEN_DATE, [activeDate]);
+  const isArchive = useMemo(() => date !== today, [date, today]);
 
   const hasSolved = useMemo(
     () =>
@@ -77,7 +77,7 @@ export const useDailyChallengeData = (date?: string) => {
       if (!correctAnswer && !isLoadingAnswer) {
         try {
           setIsLoadingAnswer(true);
-          const answer = await api.daily.getAnswer(activeDate);
+          const answer = await api.daily.getAnswer(date);
           setCorrectAnswer(answer);
         } catch (error) {
           console.error("Failed to fetch correct answer:", error);
@@ -88,13 +88,7 @@ export const useDailyChallengeData = (date?: string) => {
     };
 
     fetchCorrectAnswer();
-  }, [
-    hasReachedLimit,
-    hasSolved,
-    isLoadingAnswer,
-    activeDate,
-    setCorrectAnswer,
-  ]);
+  }, [hasReachedLimit, hasSolved, isLoadingAnswer, date, setCorrectAnswer]);
 
   const onGuess = async ({
     id,
@@ -102,7 +96,7 @@ export const useDailyChallengeData = (date?: string) => {
     const numGuesses = (guesses?.guesses.length ?? 0) + 1;
     try {
       setIsLoading(true);
-      const response = await api.daily.submitGuess(id, activeDate);
+      const response = await api.daily.submitGuess(id, date);
       setGuesses(() => {
         const guess = {
           ...response.guess,
@@ -115,7 +109,7 @@ export const useDailyChallengeData = (date?: string) => {
           };
         }
         return {
-          date: activeDate,
+          date,
           guesses: [guess],
         };
       });
@@ -150,6 +144,5 @@ export const useDailyChallengeData = (date?: string) => {
     correctAnswer,
     isLoadingAnswer,
     isArchive,
-    activeDate,
   };
 };

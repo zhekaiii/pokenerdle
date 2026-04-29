@@ -1,7 +1,10 @@
 import { createApi } from "@/api";
 import { posthogDistinctIdAtom } from "@/atoms/auth";
 import HomePage, { HomeSummary } from "@/pages/Home/HomePage";
+import { TZDate } from "@date-fns/tz";
+import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import { createFileRoute } from "@tanstack/react-router";
+import { format } from "date-fns";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -11,7 +14,9 @@ export const Route = createFileRoute("/")({
       const api = createApi(store);
       const [stats, guesses] = await Promise.all([
         api.daily.getStats(),
-        api.daily.getUserGuesses(),
+        api.daily.getUserGuesses(
+          format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd"),
+        ),
       ]);
       return {
         streak: stats.streak,

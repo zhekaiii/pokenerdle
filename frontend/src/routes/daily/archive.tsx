@@ -1,7 +1,7 @@
 import { createApi } from "@/api";
 import { posthogDistinctIdAtom } from "@/atoms/auth";
 import CalendarArchivePage from "@/pages/DailyChallenge/Archive";
-import { DAY_1, FROZEN_DATE } from "@/pages/DailyChallenge/constants";
+import { DAY_1 } from "@/pages/DailyChallenge/constants";
 import { TZDate } from "@date-fns/tz";
 import { DailyChallengeCalendarResponse } from "@pokenerdle/shared/daily";
 import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
@@ -19,11 +19,7 @@ interface ArchiveSearchParams {
 
 const MONTH_PATTERN = /^\d{4}-\d{2}$/;
 
-const getCurrentMonth = () =>
-  (import.meta.env.SSR
-    ? format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd")
-    : FROZEN_DATE
-  ).slice(0, 7);
+const getCurrentMonth = () => format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM");
 
 const FIRST_MONTH = format(DAY_1, "yyyy-MM");
 

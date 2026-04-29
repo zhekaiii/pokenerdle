@@ -28,7 +28,6 @@ import { toast } from "sonner";
 import {
   DAILY_CHALLENGE_GUESS_LIMIT,
   getChallengeNumber,
-  getCurrentChallengeNumber,
 } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
 import { generateShareText, shareResults } from "../../utils/share";
@@ -37,7 +36,7 @@ import StatsDialog from "./components/StatsDialog";
 import styles from "./index.module.scss";
 
 interface Props {
-  date?: string;
+  date: string;
 }
 
 const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
@@ -52,16 +51,13 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
     correctAnswer,
     isLoadingAnswer,
     isArchive,
-    activeDate,
   } = useDailyChallengeData(date);
   const [input, setInput] = useState("");
   const [showPokemonReference, setShowPokemonReference] = useState(false);
   const [showStatsDialog, setShowStatsDialog] = useState(false);
   const [isFirstGuessExpanded, setIsFirstGuessExpanded] = useState(false);
   const { t } = useTranslation("daily");
-  const displayChallengeNumber = isArchive
-    ? getChallengeNumber(activeDate)
-    : getCurrentChallengeNumber();
+  const displayChallengeNumber = getChallengeNumber(date);
 
   const onSelectPokemon = (pokemon: PokemonNamesResponse) => {
     onGuess(pokemon)
@@ -160,7 +156,10 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
       {!isGameFinished ? (
         <>
           <hr className="tw:my-4!" />
-          <TypeChecklist guesses={guesses?.guesses || []} />
+          <TypeChecklist
+            guesses={guesses?.guesses || []}
+            storageIdentifier={date}
+          />
         </>
       ) : (
         <>
@@ -181,7 +180,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
                   className="tw:flex-1"
                   onClick={() => {
                     navigator.clipboard.writeText(
-                      generateShareText(guesses?.guesses ?? [], t),
+                      generateShareText(guesses?.guesses ?? [], date, t),
                     );
                     posthog.capture("daily_challenge_copy_clicked");
                     toast(t("share.success"), {
@@ -200,7 +199,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
                           has_solved: hasSolved,
                           num_guesses: guesses?.guesses.length ?? 0,
                         });
-                        shareResults(guesses?.guesses ?? [], t);
+                        shareResults(guesses?.guesses ?? [], date, t);
                       }}
                     >
                       <Share2 /> {t("buttons.share")}
@@ -235,7 +234,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
 
       <Link
         to="/daily/archive"
-        search={{ month: format(new Date(activeDate), "yyyy-MM") }}
+        search={{ month: format(new Date(date), "yyyy-MM") }}
         className="tw:flex tw:gap-2 tw:items-center tw:mx-auto tw:mt-3 tw:text-[13px] tw:font-medium tw:text-muted-foreground tw:hover:text-foreground"
       >
         <CalendarDaysIcon /> {t("buttons.pastChallenges")}

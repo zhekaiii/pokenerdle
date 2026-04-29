@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   COLUMNS,
   DAILY_CHALLENGE_GUESS_LIMIT,
-  getCurrentChallengeNumber,
+  getChallengeNumber,
 } from "../constants";
 
 const generateGridEmojis = (guesses: DailyChallengeGuessResponse[]) => {
@@ -22,11 +22,12 @@ const generateGridEmojis = (guesses: DailyChallengeGuessResponse[]) => {
 
 export const generateShareText = (
   guesses: DailyChallengeGuessResponse[],
+  date: string,
   t: TFunction,
 ) => {
   const solved = guesses[guesses.length - 1].correct;
   const grid = generateGridEmojis(guesses);
-  let text = `${t("daily:share.title", { number: getCurrentChallengeNumber() })}\n\n`;
+  let text = `${t("daily:share.title", { number: getChallengeNumber(date) })}\n\n`;
   if (solved) {
     text +=
       guesses.length == 1
@@ -46,9 +47,10 @@ export const generateShareText = (
 
 export const shareResults = async (
   guesses: DailyChallengeGuessResponse[],
+  date: string,
   t: TFunction,
 ) => {
-  const shareText = generateShareText(guesses, t);
+  const shareText = generateShareText(guesses, date, t);
   if (navigator.share) {
     // Native mobile sharing
     await navigator.share({

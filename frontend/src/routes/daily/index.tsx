@@ -4,7 +4,6 @@ import DailyChallengeIntroCard from "@/pages/DailyChallenge/components/IntroCard
 import {
   DAILY_CHALLENGE_GUESS_LIMIT,
   DAY_1,
-  FROZEN_DATE,
 } from "@/pages/DailyChallenge/constants";
 import {
   CorrectAnswer,
@@ -35,10 +34,7 @@ interface DailySearchParams {
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const FIRST_DATE = format(DAY_1, "yyyy-MM-dd");
 
-const getToday = () =>
-  import.meta.env.SSR
-    ? format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd")
-    : FROZEN_DATE;
+const getToday = () => format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd");
 
 const isValidChallengeDate = (date: string): boolean => {
   if (!DATE_PATTERN.test(date)) return false;
@@ -59,7 +55,8 @@ const DailyChallengePage: React.FC = () => {
         : DailyChallengeState.Intro,
     ],
   ]);
-  const { date } = Route.useSearch();
+  const { today } = Route.useRouteContext();
+  const { date = today } = Route.useSearch();
   const [state, setState] = useAtom(dailyChallengeStateAtom);
   const onStart = () => {
     setState(DailyChallengeState.Gameplay);
@@ -79,6 +76,7 @@ export const Route = createFileRoute("/daily/")({
   component: DailyChallengePage,
   context: () => ({
     shouldShowRuleButton: true,
+    today: getToday(),
   }),
   validateSearch: (search: Record<string, unknown>): DailySearchParams => {
     const date = search.date;
@@ -97,12 +95,11 @@ export const Route = createFileRoute("/daily/")({
   loaderDeps: ({ search: { date } }) => ({ date }),
   loader: async ({
     context: { store },
-    deps: { date: archiveDate },
+    deps: { date = getToday() },
   }): Promise<{
     guesses: DailyChallenge | null;
     correctAnswer: CorrectAnswer | null;
   }> => {
-    const date = archiveDate ?? getToday();
     let data: DailyChallenge | null = null;
     let correctAnswer: CorrectAnswer | null = null;
     const api = createApi(store);

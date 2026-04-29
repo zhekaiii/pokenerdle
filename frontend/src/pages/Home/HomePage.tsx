@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
-import { getCurrentChallengeNumber } from "@/pages/DailyChallenge/constants";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
 import { getRouteApi, Link } from "@tanstack/react-router";
 import {
@@ -12,9 +11,13 @@ import {
   MapPin,
   SlidersHorizontal,
 } from "lucide-react";
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import { TZDate } from "@date-fns/tz";
+import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
+import { format } from "date-fns";
+import { getChallengeNumber } from "../DailyChallenge/constants";
 import classes from "./HomePage.module.scss";
 
 export interface HomeSummary {
@@ -167,9 +170,7 @@ const HomePage: React.FC = () => {
 
   const displayName = isAuthenticated
     ? ((
-        user?.user_metadata as
-          | { full_name?: string; name?: string }
-          | undefined
+        user?.user_metadata as { full_name?: string; name?: string } | undefined
       )?.full_name ??
       (user?.user_metadata as { full_name?: string; name?: string } | undefined)
         ?.name ??
@@ -182,7 +183,11 @@ const HomePage: React.FC = () => {
     summary?.guesses && summary.guesses.length > 0
       ? `${summary.guesses.length}/8`
       : "—";
-  const challengeNumber = getCurrentChallengeNumber();
+  const challengeNumber = useMemo(() => {
+    return getChallengeNumber(
+      format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd"),
+    );
+  }, []);
 
   return (
     <div className={classes.HomePage}>

@@ -11,15 +11,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/Dialog";
-import { FROZEN_DATE } from "@/pages/DailyChallenge/constants";
+import { TZDate } from "@date-fns/tz";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
+import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import { POKEMON_TYPES } from "@pokenerdle/shared/pokemon";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import clsx from "clsx";
-import { atom, useAtom } from "jotai";
+import { format } from "date-fns";
+import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { RotateCcw, Table } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TypeChart } from "../TypeChart/TypeChart";
 import TypeChip from "../TypeChip";
@@ -29,24 +31,9 @@ const disabledTypesStorageAtom = atomWithStorage<{
   date: string;
   types: number[];
 }>("dailyChallengeDisabledTypes", {
-  date: FROZEN_DATE,
+  date: format(TZDate.tz(SINGAPORE_TIMEZONE), "yyyy-MM-dd"),
   types: [],
 });
-const disabledTypesAtom = atom(
-  (get) => {
-    const { date, types } = get(disabledTypesStorageAtom);
-    if (date === FROZEN_DATE) {
-      return types;
-    }
-    return [];
-  },
-  (_, set, value: number[]) => {
-    set(disabledTypesStorageAtom, {
-      date: FROZEN_DATE,
-      types: value,
-    });
-  },
-);
 
 const MONO_DUAL_TYPES = [
   { id: MONO_TYPE_ID, name: "monotype" },
@@ -54,16 +41,33 @@ const MONO_DUAL_TYPES = [
 ];
 
 type TypeChecklistProps = React.ComponentProps<typeof Card> & {
+  storageIdentifier?: string;
   guesses?: DailyChallengeGuessResponse[];
 };
 
 export const TypeChecklist: React.FC<TypeChecklistProps> = ({
   className,
   guesses = [],
+  storageIdentifier,
   ...props
 }) => {
   const { t } = useTranslation(["daily", "common"]);
-  const [disabledTypes, setDisabledTypes] = useAtom(disabledTypesAtom);
+  const [_disabledTypes, _setDisabledTypes] = useAtom(disabledTypesStorageAtom);
+  const disabledTypes = useMemo(() => {
+    if (_disabledTypes.date !== storageIdentifier) {
+      return [];
+    }
+    return _disabledTypes.types;
+  }, [_disabledTypes, storageIdentifier]);
+  const setDisabledTypes = useCallback(
+    (value: number[]) => {
+      _setDisabledTypes({
+        date: storageIdentifier ?? "",
+        types: value,
+      });
+    },
+    [_setDisabledTypes, storageIdentifier],
+  );
   const [showTypeChart, setShowTypeChart] = useState(false);
 
   const clearDisabledTypes = () => {
