@@ -17,14 +17,15 @@ export const ImageWithPlaceholder: React.FC<Props> = ({
   const [isError, setIsError] = useState(false);
   const handleLoad = () => {
     setIsLoading(false);
+    setIsError(false);
   };
   useEffect(() => {
     if (props.src) {
       setIsLoading(true);
       const img = new Image();
       img.onload = handleLoad;
-      img.onerror = () => {
-        console.log("error");
+      img.onerror = (e) => {
+        console.debug("Error loading image", e);
         setIsError(true);
         setIsLoading(false);
       };
