@@ -1,6 +1,6 @@
 {
   "name": "PokéNerdle",
-  "short_name": "PokeNerdle",
+  "short_name": "PokéNerdle",
   "description": "A Pokémon-themed daily puzzle game with real-time battles.",
   "start_url": "/",
   "scope": "/",
@@ -9,12 +9,39 @@
   "theme_color": "#171717",
   "icons": [
     {
-      "src": "https://pokenerdle.app/pokeball.png",
-      "sizes": "144x144",
+      "src": "https://pokenerdle.app/icon-rounded.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "https://pokenerdle.app/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "handle_links": "preferred",
+  "shortcuts": [
+    {
+      "name": "Daily Challenge",
+      "short_name": "Daily",
+      "url": "/daily"
+    },
+    {
+      "name": "PokéChain",
+      "short_name": "PokéChain",
+      "url": "/pokechain"
+    },
+    {
+      "name": "Path Finder",
+      "short_name": "Path Finder",
+      "url": "/path-finder"
+    },
+    {
+      "name": "Stat Guesser",
+      "short_name": "Stats",
+      "url": "/stat-guesser"
+    }
+  ],
   "orientation": "portrait"
 }
