@@ -59,6 +59,7 @@ function RootLayout() {
       <head>
         <meta charSet="UTF-8" />
         <HeadContent />
+        <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
         <link
           rel="canonical"

@@ -1,0 +1,20 @@
+{
+  "name": "PokéNerdle",
+  "short_name": "PokeNerdle",
+  "description": "A Pokémon-themed daily puzzle game with real-time battles.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#171717",
+  "theme_color": "#171717",
+  "icons": [
+    {
+      "src": "https://pokenerdle.app/pokeball.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "handle_links": "preferred",
+  "orientation": "portrait"
+}
