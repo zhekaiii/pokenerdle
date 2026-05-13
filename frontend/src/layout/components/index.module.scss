@@ -7,6 +7,7 @@
   left: 0;
   right: 0;
   padding: 10px;
+  padding-top: calc(env(safe-area-inset-top) + 10px);
   background-color: var(--card);
   border-bottom-width: 1px;
   z-index: 10;
