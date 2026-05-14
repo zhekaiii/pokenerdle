@@ -43,5 +43,6 @@
       "url": "/stat-guesser"
     }
   ],
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "handle_links": "not-preferred"
 }
