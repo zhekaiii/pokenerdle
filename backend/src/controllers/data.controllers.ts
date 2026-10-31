@@ -4,7 +4,7 @@ import { StatusCode } from "../data/const.js";
 import * as dataService from "../services/data.services.js";
 import { getLanguageId } from "../utils/lang.js";
 
-const POKEMON_NAMES_LAST_UPDATED = new Date("2026-04-25").toUTCString();
+const POKEMON_NAMES_LAST_UPDATED = new Date("2026-10-31").toUTCString();
 export const getPokemonNames = async (req: Request, res: Response) => {
   const ifModifiedSince = req.headers["if-modified-since"];
   if (ifModifiedSince && ifModifiedSince === POKEMON_NAMES_LAST_UPDATED) {
@@ -19,7 +19,9 @@ export const getPokemonNames = async (req: Request, res: Response) => {
   res.json(data);
 };
 
-const POKEMON_ICONS_LAST_UPDATED = new Date("2026-04-25").toUTCString();
+const POKEMON_ICONS_LAST_UPDATED = new Date(
+  "2026-10-31T10:51:33Z",
+).toUTCString();
 export const getPokemonIcons = async (req: Request, res: Response) => {
   const ifModifiedSince = req.headers["if-modified-since"];
   if (ifModifiedSince && ifModifiedSince === POKEMON_ICONS_LAST_UPDATED) {
@@ -41,7 +43,7 @@ export const getPokemonWithAbilities = async (req: Request, res: Response) => {
   res.json(await dataService.getPokemonWithAbilities(id));
 };
 
-const POKEMON_GENERATIONS_LAST_UPDATED = new Date("2026-04-25").toUTCString();
+const POKEMON_GENERATIONS_LAST_UPDATED = new Date("2026-10-31").toUTCString();
 export const getPokemonIdsByGeneration = async (
   req: Request,
   res: Response,

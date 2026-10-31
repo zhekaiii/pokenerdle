@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
 cd pokeapi
 source .venv/bin/activate
 make migrate

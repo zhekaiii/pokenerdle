@@ -12,6 +12,7 @@ import {
   MIN_PATHFINDER_LENGTH,
   STAT_ID,
 } from "../constants/game.js";
+import { getOriginalPokemonMenuIcon } from "../data/pokemonPixelIcons.js";
 import {
   Prisma,
   pokemon_v2_ability,
@@ -157,17 +158,22 @@ export const getPokemonIcons = async (): Promise<Record<number, string>> => {
         name?.toLowerCase().includes(region),
       );
 
-      const filename = `${speciesId}${suffix ? `-${suffix}` : ""}.png`;
+      // If a Mega form has no pixel sprite, use its base species' icon.
+      const filename = `${speciesId}${suffix && suffix !== "mega" ? `-${suffix}` : ""}.png`;
 
       const fallbackUrl = `https://raw.githubusercontent.com/pokedextracker/pokesprite/refs/heads/master/images/${filename}`;
 
       const parsedSprites = JSON.parse(sprites);
-      return [
-        pokemon_id,
-        parsedSprites.versions["generation-viii"].icons.front_default ??
-          parsedSprites.versions["generation-vii"].icons.front_default ??
-          fallbackUrl,
-      ];
+      const versions = parsedSprites.versions;
+      // Use the original menu sprites at their stable URLs. Fall back to other
+      // pixel assets for forms absent from that snapshot.
+      const iconUrl: string =
+        getOriginalPokemonMenuIcon(pokemon_id) ??
+        versions?.["generation-vii"]?.icons?.front_default ??
+        versions?.["generation-viii"]?.["sword-shield"]?.icons?.front_default ??
+        (suffix === "mega" ? parsedSprites.front_default : undefined) ??
+        fallbackUrl;
+      return [pokemon_id, iconUrl];
     }),
   );
 };

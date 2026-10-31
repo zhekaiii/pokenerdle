@@ -4,11 +4,13 @@
   "version": "0.0.1",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "bun --watch run ./src/index.ts",
+    "dev": "node ./scripts/databaseArchive.mjs unpack && bun --watch run ./src/index.ts",
     "prebuild": "prisma generate --schema=./prisma-sqlite/schema.prisma && prisma generate --schema=./prisma-pg/schema.prisma",
-    "build": "tsc",
+    "build": "node ./scripts/databaseArchive.mjs unpack && tsc",
     "start": "NODE_ENV=production node --es-module-specifier-resolution=node dist/index.js",
-    "build-db": "./build-db.sh"
+    "build-db": "./build-db.sh && node ./scripts/databaseArchive.mjs pack",
+    "db:pack": "node ./scripts/databaseArchive.mjs pack",
+    "db:unpack": "node ./scripts/databaseArchive.mjs unpack"
   },
   "type": "module",
   "author": "",

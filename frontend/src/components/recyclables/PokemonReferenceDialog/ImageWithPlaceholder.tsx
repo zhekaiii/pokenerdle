@@ -30,7 +30,7 @@ export const ImageWithPlaceholder: React.FC<Props> = ({
         setIsLoading(false);
       };
       img.src = props.src;
-      if (img.complete) {
+      if (img.complete && img.naturalWidth > 0) {
         handleLoad();
       }
     }
@@ -41,7 +41,11 @@ export const ImageWithPlaceholder: React.FC<Props> = ({
       {isLoading ? (
         <div className="tw:h-14 tw:flex tw:items-end">{placeholder}</div>
       ) : (
-        <img {...props} src={isError ? fallbackSrc : props.src} />
+        <img
+          {...props}
+          className={className}
+          src={isError ? fallbackSrc : props.src}
+        />
       )}
     </>
   );
