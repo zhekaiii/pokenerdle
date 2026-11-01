@@ -1,17 +1,8 @@
 @import "tailwindcss" prefix(tw);
+// Keep this in CSS so Sass doesn't interpret Tailwind's parent selectors.
+@import "./dark-variant.css";
 
 @plugin 'tailwindcss-animate';
-
-@custom-variant dark {
-  :where(.tw\:dark, .tw\:dark *):not(:where(.tw\:light, .tw\:light *)) {
-    @slot;
-  }
-  @media (prefers-color-scheme: dark) {
-    :not(:where(.tw\:light, .tw\:light *)) {
-      @slot;
-    }
-  }
-}
 
 @layer base {
   button,
