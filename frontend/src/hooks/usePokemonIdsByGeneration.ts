@@ -1,6 +1,7 @@
 import api from "@/api";
 import { MAX_GENERATION, MIN_GENERATION } from "@/lib/constants";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useCallback, useEffect } from "react";
@@ -16,6 +17,7 @@ const pokemonIdsByGenerationAtom = atomWithStorage<Record<number, number[]>>(
 );
 
 export const usePokemonIdsByGeneration = () => {
+  const queryClient = useQueryClient();
   const [pokemonIdsByGeneration, setPokemonIdsByGeneration] = useAtom(
     pokemonIdsByGenerationAtom
   );
@@ -26,13 +28,18 @@ export const usePokemonIdsByGeneration = () => {
         return;
       }
 
-      const data = await api.data.getPokemonIdsByGeneration(generation);
+      const data = await queryClient.fetchQuery({
+        queryKey: ["pokemonIdsByGeneration", generation],
+        queryFn: () => api.data.getPokemonIdsByGeneration(generation),
+        staleTime: Infinity,
+        gcTime: Infinity,
+      });
       setPokemonIdsByGeneration((previous) => ({
         ...previous,
         [generation]: data,
       }));
     },
-    [setPokemonIdsByGeneration]
+    [queryClient, setPokemonIdsByGeneration]
   );
 
   const getPokemonNamesForGeneration = useCallback(
