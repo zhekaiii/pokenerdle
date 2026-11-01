@@ -1,21 +1,15 @@
 import api from "@/api";
 import { useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useCallback, useEffect } from "react";
 
 // Global SSR store for Pokemon icons data
 let globalSSRPokemonIcons: Record<number, string | null> = {};
-let globalSSRLastModified: string | null = null;
 
 // Function to set global SSR data (called once at startup)
-export const setSSRPokemonIconsData = (
-  data: Record<number, string | null>,
-  lastModified: string | null,
-) => {
+export const setSSRPokemonIconsData = (data: Record<number, string | null>) => {
   globalSSRPokemonIcons = data;
-  globalSSRLastModified = lastModified;
 };
 
 // Create atoms that use SSR data when available
@@ -35,20 +29,8 @@ const pokemonIconsAtom = import.meta.env.SSR
       },
     );
 
-const lastModifiedAtom = import.meta.env.SSR
-  ? atom<string | null>(globalSSRLastModified)
-  : atomWithStorage<string | null>(
-      "pokemonIconsLastModified",
-      null,
-      undefined,
-      {
-        getOnInit: true,
-      },
-    );
-
 export const usePokemonIcons = () => {
   const [pokemonIcons, setPokemonIcons] = useAtom(pokemonIconsAtom);
-  const [lastModified, setLastModified] = useAtom(lastModifiedAtom);
 
   const queryClient = useQueryClient();
 
@@ -71,19 +53,12 @@ export const usePokemonIcons = () => {
     queryClient
       .fetchQuery({
         queryKey: ["pokemonIcons"],
-        queryFn: () => api.data.getPokemonIcons(lastModified),
+        queryFn: () => api.data.getPokemonIcons(),
       })
-      .then(({ data, lastModified }) => {
+      .then((data) => {
         setPokemonIcons(data);
-        setLastModified(lastModified);
-      })
-      .catch((error) => {
-        if (axios.isAxiosError(error) && error.response?.status === 304) {
-          return;
-        }
-        throw error;
       });
-  }, []);
+  }, [queryClient, setPokemonIcons]);
 
   return { pokemonIcons, getPokemonIcon };
 };

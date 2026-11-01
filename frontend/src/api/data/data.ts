@@ -6,41 +6,18 @@ import {
 import { AxiosInstance } from "axios";
 
 export default (axiosInstance: AxiosInstance) => ({
-  getPokemonNames: async (lang: string, lastModified?: string | null) => {
-    let headers: Record<string, string> | undefined;
-    if (lastModified) {
-      headers = {
-        "if-modified-since": lastModified,
-      };
-    }
-
-    const response = await axiosInstance.get<PokemonNamesResponse[]>(
+  getPokemonNames: async (lang: string) => {
+    const { data } = await axiosInstance.get<PokemonNamesResponse[]>(
       "/v1/data/pokemon-names",
-      { headers, params: { lang } }
+      { params: { lang } },
     );
-
-    return {
-      lastModified: response.headers["last-modified"],
-      data: response.data,
-    };
+    return data;
   },
-  getPokemonIcons: async (lastModified?: string | null) => {
-    let headers: Record<string, string> | undefined;
-    if (lastModified) {
-      headers = {
-        "if-modified-since": lastModified,
-      };
-    }
-
-    const response = await axiosInstance.get<Record<number, string | null>>(
+  getPokemonIcons: async () => {
+    const { data } = await axiosInstance.get<Record<number, string | null>>(
       "/v1/data/pokemon-icons",
-      { headers }
     );
-
-    return {
-      lastModified: response.headers["last-modified"],
-      data: response.data,
-    };
+    return data;
   },
   getPokemonWithAbilities: async (id: number) => {
     const { data } = await axiosInstance.get<PokemonWithAbilities>(
@@ -53,28 +30,11 @@ export default (axiosInstance: AxiosInstance) => ({
     );
     return data;
   },
-  getPokemonIdsByGeneration: async (
-    lastModified: string | null,
-    generation: number
-  ) => {
-    let headers: Record<string, string> | undefined;
-    if (lastModified) {
-      headers = {
-        "if-modified-since": lastModified,
-      };
-    }
-
-    const response = await axiosInstance.get<PokemonIdsByGenerationResponse>(
+  getPokemonIdsByGeneration: async (generation: number) => {
+    const { data } = await axiosInstance.get<PokemonIdsByGenerationResponse>(
       "/v1/data/pokemon-generations",
-      {
-        headers,
-        params: { generation },
-      }
+      { params: { generation } },
     );
-
-    return {
-      lastModified: response.headers["last-modified"],
-      data: response.data,
-    };
+    return data;
   },
 });
