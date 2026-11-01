@@ -1,7 +1,6 @@
 import api from "@/api";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
 import { useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
@@ -13,8 +12,7 @@ let globalSSRPokemonNames: Record<
 > = {};
 
 export const setSSRPokemonNamesData = (
-  data: Record<string, Record<number, PokemonNamesResponse>>,
-  lastModified: Record<string, string | null>
+  data: Record<string, Record<number, PokemonNamesResponse>>
 ) => {
   globalSSRPokemonNames = data;
 };
@@ -35,20 +33,8 @@ const pokemonNamesAtom = import.meta.env.SSR
       }
     );
 
-const lastModifiedAtom = import.meta.env.SSR
-  ? atom<Record<string, string | null>>({})
-  : atomWithStorage<Record<string, string | null>>(
-      "pokemonNamesV2LastModified",
-      {},
-      undefined,
-      {
-        getOnInit: true,
-      }
-    );
-
 export const usePokemonNames = () => {
   const [pokemonNames, setPokemonNames] = useAtom(pokemonNamesAtom);
-  const [lastModified, setLastModified] = useAtom(lastModifiedAtom);
   const queryClient = useQueryClient();
   const {
     i18n: { language },
@@ -61,29 +47,17 @@ export const usePokemonNames = () => {
     queryClient
       .fetchQuery({
         queryKey: ["pokemonNames", language],
-        queryFn: () =>
-          api.data.getPokemonNames(language!, lastModified[language!]),
+        queryFn: () => api.data.getPokemonNames(language),
       })
-      .then(({ data, lastModified }) => {
+      .then((data) => {
         setPokemonNames((prev) => ({
           ...prev,
-          [language!]: Object.fromEntries(
+          [language]: Object.fromEntries(
             data.map((pokemon) => [pokemon.id, pokemon])
           ),
         }));
-        setLastModified((prev) => ({
-          ...prev,
-          [language!]: lastModified,
-        }));
-      })
-      .catch((error) => {
-        if (axios.isAxiosError(error) && error.response?.status === 304) {
-          return;
-        }
-        throw error;
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- we only want to fetch when the language changes
-  }, [language]);
+  }, [language, queryClient, setPokemonNames]);
 
   return language ? pokemonNames[language] ?? {} : {};
 };

@@ -16,15 +16,11 @@ export const initializeSSRData = async () => {
 
     const [iconsResult, ...namesResults] = await Promise.allSettled([
       api.data.getPokemonIcons(),
-      ...SUPPORTED_LANGUAGES.map((lang) =>
-        api.data.getPokemonNames(lang).then((result) => ({ lang, ...result }))
-      ),
+      ...SUPPORTED_LANGUAGES.map((lang) => api.data.getPokemonNames(lang)),
     ]);
 
     if (iconsResult.status === "fulfilled") {
-      const { data: iconsData, lastModified: iconsLastModified } =
-        iconsResult.value;
-      setSSRPokemonIconsData(iconsData, iconsLastModified);
+      setSSRPokemonIconsData(iconsResult.value);
     } else {
       console.warn("Failed to load Pokemon icons:", iconsResult.reason);
     }
@@ -33,16 +29,14 @@ export const initializeSSRData = async () => {
       string,
       Record<number, PokemonNamesResponse>
     > = {};
-    const pokemonNamesLastModified: Record<string, string | null> = {};
 
     namesResults.forEach((result, index) => {
       const lang = SUPPORTED_LANGUAGES[index];
       if (result.status === "fulfilled") {
-        const { data, lastModified } = result.value;
+        const data = result.value;
         pokemonNamesData[lang] = Object.fromEntries(
           data.map((pokemon) => [pokemon.id, pokemon])
         );
-        pokemonNamesLastModified[lang] = lastModified;
       } else {
         console.warn(
           `Failed to load Pokemon names for language ${lang}:`,
@@ -51,7 +45,7 @@ export const initializeSSRData = async () => {
       }
     });
 
-    setSSRPokemonNamesData(pokemonNamesData, pokemonNamesLastModified);
+    setSSRPokemonNamesData(pokemonNamesData);
   } catch (error) {
     console.warn("Failed to initialize SSR Pokemon data:", error);
   }

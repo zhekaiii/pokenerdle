@@ -1,7 +1,6 @@
 import api from "@/api";
 import { MAX_GENERATION, MIN_GENERATION } from "@/lib/constants";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
-import axios from "axios";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useCallback, useEffect } from "react";
@@ -15,18 +14,10 @@ const pokemonIdsByGenerationAtom = atomWithStorage<Record<number, number[]>>(
     getOnInit: true,
   }
 );
-const lastModifiedByGenerationAtom = atomWithStorage<
-  Record<number, string | null>
->("pokemonIdsByGenerationLastModified", {}, undefined, {
-  getOnInit: true,
-});
 
 export const usePokemonIdsByGeneration = () => {
   const [pokemonIdsByGeneration, setPokemonIdsByGeneration] = useAtom(
     pokemonIdsByGenerationAtom
-  );
-  const [lastModifiedByGeneration, setLastModifiedByGeneration] = useAtom(
-    lastModifiedByGenerationAtom
   );
 
   const fetchPokemonIdsForGeneration = useCallback(
@@ -35,32 +26,13 @@ export const usePokemonIdsByGeneration = () => {
         return;
       }
 
-      const lastModified = lastModifiedByGeneration[generation];
-      try {
-        const { data, lastModified: newLastModified } =
-          await api.data.getPokemonIdsByGeneration(lastModified, generation);
-        // Update cache
-        const updatedIds = { ...pokemonIdsByGeneration, [generation]: data };
-        const updatedLastModified = {
-          ...lastModifiedByGeneration,
-          [generation]: newLastModified,
-        };
-
-        setPokemonIdsByGeneration(updatedIds);
-        setLastModifiedByGeneration(updatedLastModified);
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 304) {
-          return;
-        }
-        throw error;
-      }
+      const data = await api.data.getPokemonIdsByGeneration(generation);
+      setPokemonIdsByGeneration((previous) => ({
+        ...previous,
+        [generation]: data,
+      }));
     },
-    [
-      pokemonIdsByGeneration,
-      lastModifiedByGeneration,
-      setPokemonIdsByGeneration,
-      setLastModifiedByGeneration,
-    ]
+    [setPokemonIdsByGeneration]
   );
 
   const getPokemonNamesForGeneration = useCallback(
