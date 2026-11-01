@@ -13,7 +13,15 @@ const validatingStorage = {
   getItem: (key: string, initialValue: StatGuessFilter): StatGuessFilter => {
     const stored = safeStorage.getItem(key, initialValue);
     const parsed = StatGuessFilterSchema.safeParse(stored);
-    return parsed.success ? parsed.data : initialValue;
+    if (!parsed.success) return initialValue;
+    // Keep saved Champions format selections valid as regulation IDs change.
+    if (
+      parsed.data.kind === "format" &&
+      parsed.data.formatId.startsWith("champions-reg")
+    ) {
+      return { ...parsed.data, formatId: "champions-reg-mc" };
+    }
+    return parsed.data;
   },
 };
 
@@ -29,7 +37,7 @@ export const useStatGuesserFilter = () => {
   const setScope = (kind: StatGuessFilter["kind"]) => {
     if (kind === "all") setFilter({ kind: "all" });
     else if (kind === "format")
-      setFilter({ kind: "format", formatId: "champions-reg-ma" });
+      setFilter({ kind: "format", formatId: "champions-reg-mc" });
     else
       setFilter({
         kind: "generations",

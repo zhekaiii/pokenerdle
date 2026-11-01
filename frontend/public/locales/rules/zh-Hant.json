@@ -134,7 +134,7 @@
     },
     "filters": {
       "title": "🔍 篩選",
-      "description": "使用篩選列將範圍縮小到指定世代區間，或選擇 Pokémon Champions Regulation M-A 等競技規則。"
+      "description": "使用篩選列將範圍縮小到指定世代區間，或選擇 Pokémon Champions 賽制M-C 等競技規則。"
     },
     "buttons": {
       "playNow": "立即遊玩"
