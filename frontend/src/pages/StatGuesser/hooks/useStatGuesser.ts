@@ -6,6 +6,7 @@ import {
   StatGuessStats,
 } from "@pokenerdle/shared";
 import { useQuery } from "@tanstack/react-query";
+import posthog from "posthog-js";
 import { useEffect, useRef, useState } from "react";
 
 import { computeScore, StatGuessScore } from "../scoring";
@@ -60,17 +61,40 @@ export const useStatGuesser = (filter: StatGuessFilter) => {
   });
 
   const recentIdsRef = useRef<number[]>([]);
+  const trackingRef = useRef<{
+    key: string | null;
+    startedAt: number;
+    roundNumber: number;
+    submitted: boolean;
+  }>({ key: null, startedAt: 0, roundNumber: 0, submitted: false });
 
   const {
     data: round,
     error: roundError,
     refetch,
+    dataUpdatedAt,
   } = useQuery<StatGuessRoundResponse>({
     queryKey: ["statGuesser", "round", filter, roundIndex[filter.kind]],
     queryFn: () => api.statGuesser.getRound(filter, recentIdsRef.current),
     staleTime: Infinity,
     retry: false,
   });
+
+  // Record when each loaded round becomes playable, including cached rounds.
+  useEffect(() => {
+    if (!round) {
+      trackingRef.current.key = null;
+      return;
+    }
+    const key = JSON.stringify([filter, roundIndex[filter.kind], dataUpdatedAt]);
+    if (trackingRef.current.key === key) return;
+    trackingRef.current = {
+      key,
+      startedAt: Date.now(),
+      roundNumber: trackingRef.current.roundNumber + 1,
+      submitted: false,
+    };
+  }, [round, filter, roundIndex, dataUpdatedAt]);
 
   // Append the new Pokémon to the recent list, keeping the last 3.
   useEffect(() => {
@@ -104,8 +128,19 @@ export const useStatGuesser = (filter: StatGuessFilter) => {
   };
 
   const submit = () => {
-    if (!round) return;
+    if (!round || phase !== "guessing" || trackingRef.current.submitted) return;
+    trackingRef.current.submitted = true;
     const newScore = computeScore(guesses, round.stats);
+    posthog.capture("stat_guesser_guess_submitted", {
+      pokemon_id: round.pokemonId,
+      filter_kind: filter.kind,
+      ...(filter.kind === "format" && { format_id: filter.formatId }),
+      ...(filter.kind === "generations" && { generations: filter.generations }),
+      round_number: trackingRef.current.roundNumber,
+      score_percent: newScore.overallPercent,
+      time_taken_ms: Date.now() - trackingRef.current.startedAt,
+      guesses,
+    });
     setScore(newScore);
     setPhase("result");
     setSession((s) => ({
