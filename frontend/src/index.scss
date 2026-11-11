@@ -1,5 +1,5 @@
 @import "tailwindcss" prefix(tw);
-// Keep this in CSS so Sass doesn't interpret Tailwind's parent selectors.
+/* Keep this in CSS so Sass doesn't interpret Tailwind's parent selectors. */
 @import "./dark-variant.css";
 
 @plugin 'tailwindcss-animate';
