@@ -92,7 +92,7 @@ const CorrectAnswerCard: React.FC<Props> = ({
               <img
                 src={getPokemonIcon(correctAnswer.pokemonId)}
                 alt={pokemonName}
-                className="tw:w-17 tw:h-14 tw:object-none"
+                className="tw:w-17 tw:h-14 tw:object-scale-down tw:object-bottom tw:[image-rendering:pixelated]"
               />
               <div className="tw:text-left">
                 <div className="tw:font-medium">{pokemonName}</div>
