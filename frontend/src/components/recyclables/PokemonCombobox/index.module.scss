@@ -1,7 +1,6 @@
 .PokemonCombobox__PokemonIcon {
   margin-right: 4px;
-  height: 40px;
-  width: 40px;
-  object-position: bottom;
-  object-fit: none;
+  // Menu icons have empty space at the top; pull the slot in vertically so
+  // rows stay compact and more suggestions fit in the list.
+  margin-block: -6px;
 }

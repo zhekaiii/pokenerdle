@@ -11,7 +11,7 @@ import React, { memo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { DailyChallengeGuessIcon } from "../../DailyChallengeGuessIcon";
 
-import placeholderIcon from "@/assets/question_mark.png";
+import { PokemonIcon } from "@/components/recyclables/PokemonIcon";
 
 import TypeChip from "@/components/recyclables/TypeChip";
 import clsx from "clsx";
@@ -73,13 +73,9 @@ export const DailyChallengeGuessBox: React.FC<Props> = ({
       <CardHeader className="tw:flex tw:flex-col tw:items-stretch">
         <div>
           <div className="tw:flex tw:items-center">
-            <img
+            <PokemonIcon
               src={getPokemonIcon(guess.pokemonId)}
-              onError={(e) => {
-                e.currentTarget.src = placeholderIcon;
-              }}
               alt={pokemonName?.name || pokemonName?.speciesName}
-              className={styles.PokemonIcon}
             />
             <div className="tw:flex tw:gap-4 tw:flex-grow">
               <div className="tw:flex tw:flex-col tw:flex-grow">

@@ -1,3 +1,4 @@
+import { PokemonIcon } from "@/components/recyclables/PokemonIcon";
 import TypeChip from "@/components/recyclables/TypeChip";
 import { Card, CardContent } from "@/components/ui/Card";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
@@ -89,10 +90,9 @@ const CorrectAnswerCard: React.FC<Props> = ({
         <CardContent>
           <div className="tw:text-center tw:mb-3">
             <div className="tw:flex tw:items-center tw:justify-center tw:gap-3">
-              <img
+              <PokemonIcon
                 src={getPokemonIcon(correctAnswer.pokemonId)}
                 alt={pokemonName}
-                className="tw:w-17 tw:h-14 tw:object-none"
               />
               <div className="tw:text-left">
                 <div className="tw:font-medium">{pokemonName}</div>
