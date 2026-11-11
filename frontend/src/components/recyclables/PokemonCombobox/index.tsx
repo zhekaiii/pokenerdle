@@ -1,4 +1,4 @@
-import iconPlaceholder from "@/assets/question_mark.png";
+import { PokemonIcon } from "@/components/recyclables/PokemonIcon";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { isCmdOrCtrl } from "@/lib/utils";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
@@ -127,12 +127,9 @@ const PokemonCombobox: React.FC<Props> = ({
         renderItemContent={(option, index) => (
           <div className="tw:flex tw:justify-between tw:items-center tw:w-full">
             <div className="tw:flex tw:items-center">
-              <img
+              <PokemonIcon
                 className={classes["PokemonCombobox__PokemonIcon"]}
                 src={getPokemonIcon(option.id)}
-                onError={(e) => {
-                  e.currentTarget.src = iconPlaceholder;
-                }}
               />
               {option.name || option.speciesName}
             </div>

@@ -1,14 +1,6 @@
-// Same sizing as the Pokemon reference dialog and daily challenge guesses:
-// standard 68x56 menu icons render at native size without cropping, and
-// larger sprites (e.g. 96x96 front_default for newer Megas) scale down to fit.
 .PokemonCombobox__PokemonIcon {
-  flex-shrink: 0;
   margin-right: 4px;
-  width: 68px;
-  height: 56px;
-  object-fit: scale-down;
-  object-position: bottom;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
+  // Menu icons have empty space at the top; pull the slot in vertically so
+  // rows stay compact and more suggestions fit in the list.
+  margin-block: -6px;
 }

@@ -46,16 +46,3 @@
     flex: 1;
   }
 }
-
-// Standard 68x56 menu icons render at native size; larger fallback sprites
-// (e.g. newer Megas using front_default) are scaled down to fit.
-.PokemonIcon {
-  flex-shrink: 0;
-  width: 68px;
-  height: 56px;
-  object-fit: scale-down;
-  object-position: bottom;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
-}
