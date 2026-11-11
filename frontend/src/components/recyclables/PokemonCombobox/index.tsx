@@ -1,4 +1,4 @@
-import iconPlaceholder from "@/assets/question_mark.png";
+import { PokemonComboboxIcon } from "./PokemonComboboxIcon";
 import { usePokemonIcons } from "@/hooks/usePokemonIcons";
 import { isCmdOrCtrl } from "@/lib/utils";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
@@ -6,7 +6,6 @@ import { PopoverContentProps } from "@radix-ui/react-popover";
 import React, { useEffect, useMemo } from "react";
 import { BrowserView, isMacOs } from "react-device-detect";
 import { ComboBox } from "../../ui/ComboBox";
-import classes from "./index.module.scss";
 
 import { usePinyin } from "@/hooks/usePinyin";
 import { usePokemonNames } from "@/hooks/usePokemonNames";
@@ -127,15 +126,7 @@ const PokemonCombobox: React.FC<Props> = ({
         renderItemContent={(option, index) => (
           <div className="tw:flex tw:justify-between tw:items-center tw:w-full">
             <div className="tw:flex tw:items-center">
-              <div className={classes["PokemonCombobox__PokemonIconWrapper"]}>
-                <img
-                  className={classes["PokemonCombobox__PokemonIcon"]}
-                  src={getPokemonIcon(option.id)}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = iconPlaceholder;
-                  }}
-                />
-              </div>
+              <PokemonComboboxIcon src={getPokemonIcon(option.id)} />
               {option.name || option.speciesName}
             </div>
             <BrowserView>
