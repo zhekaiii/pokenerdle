@@ -1,30 +1,14 @@
-.PokemonCombobox__PokemonIconWrapper {
-  margin-right: 4px;
-  height: 40px;
-  width: 40px;
-  flex-shrink: 0;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-}
-
-// Mirrors the sizing used in the Pokemon reference dialog: standard 68x56
-// menu icons render at native size (cropped to the 40x40 box), while larger
-// fallback sprites (e.g. newer Megas using front_default) are scaled down.
+// Same sizing as the Pokemon reference dialog and daily challenge guesses:
+// standard 68x56 menu icons render at native size without cropping, and
+// larger sprites (e.g. 96x96 front_default for newer Megas) scale down to fit.
 .PokemonCombobox__PokemonIcon {
   flex-shrink: 0;
-  width: auto;
-  height: auto;
-  max-width: 68px;
-  max-height: 56px;
+  margin-right: 4px;
+  width: 68px;
+  height: 56px;
   object-fit: scale-down;
+  object-position: bottom;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-
-  &--fit {
-    max-width: 40px;
-    max-height: 40px;
-  }
 }
