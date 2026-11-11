@@ -127,13 +127,15 @@ const PokemonCombobox: React.FC<Props> = ({
         renderItemContent={(option, index) => (
           <div className="tw:flex tw:justify-between tw:items-center tw:w-full">
             <div className="tw:flex tw:items-center">
-              <img
-                className={classes["PokemonCombobox__PokemonIcon"]}
-                src={getPokemonIcon(option.id)}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = iconPlaceholder;
-                }}
-              />
+              <div className={classes["PokemonCombobox__PokemonIconWrapper"]}>
+                <img
+                  className={classes["PokemonCombobox__PokemonIcon"]}
+                  src={getPokemonIcon(option.id)}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = iconPlaceholder;
+                  }}
+                />
+              </div>
               {option.name || option.speciesName}
             </div>
             <BrowserView>
