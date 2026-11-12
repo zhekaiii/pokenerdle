@@ -8,17 +8,11 @@
   padding: 8px;
   border-top: 1px solid var(--border);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   color: var(--muted-foreground);
   font-size: 13px;
-}
-
-.Links {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 4px 8px;
 
   a {
     color: var(--muted-foreground);
@@ -31,18 +25,26 @@
   }
 }
 
+.ReportBug {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+}
+
+.Links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
 .Separator {
   color: var(--muted-foreground);
   opacity: 0.6;
-}
-
-// On very narrow screens the links wrap; a dangling separator looks stray.
-@media (max-width: 359px) {
-  .Links {
-    gap: 4px 16px;
-  }
-
-  .Separator {
-    display: none;
-  }
 }
