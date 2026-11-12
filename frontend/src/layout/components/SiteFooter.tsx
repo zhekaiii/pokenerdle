@@ -18,6 +18,16 @@ const SiteFooter: React.FC = () => {
           <a href="/terms.html" target="_blank" rel="noopener noreferrer">
             {t("footer.termsOfService")}
           </a>
+          <span className={classes.Separator} aria-hidden="true">
+            ·
+          </span>
+          <a
+            href="https://github.com/zhekaiii/pokenerdle/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t("footer.reportBug")}
+          </a>
         </nav>
       </footer>
     </div>

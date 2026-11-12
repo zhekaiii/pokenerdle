@@ -3,6 +3,7 @@
   "close": "關閉",
   "footer": {
     "privacyPolicy": "隱私政策",
-    "termsOfService": "服務條款"
+    "termsOfService": "服務條款",
+    "reportBug": "回報錯誤"
   }
 }
