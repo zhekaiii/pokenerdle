@@ -16,7 +16,9 @@
 .Links {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
 
   a {
     color: var(--muted-foreground);
