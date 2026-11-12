@@ -35,3 +35,14 @@
   color: var(--muted-foreground);
   opacity: 0.6;
 }
+
+// On very narrow screens the links wrap; a dangling separator looks stray.
+@media (max-width: 359px) {
+  .Links {
+    gap: 4px 16px;
+  }
+
+  .Separator {
+    display: none;
+  }
+}
