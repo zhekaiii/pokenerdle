@@ -16,10 +16,13 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   overflow: hidden;
 }
 
+// The stage is always a true 9:16 poster, letterboxed and centred on the dark backdrop.
+// Every size inside is in cqw of the stage's width, so a taller stage would only add empty
+// space at the foot of each screen. The width is the narrower of the viewport and what
+// the (capped) height allows at 9:16; the height follows from the aspect ratio.
 .Stage {
-  height: min(100dvh, 880px);
+  width: min(100vw, calc(min(100dvh, 880px) * 9 / 16));
   aspect-ratio: 9 / 16;
-  max-width: 100vw;
   position: relative;
   overflow: hidden;
   container-type: size;
