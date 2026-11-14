@@ -10,6 +10,9 @@ const days = (n: number, start = 1) => Array.from({ length: n }, (_, i) => `2026
 const noTypes = () => [];
 const solvedOn = (ds: string[]) => ds.map((d) => g(d, 1, { ok: true }));
 const playedOn = (ds: string[]) => ds.map((d) => g(d, 1));
+// A day solved on guess `n`, with guesses 1 to n all made at 12:00:00.
+const solvedIn = (day: string, n: number, p = 1) =>
+  Array.from({ length: n }, (_, i) => g(day, i + 1, { p, ok: i + 1 === n }));
 // One guess per entry of `ids`, spread round-robin over `dayList`, numbered from 1 within each day.
 const guessesFrom = (ids: number[], dayList: string[]): WrappedGuessRow[] => {
   const count = new Map<string, number>();
@@ -124,8 +127,13 @@ describe("computeWrappedStats", () => {
   });
 
   test("opener ties go to the one used most recently", () => {
-    const rows = days(10).map((d, i) => g(d, 1, { p: i < 5 ? 445 : 6 }));
-    expect(computeWrappedStats(rows, noTypes).stats?.opener).toEqual({ pokemonId: 6, days: 5 });
+    // 445 opens Mar 6 to 10 and comes first in the rows; 6 opens Mar 1 to 5 and comes last.
+    // Row order alone would pick 445 as first-seen and 6 as last-seen, so only the dates decide.
+    const rows = [
+      ...days(10).slice(5).map((d) => g(d, 1, { p: 445 })),
+      ...days(5).map((d) => g(d, 1, { p: 6 })),
+    ];
+    expect(computeWrappedStats(rows, noTypes).stats?.opener).toEqual({ pokemonId: 445, days: 5 });
   });
 
   test("each guess counts once for each of its types", () => {
@@ -156,5 +164,112 @@ describe("computeWrappedStats", () => {
 
   test("mostGuessed with 2 distinct ids gives 2", () => {
     expect(computeWrappedStats(guessesFrom([9, 9, 9, 3, 3, 3, 3], days(5)), noTypes).stats?.mostGuessed).toEqual([3, 9]);
+  });
+
+  test("fastest solve is the shortest gap between first and correct guess", () => {
+    const rows = [
+      g("2026-03-01", 1, { time: "12:00:00" }),
+      g("2026-03-01", 3, { time: "12:00:38", ok: true, p: 25 }),
+      ...playedOn(days(4, 2)),
+    ];
+    const clock = computeWrappedStats(rows, noTypes).stats?.clock;
+    expect(clock?.fastest).toEqual({ ms: 38000, date: "2026-03-01", pokemonId: 25 });
+    expect(clock?.longest).toBeNull();
+  });
+
+  test("a one-guess solve is never the fastest", () => {
+    const rows = [
+      g("2026-03-01", 1, { ok: true, p: 4 }),
+      g("2026-03-02", 1, { time: "12:00:00" }),
+      g("2026-03-02", 2, { time: "12:05:00", ok: true, p: 7 }),
+      ...playedOn(days(3, 3)),
+    ];
+    expect(computeWrappedStats(rows, noTypes).stats?.clock?.fastest).toEqual({ ms: 300000, date: "2026-03-02", pokemonId: 7 });
+  });
+
+  test("longest battle ignores days over an hour", () => {
+    const rows = [
+      g("2026-03-01", 1, { time: "12:00:00" }),
+      g("2026-03-01", 2, { time: "12:02:00", ok: true }),
+      g("2026-03-02", 1, { time: "12:00:00" }),
+      g("2026-03-02", 2, { time: "12:09:00", ok: true, p: 2 }),
+      g("2026-03-03", 1, { time: "12:00:00" }),
+      g("2026-03-03", 2, { time: "13:01:00", ok: true }),
+      ...playedOn(days(2, 4)),
+    ];
+    expect(computeWrappedStats(rows, noTypes).stats?.clock?.longest).toEqual({ ms: 540000, date: "2026-03-02", pokemonId: 2 });
+  });
+
+  test("exactly an hour is allowed as the longest battle", () => {
+    const rows = [
+      g("2026-03-01", 1, { time: "12:00:00" }),
+      g("2026-03-01", 2, { time: "12:02:00", ok: true }),
+      g("2026-03-02", 1, { time: "12:00:00" }),
+      g("2026-03-02", 2, { time: "13:00:00", ok: true, p: 2 }),
+      ...playedOn(days(3, 3)),
+    ];
+    expect(computeWrappedStats(rows, noTypes).stats?.clock?.longest?.ms).toBe(3600000);
+  });
+
+  test("longest is null when the only qualifying day is the fastest day", () => {
+    const rows = [
+      g("2026-03-01", 1, { time: "12:00:00" }),
+      g("2026-03-01", 2, { time: "12:05:00", ok: true }),
+      g("2026-03-02", 1, { time: "12:00:00" }),
+      g("2026-03-02", 2, { time: "13:01:00", ok: true }),
+      ...playedOn(days(3, 3)),
+    ];
+    const clock = computeWrappedStats(rows, noTypes).stats?.clock;
+    expect(clock?.fastest.ms).toBe(300000);
+    expect(clock?.longest).toBeNull();
+  });
+
+  test("clock is null with no solved day of two or more guesses", () => {
+    expect(computeWrappedStats(solvedOn(days(5)), noTypes).stats?.clock).toBeNull();
+  });
+
+  test("unsolved days never appear in clock", () => {
+    // The unsolved day has a 10-minute gap, longer than the solve; it must not be picked as longest.
+    const rows = [
+      g("2026-03-01", 1, { time: "12:00:00" }),
+      g("2026-03-01", 2, { time: "12:10:00" }),
+      g("2026-03-02", 1, { time: "12:00:00" }),
+      g("2026-03-02", 2, { time: "12:03:00", ok: true, p: 9 }),
+      ...playedOn(days(3, 3)),
+    ];
+    expect(computeWrappedStats(rows, noTypes).stats?.clock).toEqual({
+      fastest: { ms: 180000, date: "2026-03-02", pokemonId: 9 },
+      longest: null,
+    });
+  });
+
+  test("average is the mean guesses over solved live days, rounded to one decimal", () => {
+    const rows = [
+      ...solvedIn("2026-03-01", 3),
+      ...solvedIn("2026-03-02", 4),
+      ...solvedIn("2026-03-03", 4),
+      ...solvedIn("2026-03-04", 5),
+      ...playedOn(days(2, 5)),
+    ];
+    expect(computeWrappedStats(rows, noTypes).stats?.average).toBe(4);
+  });
+
+  test("average rounds 10/3 to 3.3", () => {
+    const rows = [...solvedIn("2026-03-01", 3), ...solvedIn("2026-03-02", 3), ...solvedIn("2026-03-03", 4), ...playedOn(days(2, 4))];
+    expect(computeWrappedStats(rows, noTypes).stats?.average).toBe(3.3);
+  });
+
+  test("average is null with no solved day, and finish is standard", () => {
+    const stats = computeWrappedStats(playedOn(days(5)), noTypes).stats;
+    expect(stats?.average).toBeNull();
+    expect(stats?.finish).toBe("standard");
+  });
+
+  test("finish follows the rounded average and the 30-day rule", () => {
+    const thirty = days(30).flatMap((d) => solvedIn(d, 3));
+    expect(computeWrappedStats(thirty, noTypes).stats?.finish).toBe("rainbow");
+
+    const twelve = days(12).flatMap((d) => solvedIn(d, 3));
+    expect(computeWrappedStats(twelve, noTypes).stats?.finish).toBe("foil");
   });
 });

@@ -1,10 +1,14 @@
 import { TZDate } from "@date-fns/tz";
 import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import {
+  getWrappedFinish,
+  roundAverage,
+  WRAPPED_MAX_BATTLE_MS,
   WRAPPED_MIN_DAYS,
   WRAPPED_MIN_STREAK,
   WRAPPED_WINDOW_END,
   WRAPPED_WINDOW_START,
+  type WrappedSolve,
   type WrappedStats,
 } from "@pokenerdle/shared/wrapped";
 import { addDays, format } from "date-fns";
@@ -27,6 +31,11 @@ interface LiveDay {
   day: string;
   first: WrappedGuessRow;
   guesses: WrappedGuessRow[];
+}
+
+interface SolvedDay {
+  live: LiveDay;
+  correct: WrappedGuessRow; // the lowest-numbered correct guess of the day
 }
 
 const singaporeDate = (instant: Date): string =>
@@ -110,6 +119,43 @@ const findTopTypes = (
     .map(([type, count]) => ({ type, share: count / total }));
 };
 
+const findSolvedDays = (live: LiveDay[]): SolvedDay[] =>
+  live.flatMap((day) => {
+    const correct = day.guesses
+      .filter((g) => g.isCorrect)
+      .sort((a, b) => a.guessNumber - b.guessNumber)[0];
+    return correct ? [{ live: day, correct }] : [];
+  });
+
+const toSolve = ({ live, correct }: SolvedDay): WrappedSolve => ({
+  ms: correct.createdAt.getTime() - live.first.createdAt.getTime(),
+  date: live.day,
+  pokemonId: correct.pokemonId,
+});
+
+// Fastest and longest battles. Only solves after a first guess count, and only within the one-hour cap.
+// Ties go to the earliest date. The longest battle is taken from the days other than the fastest.
+const findClock = (solved: SolvedDay[]): WrappedStats["clock"] => {
+  const battles = solved
+    .filter(({ correct }) => correct.guessNumber >= 2)
+    .map(toSolve)
+    .filter((s) => s.ms <= WRAPPED_MAX_BATTLE_MS)
+    .sort((a, b) => a.ms - b.ms || a.date.localeCompare(b.date));
+  const fastest = battles[0];
+  if (!fastest) return null;
+  const longest = battles
+    .slice(1)
+    .sort((a, b) => b.ms - a.ms || a.date.localeCompare(b.date))[0];
+  return { fastest, longest: longest ?? null };
+};
+
+// Mean guess count over solved live days, including one-guess solves. Rounded to one decimal.
+const findAverage = (solved: SolvedDay[]): number | null => {
+  if (solved.length === 0) return null;
+  const total = solved.reduce((sum, { correct }) => sum + correct.guessNumber, 0);
+  return roundAverage(total / solved.length);
+};
+
 export const computeWrappedStats = (
   rows: WrappedGuessRow[],
   typesOf: (pokemonId: number) => string[],
@@ -120,7 +166,8 @@ export const computeWrappedStats = (
   const eligible = daysPlayed >= WRAPPED_MIN_DAYS;
   if (!eligible) return { daysPlayed, eligible, stats: null };
 
-  const daysSolved = live.filter((d) => d.guesses.some((g) => g.isCorrect)).length;
+  const solved = findSolvedDays(live);
+  const daysSolved = solved.length;
   const uniquePokemon = new Set(live.flatMap((d) => d.guesses.map((g) => g.pokemonId))).size;
   const guessCounts = countGuesses(live);
   const totalGuesses = [...guessCounts.values()].reduce((sum, n) => sum + n, 0);
@@ -128,20 +175,19 @@ export const computeWrappedStats = (
     .sort(([idA, a], [idB, b]) => b - a || idA - idB)
     .slice(0, 6)
     .map(([pokemonId]) => pokemonId);
-  const solvedDays = live.filter((d) => d.guesses.some((g) => g.isCorrect)).map((d) => d.day);
+  const average = findAverage(solved);
 
-  // clock, average and finish are filled in by later stats tasks.
   const stats: WrappedStats = {
     daysPlayed,
     daysSolved,
     uniquePokemon,
     mostGuessed,
-    streak: longestStreak(solvedDays),
+    streak: longestStreak(solved.map((s) => s.live.day)),
     opener: findOpener(live),
     topTypes: findTopTypes(guessCounts, totalGuesses, typesOf),
-    clock: null,
-    average: null,
-    finish: "standard",
+    clock: findClock(solved),
+    average,
+    finish: getWrappedFinish(average, daysPlayed),
   };
   return { daysPlayed, eligible, stats };
 };
