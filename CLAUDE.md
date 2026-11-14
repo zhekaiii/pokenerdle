@@ -69,7 +69,7 @@ Layered architecture: `routes/ → controllers/ → services/ → repositories/`
 
 ### Shared Package
 
-Exports via subpath: `@pokenerdle/shared`, `@pokenerdle/shared/utils`, `@pokenerdle/shared/daily`, `@pokenerdle/shared/pokemon`, `@pokenerdle/shared/date`. Contains Zod validation schemas, types, and date utilities with timezone support. Must be built (`pnpm shared-build`) before frontend/backend can use updated types.
+Exports via subpath: `@pokenerdle/shared`, `@pokenerdle/shared/utils`, `@pokenerdle/shared/daily`, `@pokenerdle/shared/pokemon`, `@pokenerdle/shared/date`, `@pokenerdle/shared/wrapped`. Contains Zod validation schemas, types, and date utilities with timezone support. Must be built (`pnpm shared-build`) before frontend/backend can use updated types.
 
 ## Key Details
 
