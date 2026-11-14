@@ -11,7 +11,8 @@
     "title": "Oops",
     "sticker": "Wrapped did not load",
     "body": "Check your connection and try again.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "home": "Back to Pokenerdle"
   },
   "before": {
     "title": "Coming",
@@ -84,7 +85,8 @@
     "playing": "playing",
     "seeYou": "See you in 2027",
     "body": "Today's daily is waiting. Keep it going.",
-    "go": "Tap for your card →"
+    "go": "Tap for your card →",
+    "cta": "Play today's daily"
   },
   "firstGuess": {
     "tag": "Fresh face",
@@ -119,6 +121,7 @@
     "preparing": "Preparing…",
     "imageFailed": "Could not make your image.",
     "retry": "Try again",
-    "shareFailed": "Sharing did not open. Try Save image."
+    "shareFailed": "Sharing did not open. Try Save image.",
+    "playDaily": "Play today's daily →"
   }
 }

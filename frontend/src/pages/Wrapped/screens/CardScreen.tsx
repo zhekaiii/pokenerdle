@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
 import posthog from "posthog-js";
 import React, { useEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -152,6 +153,9 @@ const CardScreen: React.FC<ScreenProps> = ({ data }) => {
             </div>
           </>
         )}
+        <Link to="/daily" className={classes.TextLink}>
+          {t("card.playDaily")}
+        </Link>
       </div>
       {/* The picture people save and share: this screen again, at 1080 × 1920 and
           without the buttons, kept off-screen. It is drawn from the inner element. */}

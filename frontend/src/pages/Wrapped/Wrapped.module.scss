@@ -397,6 +397,29 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   }
 }
 
+// The button on a red screen, where the red one would vanish into the plate
+.ButtonLight {
+  color: #111;
+  background: #fff;
+}
+
+// A quiet way out under a button or a row of buttons: plain underlined lettering, so it
+// never competes with the main action.
+.TextLink {
+  display: block;
+  margin-top: 4cqw;
+  text-align: center;
+  font-weight: 900;
+  font-size: 4cqw;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 0.8cqw;
+  text-decoration-thickness: 0.5cqw;
+  color: inherit;
+  padding: 1cqw 0;
+}
+
 // Entrance animations use individual transform properties so tilts (rotate) survive
 @keyframes pop {
   0% {

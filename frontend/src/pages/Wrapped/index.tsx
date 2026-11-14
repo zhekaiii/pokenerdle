@@ -99,6 +99,9 @@ const ErrorScreen: React.FC<{ onRetry: () => void }> = ({ onRetry }) => {
       <button type="button" className={classes.Button} onClick={onRetry}>
         {t("error.retry")}
       </button>
+      <Link to="/" className={classes.TextLink}>
+        {t("error.home")}
+      </Link>
     </Poster>
   );
 };

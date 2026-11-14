@@ -11,7 +11,8 @@
     "title": "哎呀",
     "sticker": "年度回顧沒能載入",
     "body": "請檢查網路連線後再試一次。",
-    "retry": "重試"
+    "retry": "重試",
+    "home": "回到 Pokenerdle"
   },
   "before": {
     "title": "即將登場",
@@ -80,7 +81,8 @@
     "playing": "一起玩",
     "seeYou": "2027 見",
     "body": "今天的每日挑戰還在等你，繼續保持。",
-    "go": "點按查看你的卡片 →"
+    "go": "點按查看你的卡片 →",
+    "cta": "去玩今天的挑戰"
   },
   "firstGuess": {
     "tag": "新面孔",
@@ -112,6 +114,7 @@
     "preparing": "準備中…",
     "imageFailed": "無法產生圖片。",
     "retry": "重試",
-    "shareFailed": "無法開啟分享，請試試儲存圖片。"
+    "shareFailed": "無法開啟分享，請試試儲存圖片。",
+    "playDaily": "去玩今天的挑戰 →"
   }
 }
