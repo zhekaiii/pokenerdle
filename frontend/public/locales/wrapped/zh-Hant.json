@@ -30,5 +30,62 @@
     "sticker": "你的年度回顧是空白的",
     "body": "年度回顧由你的每日挑戰猜測生成，而目前還沒有紀錄。先去玩一局今天的挑戰吧。",
     "cta": "去玩每日挑戰"
+  },
+  "opener": {
+    "your": "你的",
+    "in": "年度回顧",
+    "period": "1月1日至11月30日",
+    "go": "點按開始 →"
+  },
+  "showingUp": {
+    "tag": "你一直都在",
+    "days": "遊玩天數，1月至11月",
+    "unique": "還猜過 <em>{{n}}</em><br/>種寶可夢"
+  },
+  "streak": {
+    "tag": "最長連續打卡",
+    "inARow": "天連續打卡",
+    "months": "1,2,3,4,5,6,7,8,9,10,11",
+    "body": "沒有什麼能難倒你。"
+  },
+  "signature": {
+    "tag": "你的招牌開局",
+    "body": "拿不準的時候，你就派出{{name}}。",
+    "days_other": "{{count}} 天首猜都是它"
+  },
+  "types": {
+    "tag": "屬性偏愛",
+    "body": "的猜測都是{{type}}屬性。"
+  },
+  "clock": {
+    "tag": "與時間賽跑",
+    "fastest": "你最快的一次",
+    "secondsFlat": "秒搞定",
+    "minutesFlat": "分鐘搞定",
+    "fastestLine": "{{date}}，{{name}}毫無還手之力。",
+    "longest": "你最久的一戰",
+    "seconds_other": "{{count}} 秒",
+    "minutes_other": "{{count}} 分鐘",
+    "longestLine": "{{date}}，{{name}}負隅頑抗。"
+  },
+  "average": {
+    "tag": "你的平均成績",
+    "lead": "你破解每日挑戰平均只需",
+    "unit": "次猜測",
+    "body_other": "8 次封頂，統計你解開的 {{count}} 天。"
+  },
+  "thanks": {
+    "tag": "年度回顧完畢",
+    "thanksFor": "謝謝你",
+    "playing": "一起玩",
+    "seeYou": "2027 見",
+    "body": "今天的每日挑戰還在等你，繼續保持。",
+    "go": "點按查看你的卡片 →"
+  },
+  "firstGuess": {
+    "tag": "新面孔",
+    "line": "你的第一次猜測，在 {{date}}。",
+    "welcome": "歡迎來到 Pokenerdle",
+    "days_other": "你在 1 月至 11 月間玩了 {{count}} 天。"
   }
 }

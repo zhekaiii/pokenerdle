@@ -30,5 +30,67 @@
     "sticker": "Your Wrapped is blank",
     "body": "Wrapped is built from your Daily Challenge guesses, and there are none to show. Play today's daily to get started.",
     "cta": "Play the daily"
+  },
+  "opener": {
+    "your": "Your",
+    "in": "in Pokenerdle",
+    "period": "1 Jan to 30 Nov",
+    "go": "Tap to start →"
+  },
+  "showingUp": {
+    "tag": "You showed up",
+    "days": "days played, Jan to Nov",
+    "unique": "and named <em>{{n}}</em><br/>different Pokémon"
+  },
+  "streak": {
+    "tag": "Longest streak",
+    "inARow": "days in a row",
+    "months": "J,F,M,A,M,J,J,A,S,O,N",
+    "body": "Nothing got past you."
+  },
+  "signature": {
+    "tag": "Your signature opener",
+    "body": "When in doubt, you send out {{name}}.",
+    "days_one": "First guess on {{count}} day",
+    "days_other": "First guess on {{count}} days"
+  },
+  "types": {
+    "tag": "Type loyalty",
+    "body": "of your guesses were {{type}} types."
+  },
+  "clock": {
+    "tag": "Against the clock",
+    "fastest": "Your fastest solve",
+    "secondsFlat": "seconds flat",
+    "minutesFlat": "minutes flat",
+    "fastestLine": "{{date}}. {{name}} never stood a chance.",
+    "longest": "Your longest battle",
+    "seconds_one": "{{count}} second",
+    "seconds_other": "{{count}} seconds",
+    "minutes_one": "{{count}} minute",
+    "minutes_other": "{{count}} minutes",
+    "longestLine": "{{date}}. {{name}} put up a fight."
+  },
+  "average": {
+    "tag": "Your average",
+    "lead": "You crack the daily in",
+    "unit": "guesses on average",
+    "body_one": "Out of 8, across the {{count}} day you solved.",
+    "body_other": "Out of 8, across the {{count}} days you solved."
+  },
+  "thanks": {
+    "tag": "That's a wrap",
+    "thanksFor": "Thanks for",
+    "playing": "playing",
+    "seeYou": "See you in 2027",
+    "body": "Today's daily is waiting. Keep it going.",
+    "go": "Tap for your card →"
+  },
+  "firstGuess": {
+    "tag": "Fresh face",
+    "line": "Your very first guess, on {{date}}.",
+    "welcome": "Welcome to Pokenerdle",
+    "days_one": "You played on {{count}} day, Jan to Nov.",
+    "days_other": "You played on {{count}} days, Jan to Nov."
   }
 }

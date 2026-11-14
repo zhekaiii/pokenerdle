@@ -15,6 +15,15 @@ import Background, {
   type BackgroundHandle,
 } from "./Background";
 import { buildScreens, SIMPLE_SCREENS, type ScreenId } from "./screens";
+import Average from "./screens/Average";
+import Clock from "./screens/Clock";
+import FirstGuess from "./screens/FirstGuess";
+import Opener from "./screens/Opener";
+import ShowingUp from "./screens/ShowingUp";
+import Signature from "./screens/Signature";
+import Streak from "./screens/Streak";
+import Thanks from "./screens/Thanks";
+import Types from "./screens/Types";
 import { getTargetIndex, TRANSITION } from "./transition";
 import classes from "./Wrapped.module.scss";
 
@@ -54,17 +63,30 @@ interface Content {
   enter: Enter | null; // how `main` arrives; null when it was there from the start
 }
 
-// Stands in for the real screens until Task 8.
-const ScreenContent: React.FC<ScreenProps & { id: ScreenId }> = ({ id }) => {
+// Stands in for the card screen until it is built.
+const CardPlaceholder: React.FC<ScreenProps> = () => {
   const { t } = useTranslation("wrapped");
   return (
     <>
       <div className={clsx(classes.Tag, classes.Pop)}>{t("tag")}</div>
       <div className={classes.Main}>
-        <div className={clsx(classes.Title, classes.Slam)}>{id}</div>
+        <div className={clsx(classes.Title, classes.Slam)}>card</div>
       </div>
     </>
   );
+};
+
+const SCREEN_COMPONENTS: Record<ScreenId, React.FC<ScreenProps>> = {
+  opener: Opener,
+  showingUp: ShowingUp,
+  streak: Streak,
+  signature: Signature,
+  types: Types,
+  clock: Clock,
+  average: Average,
+  thanks: Thanks,
+  firstGuess: FirstGuess,
+  card: CardPlaceholder,
 };
 
 interface ScreenViewProps {
@@ -77,6 +99,7 @@ interface ScreenViewProps {
 const ScreenView: React.FC<ScreenViewProps> = ({ id, data, enter }) => {
   const el = useRef<HTMLElement>(null);
   const enterOnMount = useRef(enter);
+  const Content = SCREEN_COMPONENTS[id];
 
   // Before first paint, so the screen never shows in place for a frame before it moves.
   useLayoutEffect(() => {
@@ -101,7 +124,7 @@ const ScreenView: React.FC<ScreenViewProps> = ({ id, data, enter }) => {
       data-screen={id}
       className={clsx(classes.Screen, classes.StoryScreen, classes[TONE[id]])}
     >
-      <ScreenContent id={id} data={data} />
+      <Content data={data} />
     </section>
   );
 };

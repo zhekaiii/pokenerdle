@@ -13,12 +13,10 @@ import { Plate } from "./Background";
 import { getDemoResponse } from "./demoData";
 import { buildScreens, SIMPLE_SCREENS, type ScreenId } from "./screens";
 import Story from "./Story";
+import { delay } from "./style";
 import classes from "./Wrapped.module.scss";
 
 export const WRAPPED_QUERY_KEY = "wrapped";
-
-// Entrance animations read their start time from --d (see Wrapped.module.scss).
-const delay = (seconds: string) => ({ "--d": seconds }) as React.CSSProperties;
 
 type Tone = "Red" | "Blue" | "Yellow" | "Purple" | "Green";
 
@@ -164,7 +162,9 @@ const EmptyScreen: React.FC = () => {
 };
 
 const WrappedPage: React.FC = () => {
-  const { i18n } = useTranslation("wrapped");
+  // "types" holds the type names the types screen shows. Loading it here, with the page,
+  // keeps it from suspending in the middle of a screen change.
+  const { i18n } = useTranslation(["wrapped", "types"]);
   useChineseFont(i18n.language);
 
   // Development only: ?demo=1 or ?demo=simple shows the story with made-up numbers.

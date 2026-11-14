@@ -337,7 +337,8 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   font-size: 44cqw;
   line-height: 0.86;
   white-space: nowrap;
-  color: #ffde00;
+  text-align: center;
+  color: var(--num, #ffde00);
   -webkit-text-stroke: 1.6cqw #111;
   paint-order: stroke fill;
   text-shadow: 2cqw 2cqw 0 #111;
@@ -351,6 +352,7 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
 }
 
 .Sticker {
+  align-self: center;
   font-family: $display;
   text-transform: uppercase;
   font-weight: 400;
@@ -477,6 +479,421 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   }
 }
 
+// One step down from the default sticker, for longer phrases
+.StickerSmall {
+  font-size: 5.4cqw;
+}
+
+.BodyCenter {
+  text-align: center;
+}
+.BodyLight {
+  color: #fff;
+}
+
+// "Tap to start": a prompt at the foot of the opener and the thank-you
+.Go {
+  text-align: center;
+  font-weight: 900;
+  font-size: 4cqw;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  animation: wiggle 1.4s ease-in-out infinite;
+}
+
+// Artwork in a circle with slowly turning rays. Size it with a modifier.
+.Burst {
+  align-self: center;
+  position: relative;
+  flex: none;
+  border-radius: 50%;
+  border: 1.1cqw solid #111;
+  box-shadow: 1.8cqw 1.8cqw 0 #111;
+  background: var(--burst, #2a75bb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    background: repeating-conic-gradient(
+      rgba(255, 255, 255, 0.28) 0 12deg,
+      transparent 12deg 24deg
+    );
+    animation: spin 18s linear infinite;
+  }
+
+  img {
+    position: relative;
+    width: 92%;
+    height: 92%;
+    object-fit: contain;
+    filter: drop-shadow(0 1.5cqw 0 rgba(0, 0, 0, 0.25));
+  }
+}
+
+.Panel {
+  background: #fff;
+  border: 1cqw solid #111;
+  box-shadow: 1.8cqw 1.8cqw 0 #111;
+  padding: 4cqw 5cqw;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes fill {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--w);
+  }
+}
+@keyframes wiggle {
+  0%,
+  100% {
+    rotate: 3deg;
+  }
+  50% {
+    rotate: -2deg;
+  }
+}
+
+// Opener
+.OpenerTitle {
+  font-size: 21cqw;
+}
+.OpenerYear {
+  font-size: 44cqw;
+  --num: #fff;
+  margin: 2cqw 0 4cqw;
+}
+.OpenerSub {
+  font-size: 13.5cqw;
+}
+
+// Showing up
+.ShowingUpCount {
+  font-size: 58cqw;
+  margin-top: 6cqw;
+}
+.Mons {
+  display: flex;
+  justify-content: center;
+  margin: 5cqw 0 2cqw;
+}
+.Mon {
+  width: 17cqw;
+  height: 17cqw;
+  object-fit: contain;
+  margin: 0 -1.6cqw;
+  filter: drop-shadow(0.8cqw 0.8cqw 0 #111);
+}
+.Line {
+  font-family: $display;
+  text-transform: uppercase;
+  font-size: 10.5cqw;
+  line-height: 1;
+  text-align: center;
+  color: #fff;
+  -webkit-text-stroke: 0.8cqw #111;
+  paint-order: stroke fill;
+  text-shadow: 1cqw 1cqw 0 #111;
+
+  em {
+    font-style: normal;
+    color: #ffde00;
+  }
+}
+
+// Streak. The strip is one position per day, January to November. --l, --w and --f are
+// where the block starts, how wide it is and where its middle is, as fractions of the strip.
+.StreakCount {
+  font-size: 74cqw;
+  --num: #fff;
+  margin-top: 4cqw;
+}
+.Year {
+  position: relative;
+  padding-top: 11cqw;
+  margin: 9cqw 0 4cqw;
+}
+.Track {
+  position: relative;
+  height: 9cqw;
+  background: #fff;
+  border: 0.9cqw solid #111;
+  box-shadow: 1.4cqw 1.4cqw 0 #111;
+}
+.Tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0.4cqw;
+  translate: -50% 0;
+  background: rgba(17, 17, 17, 0.25);
+}
+// The block never gets narrower than 3cqw, and its left edge stops where that much still
+// fits, so a short streak at either end of the year stays inside the strip.
+.StreakBlock {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: min(var(--l), calc(100% - 3cqw));
+  width: var(--w);
+  min-width: 3cqw;
+  background: #e3350d;
+  outline: 0.8cqw solid #111;
+  animation: fill 0.7s cubic-bezier(0.2, 0.9, 0.3, 1) 1s both;
+}
+// The flag sits over the middle of the block. Sliding it left by the same fraction of its
+// own width as the block's place along the strip keeps it inside the strip at either end.
+.Flag {
+  position: absolute;
+  top: 0;
+  left: calc(0.9cqw + var(--f) * (100% - 1.8cqw));
+  translate: calc(var(--f) * -100%) 0;
+  background: #111;
+  color: #fff;
+  font-weight: 900;
+  font-size: 3.4cqw;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1.2cqw 2.6cqw;
+  white-space: nowrap;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: clamp(2.5cqw, calc(var(--f) * 100%), calc(100% - 2.5cqw));
+    top: 100%;
+    translate: -50% 0;
+    border: 2cqw solid transparent;
+    border-top-color: #111;
+    border-bottom: 0;
+  }
+}
+.Months {
+  display: flex;
+  margin-top: 2cqw;
+  padding: 0 0.9cqw;
+
+  span {
+    flex: 1 1 0;
+    text-align: center;
+    font-weight: 900;
+    font-size: 3cqw;
+  }
+}
+.MonthHit {
+  color: #fff;
+}
+
+// Signature opener, and the simplified story's first guess
+.PosterBurst {
+  width: 70cqw;
+  height: 70cqw;
+  margin: 7cqw 0 5cqw;
+}
+// A name set in one line. useFitText shrinks it through --fit when it is too wide.
+.FitName {
+  font-size: calc(21cqw * var(--fit, 1));
+  text-align: center;
+  white-space: nowrap;
+}
+.AfterName {
+  margin-top: 3cqw;
+}
+.AfterBody {
+  margin-top: 4cqw;
+}
+
+// Type loyalty
+.TopType {
+  --ttl: #fff;
+  font-size: calc(27cqw * var(--fit, 1));
+  text-align: center;
+  white-space: nowrap;
+  margin-top: 9cqw;
+  rotate: -3deg;
+}
+.TypePercent {
+  font-size: 40cqw;
+  --num: #ffde00;
+  margin: 2cqw 0 1cqw;
+  rotate: 2deg;
+}
+.TypeBars {
+  margin-top: 7cqw;
+  display: flex;
+  flex-direction: column;
+  gap: 2.6cqw;
+}
+.Bar {
+  display: flex;
+  align-items: center;
+  gap: 2.5cqw;
+
+  span {
+    width: 21cqw;
+    font-family: $display;
+    text-transform: uppercase;
+    font-size: 4.6cqw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #fff;
+  }
+  div {
+    flex: 1;
+    height: 7.5cqw;
+    background: rgba(17, 17, 17, 0.25);
+    border: 0.8cqw solid #111;
+  }
+  b {
+    display: block;
+    height: 100%;
+    width: var(--w);
+    background: var(--c);
+    border-right: 0.8cqw solid #111;
+    animation: fill 0.8s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+    animation-delay: var(--d);
+  }
+  em {
+    width: 11cqw;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 4.2cqw;
+    color: #fff;
+  }
+}
+
+// Against the clock
+.PanelSub {
+  font-weight: 900;
+  font-size: 3.2cqw;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 1cqw;
+}
+.FastPanel {
+  margin-top: 7cqw;
+  rotate: -2deg;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 3cqw;
+}
+.FastText {
+  flex: 1;
+  text-align: center;
+}
+.FastTime {
+  margin: 2cqw 0;
+  font-size: 30cqw;
+  --num: #ffde00;
+  rotate: 0deg;
+}
+// "1:05" is wider than "38"
+.FastTimeLong {
+  font-size: 21cqw;
+}
+.FastUnit {
+  font-family: $display;
+  text-transform: uppercase;
+  font-size: 7.5cqw;
+  line-height: 1;
+}
+.FastBurst {
+  width: 32cqw;
+  height: 32cqw;
+  --burst: #3d8bff;
+  box-shadow: none;
+}
+.FastFoot {
+  flex-basis: 100%;
+  font-size: 3.6cqw;
+  margin-top: 2.5cqw;
+  padding-top: 2.5cqw;
+  border-top: 0.5cqw solid rgba(17, 17, 17, 0.2);
+}
+.LongPanel {
+  margin-top: 6cqw;
+  rotate: 2deg;
+  background: #111;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 3cqw;
+}
+.LongBurst {
+  width: 30cqw;
+  height: 30cqw;
+  --burst: #e3350d;
+  box-shadow: none;
+  border-color: #fff;
+}
+.LongTime {
+  font-family: $display;
+  text-transform: uppercase;
+  font-size: 9.5cqw;
+  line-height: 1;
+  color: #ffde00;
+}
+.LongLine {
+  font-size: 3.6cqw;
+}
+
+// Average
+.Lead {
+  font-family: $display;
+  text-transform: uppercase;
+  font-size: 10cqw;
+  text-align: center;
+  text-wrap: balance;
+  color: #fff;
+  -webkit-text-stroke: 0.8cqw #111;
+  paint-order: stroke fill;
+  text-shadow: 1cqw 1cqw 0 #111;
+  margin-top: 9cqw;
+}
+.AverageNumber {
+  font-size: 44cqw;
+  margin: 2cqw 0;
+}
+
+// Thank you, before the card
+.ThanksTitle {
+  --ttl: #ffde00;
+  font-size: 18cqw;
+  text-align: center;
+}
+.ThanksBig {
+  --ttl: #fff;
+  font-size: 24cqw;
+  rotate: -4deg;
+  margin: 1cqw 0 5cqw;
+}
+
+// First guess, the simplified story's only screen of its own
+.FirstGuessTag {
+  --tagc: #fff;
+}
+.FirstGuessName {
+  --ttl: #ffde00;
+}
+.FirstGuessDays {
+  margin-top: 6cqw;
+}
+
 // A story screen leaves room for the progress segments
 .StoryScreen {
   padding-top: 13cqw;
@@ -491,6 +908,10 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   .Pop,
   .Up,
   .Slam,
+  .Go,
+  .Burst::before,
+  .StreakBlock,
+  .Bar b,
   .Plate::before,
   .Plate i {
     animation: none !important;
