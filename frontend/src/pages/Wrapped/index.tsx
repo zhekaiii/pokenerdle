@@ -1,4 +1,6 @@
 import api from "@/api";
+import { sessionAtom } from "@/atoms/auth";
+import { useAuth } from "@/hooks/useAuth";
 import "@fontsource/anton/400.css";
 import "@fontsource/rubik/500.css";
 import "@fontsource/rubik/700.css";
@@ -6,6 +8,7 @@ import "@fontsource/rubik/900.css";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 import clsx from "clsx";
+import { useAtomValue } from "jotai";
 import posthog from "posthog-js";
 import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -172,12 +175,21 @@ const WrappedPage: React.FC = () => {
   const search = useLocation({ select: (location) => location.searchStr });
   const demo = import.meta.env.DEV ? getDemoResponse(search) : null;
 
+  // The server renders the page with the player's user, but the access token reaches the
+  // client later (Supabase's INITIAL_SESSION), and the API client sends it only once it
+  // is there. A request before that would be answered for the anonymous PostHog id and,
+  // with staleTime Infinity, kept. So a signed-in player's request waits for the session,
+  // and the cache is keyed on the player so a sign-out and sign-in never shows the last
+  // player's story. If the session turns out to be gone, user clears and the anonymous
+  // request goes ahead.
+  const { user } = useAuth();
+  const session = useAtomValue(sessionAtom);
   const query = useQuery({
-    queryKey: [WRAPPED_QUERY_KEY],
+    queryKey: [WRAPPED_QUERY_KEY, user?.id ?? "anon"],
     queryFn: api.daily.getWrapped,
     staleTime: Infinity,
     retry: 1,
-    enabled: !demo,
+    enabled: !demo && (!user || !!session),
   });
   const { isError, isFetching, refetch } = query;
   const data = demo ?? query.data;
