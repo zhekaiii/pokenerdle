@@ -73,7 +73,7 @@ const LoadingScreen: React.FC = () => {
       <div className={clsx(classes.Title, classes.Slam)}>
         {t("loading.title")}
       </div>
-      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(".4s")}>
+      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(0.4)}>
         {t("loading.sticker")}
       </div>
     </Poster>
@@ -87,10 +87,10 @@ const ErrorScreen: React.FC<{ onRetry: () => void }> = ({ onRetry }) => {
       <div className={clsx(classes.Title, classes.Slam)}>
         {t("error.title")}
       </div>
-      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(".4s")}>
+      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(0.4)}>
         {t("error.sticker")}
       </div>
-      <div className={clsx(classes.Body, classes.Up)} style={delay(".7s")}>
+      <div className={clsx(classes.Body, classes.Up)} style={delay(0.7)}>
         {t("error.body")}
       </div>
       <button type="button" className={classes.Button} onClick={onRetry}>
@@ -107,13 +107,13 @@ const BeforeScreen: React.FC = () => {
       <div className={clsx(classes.Title, classes.Slam)}>
         {t("before.title")}
       </div>
-      <div className={clsx(classes.When, classes.Slam)} style={delay(".25s")}>
+      <div className={clsx(classes.When, classes.Slam)} style={delay(0.25)}>
         {t("before.when")}
       </div>
-      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(".7s")}>
+      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(0.7)}>
         {t("before.sticker")}
       </div>
-      <div className={clsx(classes.Body, classes.Up)} style={delay(".95s")}>
+      <div className={clsx(classes.Body, classes.Up)} style={delay(0.95)}>
         {t("before.body")}
       </div>
     </Poster>
@@ -127,10 +127,10 @@ const ClosedScreen: React.FC = () => {
       <div className={clsx(classes.Title, classes.Slam)}>
         {t("closed.title")}
       </div>
-      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(".5s")}>
+      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(0.5)}>
         {t("closed.sticker")}
       </div>
-      <div className={clsx(classes.Body, classes.Up)} style={delay(".8s")}>
+      <div className={clsx(classes.Body, classes.Up)} style={delay(0.8)}>
         {t("closed.body")}
       </div>
       <Link to="/daily" className={classes.Button}>
@@ -148,10 +148,10 @@ const EmptyScreen: React.FC = () => {
       <div className={clsx(classes.Title, classes.Slam)}>
         {t("empty.title")}
       </div>
-      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(".5s")}>
+      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(0.5)}>
         {t("empty.sticker")}
       </div>
-      <div className={clsx(classes.Body, classes.Up)} style={delay(".8s")}>
+      <div className={clsx(classes.Body, classes.Up)} style={delay(0.8)}>
         {t("empty.body")}
       </div>
       <Link to="/daily" className={classes.Button}>

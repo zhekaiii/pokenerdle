@@ -99,7 +99,7 @@ interface ScreenViewProps {
 const ScreenView: React.FC<ScreenViewProps> = ({ id, data, enter }) => {
   const el = useRef<HTMLElement>(null);
   const enterOnMount = useRef(enter);
-  const Content = SCREEN_COMPONENTS[id];
+  const ScreenComponent = SCREEN_COMPONENTS[id];
 
   // Before first paint, so the screen never shows in place for a frame before it moves.
   useLayoutEffect(() => {
@@ -124,7 +124,7 @@ const ScreenView: React.FC<ScreenViewProps> = ({ id, data, enter }) => {
       data-screen={id}
       className={clsx(classes.Screen, classes.StoryScreen, classes[TONE[id]])}
     >
-      <Content data={data} />
+      <ScreenComponent data={data} />
     </section>
   );
 };

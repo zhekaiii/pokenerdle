@@ -10,26 +10,30 @@ import classes from "../Wrapped.module.scss";
 import Artwork from "./Artwork";
 
 const MAX_THUMBNAILS = 6;
+// When each count appears, in seconds. The same value sets the element's entrance delay
+// and starts its count.
+const DAYS_AT = 0.2;
+const UNIQUE_AT = 1.5;
 
 const ShowingUpView: React.FC<{ data: WrappedResponse; stats: WrappedStats }> = ({
   data,
   stats,
 }) => {
   const { t, i18n } = useTranslation("wrapped");
-  const days = useCountUp(stats.daysPlayed);
-  const unique = useCountUp(stats.uniquePokemon);
+  const days = useCountUp(stats.daysPlayed, { delaySeconds: DAYS_AT });
+  const unique = useCountUp(stats.uniquePokemon, { delaySeconds: UNIQUE_AT });
   return (
     <>
       <div className={clsx(classes.Tag, classes.Pop)}>{t("showingUp.tag")}</div>
       <div
         className={clsx(classes.Huge, classes.ShowingUpCount, classes.Slam)}
-        style={delay(".2s")}
+        style={delay(DAYS_AT)}
       >
         {days}
       </div>
       <div
         className={clsx(classes.Sticker, classes.StickerSmall, classes.Pop)}
-        style={delay(".7s")}
+        style={delay(0.7)}
       >
         {t("showingUp.days")}
       </div>
@@ -41,14 +45,14 @@ const ShowingUpView: React.FC<{ data: WrappedResponse; stats: WrappedStats }> = 
             <Artwork
               key={id}
               className={clsx(classes.Mon, classes.Pop)}
-              style={delay(`${(1 + n * 0.08).toFixed(2)}s`)}
+              style={delay(1 + n * 0.08)}
               src={mon.artwork}
               alt={mon.name}
             />
           );
         })}
       </div>
-      <div className={clsx(classes.Line, classes.Up)} style={delay("1.5s")}>
+      <div className={clsx(classes.Line, classes.Up)} style={delay(UNIQUE_AT)}>
         <Trans
           t={t}
           i18nKey="showingUp.unique"

@@ -28,19 +28,19 @@ const TypesView: React.FC<{ topTypes: WrappedStats["topTypes"] }> = ({
       <div
         ref={nameRef}
         className={clsx(classes.Title, classes.TopType, classes.Slam)}
-        style={delay(".2s")}
+        style={delay(0.2)}
       >
         {topName}
       </div>
       <div
         className={clsx(classes.Huge, classes.TypePercent, classes.Slam)}
-        style={delay(".6s")}
+        style={delay(0.6)}
       >
         {toPercent(top.share)}%
       </div>
       <div
         className={clsx(classes.Body, classes.BodyCenter, classes.BodyLight, classes.Up)}
-        style={delay("1s")}
+        style={delay(1)}
       >
         {t("types.body", { type: topName })}
       </div>
@@ -49,7 +49,7 @@ const TypesView: React.FC<{ topTypes: WrappedStats["topTypes"] }> = ({
           <div
             key={type}
             className={clsx(classes.Bar, classes.Up)}
-            style={delay(`${(1.3 + rank * 0.15).toFixed(2)}s`)}
+            style={delay(1.3 + rank * 0.15)}
           >
             <span>{typeName(type)}</span>
             <div>

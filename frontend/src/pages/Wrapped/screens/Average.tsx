@@ -7,31 +7,34 @@ import type { ScreenProps } from "../Story";
 import { useCountUp } from "../useCountUp";
 import classes from "../Wrapped.module.scss";
 
+// When the number appears, in seconds. The same value sets the entrance delay and starts the count.
+const NUMBER_AT = 0.5;
+
 const AverageView: React.FC<{ stats: WrappedStats; average: number }> = ({
   stats,
   average,
 }) => {
   const { t } = useTranslation("wrapped");
-  const shown = useCountUp(average, { decimals: 1 });
+  const shown = useCountUp(average, { decimals: 1, delaySeconds: NUMBER_AT });
   return (
     <>
       <div className={clsx(classes.Tag, classes.Pop)}>{t("average.tag")}</div>
-      <div className={clsx(classes.Lead, classes.Up)} style={delay(".2s")}>
+      <div className={clsx(classes.Lead, classes.Up)} style={delay(0.2)}>
         {t("average.lead")}
       </div>
       <div
         className={clsx(classes.Huge, classes.AverageNumber, classes.Slam)}
-        style={delay(".5s")}
+        style={delay(NUMBER_AT)}
       >
         {shown.toFixed(1)}
       </div>
-      <div className={clsx(classes.Sticker, classes.Pop)} style={delay("1.1s")}>
+      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(1.1)}>
         {t("average.unit")}
       </div>
       <div className={classes.Grow} />
       <div
         className={clsx(classes.Body, classes.BodyCenter, classes.Up)}
-        style={delay("1.4s")}
+        style={delay(1.4)}
       >
         {t("average.body", { count: stats.daysSolved })}
       </div>

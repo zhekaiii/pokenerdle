@@ -13,26 +13,26 @@ const Thanks: React.FC<ScreenProps> = () => {
       <div className={classes.Grow} />
       <div
         className={clsx(classes.Title, classes.ThanksTitle, classes.Slam)}
-        style={delay(".15s")}
+        style={delay(0.15)}
       >
         {t("thanks.thanksFor")}
       </div>
       <div
         className={clsx(classes.Title, classes.ThanksTitle, classes.ThanksBig, classes.Slam)}
-        style={delay(".35s")}
+        style={delay(0.35)}
       >
         {t("thanks.playing")}
       </div>
       <div
         className={clsx(classes.Sticker, classes.StickerSmall, classes.Pop)}
-        style={delay(".9s")}
+        style={delay(0.9)}
       >
         {t("thanks.seeYou")}
       </div>
       <div className={classes.Grow} />
       <div
         className={clsx(classes.Body, classes.BodyCenter, classes.BodyLight, classes.Up)}
-        style={delay("1.2s")}
+        style={delay(1.2)}
       >
         {t("thanks.body")}
       </div>

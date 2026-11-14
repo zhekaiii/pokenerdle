@@ -29,7 +29,7 @@ const FirstGuess: React.FC<ScreenProps> = ({ data }) => {
       </div>
       <div
         className={clsx(classes.Burst, classes.PosterBurst, classes.Pop)}
-        style={delay(".2s")}
+        style={delay(0.2)}
       >
         <Artwork src={mon.artwork} alt={mon.name} />
       </div>
@@ -41,7 +41,7 @@ const FirstGuess: React.FC<ScreenProps> = ({ data }) => {
           classes.FirstGuessName,
           classes.Slam,
         )}
-        style={delay(".7s")}
+        style={delay(0.7)}
       >
         {mon.name}
       </div>
@@ -53,7 +53,7 @@ const FirstGuess: React.FC<ScreenProps> = ({ data }) => {
           classes.AfterName,
           classes.Up,
         )}
-        style={delay("1.1s")}
+        style={delay(1.1)}
       >
         {t("firstGuess.line", { date })}
       </div>
@@ -64,7 +64,7 @@ const FirstGuess: React.FC<ScreenProps> = ({ data }) => {
           classes.AfterBody,
           classes.Pop,
         )}
-        style={delay("1.4s")}
+        style={delay(1.4)}
       >
         {t("firstGuess.welcome")}
       </div>
@@ -78,7 +78,7 @@ const FirstGuess: React.FC<ScreenProps> = ({ data }) => {
             classes.FirstGuessDays,
             classes.Up,
           )}
-          style={delay("1.7s")}
+          style={delay(1.7)}
         >
           {t("firstGuess.days", { count: data.daysPlayed })}
         </div>

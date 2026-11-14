@@ -16,6 +16,10 @@ import { useCountUp } from "../useCountUp";
 import classes from "../Wrapped.module.scss";
 import Artwork from "./Artwork";
 
+// When the fastest-solve panel, and so its count, appears, in seconds. The same value sets the
+// panel's entrance delay and starts the count.
+const FASTEST_AT = 0.2;
+
 type ClockStats = NonNullable<WrappedStats["clock"]>;
 
 const ClockView: React.FC<{ data: WrappedResponse; clock: ClockStats }> = ({
@@ -26,7 +30,7 @@ const ClockView: React.FC<{ data: WrappedResponse; clock: ClockStats }> = ({
   const fastest = pokemonInfo(data, clock.fastest.pokemonId, i18n.language);
   const seconds = toSolveSeconds(clock.fastest.ms);
   const asMinutes = isMinutesClock(seconds);
-  const shown = useCountUp(seconds);
+  const shown = useCountUp(seconds, { delaySeconds: FASTEST_AT });
   const longest = clock.longest;
   const longestMon =
     longest && pokemonInfo(data, longest.pokemonId, i18n.language);
@@ -36,7 +40,7 @@ const ClockView: React.FC<{ data: WrappedResponse; clock: ClockStats }> = ({
       <div className={clsx(classes.Tag, classes.Pop)}>{t("clock.tag")}</div>
       <div
         className={clsx(classes.Panel, classes.FastPanel, classes.Pop)}
-        style={delay(".2s")}
+        style={delay(FASTEST_AT)}
       >
         <div className={classes.FastText}>
           <div className={classes.PanelSub}>{t("clock.fastest")}</div>
@@ -66,7 +70,7 @@ const ClockView: React.FC<{ data: WrappedResponse; clock: ClockStats }> = ({
       {longest && longestMon && longestTime && (
         <div
           className={clsx(classes.Panel, classes.LongPanel, classes.Pop)}
-          style={delay(".9s")}
+          style={delay(0.9)}
         >
           <div className={clsx(classes.Burst, classes.LongBurst)}>
             <Artwork src={longestMon.artwork} alt={longestMon.name} />

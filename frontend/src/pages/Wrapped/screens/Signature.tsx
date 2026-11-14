@@ -21,20 +21,20 @@ const SignatureView: React.FC<{ data: WrappedResponse; stats: WrappedStats }> = 
       <div className={clsx(classes.Tag, classes.Pop)}>{t("signature.tag")}</div>
       <div
         className={clsx(classes.Burst, classes.PosterBurst, classes.Pop)}
-        style={delay(".2s")}
+        style={delay(0.2)}
       >
         <Artwork src={mon.artwork} alt={mon.name} />
       </div>
       <div
         ref={nameRef}
         className={clsx(classes.Title, classes.FitName, classes.Slam)}
-        style={delay(".7s")}
+        style={delay(0.7)}
       >
         {mon.name}
       </div>
       <div
         className={clsx(classes.Body, classes.BodyCenter, classes.AfterName, classes.Up)}
-        style={delay("1.1s")}
+        style={delay(1.1)}
       >
         {t("signature.body", { name: mon.name })}
       </div>
@@ -45,7 +45,7 @@ const SignatureView: React.FC<{ data: WrappedResponse; stats: WrappedStats }> = 
           classes.AfterBody,
           classes.Pop,
         )}
-        style={delay("1.4s")}
+        style={delay(1.4)}
       >
         {t("signature.days", { count: stats.opener.days })}
       </div>

@@ -14,19 +14,19 @@ const Opener: React.FC<ScreenProps> = ({ data }) => {
       <div className={classes.Grow} />
       <div
         className={clsx(classes.Title, classes.OpenerTitle, classes.Slam)}
-        style={delay(".15s")}
+        style={delay(0.15)}
       >
         {t("opener.your")}
       </div>
       <div
         className={clsx(classes.Huge, classes.OpenerYear, classes.Slam)}
-        style={delay(".35s")}
+        style={delay(0.35)}
       >
         {WRAPPED_YEAR}
       </div>
       <div
         className={clsx(classes.Title, classes.OpenerSub, classes.Slam)}
-        style={delay(".55s")}
+        style={delay(0.55)}
       >
         {t("opener.in")}
       </div>
@@ -35,7 +35,7 @@ const Opener: React.FC<ScreenProps> = ({ data }) => {
       {data.daysPlayed > 0 && (
         <div
           className={clsx(classes.Sticker, classes.StickerSmall, classes.Pop)}
-          style={delay(".9s")}
+          style={delay(0.9)}
         >
           {t("opener.period")}
         </div>

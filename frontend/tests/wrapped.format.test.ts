@@ -77,7 +77,10 @@ describe("dates", () => {
   });
 
   test("a range in one month names the month once", () => {
-    expect(formatDayRange("en", "2026-03-04", "2026-03-26")).toBe("4 – 26 Mar");
+    // ICU versions differ in the spaces around the dash.
+    expect(formatDayRange("en", "2026-03-04", "2026-03-26")).toMatch(
+      /^4\s*[–-]\s*26 Mar$/,
+    );
   });
 
   test("a one-day range is just the day", () => {

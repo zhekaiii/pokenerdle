@@ -13,13 +13,16 @@ import type { ScreenProps } from "../Story";
 import { useCountUp } from "../useCountUp";
 import classes from "../Wrapped.module.scss";
 
+// When the count appears, in seconds. The same value sets the entrance delay and starts the count.
+const COUNT_AT = 0.2;
+
 type StreakStats = NonNullable<WrappedStats["streak"]>;
 
 const percent = (fraction: number) => `${fraction * 100}%`;
 
 const StreakView: React.FC<{ streak: StreakStats }> = ({ streak }) => {
   const { t, i18n } = useTranslation("wrapped");
-  const length = useCountUp(streak.length);
+  const length = useCountUp(streak.length, { delaySeconds: COUNT_AT });
   const place = placeStreak(streak);
   const months = t("streak.months").split(",");
   return (
@@ -27,11 +30,11 @@ const StreakView: React.FC<{ streak: StreakStats }> = ({ streak }) => {
       <div className={clsx(classes.Tag, classes.Pop)}>{t("streak.tag")}</div>
       <div
         className={clsx(classes.Huge, classes.StreakCount, classes.Slam)}
-        style={delay(".2s")}
+        style={delay(COUNT_AT)}
       >
         {length}
       </div>
-      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(".7s")}>
+      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(0.7)}>
         {t("streak.inARow")}
       </div>
       <div
@@ -43,7 +46,7 @@ const StreakView: React.FC<{ streak: StreakStats }> = ({ streak }) => {
           "--f": place.centre,
         })}
       >
-        <div className={clsx(classes.Flag, classes.Pop)} style={delay("1.5s")}>
+        <div className={clsx(classes.Flag, classes.Pop)} style={delay(1.5)}>
           {formatDayRange(i18n.language, streak.start, streak.end)}
         </div>
         <div className={classes.Track}>
@@ -68,7 +71,7 @@ const StreakView: React.FC<{ streak: StreakStats }> = ({ streak }) => {
       </div>
       <div
         className={clsx(classes.Body, classes.BodyCenter, classes.Up)}
-        style={delay("1.8s")}
+        style={delay(1.8)}
       >
         {t("streak.body")}
       </div>
