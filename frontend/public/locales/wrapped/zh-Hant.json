@@ -87,5 +87,27 @@
     "line": "你的第一次猜測，在 {{date}}。",
     "welcome": "歡迎來到 Pokenerdle",
     "days_other": "你在 1 月至 11 月間玩了 {{count}} 天。"
+  },
+  "card": {
+    "headline": "我的 2026 Pokenerdle",
+    "signatureOpener": "招牌開局",
+    "firstGuess": "首猜",
+    "new": "新手",
+    "days_other": "天",
+    "rookieStrip": "我的第一次猜測",
+    "streak": "最長連勝",
+    "type": "最愛屬性",
+    "average": "平均",
+    "unique": "猜過的寶可夢",
+    "solved": "解開天數",
+    "valueDays_other": "{{count}} 天",
+    "valueGuesses": "{{value}} 次猜測",
+    "joined": "加入",
+    "status": "身份",
+    "rookie": "新手",
+    "rookieCard": "新手卡",
+    "avg": "平均",
+    "save": "儲存圖片",
+    "share": "分享"
   }
 }

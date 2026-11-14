@@ -16,6 +16,7 @@ import Background, {
 } from "./Background";
 import { buildScreens, SIMPLE_SCREENS, type ScreenId } from "./screens";
 import Average from "./screens/Average";
+import CardScreen from "./screens/CardScreen";
 import Clock from "./screens/Clock";
 import FirstGuess from "./screens/FirstGuess";
 import Opener from "./screens/Opener";
@@ -63,19 +64,6 @@ interface Content {
   enter: Enter | null; // how `main` arrives; null when it was there from the start
 }
 
-// Stands in for the card screen until it is built.
-const CardPlaceholder: React.FC<ScreenProps> = () => {
-  const { t } = useTranslation("wrapped");
-  return (
-    <>
-      <div className={clsx(classes.Tag, classes.Pop)}>{t("tag")}</div>
-      <div className={classes.Main}>
-        <div className={clsx(classes.Title, classes.Slam)}>card</div>
-      </div>
-    </>
-  );
-};
-
 const SCREEN_COMPONENTS: Record<ScreenId, React.FC<ScreenProps>> = {
   opener: Opener,
   showingUp: ShowingUp,
@@ -86,7 +74,7 @@ const SCREEN_COMPONENTS: Record<ScreenId, React.FC<ScreenProps>> = {
   average: Average,
   thanks: Thanks,
   firstGuess: FirstGuess,
-  card: CardPlaceholder,
+  card: CardScreen,
 };
 
 interface ScreenViewProps {

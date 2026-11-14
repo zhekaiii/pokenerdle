@@ -92,5 +92,29 @@
     "welcome": "Welcome to Pokenerdle",
     "days_one": "You played on {{count}} day, Jan to Nov.",
     "days_other": "You played on {{count}} days, Jan to Nov."
+  },
+  "card": {
+    "headline": "My 2026 in Pokenerdle",
+    "signatureOpener": "Signature opener",
+    "firstGuess": "First guess",
+    "new": "NEW",
+    "days_one": "day",
+    "days_other": "days",
+    "rookieStrip": "My very first guess",
+    "streak": "Longest streak",
+    "type": "Top type",
+    "average": "Average",
+    "unique": "Pokémon named",
+    "solved": "Days solved",
+    "valueDays_one": "{{count}} day",
+    "valueDays_other": "{{count}} days",
+    "valueGuesses": "{{value}} guesses",
+    "joined": "Joined",
+    "status": "Status",
+    "rookie": "Rookie",
+    "rookieCard": "Rookie card",
+    "avg": "avg",
+    "save": "Save image",
+    "share": "Share"
   }
 }

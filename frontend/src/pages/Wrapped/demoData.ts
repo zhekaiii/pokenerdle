@@ -1,7 +1,8 @@
-import type { WrappedResponse } from "@pokenerdle/shared/wrapped";
+import type { WrappedFinish, WrappedResponse } from "@pokenerdle/shared/wrapped";
 
 // Made-up players for trying the story in development: ?demo=1 for the full story,
-// ?demo=simple for the simplified one. No local player is eligible, so this is the only
+// ?demo=simple for the simplified one. ?demo=1&finish=standard|foil|gold|rainbow shows
+// that card finish. No local player is eligible, so this is the only
 // way to see it. Only reachable behind import.meta.env.DEV (see index.tsx).
 
 const artwork = (id: number) =>
@@ -69,10 +70,27 @@ const simple: WrappedResponse = {
   pokemon,
 };
 
+// An average that earns each finish, so the story and the card agree with ?finish=.
+const FINISH_AVERAGE: Record<WrappedFinish, number> = {
+  standard: 4.8,
+  foil: 4.4,
+  gold: 3.9,
+  rainbow: 3.4,
+};
+
+const isFinish = (value: string | null): value is WrappedFinish =>
+  value !== null && value in FINISH_AVERAGE;
+
 // `search` is the location's query string, with or without the leading "?".
 export const getDemoResponse = (search: string): WrappedResponse | null => {
-  const demo = new URLSearchParams(search).get("demo");
+  const params = new URLSearchParams(search);
+  const demo = params.get("demo");
   if (demo === "simple") return simple;
-  if (demo === "1") return full;
-  return null;
+  if (demo !== "1") return null;
+  const finish = params.get("finish");
+  if (!isFinish(finish) || !full.stats) return full;
+  return {
+    ...full,
+    stats: { ...full.stats, finish, average: FINISH_AVERAGE[finish] },
+  };
 };

@@ -1,0 +1,708 @@
+// The collectible card and the screen that shows it. Ported from
+// docs/superpowers/specs/2026-11-13-wrapped-prototype.html.
+// Sizes are in cqw of .Tilt (the card's own width), so the card scales as one piece
+// wherever it is placed: on the story screen, or off-screen for the share image.
+
+$display: "Anton", "Noto Sans SC", "Noto Sans TC", Impact, sans-serif;
+$text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
+
+// The card, its tilt and its shadow. --rx and --ry (-1 to 1) and --f (0 to 1) are set from
+// the pointer by useCardTilt; --art-scale and --art-brightness by Card, from its artwork.
+// The shadow is its own layer that only slides, so tilting never repaints the card.
+.Tilt {
+  position: relative;
+  isolation: isolate; // keeps the shadow layer (z-index -1) inside the card
+  width: 100%;
+  container-type: inline-size;
+  font-family: $text;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  --rx: 0;
+  --ry: 0;
+  --f: 0.25;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: 6% / 4.29%;
+    background: #111;
+    transform: perspective(700px) rotateX(calc(var(--ry) * -14deg))
+      rotateY(calc(var(--rx) * 14deg));
+    translate: calc(2.9% - var(--rx) * 2.1%) calc(2.07% - var(--ry) * 1.5%);
+  }
+}
+
+// A card that moves. A still has no tilt, easing or animation; its shadow sits flat.
+.Interactive {
+  &::before {
+    transition:
+      translate 0.25s ease-out,
+      transform 0.25s ease-out;
+    animation: wobsh 1.3s ease-in-out 1.15s 1;
+  }
+
+  .Card {
+    will-change: transform;
+    transition: transform 0.25s ease-out;
+    transform: perspective(700px) rotateX(calc(var(--ry) * -14deg))
+      rotateY(calc(var(--rx) * 14deg));
+    animation: wob 1.3s ease-in-out 1.15s 1;
+  }
+
+  // While a pointer is on the card there is no easing: it follows directly.
+  &.Live::before,
+  &.Live .Card {
+    transition: none;
+  }
+
+  .Gold .Art img,
+  .Rainbow .Art img,
+  .Rainbow .Art::before {
+    transition: translate 0.25s ease-out;
+  }
+  &.Live .Gold .Art img,
+  &.Live .Rainbow .Art img,
+  &.Live .Rainbow .Art::before {
+    transition: none;
+  }
+}
+
+// The Pokémon shifts slightly against the card as it tilts.
+.Gold .Art img,
+.Rainbow .Art img,
+.Rainbow .Art::before {
+  translate: calc(var(--rx) * -4cqw) calc(var(--ry) * -4cqw);
+}
+
+.Card {
+  width: 100cqw;
+  aspect-ratio: 5 / 7;
+  padding: 4cqw;
+  border-radius: 6cqw;
+  border: 1.5cqw solid #111;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  color: #1c1c28;
+  background: var(--frame);
+}
+
+.In {
+  flex: 1;
+  min-width: 0;
+  border-radius: 3.6cqw;
+  padding: 4cqw;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--paper, linear-gradient(170deg, #f3efff, #d9d2ff));
+  box-shadow: inset 0 0 0 0.9cqw rgba(255, 255, 255, 0.7);
+}
+
+.Tagline {
+  font-size: 3.3cqw;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.Bar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 3cqw;
+}
+
+// useFitText sets --fit when the name is too wide.
+.Name {
+  font-family: $display;
+  text-transform: uppercase;
+  font-size: calc(11.2cqw * var(--fit, 1));
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.Corner {
+  font-weight: 900;
+  font-size: 4cqw;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1;
+
+  b {
+    font-family: $display;
+    font-weight: 400;
+    font-size: 9.7cqw;
+    color: var(--hot, #e3350d);
+  }
+}
+
+.Art {
+  margin: 2cqw 0;
+  flex: 1;
+  min-height: 0;
+  border-radius: 2cqw;
+  border: 1.4cqw solid var(--rim, #c9b037);
+  position: relative;
+  overflow: hidden;
+  background: var(--artbg);
+
+  // Rays behind the Pokémon
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -60%;
+    background: repeating-conic-gradient(
+      rgba(255, 255, 255, 0.3) 0 10deg,
+      transparent 10deg 20deg
+    );
+  }
+
+  img {
+    position: absolute;
+    inset: 3%;
+    width: 94%;
+    height: 94%;
+    max-width: none; // the global img reset caps width at 100%, which gold and rainbow outgrow
+    object-fit: contain;
+    filter: drop-shadow(0 1.5cqw 1.5cqw rgba(0, 0, 0, 0.35));
+    // No long-press menu or drag on the artwork
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+  }
+}
+
+.Strip {
+  font-size: 3.5cqw;
+  line-height: 1.2;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  border-radius: 1.2cqw;
+  padding: 0.9cqw 1.5cqw;
+  margin-bottom: 0.9cqw;
+  background: var(--stripbg, linear-gradient(90deg, #c9b037, #f6e9a6, #c9b037));
+}
+
+.Row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3cqw;
+  white-space: nowrap;
+  padding: 1.4cqw 0.9cqw;
+  border-bottom: 0.45cqw solid var(--line, rgba(17, 17, 17, 0.18));
+
+  span {
+    font-weight: 900;
+    font-size: 4.7cqw;
+  }
+
+  b {
+    font-family: $display;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 7.3cqw;
+    line-height: 1.15;
+  }
+}
+
+.Foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 3.5cqw;
+  line-height: 1.2;
+  font-weight: 900;
+  margin-top: 2cqw;
+
+  i {
+    font-style: normal;
+    letter-spacing: 0.1em;
+    margin-left: 1.5cqw;
+  }
+}
+
+// The finish's band of light is --f across the card. Moving, it sweeps (see .Interactive
+// below); still, or while a pointer holds it, it sits where --f puts it.
+
+// FOIL: a still rainbow tint and faint diagonal stripes over the card, behind the
+// Pokémon, and a band of light in front of everything
+.Foil {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    opacity: 0.8;
+    background:
+      repeating-linear-gradient(
+        115deg,
+        rgba(255, 255, 255, 0.14) 0 1.2cqw,
+        transparent 1.2cqw 3cqw
+      ),
+      linear-gradient(
+        115deg,
+        rgba(255, 60, 170, 0.7),
+        rgba(255, 220, 60, 0.65),
+        rgba(60, 230, 255, 0.7),
+        rgba(160, 110, 255, 0.7),
+        rgba(255, 60, 170, 0.7),
+        rgba(255, 220, 60, 0.65),
+        rgba(60, 230, 255, 0.7)
+      );
+    background-size:
+      auto,
+      200% 100%;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.9) 48%,
+      transparent 66%
+    );
+    background-size: 200% 100%;
+    background-position: calc((0.96 - var(--f)) * 100%) 0;
+  }
+
+  .Art img {
+    z-index: 5;
+  }
+}
+
+// GOLD: gold frame, sparkles, cream paper, artwork bursting out of its window
+.Gold {
+  --frame: linear-gradient(
+    135deg,
+    #a8740a,
+    #ffe680 22%,
+    #c9972b 45%,
+    #fff3b0 62%,
+    #b8860b 80%,
+    #ffe680
+  );
+  --paper: linear-gradient(170deg, #fffbea, #f4e3a8);
+  --artbg: radial-gradient(circle at 50% 60%, #fffbe0 0, #f1cf6a 55%, #b8860b 100%);
+  --rim: #8a5d00;
+  --hot: #8a5d00;
+
+  .Name,
+  .Row b {
+    color: #5c3d00;
+  }
+
+  .Art {
+    overflow: visible;
+    background:
+      repeating-conic-gradient(
+        from 0deg at 50% 60%,
+        rgba(255, 255, 255, 0.32) 0 10deg,
+        transparent 10deg 20deg
+      ),
+      var(--artbg);
+
+    &::before {
+      display: none;
+    }
+
+    img {
+      inset: -16% -11% -8% -11%;
+      width: 122%;
+      height: 124%;
+      z-index: 3;
+      scale: var(--art-scale, 1);
+    }
+  }
+
+  .Bar,
+  .Tagline,
+  .Strip {
+    position: relative;
+    z-index: 3;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    mix-blend-mode: hard-light;
+    background: linear-gradient(
+      115deg,
+      transparent 28%,
+      rgba(255, 170, 30, 0.55) 40%,
+      rgba(255, 226, 140, 0.9) 48%,
+      rgba(255, 170, 30, 0.55) 56%,
+      transparent 68%
+    );
+    background-size: 200% 100%;
+    background-position: calc((0.96 - var(--f)) * 100%) 0;
+  }
+}
+
+// Sparkles, shared by gold and rainbow
+.Gold::before,
+.Rainbow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, #fff 0 0.7cqw, transparent 0.8cqw) 8% 6% / 23cqw 19cqw,
+    radial-gradient(circle, #fff 0 0.45cqw, transparent 0.55cqw) 61% 47% / 17cqw 29cqw,
+    radial-gradient(circle, #fff 0 0.9cqw, transparent 1cqw) 34% 81% / 37cqw 31cqw;
+  opacity: 0.8;
+}
+
+.Seal {
+  position: absolute;
+  z-index: 3;
+  right: 2cqw;
+  top: 2cqw;
+  width: 15cqw;
+  height: 15cqw;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: $display;
+  font-size: 3.8cqw;
+  line-height: 1;
+  text-transform: uppercase;
+  color: #111;
+  background: #ffe680;
+  border: 1cqw solid #111;
+  rotate: 12deg;
+}
+
+// RAINBOW: brushed silver frame, a pastel rainbow washing over the whole card, artwork
+// filling the card and coloured by a rainbow of its own
+.Rainbow {
+  --frame: linear-gradient(
+    135deg,
+    #c9cfd8,
+    #ffffff 28%,
+    #aeb6c2 52%,
+    #f4f6f8 74%,
+    #bcc4cf
+  );
+  --line: rgba(17, 17, 17, 0.22);
+  --hot: #b3126f;
+
+  .In {
+    overflow: hidden;
+    box-shadow: inset 0 0 0 0.7cqw rgba(255, 255, 255, 0.85);
+    background: repeating-linear-gradient(
+      125deg,
+      #ff9ecb 0,
+      #ffc79e 29cqw,
+      #fff3a0 58cqw,
+      #a9efb9 86cqw,
+      #9ed9ff 115cqw,
+      #c8a9ff 141cqw,
+      #ff9ecb 160cqw
+    );
+    background-size: 600cqw 100%;
+  }
+
+  .In > *:not(.Art) {
+    position: relative;
+    z-index: 2;
+  }
+
+  .Art {
+    overflow: visible;
+    border-color: transparent;
+    background: none;
+
+    // The Pokémon's own rainbow: a vivid gradient cut to the artwork's shape, sitting
+    // under the grey shading. Saturated colour bands, opacity .5, 60% of the card wide at
+    // 70 degrees, cycling through the spectrum every 3 seconds.
+    &::before {
+      inset: -34% -16% -62% -16%;
+      opacity: 0.5;
+      --p: 60cqw;
+      background: repeating-linear-gradient(
+        70deg,
+        #ff0a7a 0,
+        #ff7a00 calc(var(--p) * 0.17),
+        #ffe600 calc(var(--p) * 0.34),
+        #00e060 calc(var(--p) * 0.5),
+        #00a8ff calc(var(--p) * 0.67),
+        #8a2bff calc(var(--p) * 0.84),
+        #ff0a7a var(--p)
+      );
+      -webkit-mask: var(--art-mask) center / contain no-repeat;
+      mask: var(--art-mask) center / contain no-repeat;
+      scale: var(--art-scale, 1);
+    }
+
+    // Grey shading. 1.75 is the owner's brightness (RAINBOW_SHADING_BRIGHTNESS in
+    // cardArt.ts), times the correction for how light the artwork is.
+    img {
+      inset: -34% -16% -62% -16%;
+      width: 132%;
+      height: 196%;
+      filter: grayscale(1) contrast(1.1) brightness(calc(1.75 * var(--art-brightness, 1)));
+      mix-blend-mode: multiply;
+      opacity: 0.9;
+      scale: var(--art-scale, 1);
+    }
+
+    .Seal {
+      z-index: 3;
+    }
+  }
+
+  .Name,
+  .Row b,
+  .Row span,
+  .Corner {
+    text-shadow:
+      0 0 1.5cqw rgba(255, 255, 255, 0.9),
+      0 0 0.6cqw rgba(255, 255, 255, 0.9);
+  }
+
+  .Strip {
+    --stripbg: rgba(255, 255, 255, 0.6);
+  }
+
+  .Row {
+    background: rgba(255, 255, 255, 0.28);
+  }
+
+  // Fine holo lines, and the band of light
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    background:
+      repeating-linear-gradient(
+        60deg,
+        rgba(255, 255, 255, 0.35) 0 0.5cqw,
+        transparent 0.5cqw 1.6cqw
+      ),
+      linear-gradient(
+        115deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.9) 48%,
+        transparent 66%
+      );
+    background-size:
+      auto,
+      200% 100%;
+    background-position:
+      0 0,
+      calc((0.96 - var(--f)) * 100%) 0;
+  }
+
+  .Seal {
+    background: #fff;
+  }
+}
+
+// Motion, for a card that moves: rays turn, the band of light sweeps every 4.5 s, and on
+// rainbow the Pokémon's colours cycle every 3 s. The rainbow background stays put.
+.Interactive {
+  .Art::before {
+    animation: spin 24s linear infinite;
+  }
+  .Gold .Art::before {
+    animation: none;
+  }
+  .Foil::before,
+  .Gold::after,
+  .Rainbow::after {
+    animation: slide 4.5s linear infinite;
+  }
+  .Rainbow::after {
+    animation-name: slideRainbow;
+  }
+  .Rainbow .Art::before {
+    animation: rbhue 3s linear infinite;
+  }
+
+  // Under a finger or the mouse, the band follows the pointer instead
+  &.Live .Foil::before,
+  &.Live .Gold::after,
+  &.Live .Rainbow::after {
+    animation: none;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes slide {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+// Two background layers, and only the second moves
+@keyframes slideRainbow {
+  from {
+    background-position:
+      0 0,
+      0 0;
+  }
+  to {
+    background-position:
+      0 0,
+      200% 0;
+  }
+}
+@keyframes rbhue {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+@keyframes wob {
+  0%,
+  100% {
+    transform: perspective(700px) rotateY(0deg);
+  }
+  30% {
+    transform: perspective(700px) rotateY(-13deg) rotateX(5deg);
+  }
+  65% {
+    transform: perspective(700px) rotateY(11deg) rotateX(-4deg);
+  }
+}
+// The shadow wobbles with the card, shifting opposite its tilt
+@keyframes wobsh {
+  0%,
+  100% {
+    translate: 2.9% 2.07%;
+    transform: perspective(700px) rotateY(0deg);
+  }
+  30% {
+    translate: 4.85% 2.6%;
+    transform: perspective(700px) rotateY(-13deg) rotateX(5deg);
+  }
+  65% {
+    translate: 1.25% 1.64%;
+    transform: perspective(700px) rotateY(11deg) rotateX(-4deg);
+  }
+}
+@keyframes drop {
+  0% {
+    translate: 0 -150cqw;
+    rotate: -30deg;
+  }
+  60% {
+    translate: 0 3cqw;
+    rotate: -2deg;
+  }
+  80% {
+    translate: 0 -1.5cqw;
+    rotate: -5deg;
+  }
+  100% {
+    translate: 0 0;
+    rotate: -4deg;
+  }
+}
+
+// The card screen: headline, the tilted card, the address and the buttons. The card's
+// wrapper is sized in stage cqw; the card inside measures itself.
+.Headline {
+  align-self: center;
+}
+
+.Drop {
+  align-self: center;
+  flex: none;
+  width: 66cqw;
+  margin-top: 6cqw;
+  rotate: -4deg;
+  animation: drop 0.9s cubic-bezier(0.3, 0.9, 0.4, 1) 0.15s both;
+}
+
+.Url {
+  align-self: center;
+  font-family: $display;
+  font-size: 8cqw;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  margin-top: 6cqw;
+}
+
+.Buttons {
+  display: flex;
+  gap: 3cqw;
+  width: 100%;
+
+  button {
+    flex: 1;
+    font-family: $display;
+    text-transform: uppercase;
+    font-size: 5.4cqw;
+    line-height: 1.2;
+    padding: 2.4cqw 0;
+    cursor: pointer;
+    color: #111;
+    background: #fff;
+    border: 0.9cqw solid #111;
+    box-shadow: 1.2cqw 1.2cqw 0 #111;
+
+    &:active:not(:disabled) {
+      translate: 0.8cqw 0.8cqw;
+      box-shadow: 0.4cqw 0.4cqw 0 #111;
+    }
+
+    // Until saving and sharing are wired up
+    &:disabled {
+      cursor: default;
+      opacity: 0.6;
+    }
+  }
+
+  .Primary {
+    background: #e3350d;
+    color: #fff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Drop,
+  .Tilt,
+  .Tilt::before,
+  .Tilt *,
+  .Tilt *::before,
+  .Tilt *::after {
+    animation: none !important;
+  }
+}

@@ -1,6 +1,17 @@
 import { describe, expect, test } from "bun:test";
-import type { WrappedStats } from "@pokenerdle/shared/wrapped";
-import { buildScreens, SIMPLE_SCREENS } from "../src/pages/Wrapped/screens";
+import type { WrappedResponse, WrappedStats } from "@pokenerdle/shared/wrapped";
+import {
+  ART_REFERENCE,
+  fitArtwork,
+  measureArtwork,
+} from "../src/pages/Wrapped/cardArt";
+import { TYPE_COLORS, typeColors } from "../src/pages/Wrapped/cardColors";
+import { pokemonInfo } from "../src/pages/Wrapped/format";
+import {
+  buildScreens,
+  pickCardRows,
+  SIMPLE_SCREENS,
+} from "../src/pages/Wrapped/screens";
 import { getTargetIndex, TRANSITION } from "../src/pages/Wrapped/transition";
 
 const solve = { ms: 38_000, date: "2026-05-12", pokemonId: 448 };
@@ -118,5 +129,196 @@ describe("TRANSITION", () => {
     expect(TRANSITION.enterAtMs + TRANSITION.enterMs).toBeLessThanOrEqual(
       TRANSITION.busyMs,
     );
+  });
+});
+
+describe("pickCardRows", () => {
+  test("a full year shows streak, type and average", () => {
+    expect(pickCardRows(stats())).toEqual([
+      { kind: "streak", days: 23 },
+      { kind: "type", type: "dragon" },
+      { kind: "average", value: 3.9 },
+    ]);
+  });
+
+  test("without a streak it shows type, average, unique", () => {
+    expect(pickCardRows(stats({ streak: null }))).toEqual([
+      { kind: "type", type: "dragon" },
+      { kind: "average", value: 3.9 },
+      { kind: "unique", count: 243 },
+    ]);
+  });
+
+  test("an average above 4.5 or null is replaced by unique", () => {
+    const expected = [
+      { kind: "streak", days: 23 },
+      { kind: "type", type: "dragon" },
+      { kind: "unique", count: 243 },
+    ];
+    expect(pickCardRows(stats({ average: 4.6 }))).toEqual(expected);
+    expect(pickCardRows(stats({ average: null }))).toEqual(expected);
+    expect(pickCardRows(stats({ average: 4.5 }))[2]).toEqual({
+      kind: "average",
+      value: 4.5,
+    });
+  });
+
+  test("only two rows when nothing else is available", () => {
+    expect(
+      pickCardRows(stats({ streak: null, average: null, daysSolved: 0 })),
+    ).toEqual([
+      { kind: "type", type: "dragon" },
+      { kind: "unique", count: 243 },
+    ]);
+  });
+
+  test("solved days is the last fallback and needs at least 1", () => {
+    const bare = { streak: null, average: null, uniquePokemon: 0 };
+    expect(pickCardRows(stats({ ...bare, daysSolved: 12 }))).toEqual([
+      { kind: "type", type: "dragon" },
+      { kind: "solved", days: 12 },
+    ]);
+    expect(pickCardRows(stats({ ...bare, daysSolved: 0 }))).toEqual([
+      { kind: "type", type: "dragon" },
+    ]);
+  });
+
+  test("a streak under the minimum is not shown", () => {
+    expect(pickCardRows(stats({ streak: { length: 2, start: "2026-03-04", end: "2026-03-05" } }))[0])
+      .toEqual({ kind: "type", type: "dragon" });
+  });
+
+  test("a player with no top type still gets rows", () => {
+    expect(pickCardRows(stats({ topTypes: [] })).map((row) => row.kind)).toEqual([
+      "streak",
+      "average",
+      "unique",
+    ]);
+  });
+});
+
+describe("a card whose artwork is missing", () => {
+  const response: WrappedResponse = {
+    phase: "live",
+    eligible: true,
+    daysPlayed: 187,
+    stats: stats(),
+    simple: null,
+    pokemon: {
+      445: {
+        names: { en: "Garchomp", "zh-Hans": "烈咬陆鲨", "zh-Hant": "烈咬陸鯊" },
+        artwork: null,
+        types: ["dragon", "ground"],
+      },
+    },
+  };
+
+  test("still yields a renderable card", () => {
+    expect(() => pickCardRows(response.stats as WrappedStats)).not.toThrow();
+    // The card reads its name and art through pokemonInfo; a null artwork is what
+    // makes Artwork show the question-mark placeholder.
+    expect(pokemonInfo(response, 445, "en")).toEqual({
+      name: "Garchomp",
+      artwork: null,
+    });
+  });
+
+  test("a Pokemon missing from the response falls back to its number", () => {
+    expect(pokemonInfo(response, 9999, "en")).toEqual({
+      name: "#9999",
+      artwork: null,
+    });
+  });
+});
+
+describe("TYPE_COLORS", () => {
+  const TYPES = [
+    "bug", "dark", "dragon", "electric", "fairy", "fighting", "fire", "flying", "ghost",
+    "grass", "ground", "ice", "normal", "poison", "psychic", "rock", "steel", "water",
+  ];
+
+  test("covers all 18 types, each with every colour", () => {
+    expect(Object.keys(TYPE_COLORS).sort()).toEqual([...TYPES].sort());
+    for (const type of TYPES) {
+      for (const value of Object.values(TYPE_COLORS[type])) {
+        expect(value.length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  test("no two types share a frame", () => {
+    const frames = TYPES.map((type) => TYPE_COLORS[type].frame);
+    expect(new Set(frames).size).toBe(TYPES.length);
+  });
+
+  test("an unknown type falls back to a defined one", () => {
+    expect(typeColors("shadow")).toEqual(TYPE_COLORS.normal);
+    expect(typeColors("dragon")).toEqual(TYPE_COLORS.dragon);
+  });
+});
+
+// RGBA pixels for a w x h image with an opaque grey block at (x, y, bw, bh).
+const image = (
+  w: number,
+  h: number,
+  block: { x: number; y: number; bw: number; bh: number; grey: number },
+) => {
+  const data = new Uint8ClampedArray(w * h * 4);
+  for (let row = block.y; row < block.y + block.bh; row++) {
+    for (let col = block.x; col < block.x + block.bw; col++) {
+      const i = (row * w + col) * 4;
+      data.set([block.grey, block.grey, block.grey, 255], i);
+    }
+  }
+  return data;
+};
+
+describe("measureArtwork", () => {
+  test("reads how much of the image the drawing fills and how light it is", () => {
+    // A 5x5 block in the middle of a 10x10 image covers a quarter of it, so 0.5 a side.
+    const m = measureArtwork(image(10, 10, { x: 2, y: 2, bw: 5, bh: 5, grey: 255 }), 10, 10);
+    expect(m?.fill).toBeCloseTo(0.5);
+    expect(m?.lightness).toBeCloseTo(1);
+    const dark = measureArtwork(image(10, 10, { x: 0, y: 0, bw: 10, bh: 10, grey: 0 }), 10, 10);
+    expect(dark?.fill).toBeCloseTo(1);
+    expect(dark?.lightness).toBeCloseTo(0);
+  });
+
+  test("a fully transparent image has nothing to measure", () => {
+    expect(measureArtwork(new Uint8ClampedArray(10 * 10 * 4), 10, 10)).toBeNull();
+  });
+});
+
+describe("fitArtwork", () => {
+  test("the reference drawing is left as it is", () => {
+    const fit = fitArtwork(ART_REFERENCE);
+    expect(fit.scale).toBeCloseTo(1);
+    expect(fit.brightness).toBeCloseTo(1);
+  });
+
+  test("a drawing that fills less of its image is scaled up, to at most 1.15", () => {
+    const fit = fitArtwork({ fill: ART_REFERENCE.fill * 0.9, lightness: ART_REFERENCE.lightness });
+    expect(fit.scale).toBeCloseTo(1 / 0.9);
+    expect(fitArtwork({ fill: 0.1, lightness: ART_REFERENCE.lightness }).scale).toBe(1.15);
+  });
+
+  test("a drawing that fills more is scaled down, to at least 0.6", () => {
+    const fit = fitArtwork({ fill: ART_REFERENCE.fill * 1.25, lightness: ART_REFERENCE.lightness });
+    expect(fit.scale).toBeCloseTo(0.8);
+    expect(fitArtwork({ fill: ART_REFERENCE.fill * 10, lightness: ART_REFERENCE.lightness }).scale).toBe(0.6);
+  });
+
+  test("a light drawing gets darker shading and a dark one never goes past the cap", () => {
+    // brightness is a multiplier on the owner's 1.75 setting; the product stays in 0.45 to 1.8.
+    expect(fitArtwork({ fill: ART_REFERENCE.fill, lightness: ART_REFERENCE.lightness * 1.5 }).brightness)
+      .toBeCloseTo(1 / 1.5);
+    expect(fitArtwork({ fill: ART_REFERENCE.fill, lightness: 0.01 }).brightness).toBeCloseTo(1.8 / 1.75);
+    expect(fitArtwork({ fill: ART_REFERENCE.fill, lightness: 1 }).brightness).toBeCloseTo(
+      ART_REFERENCE.lightness,
+    );
+  });
+
+  test("nothing measured means no adjustment", () => {
+    expect(fitArtwork(null)).toEqual({ scale: 1, brightness: 1 });
   });
 });

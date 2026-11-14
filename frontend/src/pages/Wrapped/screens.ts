@@ -1,5 +1,6 @@
 import {
   WRAPPED_FOIL_MAX_AVG,
+  WRAPPED_MIN_STREAK,
   type WrappedStats,
 } from "@pokenerdle/shared/wrapped";
 
@@ -36,4 +37,35 @@ export const buildScreens = (stats: WrappedStats): ScreenId[] => {
   }
   screens.push("thanks", "card");
   return screens;
+};
+
+export type CardRow =
+  | { kind: "streak"; days: number }
+  | { kind: "type"; type: string }
+  | { kind: "average"; value: number }
+  | { kind: "unique"; count: number }
+  | { kind: "solved"; days: number };
+
+const CARD_ROWS = 3;
+
+// The stat rows on the card: the first three that have something flattering to show, in
+// this order (spec section 4, "Weak results"). Fewer than three when nothing else
+// qualifies.
+export const pickCardRows = (stats: WrappedStats): CardRow[] => {
+  const candidates: (CardRow | false)[] = [
+    !!stats.streak &&
+      stats.streak.length >= WRAPPED_MIN_STREAK && {
+        kind: "streak",
+        days: stats.streak.length,
+      },
+    stats.topTypes.length > 0 && { kind: "type", type: stats.topTypes[0].type },
+    stats.average !== null &&
+      stats.average <= WRAPPED_FOIL_MAX_AVG && {
+        kind: "average",
+        value: stats.average,
+      },
+    stats.uniquePokemon > 0 && { kind: "unique", count: stats.uniquePokemon },
+    stats.daysSolved >= 1 && { kind: "solved", days: stats.daysSolved },
+  ];
+  return candidates.filter((row): row is CardRow => row !== false).slice(0, CARD_ROWS);
 };
