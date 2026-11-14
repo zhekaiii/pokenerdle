@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import React, { useEffect, useImperativeHandle, useRef } from "react";
 import type { ScreenId } from "./screens";
+import { TRANSITION } from "./transition";
 import classes from "./Wrapped.module.scss";
 
 export interface BackgroundHandle {
@@ -26,12 +27,6 @@ const PLATE_CLASS: Record<ScreenId, string> = {
   thanks: classes.P9,
 };
 
-const FLOOD_MS = 650;
-// The new plate trails the black edge, so a thin black ring shows between old and new.
-const FLOOD_LEAD_MS = 80;
-// Just after the new plate has covered the stage.
-const FLOOD_DONE_MS = 740;
-const FADE_MS = 200;
 const FLOOD_EASING = "cubic-bezier(.6,0,.3,1)";
 
 // Stacking inside .Bg: resting plates 0, the plate on show 1, the black edge 2, a plate
@@ -111,11 +106,11 @@ const Background: React.FC<BackgroundProps> = ({ screens, initial, ref }) => {
     if (prefersReducedMotion()) {
       running.current.animations = [
         arriving.animate([{ opacity: 0 }, { opacity: 1 }], {
-          duration: FADE_MS,
+          duration: TRANSITION.fadeMs,
           fill: "backwards",
         }),
       ];
-      running.current.timer = window.setTimeout(() => set(to), FADE_MS);
+      running.current.timer = window.setTimeout(() => set(to), TRANSITION.fadeMs);
       return;
     }
 
@@ -126,18 +121,18 @@ const Background: React.FC<BackgroundProps> = ({ screens, initial, ref }) => {
     ink.current.style.display = "block";
     running.current.animations = [
       ink.current.animate(reveal, {
-        duration: FLOOD_MS,
+        duration: TRANSITION.floodMs,
         easing: FLOOD_EASING,
         fill: "both",
       }),
       arriving.animate(reveal, {
-        duration: FLOOD_MS,
-        delay: FLOOD_LEAD_MS,
+        duration: TRANSITION.floodMs,
+        delay: TRANSITION.floodLeadMs,
         easing: FLOOD_EASING,
         fill: "backwards",
       }),
     ];
-    running.current.timer = window.setTimeout(() => set(to), FLOOD_DONE_MS);
+    running.current.timer = window.setTimeout(() => set(to), TRANSITION.floodDoneMs);
   };
 
   useImperativeHandle(ref, () => ({ flood, set }));

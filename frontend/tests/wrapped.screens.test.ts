@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import type { WrappedStats } from "@pokenerdle/shared/wrapped";
 import { buildScreens, SIMPLE_SCREENS } from "../src/pages/Wrapped/screens";
+import { getTargetIndex, TRANSITION } from "../src/pages/Wrapped/transition";
 
 const solve = { ms: 38_000, date: "2026-05-12", pokemonId: 448 };
 
@@ -76,5 +77,46 @@ describe("buildScreens", () => {
 describe("SIMPLE_SCREENS", () => {
   test("is the four-screen story with the first guess before the thank-you", () => {
     expect(SIMPLE_SCREENS).toEqual(["opener", "firstGuess", "thanks", "card"]);
+  });
+});
+
+describe("getTargetIndex", () => {
+  test("a normal step moves one screen either way", () => {
+    expect(getTargetIndex(3, 9, 1, false)).toBe(4);
+    expect(getTargetIndex(3, 9, -1, false)).toBe(2);
+  });
+
+  test("back from the first screen does nothing", () => {
+    expect(getTargetIndex(0, 9, -1, false)).toBeNull();
+  });
+
+  test("forward from the last screen does nothing", () => {
+    expect(getTargetIndex(8, 9, 1, false)).toBeNull();
+    expect(getTargetIndex(3, 4, 1, false)).toBeNull();
+  });
+
+  test("a step while a change is playing is rejected", () => {
+    expect(getTargetIndex(3, 9, 1, true)).toBeNull();
+    expect(getTargetIndex(3, 9, -1, true)).toBeNull();
+  });
+
+  test("the ends are still reachable from the screen next to them", () => {
+    expect(getTargetIndex(1, 9, -1, false)).toBe(0);
+    expect(getTargetIndex(7, 9, 1, false)).toBe(8);
+  });
+});
+
+describe("TRANSITION", () => {
+  test("input unlocks only after the flood and its black edge are done", () => {
+    expect(TRANSITION.floodDoneMs).toBeGreaterThanOrEqual(
+      TRANSITION.floodLeadMs + TRANSITION.floodMs,
+    );
+    expect(TRANSITION.busyMs).toBeGreaterThanOrEqual(TRANSITION.floodDoneMs);
+  });
+
+  test("the new screen has finished arriving before input unlocks", () => {
+    expect(TRANSITION.enterAtMs + TRANSITION.enterMs).toBeLessThanOrEqual(
+      TRANSITION.busyMs,
+    );
   });
 });

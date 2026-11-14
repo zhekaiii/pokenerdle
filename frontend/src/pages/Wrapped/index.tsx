@@ -11,7 +11,7 @@ import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Plate } from "./Background";
 import { getDemoResponse } from "./demoData";
-import type { ScreenId } from "./screens";
+import { buildScreens, SIMPLE_SCREENS, type ScreenId } from "./screens";
 import Story from "./Story";
 import classes from "./Wrapped.module.scss";
 
@@ -205,7 +205,9 @@ const WrappedPage: React.FC = () => {
   } else if (data.phase === "closed") {
     screen = <ClosedScreen />;
   } else if (data.eligible || data.simple) {
-    screen = <Story data={data} />;
+    // Story keeps an index into its screen list, so a different list needs a fresh Story.
+    const screens = data.stats ? buildScreens(data.stats) : SIMPLE_SCREENS;
+    screen = <Story key={screens.join()} data={data} />;
   } else {
     screen = <EmptyScreen />;
   }

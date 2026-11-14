@@ -15,6 +15,7 @@ import Background, {
   type BackgroundHandle,
 } from "./Background";
 import { buildScreens, SIMPLE_SCREENS, type ScreenId } from "./screens";
+import { getTargetIndex, TRANSITION } from "./transition";
 import classes from "./Wrapped.module.scss";
 
 // Every screen reads what it needs from `data`. data.stats is set whenever a full-story
@@ -26,15 +27,6 @@ export interface ScreenProps {
 // A tap that starts on one of these never turns the page, so a screen's own controls
 // (and its card) can take taps. Mark a non-interactive element with data-no-nav.
 const NO_NAV_SELECTOR = "button, a, input, select, textarea, [data-no-nav]";
-
-// A screen change, in milliseconds. The flood and the leaving content start together;
-// the new content mounts partway through and the whole thing settles at TRANSITION_MS.
-const ENTER_AT_MS = 220;
-const TRANSITION_MS = 780;
-const LEAVE_MS = 380;
-const LEAVE_STAGGER_MS = 35;
-const ENTER_MS = 500;
-const FADE_MS = 200;
 
 type Tone = "Red" | "Blue" | "Orange" | "Yellow" | "Purple" | "Green" | "Pink";
 
@@ -98,8 +90,8 @@ const ScreenView: React.FC<ScreenViewProps> = ({ id, data, enter }) => {
             { transform: "none" },
           ],
       how.kind === "fade"
-        ? { duration: FADE_MS }
-        : { duration: ENTER_MS, easing: "cubic-bezier(.2,.9,.3,1)" },
+        ? { duration: TRANSITION.fadeMs }
+        : { duration: TRANSITION.enterMs, easing: "cubic-bezier(.2,.9,.3,1)" },
     );
   }, []);
 
@@ -137,14 +129,14 @@ const Story: React.FC<{ data: WrappedResponse }> = ({ data }) => {
     timers.current.push(window.setTimeout(fn, ms));
   }, []);
 
-  // Moves to screen `to`; (x, y) is where the background flood starts, in stage pixels.
+  // Steps one screen in `direction`; (x, y) is where the background flood starts, in
+  // stage pixels.
   const go = useCallback(
-    (to: number, x: number, y: number) => {
+    (direction: 1 | -1, x: number, y: number) => {
       const root = stage.current;
       const from = indexRef.current;
-      if (!root || busy.current || to < 0 || to >= screens.length || to === from) {
-        return;
-      }
+      const to = getTargetIndex(from, screens.length, direction, busy.current);
+      if (!root || to === null) return;
       busy.current = true;
       indexRef.current = to;
       setIndex(to);
@@ -160,16 +152,15 @@ const Story: React.FC<{ data: WrappedResponse }> = ({ data }) => {
 
       if (prefersReducedMotion()) {
         leaving?.animate([{ opacity: 1 }, { opacity: 0 }], {
-          duration: FADE_MS,
+          duration: TRANSITION.fadeMs,
           fill: "forwards",
         });
         setContent({ main: to, leaving: from, enter: { kind: "fade" } });
-        later(finish, FADE_MS);
+        later(finish, TRANSITION.fadeMs);
         return;
       }
 
       // Old content leaves in the direction of travel, one piece after another.
-      const direction = to > from ? 1 : -1;
       const width = root.clientWidth;
       [...(leaving?.children ?? [])]
         .filter((piece) => !piece.classList.contains(classes.Grow))
@@ -183,8 +174,8 @@ const Story: React.FC<{ data: WrappedResponse }> = ({ data }) => {
               },
             ],
             {
-              duration: LEAVE_MS,
-              delay: n * LEAVE_STAGGER_MS,
+              duration: TRANSITION.leaveMs,
+              delay: n * TRANSITION.leaveStaggerMs,
               easing: "cubic-bezier(.5,0,.9,.4)",
               fill: "forwards",
             },
@@ -198,9 +189,9 @@ const Story: React.FC<{ data: WrappedResponse }> = ({ data }) => {
             leaving: from,
             enter: { kind: "slide", direction },
           }),
-        ENTER_AT_MS,
+        TRANSITION.enterAtMs,
       );
-      later(finish, TRANSITION_MS);
+      later(finish, TRANSITION.busyMs);
     },
     [screens, later],
   );
@@ -217,12 +208,11 @@ const Story: React.FC<{ data: WrappedResponse }> = ({ data }) => {
       // Space belongs to a focused button or link, which it activates.
       const onControl =
         e.target instanceof Element && e.target.closest(NO_NAV_SELECTOR);
-      const current = indexRef.current;
       if (e.key === "ArrowRight" || (e.key === " " && !onControl)) {
         e.preventDefault();
-        go(current + 1, root.clientWidth, root.clientHeight / 2);
+        go(1, root.clientWidth, root.clientHeight / 2);
       } else if (e.key === "ArrowLeft") {
-        go(current - 1, 0, root.clientHeight / 2);
+        go(-1, 0, root.clientHeight / 2);
       }
     };
     document.addEventListener("keydown", onKeyDown);
@@ -242,7 +232,7 @@ const Story: React.FC<{ data: WrappedResponse }> = ({ data }) => {
     const box = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - box.left;
     const y = e.clientY - box.top;
-    go(indexRef.current + (x < box.width / 3 ? -1 : 1), x, y);
+    go(x < box.width / 3 ? -1 : 1, x, y);
   };
 
   // Rendered oldest first so the arriving screen sits on top of the leaving one.
