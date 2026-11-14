@@ -4,6 +4,7 @@ import {
   getDailyPokemonAnswerController,
   getUserGuessesController,
   getUserStatsController,
+  getWrappedController,
   migrateUserGuessesController,
   submitDailyPokemonGuessController,
 } from "../controllers/daily.controllers.js";
@@ -32,6 +33,7 @@ dailyRouter.get(
 );
 dailyRouter.get("/challenge/calendar", authenticateUser, getCalendarController);
 dailyRouter.get("/challenge/stats", authenticateUser, getUserStatsController);
+dailyRouter.get("/wrapped", authenticateUser, getWrappedController);
 dailyRouter.post(
   "/challenge/migrate",
   authenticateUser,

@@ -3,6 +3,7 @@ import seedrandom from "seedrandom";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
 import { Prisma } from "../generated/prisma-pg/client.js";
 import { pgClient } from "../lib/pg.js";
+import type { WrappedGuessRow } from "../services/wrapped.stats.js";
 
 export const getDailyPokemonFromDb = async (date: string) => {
   return pgClient.dailyChallenge.findUnique({
@@ -293,4 +294,36 @@ export const getCalendarData = async (userId: string, month: string) => {
     pokemonId: challengeMap.get(g.dailyChallengeId) ?? 0,
     attempts: Number(g.count),
   }));
+};
+
+// All of a player's guesses with dailyChallengeId from startInclusive to endInclusive (yyyy-MM-dd strings compare in date order).
+export const getUserGuessesInWindow = async (
+  userId: string,
+  startInclusive: string,
+  endInclusive: string,
+): Promise<WrappedGuessRow[]> => {
+  return pgClient.userDailyGuess.findMany({
+    where: {
+      userId,
+      dailyChallengeId: { gte: startInclusive, lte: endInclusive },
+    },
+    select: {
+      dailyChallengeId: true,
+      pokemonId: true,
+      guessNumber: true,
+      isCorrect: true,
+      createdAt: true,
+    },
+  });
+};
+
+// The player's earliest guess on any date, live or archive.
+export const getUserFirstGuess = async (
+  userId: string,
+): Promise<{ pokemonId: number; createdAt: Date } | null> => {
+  return pgClient.userDailyGuess.findFirst({
+    where: { userId },
+    orderBy: { createdAt: "asc" },
+    select: { pokemonId: true, createdAt: true },
+  });
 };

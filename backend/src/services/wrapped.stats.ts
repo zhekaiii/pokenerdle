@@ -38,7 +38,7 @@ interface SolvedDay {
   correct: WrappedGuessRow; // the lowest-numbered correct guess of the day
 }
 
-const singaporeDate = (instant: Date): string =>
+export const singaporeDate = (instant: Date): string =>
   format(new TZDate(instant, SINGAPORE_TIMEZONE), "yyyy-MM-dd");
 
 // A day is live when its first guess was made on the challenge date in Singapore.

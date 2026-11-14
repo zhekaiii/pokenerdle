@@ -4,6 +4,7 @@ import {
   StatGuessScope,
   StatGuessStats,
 } from "@pokenerdle/shared";
+import type { WrappedLang, WrappedPokemonInfo } from "@pokenerdle/shared/wrapped";
 import { readFileSync, writeFileSync } from "fs";
 import { Heap } from "heap-js";
 import {
@@ -24,7 +25,8 @@ import { prisma } from "../lib/prisma.js";
 import { randomChoice, randomChoiceWeighted } from "../utils/random.js";
 import { DailyPokemon, isTruthy } from "../utils/types.js";
 
-export const getPokemonNames = async (lang: LanguageId) => {
+// Names for every default form, or only for `ids` when given.
+export const getPokemonNames = async (lang: LanguageId, ids?: number[]) => {
   const pokemonDetails: PokemonNamesResponse[] = await prisma.$queryRaw`
     SELECT
       p.id,
@@ -46,6 +48,7 @@ export const getPokemonNames = async (lang: LanguageId) => {
     WHERE
       psn.language_id = ${lang}
       AND f.is_default = true
+      ${ids ? Prisma.sql`AND p.id IN (${Prisma.join(ids)})` : Prisma.empty}
     GROUP BY
       p.id;
   `;
@@ -440,4 +443,74 @@ export const getMetagameFormats = async () => {
     displayName: r.display_name,
     pokemonCount: r._count.metagame_format_pokemon,
   }));
+};
+
+const WRAPPED_LANGUAGES: Record<WrappedLang, LanguageId> = {
+  en: LanguageId.English,
+  "zh-Hans": LanguageId.SimplifiedChinese,
+  "zh-Hant": LanguageId.TraditionalChinese,
+};
+
+// Official artwork first, then the HOME render, else null.
+const pickArtwork = (spritesJson: string | undefined): string | null => {
+  if (!spritesJson) return null;
+  const other = JSON.parse(spritesJson).other;
+  return other?.["official-artwork"]?.front_default ?? other?.home?.front_default ?? null;
+};
+
+/**
+ * Types (lowercase English ids), names in the three app languages and artwork
+ * for the given Pokemon. A name missing in a language falls back to English.
+ */
+export const getWrappedPokemonInfo = async (
+  ids: number[],
+): Promise<Map<number, { types: string[] } & WrappedPokemonInfo>> => {
+  if (ids.length === 0) return new Map();
+
+  const [namesByLang, typeRows, spriteRows] = await Promise.all([
+    Promise.all(
+      Object.entries(WRAPPED_LANGUAGES).map(async ([lang, languageId]) => {
+        const names = await getPokemonNames(languageId, ids);
+        return [lang, new Map(names.map((n) => [n.id, n.name || n.speciesName]))] as const;
+      }),
+    ),
+    prisma.pokemon_v2_pokemontype.findMany({
+      where: { pokemon_id: { in: ids } },
+      select: { pokemon_id: true, pokemon_v2_type: { select: { name: true } } },
+      orderBy: { slot: "asc" },
+    }),
+    prisma.pokemon_v2_pokemonsprites.findMany({
+      where: { pokemon_id: { in: ids } },
+      select: { pokemon_id: true, sprites: true },
+    }),
+  ]);
+  const names = Object.fromEntries(namesByLang) as Record<WrappedLang, Map<number, string>>;
+
+  const typesById = new Map<number, string[]>();
+  for (const { pokemon_id, pokemon_v2_type } of typeRows) {
+    if (pokemon_id === null || !pokemon_v2_type) continue;
+    typesById.set(pokemon_id, [...(typesById.get(pokemon_id) ?? []), pokemon_v2_type.name]);
+  }
+  const spritesById = new Map<number, string>();
+  for (const { pokemon_id, sprites } of spriteRows) {
+    if (pokemon_id !== null && !spritesById.has(pokemon_id)) spritesById.set(pokemon_id, sprites);
+  }
+
+  return new Map(
+    ids.map((id) => {
+      const english = names.en.get(id) ?? "";
+      return [
+        id,
+        {
+          types: typesById.get(id) ?? [],
+          names: {
+            en: english,
+            "zh-Hans": names["zh-Hans"].get(id) || english,
+            "zh-Hant": names["zh-Hant"].get(id) || english,
+          },
+          artwork: pickArtwork(spritesById.get(id)),
+        },
+      ];
+    }),
+  );
 };
