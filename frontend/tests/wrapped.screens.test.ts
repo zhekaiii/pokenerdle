@@ -12,6 +12,7 @@ import {
   pickCardRows,
   SIMPLE_SCREENS,
 } from "../src/pages/Wrapped/screens";
+import { canShareFiles, unicodeRangeCovers } from "../src/pages/Wrapped/shareImage";
 import { getTargetIndex, TRANSITION } from "../src/pages/Wrapped/transition";
 
 const solve = { ms: 38_000, date: "2026-05-12", pokemonId: 448 };
@@ -327,5 +328,70 @@ describe("fitArtwork", () => {
 
   test("nothing measured means no adjustment", () => {
     expect(fitArtwork(null)).toEqual({ scale: 1, brightness: 1 });
+  });
+});
+
+describe("canShareFiles", () => {
+  test("is false where the browser has no canShare", () => {
+    expect(canShareFiles({})).toBe(false);
+    expect(canShareFiles({ canShare: undefined })).toBe(false);
+  });
+
+  test("is false when canShare says the files cannot be shared", () => {
+    expect(canShareFiles({ canShare: () => false })).toBe(false);
+  });
+
+  test("is true when canShare accepts a PNG file, and is asked about files", () => {
+    let asked: ShareData | undefined;
+    const shareable = canShareFiles({
+      canShare: (data) => {
+        asked = data;
+        return true;
+      },
+    });
+    expect(shareable).toBe(true);
+    expect(asked?.files?.[0]?.type).toBe("image/png");
+  });
+
+  test("is false when canShare throws", () => {
+    expect(
+      canShareFiles({
+        canShare: () => {
+          throw new TypeError("not supported");
+        },
+      }),
+    ).toBe(false);
+  });
+});
+
+describe("unicodeRangeCovers", () => {
+  const LATIN = "U+0000-00FF, U+0131, U+0152-0153";
+
+  test("a face with no range covers everything", () => {
+    expect(unicodeRangeCovers("", "烈咬陆鲨")).toBe(true);
+  });
+
+  test("covers text with a character in a span or equal to a single code point", () => {
+    expect(unicodeRangeCovers(LATIN, "Pokenerdle")).toBe(true);
+    expect(unicodeRangeCovers(LATIN, "ı")).toBe(true); // U+0131
+    expect(unicodeRangeCovers(LATIN, "œ")).toBe(true); // U+0153
+  });
+
+  test("covers mixed text when any one character is in range", () => {
+    expect(unicodeRangeCovers("U+4E00-9FFF", "2026 烈咬陆鲨")).toBe(true);
+  });
+
+  test("does not cover text with no character in range", () => {
+    expect(unicodeRangeCovers("U+4E00-9FFF", "Pokenerdle 2026")).toBe(false);
+    expect(unicodeRangeCovers(LATIN, "烈咬陆鲨")).toBe(false);
+  });
+
+  test("a wildcard stands for a whole block", () => {
+    expect(unicodeRangeCovers("U+4??", "Ж")).toBe(true); // U+0416
+    expect(unicodeRangeCovers("U+4??", "Z")).toBe(false);
+  });
+
+  test("an astral character is read as one code point", () => {
+    expect(unicodeRangeCovers("U+1F600-1F64F", "x😀")).toBe(true);
   });
 });

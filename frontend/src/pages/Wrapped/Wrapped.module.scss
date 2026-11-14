@@ -904,6 +904,47 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   flex: 1;
 }
 
+// The share image: the card screen without its buttons, laid out at 1080 × 1920 CSS
+// pixels in a host that sits off-screen (spec section 6). The image is drawn from the
+// inner element, because html-to-image copies the node's own position, which would put
+// the picture off-screen too. Headline, card and address stay clear of the top and
+// bottom 13% of the picture, where story apps put their own interface.
+.ShareHost {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  pointer-events: none;
+}
+
+.ShareImage {
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  container-type: size;
+  font-family: $text;
+  color: #111;
+}
+
+// 13% of the picture's height, in cqw
+$share-safe: 23.1cqw;
+
+.ShareScreen {
+  justify-content: center;
+  padding: $share-safe 7cqw;
+}
+
+// A still: nothing moves, so the picture does not depend on when it is taken. Entrance
+// animations are left off the share image's elements; this covers the plate and the
+// card's own motion.
+.Still,
+.Still *,
+.Still *::before,
+.Still *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .Pop,
   .Up,

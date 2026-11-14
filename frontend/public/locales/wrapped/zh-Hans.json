@@ -108,6 +108,10 @@
     "rookieCard": "新手卡",
     "avg": "平均",
     "save": "保存图片",
-    "share": "分享"
+    "share": "分享",
+    "preparing": "准备中…",
+    "imageFailed": "无法生成图片。",
+    "retry": "重试",
+    "shareFailed": "无法打开分享，请试试保存图片。"
   }
 }

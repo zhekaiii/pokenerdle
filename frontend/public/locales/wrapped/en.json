@@ -115,6 +115,10 @@
     "rookieCard": "Rookie card",
     "avg": "avg",
     "save": "Save image",
-    "share": "Share"
+    "share": "Share",
+    "preparing": "Preparing…",
+    "imageFailed": "Could not make your image.",
+    "retry": "Try again",
+    "shareFailed": "Sharing did not open. Try Save image."
   }
 }
