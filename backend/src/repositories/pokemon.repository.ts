@@ -22,6 +22,7 @@ import {
 import { LanguageId } from "../lib/constants.js";
 import { Graph } from "../lib/graph.js";
 import { prisma } from "../lib/prisma.js";
+import { pickArtwork } from "../utils/artwork.js";
 import { randomChoice, randomChoiceWeighted } from "../utils/random.js";
 import { DailyPokemon, isTruthy } from "../utils/types.js";
 
@@ -449,13 +450,6 @@ const WRAPPED_LANGUAGES: Record<WrappedLang, LanguageId> = {
   en: LanguageId.English,
   "zh-Hans": LanguageId.SimplifiedChinese,
   "zh-Hant": LanguageId.TraditionalChinese,
-};
-
-// Official artwork first, then the HOME render, else null.
-const pickArtwork = (spritesJson: string | undefined): string | null => {
-  if (!spritesJson) return null;
-  const other = JSON.parse(spritesJson).other;
-  return other?.["official-artwork"]?.front_default ?? other?.home?.front_default ?? null;
 };
 
 /**
