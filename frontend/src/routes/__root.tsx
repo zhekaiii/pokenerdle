@@ -8,6 +8,7 @@ import {
   Outlet,
   Scripts,
   useLocation,
+  useMatches,
   useRouter,
 } from "@tanstack/react-router";
 import { i18n } from "i18next";
@@ -30,6 +31,8 @@ function RootLayout() {
   const { v } = Route.useSearch() as SearchParams;
   const location = useLocation();
   const router = useRouter();
+  const matches = useMatches();
+  const hideChrome = matches.some((match) => match.context.hideChrome);
 
   useHydrateAtoms([[userAtom, user]]);
   const theme = useAtomValue(themeAtom);
@@ -121,10 +124,10 @@ function RootLayout() {
       </head>
       <body>
         <PageContainer>
-          <Header />
+          {!hideChrome && <Header />}
           <Outlet />
-          <SiteFooter />
-          <MobileFooter />
+          {!hideChrome && <SiteFooter />}
+          {!hideChrome && <MobileFooter />}
         </PageContainer>
         <Scripts />
       </body>
@@ -133,6 +136,7 @@ function RootLayout() {
 }
 
 interface RootRouteContext {
+  hideChrome?: boolean;
   shouldShowRuleButton?: boolean;
   head: string;
   scripts?: AnyRouteMatch["headScripts"];

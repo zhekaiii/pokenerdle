@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "title": "Your 2026 in Pokenerdle – PokéNerdle"
+  },
+  "tag": "Pokenerdle Wrapped",
+  "loading": {
+    "title": "Loading",
+    "sticker": "Hang on"
+  },
+  "error": {
+    "title": "Oops",
+    "sticker": "Wrapped did not load",
+    "body": "Check your connection and try again.",
+    "retry": "Try again"
+  },
+  "before": {
+    "title": "Coming",
+    "when": "1 December",
+    "sticker": "Your 2026 in Pokenerdle",
+    "body": "Come back then to see how your daily challenges went."
+  },
+  "closed": {
+    "title": "Wrapped 2026",
+    "sticker": "Has ended",
+    "body": "Thanks for playing. Today's daily is waiting.",
+    "cta": "Play today's daily"
+  },
+  "empty": {
+    "title": "Nothing here yet",
+    "sticker": "Your Wrapped is blank",
+    "body": "Wrapped is built from your Daily Challenge guesses, and there are none to show. Play today's daily to get started.",
+    "cta": "Play the daily"
+  },
+  "placeholder": {
+    "days": "days played, Jan to Nov",
+    "full": "Full story",
+    "simple": "Short story"
+  }
+}

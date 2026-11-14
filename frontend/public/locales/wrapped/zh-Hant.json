@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "title": "你的 2026 Pokenerdle 年度回顧 – PokéNerdle"
+  },
+  "tag": "Pokenerdle Wrapped",
+  "loading": {
+    "title": "載入中",
+    "sticker": "稍等一下"
+  },
+  "error": {
+    "title": "哎呀",
+    "sticker": "年度回顧沒能載入",
+    "body": "請檢查網路連線後再試一次。",
+    "retry": "重試"
+  },
+  "before": {
+    "title": "即將登場",
+    "when": "12 月 1 日",
+    "sticker": "你的 2026 Pokenerdle",
+    "body": "屆時再來看看你的每日挑戰戰績吧。"
+  },
+  "closed": {
+    "title": "2026 年度回顧",
+    "sticker": "已經結束",
+    "body": "感謝你的參與。今天的每日挑戰正等著你。",
+    "cta": "去玩今天的挑戰"
+  },
+  "empty": {
+    "title": "這裡還空空的",
+    "sticker": "你的年度回顧是空白的",
+    "body": "年度回顧由你的每日挑戰猜測生成，而目前還沒有紀錄。先去玩一局今天的挑戰吧。",
+    "cta": "去玩每日挑戰"
+  },
+  "placeholder": {
+    "days": "參與天數，1 月至 11 月",
+    "full": "完整故事",
+    "simple": "簡短故事"
+  }
+}
