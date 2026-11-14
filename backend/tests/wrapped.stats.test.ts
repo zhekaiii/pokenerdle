@@ -272,4 +272,35 @@ describe("computeWrappedStats", () => {
     const twelve = days(12).flatMap((d) => solvedIn(d, 3));
     expect(computeWrappedStats(twelve, noTypes).stats?.finish).toBe("foil");
   });
+
+  test("clock is null when the only 2+ guess solve took over an hour", () => {
+    const rows = [
+      g("2026-03-01", 1, { time: "12:00:00" }),
+      g("2026-03-01", 2, { time: "13:01:00", ok: true }),
+      ...playedOn(days(4, 2)),
+    ];
+    expect(computeWrappedStats(rows, noTypes).stats?.clock).toBeNull();
+  });
+
+  test("equal fastest times go to the earlier date, and equal longest times too", () => {
+    const battle = (day: string, minutes: number, p = 1) => [
+      g(day, 1, { time: "12:00:00" }),
+      g(day, 2, { time: `12:${String(minutes).padStart(2, "0")}:00`, ok: true, p }),
+    ];
+    const rows = [
+      ...battle("2026-03-01", 3, 11),
+      ...battle("2026-03-02", 3, 12),
+      ...battle("2026-03-03", 9, 13),
+      ...battle("2026-03-04", 9, 14),
+      ...playedOn(days(1, 5)),
+    ];
+    const clock = computeWrappedStats(rows, noTypes).stats?.clock;
+    expect(clock?.fastest).toEqual({ ms: 180000, date: "2026-03-01", pokemonId: 11 });
+    expect(clock?.longest).toEqual({ ms: 540000, date: "2026-03-03", pokemonId: 13 });
+  });
+
+  test("a one-guess solve counts in the average", () => {
+    const rows = [...solvedIn("2026-03-01", 1), ...solvedIn("2026-03-02", 4), ...playedOn(days(3, 3))];
+    expect(computeWrappedStats(rows, noTypes).stats?.average).toBe(2.5);
+  });
 });
