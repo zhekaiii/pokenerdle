@@ -51,6 +51,12 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
     animation: wob 1.3s ease-in-out 1.15s 1;
   }
 
+  // The first touch ends the landing wobble, so the pointer takes the transform at once.
+  &.Touched::before,
+  &.Touched .Card {
+    animation: none;
+  }
+
   // While a pointer is on the card there is no easing: it follows directly.
   &.Live::before,
   &.Live .Card {

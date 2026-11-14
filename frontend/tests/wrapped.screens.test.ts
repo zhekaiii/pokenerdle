@@ -5,7 +5,7 @@ import {
   fitArtwork,
   measureArtwork,
 } from "../src/pages/Wrapped/cardArt";
-import { TYPE_COLORS, typeColors } from "../src/pages/Wrapped/cardColors";
+import { TYPE_COLORS, typeColors, typeColorVars } from "../src/pages/Wrapped/cardColors";
 import { pokemonInfo } from "../src/pages/Wrapped/format";
 import {
   buildScreens,
@@ -254,6 +254,13 @@ describe("TYPE_COLORS", () => {
   test("an unknown type falls back to a defined one", () => {
     expect(typeColors("shadow")).toEqual(TYPE_COLORS.normal);
     expect(typeColors("dragon")).toEqual(TYPE_COLORS.dragon);
+  });
+
+  test("a card with no top type still gets a frame, never the gold fallbacks", () => {
+    const vars = typeColorVars(undefined) as Record<string, string>;
+    expect(vars["--frame"]).toBe(TYPE_COLORS.normal.frame);
+    expect(vars["--rim"]).toBe(TYPE_COLORS.normal.rim);
+    expect(vars["--stripbg"]).toBe(TYPE_COLORS.normal.strip);
   });
 });
 

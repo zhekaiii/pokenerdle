@@ -50,9 +50,11 @@ export const TYPE_COLORS: Record<string, TypeColors> = {
 export const typeColors = (type: string): TypeColors =>
   TYPE_COLORS[type] ?? TYPE_COLORS.normal;
 
-// The colours as the CSS variables Card.module.scss reads.
-export const typeColorVars = (type: string) => {
-  const c = typeColors(type);
+// The colours as the CSS variables Card.module.scss reads. A card with no top type gets the
+// normal type's colours: without them it would have no frame, and the stylesheet's own
+// fallbacks are gold.
+export const typeColorVars = (type: string | undefined) => {
+  const c = typeColors(type ?? "normal");
   return cssVars({
     "--frame": c.frame,
     "--artbg": c.art,

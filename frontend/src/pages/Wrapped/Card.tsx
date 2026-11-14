@@ -140,7 +140,10 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
 }) => {
   const { t } = useTranslation("wrapped");
   const nameRef = useFitText<HTMLDivElement>(face.name);
-  const { ref, handlers } = useCardTilt<HTMLDivElement>(interactive, classes.Live);
+  const { ref, handlers } = useCardTilt<HTMLDivElement>(interactive, {
+    live: classes.Live,
+    touched: classes.Touched,
+  });
   const artRef = useRef<HTMLDivElement>(null);
   const { finish } = face;
 
@@ -167,7 +170,7 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
       data-no-nav
       className={clsx(classes.Tilt, interactive && classes.Interactive)}
       style={
-        hasTypeColours(finish) && face.topType ? typeColorVars(face.topType) : undefined
+        hasTypeColours(finish) ? typeColorVars(face.topType) : undefined
       }
       {...handlers}
       // The card takes its own touches and taps: they never turn the story's page.
