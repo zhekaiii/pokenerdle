@@ -1,15 +1,18 @@
 import api from "@/api";
-import type { WrappedResponse } from "@pokenerdle/shared/wrapped";
 import "@fontsource/anton/400.css";
 import "@fontsource/rubik/500.css";
 import "@fontsource/rubik/700.css";
 import "@fontsource/rubik/900.css";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import clsx from "clsx";
 import posthog from "posthog-js";
 import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { Plate } from "./Background";
+import { getDemoResponse } from "./demoData";
+import type { ScreenId } from "./screens";
+import Story from "./Story";
 import classes from "./Wrapped.module.scss";
 
 export const WRAPPED_QUERY_KEY = "wrapped";
@@ -17,7 +20,16 @@ export const WRAPPED_QUERY_KEY = "wrapped";
 // Entrance animations read their start time from --d (see Wrapped.module.scss).
 const delay = (seconds: string) => ({ "--d": seconds }) as React.CSSProperties;
 
-type Tone = "Red" | "Blue" | "Yellow" | "Purple" | "Green" | "Pink";
+type Tone = "Red" | "Blue" | "Yellow" | "Purple" | "Green";
+
+// A poster screen uses the plate of the story screen with the same colour.
+const TONE_PLATE: Record<Tone, ScreenId> = {
+  Red: "opener",
+  Blue: "showingUp",
+  Yellow: "signature",
+  Purple: "types",
+  Green: "clock",
+};
 
 // The Chinese lettering fonts are large, so only players reading Chinese download them.
 // Weight 900 only: the poster lettering is always the heaviest weight.
@@ -46,16 +58,7 @@ const Poster: React.FC<PosterProps> = ({ tone, children, busy }) => {
   return (
     <div className={clsx(classes.Stage, classes[tone])}>
       <div className={classes.Bg}>
-        <div className={classes.Plate}>
-          {tone === "Red" && (
-            <>
-              <i />
-              <i />
-              <i />
-              <i />
-            </>
-          )}
-        </div>
+        <Plate id={TONE_PLATE[tone]} />
       </div>
       <section className={classes.Screen} aria-busy={busy}>
         <div className={classes.Tag}>{t("tag")}</div>
@@ -160,45 +163,34 @@ const EmptyScreen: React.FC = () => {
   );
 };
 
-// Stands in for <Story data={data} /> until Task 7 builds it; delete this and the
-// `placeholder` locale keys when it lands.
-const StoryPlaceholder: React.FC<{ data: WrappedResponse }> = ({ data }) => {
-  const { t } = useTranslation("wrapped");
-  return (
-    <Poster tone="Pink">
-      <div className={clsx(classes.Title, classes.Slam)}>
-        {data.eligible ? t("placeholder.full") : t("placeholder.simple")}
-      </div>
-      <div className={clsx(classes.Huge, classes.Slam)} style={delay(".25s")}>
-        {data.daysPlayed}
-      </div>
-      <div className={clsx(classes.Sticker, classes.Pop)} style={delay(".7s")}>
-        {t("placeholder.days")}
-      </div>
-    </Poster>
-  );
-};
-
 const WrappedPage: React.FC = () => {
   const { i18n } = useTranslation("wrapped");
   useChineseFont(i18n.language);
 
-  const { data, isError, isFetching, refetch } = useQuery({
+  // Development only: ?demo=1 or ?demo=simple shows the story with made-up numbers.
+  // The branch is dead in production builds, so none of this ships.
+  const search = useLocation({ select: (location) => location.searchStr });
+  const demo = import.meta.env.DEV ? getDemoResponse(search) : null;
+
+  const query = useQuery({
     queryKey: [WRAPPED_QUERY_KEY],
     queryFn: api.daily.getWrapped,
     staleTime: Infinity,
     retry: 1,
+    enabled: !demo,
   });
+  const { isError, isFetching, refetch } = query;
+  const data = demo ?? query.data;
 
   const hasCapturedOpen = useRef(false);
   useEffect(() => {
-    if (!data || hasCapturedOpen.current) return;
+    if (!query.data || hasCapturedOpen.current) return;
     hasCapturedOpen.current = true;
     posthog.capture("wrapped_opened", {
-      phase: data.phase,
-      eligible: data.eligible,
+      phase: query.data.phase,
+      eligible: query.data.eligible,
     });
-  }, [data]);
+  }, [query.data]);
 
   let screen: React.ReactNode;
   if (!data) {
@@ -213,7 +205,7 @@ const WrappedPage: React.FC = () => {
   } else if (data.phase === "closed") {
     screen = <ClosedScreen />;
   } else if (data.eligible || data.simple) {
-    screen = <StoryPlaceholder data={data} />;
+    screen = <Story data={data} />;
   } else {
     screen = <EmptyScreen />;
   }

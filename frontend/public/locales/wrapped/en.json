@@ -30,10 +30,5 @@
     "sticker": "Your Wrapped is blank",
     "body": "Wrapped is built from your Daily Challenge guesses, and there are none to show. Play today's daily to get started.",
     "cta": "Play the daily"
-  },
-  "placeholder": {
-    "days": "days played, Jan to Nov",
-    "full": "Full story",
-    "simple": "Short story"
   }
 }

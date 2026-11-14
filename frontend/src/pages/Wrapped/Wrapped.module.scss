@@ -33,8 +33,10 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   }
 }
 
-// Living background: one colour plate with a moving pattern. Patterns move by
-// transform on an oversized layer, never by repainting.
+// Living background: one colour plate with a moving pattern per screen. Patterns move
+// by transform on an oversized layer, never by repainting. The Story stacks every plate
+// and floods the next one over the current one; a poster state screen shows a single plate.
+// isolation: isolate keeps the plates' z-index below the screen content.
 .Bg {
   position: absolute;
   inset: 0;
@@ -47,6 +49,7 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   inset: 0;
   background: var(--c);
   overflow: hidden;
+  z-index: 0;
 
   &::before {
     content: "";
@@ -54,14 +57,20 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   }
 }
 
-// Red, rings pulsing outward
-.Red {
-  --c: #e3350d;
-  --ink: #fff;
-  --tagc: #fff;
-  --ttl: #ffde00;
+// The black edge that leads a flood
+.Ink {
+  position: absolute;
+  inset: 0;
+  background: #111;
+  z-index: 2;
+  display: none;
+}
 
-  .Plate i {
+// P1, rings pulsing outward
+.P1 {
+  --c: #e3350d;
+
+  i {
     position: absolute;
     left: 50%;
     top: 45%;
@@ -85,14 +94,11 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   }
 }
 
-// Blue, chevrons rising
-.Blue {
+// P2, chevrons rising
+.P2 {
   --c: #3d8bff;
-  --ink: #111;
-  --tagc: #ffde00;
-  --ttl: #fff;
 
-  .Plate::before {
+  &::before {
     inset: -14cqw;
     animation: rise 1.8s linear infinite;
     background: 0 0 / 20cqw 12cqw
@@ -100,14 +106,25 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   }
 }
 
-// Yellow, sparse plus signs floating up slowly
-.Yellow {
-  --c: #ffde00;
-  --ink: #111;
-  --tagc: #ffde00;
-  --ttl: #e3350d;
+// P3, drifting dots
+.P3 {
+  --c: #ff8a1f;
 
-  .Plate::before {
+  &::before {
+    inset: -12cqw;
+    background: radial-gradient(rgba(0, 0, 0, 0.2) 30%, transparent 31%) 0 0 /
+      6cqw 6cqw;
+    animation: drift 2.4s linear infinite;
+  }
+}
+
+// P4, sparse plus signs floating up slowly. Not rays: the artwork's own circle already
+// has rotating rays, and dense diamonds were tried and made the owner dizzy, so keep this
+// one sparse and slow.
+.P4 {
+  --c: #ffde00;
+
+  &::before {
     inset: -34cqw 0;
     animation: floatup 12s linear infinite;
     background: 0 0 / 32cqw 32cqw
@@ -115,14 +132,11 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   }
 }
 
-// Purple, sliding diagonal stripes
-.Purple {
+// P5, sliding diagonal stripes
+.P5 {
   --c: #8a5cff;
-  --ink: #fff;
-  --tagc: #fff;
-  --ttl: #fff;
 
-  .Plate::before {
+  &::before {
     inset: -36cqw;
     background: repeating-linear-gradient(
       135deg,
@@ -133,14 +147,11 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   }
 }
 
-// Green, speed lines
-.Green {
+// P6, speed lines
+.P6 {
   --c: #23b26d;
-  --ink: #111;
-  --tagc: #ffde00;
-  --ttl: #fff;
 
-  .Plate::before {
+  &::before {
     inset: 0 -62cqw 0 0;
     animation: rush 3s linear infinite;
     background: 0 0 / 60cqw 30cqw
@@ -148,19 +159,83 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   }
 }
 
-// Pink, scattered stars
-.Pink {
+// P7, scattered stars
+.P7 {
   --c: #ff4f9a;
-  --ink: #fff;
-  --tagc: #fff;
-  --ttl: #ffde00;
 
-  .Plate::before {
+  &::before {
     inset: -38cqw;
     animation: stars 9s linear infinite;
     background: 0 0 / 36cqw 36cqw
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M10 2Q10 10 18 10Q10 10 10 18Q10 10 2 10Q10 10 10 2ZM30 23Q30 28 35 28Q30 28 30 33Q30 28 25 28Q30 28 30 23Z' fill='%23fff' fill-opacity='.45'/%3E%3C/svg%3E");
   }
+}
+
+// P8, dots that grow toward the bottom. Reads well as a still, and only bobs gently so
+// the card stays smooth.
+.P8 {
+  --c: #ffde00;
+
+  &::before {
+    inset: -4cqw 0;
+    opacity: 0.17;
+    mix-blend-mode: multiply;
+    filter: contrast(40);
+    animation: bob 6s ease-in-out infinite alternate;
+    background:
+      linear-gradient(to bottom, #fff 5%, #999 100%),
+      radial-gradient(closest-side, #888, #fff) 0 0 / 5cqw 5cqw;
+    background-blend-mode: multiply;
+  }
+}
+
+// P9, thank-you: the opener's red, with sparse dots floating up slowly
+.P9 {
+  --c: #e3350d;
+
+  &::before {
+    inset: -34cqw 0;
+    animation: floatup 14s linear infinite;
+    background: 0 0 / 32cqw 32cqw
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='%23000' fill-opacity='.15'%3E%3Ccircle cx='9' cy='10' r='3.4'/%3E%3Ccircle cx='30' cy='29' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  }
+}
+
+// Text colours per screen. The plate colour comes from the P1 to P9 class above.
+.Red {
+  --ink: #fff;
+  --tagc: #fff;
+  --ttl: #ffde00;
+}
+.Blue {
+  --ink: #111;
+  --tagc: #ffde00;
+  --ttl: #fff;
+}
+.Orange {
+  --ink: #111;
+  --tagc: #ffde00;
+  --ttl: #fff;
+}
+.Yellow {
+  --ink: #111;
+  --tagc: #ffde00;
+  --ttl: #e3350d;
+}
+.Purple {
+  --ink: #fff;
+  --tagc: #fff;
+  --ttl: #fff;
+}
+.Green {
+  --ink: #111;
+  --tagc: #ffde00;
+  --ttl: #fff;
+}
+.Pink {
+  --ink: #fff;
+  --tagc: #fff;
+  --ttl: #ffde00;
 }
 
 @keyframes ring {
@@ -171,6 +246,11 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
 @keyframes rise {
   to {
     translate: 0 -12cqw;
+  }
+}
+@keyframes drift {
+  to {
+    translate: 6cqw 6cqw;
   }
 }
 @keyframes slidex {
@@ -191,6 +271,14 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
 @keyframes stars {
   to {
     translate: 36cqw -36cqw;
+  }
+}
+@keyframes bob {
+  from {
+    translate: 0 -3cqw;
+  }
+  to {
+    translate: 0 3cqw;
   }
 }
 
@@ -360,6 +448,45 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   animation-delay: var(--d, 0s);
 }
 
+// The story: tap anywhere to move on, so the whole stage is the target
+.Tappable {
+  cursor: pointer;
+}
+
+// Progress segments across the top, one per screen
+.Bars {
+  position: absolute;
+  z-index: 5;
+  top: 3.2cqw;
+  left: 4cqw;
+  right: 4cqw;
+  display: flex;
+  gap: 1.2cqw;
+  pointer-events: none;
+
+  i {
+    flex: 1;
+    height: 1.1cqw;
+    border-radius: 1cqw;
+    background: rgba(17, 17, 17, 0.25);
+    border: 0.3cqw solid #111;
+
+    &.BarOn {
+      background: #fff;
+    }
+  }
+}
+
+// A story screen leaves room for the progress segments
+.StoryScreen {
+  padding-top: 13cqw;
+}
+
+// A flexible gap between a screen's pieces. Story does not animate these when a screen leaves.
+.Grow {
+  flex: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .Pop,
   .Up,
@@ -367,5 +494,21 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   .Plate::before,
   .Plate i {
     animation: none !important;
+  }
+
+  // Standing still, the rings sit at four sizes, spread like the moving ones. Without
+  // this they stay at scale 0 and the red plates lose their pattern.
+  .P1 i {
+    scale: 0.2;
+
+    &:nth-child(2) {
+      scale: 0.4;
+    }
+    &:nth-child(3) {
+      scale: 0.6;
+    }
+    &:nth-child(4) {
+      scale: 0.8;
+    }
   }
 }
