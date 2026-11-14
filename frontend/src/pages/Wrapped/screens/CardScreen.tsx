@@ -73,6 +73,9 @@ const CardScreen: React.FC<ScreenProps> = ({ data }) => {
   // cannot know what the browser can share.
   const canShare = useSyncExternalStore(subscribeNever, canShareFiles, () => false);
   const [shareFailed, setShareFailed] = useState(false);
+  // True while the share sheet is open: a second tap then does nothing, instead of asking
+  // the browser to share again, which it refuses and which would show the failure notice.
+  const sharing = useRef(false);
 
   const ready = state.status === "ready" ? state : null;
 
@@ -83,7 +86,8 @@ const CardScreen: React.FC<ScreenProps> = ({ data }) => {
   };
 
   const onShare = async () => {
-    if (!ready) return;
+    if (!ready || sharing.current) return;
+    sharing.current = true;
     setShareFailed(false);
     try {
       if ((await shareImage(ready.blob)) === "shared") {
@@ -91,6 +95,8 @@ const CardScreen: React.FC<ScreenProps> = ({ data }) => {
       }
     } catch {
       setShareFailed(true);
+    } finally {
+      sharing.current = false;
     }
   };
 

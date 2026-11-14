@@ -107,7 +107,17 @@ const fontEmbedCSS = async (node: HTMLElement): Promise<string> => {
       }
     }
   }
-  return (await Promise.all(faces.map(embedFontFace))).join("\n");
+  // A face that cannot be fetched is left out, and its text falls back to a system font:
+  // a plainer picture is better than no picture to save.
+  const embedded = await Promise.all(
+    faces.map((face) =>
+      embedFontFace(face).catch((error: unknown) => {
+        console.warn("Wrapped share image: a font was left out", error);
+        return "";
+      }),
+    ),
+  );
+  return embedded.join("\n");
 };
 
 const nextFrame = () =>

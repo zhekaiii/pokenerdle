@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { afterEach, describe, expect, test } from "bun:test";
 import type { WrappedResponse, WrappedStats } from "@pokenerdle/shared/wrapped";
 import {
   ART_REFERENCE,
@@ -12,7 +12,7 @@ import {
   pickCardRows,
   SIMPLE_SCREENS,
 } from "../src/pages/Wrapped/screens";
-import { canShareFiles, unicodeRangeCovers } from "../src/pages/Wrapped/shareImage";
+import { canShareFiles, shareImage, unicodeRangeCovers } from "../src/pages/Wrapped/shareImage";
 import { getTargetIndex, TRANSITION } from "../src/pages/Wrapped/transition";
 
 const solve = { ms: 38_000, date: "2026-05-12", pokemonId: 448 };
@@ -393,5 +393,52 @@ describe("unicodeRangeCovers", () => {
 
   test("an astral character is read as one code point", () => {
     expect(unicodeRangeCovers("U+1F600-1F64F", "x😀")).toBe(true);
+  });
+});
+
+describe("shareImage", () => {
+  const realNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+  const stubShare = (share: (data: ShareData) => Promise<void>) =>
+    Object.defineProperty(globalThis, "navigator", {
+      value: { share },
+      configurable: true,
+    });
+  afterEach(() => {
+    if (realNavigator) Object.defineProperty(globalThis, "navigator", realNavigator);
+    else Reflect.deleteProperty(globalThis, "navigator");
+  });
+
+  const blob = new Blob(["png"], { type: "image/png" });
+
+  test("hands the browser a PNG file named for the picture and reports it shared", async () => {
+    let given: ShareData | undefined;
+    stubShare(async (data) => {
+      given = data;
+    });
+    expect(await shareImage(blob)).toBe("shared");
+    expect(given?.files).toHaveLength(1);
+    expect(given?.files?.[0].name).toBe("pokenerdle-wrapped-2026.png");
+    expect(given?.files?.[0].type).toBe("image/png");
+  });
+
+  test("closing the share sheet (AbortError) is a cancel, not an error", async () => {
+    stubShare(async () => {
+      throw new DOMException("Share canceled", "AbortError");
+    });
+    expect(await shareImage(blob)).toBe("cancelled");
+  });
+
+  test("any other failure is thrown to the caller", async () => {
+    const denied = new DOMException("not allowed", "NotAllowedError");
+    stubShare(async () => {
+      throw denied;
+    });
+    await expect(shareImage(blob)).rejects.toBe(denied);
+
+    const broken = new TypeError("no share");
+    stubShare(async () => {
+      throw broken;
+    });
+    await expect(shareImage(blob)).rejects.toBe(broken);
   });
 });
