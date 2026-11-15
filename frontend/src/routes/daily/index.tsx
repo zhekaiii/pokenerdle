@@ -1,4 +1,5 @@
 import { createApi } from "@/api";
+import { getNoticeNamespaces } from "@/components/Notice/namespaces";
 import DailyChallengeGameplay from "@/pages/DailyChallenge/components/Gameplay";
 import DailyChallengeIntroCard from "@/pages/DailyChallenge/components/IntroCard";
 import {
@@ -14,6 +15,7 @@ import {
 } from "@/pages/DailyChallenge/hooks/useData";
 import { TZDate } from "@date-fns/tz";
 import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
+import type { Notice } from "@pokenerdle/shared/notices";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { format, isValid, parseISO } from "date-fns";
 import { atom, useAtom } from "jotai";
@@ -100,11 +102,12 @@ export const Route = createFileRoute("/daily/")({
   },
   loaderDeps: ({ search: { date } }) => ({ date }),
   loader: async ({
-    context: { store, today },
+    context: { store, today, i18n },
     deps: { date = today },
   }): Promise<{
     guesses: DailyChallenge | null;
     correctAnswer: CorrectAnswer | null;
+    notice: Notice | null | undefined;
   }> => {
     let data: DailyChallenge | null = null;
     let correctAnswer: CorrectAnswer | null = null;
@@ -131,9 +134,22 @@ export const Route = createFileRoute("/daily/")({
     ) {
       store.set(dailyChallengeStateAtom, DailyChallengeState.Gameplay);
     }
+    // Only fetch when the finished screen can show the notice.
+    let notice: Notice | null | undefined;
+    if (correctAnswer) {
+      try {
+        notice = (await api.notices.get("daily")).notice;
+      } catch (error) {
+        console.error("Error loading daily notice:", error);
+        notice = null;
+      }
+      // Load the notice's namespaces now so the SSR HTML is already translated.
+      if (notice) await i18n.loadNamespaces(getNoticeNamespaces(notice));
+    }
     return {
       guesses: data,
       correctAnswer,
+      notice,
     };
   },
   head: async ({ match }) => {

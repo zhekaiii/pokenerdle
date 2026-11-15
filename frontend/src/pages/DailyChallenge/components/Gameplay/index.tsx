@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+import { NoticeBanner } from "@/components/Notice/NoticeBanner";
 import { NoSsr } from "@/components/NoSsr";
 import LoadingDialog from "@/components/recyclables/LoadingDialog";
 import PokemonCombobox from "@/components/recyclables/PokemonCombobox";
@@ -11,7 +12,7 @@ import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 import { DailyChallengeGuessBox } from "@/pages/DailyChallenge/components/Gameplay/components/DailyChallengeGuessBox";
 import { PokemonNamesResponse } from "@pokenerdle/shared";
-import { Link } from "@tanstack/react-router";
+import { getRouteApi, Link } from "@tanstack/react-router";
 import clsx from "clsx";
 import { format } from "date-fns";
 import {
@@ -30,6 +31,7 @@ import {
   getChallengeNumber,
 } from "../../constants";
 import { useDailyChallengeData } from "../../hooks/useData";
+import { useDailyNotice } from "../../hooks/useDailyNotice";
 import { generateShareText, shareResults } from "../../utils/share";
 import CorrectAnswerCard from "./components/CorrectAnswerCard";
 import StatsDialog from "./components/StatsDialog";
@@ -38,6 +40,8 @@ import styles from "./index.module.scss";
 interface Props {
   date: string;
 }
+
+const dailyRouteApi = getRouteApi("/daily/");
 
 const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
   const { isAuthenticated, loading: authLoading } = useAuth();
@@ -52,6 +56,11 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
     isLoadingAnswer,
     isArchive,
   } = useDailyChallengeData(date);
+  const { notice: initialNotice } = dailyRouteApi.useLoaderData();
+  const { notice, isPending: noticePending } = useDailyNotice({
+    enabled: isGameFinished,
+    initialNotice,
+  });
   const [input, setInput] = useState("");
   const [showPokemonReference, setShowPokemonReference] = useState(false);
   const [showStatsDialog, setShowStatsDialog] = useState(false);
@@ -173,6 +182,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
             hasSolved={hasSolved}
             attempts={guesses?.guesses.length ?? 0}
           />
+          {notice && <NoticeBanner notice={notice} placement="daily" />}
           <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto tw:pt-4">
             {!isArchive && (
               <div className="tw:flex tw:gap-2">
@@ -217,7 +227,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
               <TrendingUp />
               {t("gameplay.viewStats")}
             </Button>
-            {!isAuthenticated && !authLoading && (
+            {!isAuthenticated && !authLoading && !noticePending && !notice && (
               <>
                 <GoogleSignInButton
                   variant="outline"
