@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { shadeArtwork } from "../src/pages/Wrapped/rainbowArt";
+import { hasVisiblePixels, shadeArtwork } from "../src/pages/Wrapped/rainbowArt";
 
 describe("shadeArtwork", () => {
   test("turns pixels grey with the CSS contrast and brightness, and keeps alpha", () => {
@@ -23,5 +23,21 @@ describe("shadeArtwork", () => {
     shadeArtwork(data, 3);
     expect(data[0]).toBe(255);
     expect(data[4]).toBe(0);
+  });
+});
+
+describe("hasVisiblePixels", () => {
+  test("is false for pixels read back as all zeros, as a blocked canvas gives", () => {
+    expect(hasVisiblePixels(new Uint8ClampedArray(16))).toBe(false);
+  });
+
+  test("is true once any pixel has some alpha, whatever its colour", () => {
+    const data = new Uint8ClampedArray(16);
+    data[11] = 1;
+    expect(hasVisiblePixels(data)).toBe(true);
+  });
+
+  test("looks at alpha, not colour", () => {
+    expect(hasVisiblePixels(new Uint8ClampedArray([255, 255, 255, 0]))).toBe(false);
   });
 });

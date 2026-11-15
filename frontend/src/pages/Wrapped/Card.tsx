@@ -167,7 +167,7 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
 
   // The still rainbow card has no CSS mask or blend (html-to-image cannot draw them), so
   // its Pokémon is composed on a canvas once the artwork has loaded, and shown as a plain
-  // picture. undefined until then, a data URL once it is made, null if it cannot be (the
+  // picture. undefined until then, an object URL once it is made, null if it cannot be (the
   // card then shows the plain artwork).
   const bakesArt = !interactive && finish === "rainbow";
   const [bakedArt, setBakedArt] = useState<string | null | undefined>(undefined);
@@ -175,20 +175,32 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
     const img = artRef.current?.querySelector("img");
     const card = ref.current;
     if (!img || !card || !bakesArt) return;
-    const bake = () =>
-      setBakedArt(
-        composeRainbowArtwork(
-          img,
-          img.offsetWidth,
-          img.offsetHeight,
-          card.clientWidth,
-          readArtworkFit(img).brightness,
-        ),
+    let current = true;
+    let url: string | null = null;
+    const bake = async () => {
+      const made = await composeRainbowArtwork(
+        img,
+        img.offsetWidth,
+        img.offsetHeight,
+        card.clientWidth,
+        readArtworkFit(img).brightness,
       );
-    if (img.complete) bake();
+      if (!current) {
+        if (made) URL.revokeObjectURL(made);
+        return;
+      }
+      if (url) URL.revokeObjectURL(url);
+      url = made;
+      setBakedArt(made);
+    };
+    if (img.complete) void bake();
     // A failed artwork swaps itself for the placeholder, which is a load of its own.
     img.addEventListener("load", bake);
-    return () => img.removeEventListener("load", bake);
+    return () => {
+      current = false;
+      img.removeEventListener("load", bake);
+      if (url) URL.revokeObjectURL(url);
+    };
   }, [face.artwork, bakesArt, ref]);
 
   return (
