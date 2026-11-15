@@ -61,6 +61,10 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
     enabled: isGameFinished,
     initialNotice,
   });
+  // Avoid two sign-in prompts. Hidden while the notice loads, since its
+  // action isn't known yet and showing then swapping would flash.
+  const noticeMayOfferSignIn =
+    noticePending || notice?.action?.type === "signIn";
   const [input, setInput] = useState("");
   const [showPokemonReference, setShowPokemonReference] = useState(false);
   const [showStatsDialog, setShowStatsDialog] = useState(false);
@@ -227,7 +231,7 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
               <TrendingUp />
               {t("gameplay.viewStats")}
             </Button>
-            {!isAuthenticated && !authLoading && !noticePending && !notice && (
+            {!isAuthenticated && !authLoading && !noticeMayOfferSignIn && (
               <>
                 <GoogleSignInButton
                   variant="outline"
