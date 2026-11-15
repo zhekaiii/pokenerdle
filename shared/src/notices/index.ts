@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const NOTICE_PLACEMENTS = ["home"] as const;
+export const NOTICE_PLACEMENTS = ["home", "daily"] as const;
 export const NoticePlacementSchema = z.enum(NOTICE_PLACEMENTS);
 export type NoticePlacement = z.infer<typeof NoticePlacementSchema>;
 
@@ -39,7 +39,7 @@ export const NoticeSchema = z.strictObject({
   bodyKey: z.string().optional(),
   tagKey: z.string().optional(),
   ctaKey: z.string().optional(),
-  action: NoticeActionSchema,
+  action: NoticeActionSchema.optional(),
   when: NoticeConditionsSchema.optional(),
 });
 export type Notice = z.infer<typeof NoticeSchema>;

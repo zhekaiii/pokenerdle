@@ -37,6 +37,7 @@ export const NoticeBanner: React.FC<NoticeBannerProps> = ({
   if (!Template || !text) return null;
 
   const onActivate = () => {
+    if (!notice.action) return;
     trackNoticeClicked({ id: notice.id, placement });
     if (notice.action.type === "signIn") {
       void handleSignIn();

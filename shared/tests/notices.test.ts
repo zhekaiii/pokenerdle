@@ -66,7 +66,7 @@ describe("parseNoticesPayload", () => {
   });
 
   test("ignores unknown placements and a non-array placement", () => {
-    const { notices, errors } = parseNoticesPayload({ home: "nope", daily: [validRaw] });
+    const { notices, errors } = parseNoticesPayload({ home: "nope", weekly: [validRaw] });
     expect(notices).toEqual({});
     expect(errors.length).toBeGreaterThanOrEqual(1);
   });
@@ -82,6 +82,20 @@ describe("parseNoticesPayload", () => {
   test("drops entries with unknown top-level keys", () => {
     const { notices } = parseNoticesPayload({ home: [{ ...validRaw, whne: { signedIn: false } }] });
     expect(notices.home).toHaveLength(0);
+  });
+
+  test("accepts an entry with no action", () => {
+    const { notices, errors } = parseNoticesPayload({
+      daily: [{ id: "t", template: "pokedex", titleKey: "notices:wrappedTeaser.title" }],
+    });
+    expect(errors).toEqual([]);
+    expect(notices.daily).toHaveLength(1);
+    expect(notices.daily?.[0].action).toBeUndefined();
+  });
+
+  test("parses the daily placement", () => {
+    const { notices } = parseNoticesPayload({ daily: [validRaw] });
+    expect(notices.daily).toHaveLength(1);
   });
 
   test("drops millisecond timestamps", () => {
