@@ -1,6 +1,8 @@
 // Ported from docs/superpowers/specs/2026-11-13-wrapped-prototype.html.
 // All sizes are in cqw (container query width) of .Stage, so the poster scales as one piece.
 
+@use "sass:math";
+
 $display: "Anton", "Noto Sans SC", "Noto Sans TC", Impact, sans-serif;
 $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
 
@@ -26,7 +28,11 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   position: relative;
   overflow: hidden;
   container-type: size;
+  // Taps and drags must never select text. Safari still needs the prefixed property, and
+  // the callout is the iOS long-press menu on links and images.
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
   color: #111;
 
@@ -176,19 +182,56 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
 
 // P8, dots that grow toward the bottom. Reads well as a still, and only bobs gently so
 // the card stays smooth.
+//
+// Each row of dots is its own hard-edged radial gradient, with a radius that grows row by
+// row. An earlier version blurred a gradient and sharpened it with filter: contrast(40)
+// under mix-blend-mode, which Safari composites differently (brighter yellow, blurred and
+// fainter dots). Plain gradients with no filter or blend render the same everywhere,
+// and in the share image.
+//
+// The row radius follows what the old trick produced: a dot's brightness fell from #888
+// at its centre to white at its edge, a vertical ramp ran from white at 5% of the layer to
+// #999 at the bottom, and the filter cut where their product crossed one half.
+$p8-tile: 5; // cqw, the dot spacing
+$p8-height: 185.78; // cqw, a 9:16 stage (177.78) plus the layer's 4cqw overhang each side
+$p8-edge: 0.07; // cqw, half the softness of a dot's rim, about one device pixel
+
+@function p8-dot-radius($y) {
+  $ramp: 1 - 0.4 * math.div(math.div($y, $p8-height) - 0.05, 0.95);
+  $reach: math.div(math.div(0.5, math.min(1, $ramp)) - 0.5333, 0.4667);
+  @return math.max(0, $reach) * $p8-tile * 0.5;
+}
+
+@function p8-round($n) {
+  @return math.div(math.round($n * 1000), 1000);
+}
+
+@function p8-dots() {
+  $rows: ();
+  @for $row from 0 through math.ceil(math.div($p8-height, $p8-tile)) - 1 {
+    $r: p8-dot-radius($row * $p8-tile + $p8-tile * 0.5);
+    @if $r > 0 {
+      $edge-in: p8-round(math.max(0, $r - $p8-edge));
+      $edge-out: p8-round($r + $p8-edge);
+      $rows: append(
+        $rows,
+        unquote(
+          "radial-gradient(circle closest-side, rgba(0, 0, 0, 0.17) #{$edge-in}cqw, transparent #{$edge-out}cqw) 0 #{$row * $p8-tile}cqw / #{$p8-tile}cqw #{$p8-tile}cqw repeat-x"
+        ),
+        comma
+      );
+    }
+  }
+  @return $rows;
+}
+
 .P8 {
   --c: #ffde00;
 
   &::before {
     inset: -4cqw 0;
-    opacity: 0.17;
-    mix-blend-mode: multiply;
-    filter: contrast(40);
     animation: bob 6s ease-in-out infinite alternate;
-    background:
-      linear-gradient(to bottom, #fff 5%, #999 100%),
-      radial-gradient(closest-side, #888, #fff) 0 0 / 5cqw 5cqw;
-    background-blend-mode: multiply;
+    background: p8-dots();
   }
 }
 
