@@ -10,5 +10,11 @@
     "title": "Sign in",
     "body": "Keep your streaks and stats on every device",
     "cta": "Sign in"
+  },
+  "wrappedTeaser": {
+    "tag": "DEC 1",
+    "title": "Wrapped is coming",
+    "body": "Every daily until Nov 30 counts. Make it a good one.",
+    "cta": "Play today"
   }
 }
