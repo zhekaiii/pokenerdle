@@ -186,7 +186,11 @@ const DailyChallengeGameplay: React.FC<Props> = ({ date }) => {
             hasSolved={hasSolved}
             attempts={guesses?.guesses.length ?? 0}
           />
-          {notice && <NoticeBanner notice={notice} placement="daily" />}
+          {notice && (
+            <div className="tw:mt-4">
+              <NoticeBanner notice={notice} placement="daily" />
+            </div>
+          )}
           <div className="tw:flex tw:flex-col tw:gap-2 tw:mt-auto tw:pt-4">
             {!isArchive && (
               <div className="tw:flex tw:gap-2">

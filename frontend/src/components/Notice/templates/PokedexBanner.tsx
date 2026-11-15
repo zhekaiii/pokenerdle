@@ -3,7 +3,7 @@ import { NoticeTemplateProps } from "./types";
 const LED_COLORS = ["#ffd76a", "#7affc1", "#ff9ad1"];
 
 const BASE_CLASS =
-  "tw:relative tw:mt-2 tw:flex tw:w-full tw:items-center tw:gap-3 tw:rounded-2xl tw:border-0 tw:bg-[#d8343a] tw:px-3 tw:py-2.5 tw:text-left tw:text-white tw:shadow-[inset_0_-4px_0_rgba(0,0,0,0.18)] tw:transition-[filter]";
+  "tw:relative tw:flex tw:w-full tw:items-center tw:gap-3 tw:rounded-2xl tw:border-0 tw:bg-[#d8343a] tw:px-3 tw:py-2.5 tw:text-left tw:text-white tw:shadow-[inset_0_-4px_0_rgba(0,0,0,0.18)] tw:transition-[filter]";
 const INTERACTIVE_CLASS = "tw:cursor-pointer tw:hover:brightness-105";
 
 export const PokedexBanner: React.FC<NoticeTemplateProps> = ({
@@ -51,12 +51,16 @@ export const PokedexBanner: React.FC<NoticeTemplateProps> = ({
     </>
   );
 
-  if (!onActivate) return <div className={BASE_CLASS}>{content}</div>;
+  // The tag overhangs the top edge; reserve its height so callers can space
+  // the banner by its visible edge.
+  const className = `${BASE_CLASS} ${tag ? "tw:mt-2.5" : ""}`;
+
+  if (!onActivate) return <div className={className}>{content}</div>;
   return (
     <button
       type="button"
       onClick={onActivate}
-      className={`${BASE_CLASS} ${INTERACTIVE_CLASS}`}
+      className={`${className} ${INTERACTIVE_CLASS}`}
     >
       {content}
     </button>
