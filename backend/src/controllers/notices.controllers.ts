@@ -13,7 +13,9 @@ export const getNoticeController = async (req: AuthenticatedRequest, res: Respon
   const body: NoticeResponse = {
     notice: await getNoticeService(placement.data, Boolean(req.user)),
   };
-  // Depends on auth, so never share it between users.
-  res.set("Cache-Control", "private, no-store");
+  // Same policy as the cached data endpoints: private (depends on auth) and
+  // always revalidated. Express's default ETag on res.json turns an unchanged
+  // notice into a 304, and a changed one (sign-in, new config) into a 200.
+  res.set("Cache-Control", "private, no-cache");
   res.json(body);
 };

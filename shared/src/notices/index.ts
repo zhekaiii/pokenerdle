@@ -50,24 +50,29 @@ export interface NoticeResponse {
 
 export type NoticesByPlacement = Partial<Record<NoticePlacement, Notice[]>>;
 
+// Shape checks only: entries are validated one by one below, so one bad entry
+// (or one bad placement) never drops the rest.
+const NoticesPayloadSchema = z.record(z.string(), z.unknown());
+const PlacementEntriesSchema = z.array(z.unknown());
+
 export const parseNoticesPayload = (
   payload: unknown,
 ): { notices: NoticesByPlacement; errors: string[] } => {
-  if (typeof payload !== "object" || payload === null || Array.isArray(payload)) {
+  const record = NoticesPayloadSchema.safeParse(payload);
+  if (!record.success) {
     return { notices: {}, errors: ["payload must be an object keyed by placement"] };
   }
-  const record = payload as Record<string, unknown>;
   const notices: NoticesByPlacement = {};
   const errors: string[] = [];
 
   for (const placement of NOTICE_PLACEMENTS) {
-    const entries = record[placement];
-    if (entries === undefined) continue;
-    if (!Array.isArray(entries)) {
+    if (record.data[placement] === undefined) continue;
+    const entries = PlacementEntriesSchema.safeParse(record.data[placement]);
+    if (!entries.success) {
       errors.push(`${placement}: must be an array`);
       continue;
     }
-    notices[placement] = entries.flatMap((entry, i) => {
+    notices[placement] = entries.data.flatMap((entry, i) => {
       const parsed = NoticeSchema.safeParse(entry);
       if (parsed.success) return [parsed.data];
       errors.push(`${placement}[${i}]: ${parsed.error.issues.map((x) => x.message).join("; ")}`);
