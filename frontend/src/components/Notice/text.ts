@@ -8,8 +8,8 @@ export interface NoticeText {
 }
 
 /**
- * Translates a notice's keys. A missing key would render as raw key text, so
- * a missing title hides the notice and a missing optional key is left out.
+ * A missing key would render as raw key text, so a missing title hides the
+ * notice and a missing optional key is left out.
  */
 export const resolveNoticeText = (
   notice: Notice,

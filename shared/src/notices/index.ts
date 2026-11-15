@@ -31,7 +31,7 @@ export const NoticeConditionsSchema = z.strictObject({
 });
 export type NoticeConditions = z.infer<typeof NoticeConditionsSchema>;
 
-// Strict so a typo like "whne" drops the entry instead of losing its conditions.
+// Strict: a typo drops the entry rather than losing its conditions.
 export const NoticeSchema = z.strictObject({
   id: z.string().min(1),
   template: NoticeTemplateSchema,
