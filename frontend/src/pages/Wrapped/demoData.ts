@@ -24,8 +24,7 @@ const pokemon: WrappedResponse["pokemon"] = {
   6: mon(6, "Charizard", "喷火龙", "噴火龍", ["fire", "flying"]),
   25: mon(25, "Pikachu", "皮卡丘", "皮卡丘", ["electric"]),
   94: mon(94, "Gengar", "耿鬼", "耿鬼", ["ghost", "poison"]),
-  // No artwork on purpose: the thumbnail on the showing-up screen shows the placeholder.
-  130: { ...mon(130, "Gyarados", "暴鲤龙", "暴鯉龍", ["water", "flying"]), artwork: null },
+  130: mon(130, "Gyarados", "暴鲤龙", "暴鯉龍", ["water", "flying"]),
   149: mon(149, "Dragonite", "快龙", "快龍", ["dragon", "flying"]),
   248: mon(248, "Tyranitar", "班基拉斯", "班基拉斯", ["rock", "dark"]),
   445: mon(445, "Garchomp", "烈咬陆鲨", "烈咬陸鯊", ["dragon", "ground"]),
