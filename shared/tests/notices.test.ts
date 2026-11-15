@@ -78,4 +78,14 @@ describe("parseNoticesPayload", () => {
       expect(result.errors).toHaveLength(1);
     }
   });
+
+  test("drops entries with unknown top-level keys", () => {
+    const { notices } = parseNoticesPayload({ home: [{ ...validRaw, whne: { signedIn: false } }] });
+    expect(notices.home).toHaveLength(0);
+  });
+
+  test("drops millisecond timestamps", () => {
+    const { notices } = parseNoticesPayload({ home: [{ ...validRaw, when: { before: 1796054400000 } }] });
+    expect(notices.home).toHaveLength(0);
+  });
 });

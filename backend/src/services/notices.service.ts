@@ -9,19 +9,26 @@ import { posthog } from "../lib/posthog.js";
 
 const NOTICES_FLAG_KEY = "notices";
 const DEFAULT_TTL_MS = 60_000;
+const DEFAULT_FIRST_LOAD_TIMEOUT_MS = 1_500;
 
 /**
  * Caches the notices config. A fetch that returns `undefined` or throws is a
  * blip: the last good config keeps being served. Any parsed object, including
  * `{}`, replaces it — that's how notices get switched off.
+ *
+ * Stale-while-revalidate: once a value exists, requests never wait on PostHog;
+ * a stale cache triggers a background refresh. Only the very first load
+ * waits, and at most `firstLoadTimeoutMs`.
  */
 export const createNoticesSource = ({
   fetchPayload,
   ttlMs = DEFAULT_TTL_MS,
+  firstLoadTimeoutMs = DEFAULT_FIRST_LOAD_TIMEOUT_MS,
   now = Date.now,
 }: {
   fetchPayload: () => Promise<unknown>;
   ttlMs?: number;
+  firstLoadTimeoutMs?: number;
   now?: () => number;
 }) => {
   let cached: NoticesByPlacement = {};
@@ -45,13 +52,24 @@ export const createNoticesSource = ({
     }
   };
 
+  const startRefresh = () =>
+    (inFlight ??= refresh().finally(() => {
+      inFlight = null;
+    }));
+
   return {
     getPlacement: async (placement: NoticePlacement): Promise<Notice[]> => {
-      if (fetchedAt === null || now() - fetchedAt > ttlMs) {
-        inFlight ??= refresh().finally(() => {
-          inFlight = null;
-        });
-        await inFlight;
+      if (fetchedAt === null) {
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        await Promise.race([
+          startRefresh(),
+          new Promise((resolve) => {
+            timer = setTimeout(resolve, firstLoadTimeoutMs);
+          }),
+        ]);
+        clearTimeout(timer);
+      } else if (now() - fetchedAt > ttlMs) {
+        void startRefresh();
       }
       return cached[placement] ?? [];
     },

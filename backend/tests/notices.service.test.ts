@@ -62,6 +62,8 @@ describe("createNoticesSource", () => {
     const s = setup([{ home: [valid] }, {}]);
     await s.source.getPlacement("home");
     s.advance(60_001);
+    await s.source.getPlacement("home"); // serves stale, refreshes in background
+    await new Promise((resolve) => setTimeout(resolve, 0));
     expect(await s.source.getPlacement("home")).toEqual([]);
   });
 
@@ -73,5 +75,39 @@ describe("createNoticesSource", () => {
   test("garbage payload yields empty list without throwing", async () => {
     const s = setup(["not json obj"]);
     expect(await s.source.getPlacement("home")).toEqual([]);
+  });
+});
+
+describe("createNoticesSource latency", () => {
+  const never = () => new Promise<unknown>(() => {});
+
+  test("serves the cached value while a stale refresh is still running", async () => {
+    let t = 0;
+    let calls = 0;
+    const source = createNoticesSource({
+      now: () => t,
+      fetchPayload: async () => (calls++ === 0 ? { home: [valid] } : never()),
+    });
+    await source.getPlacement("home");
+    t += 60_001;
+    expect(await source.getPlacement("home")).toHaveLength(1);
+    expect(calls).toBe(2);
+  });
+
+  test("first load gives up after firstLoadTimeoutMs", async () => {
+    const source = createNoticesSource({ fetchPayload: never, firstLoadTimeoutMs: 20 });
+    expect(await source.getPlacement("home")).toEqual([]);
+  });
+
+  test("concurrent first calls share one fetch", async () => {
+    let calls = 0;
+    const source = createNoticesSource({
+      fetchPayload: async () => {
+        calls++;
+        return { home: [valid] };
+      },
+    });
+    await Promise.all([source.getPlacement("home"), source.getPlacement("home")]);
+    expect(calls).toBe(1);
   });
 });

@@ -19,15 +19,20 @@ export const NoticeActionSchema = z.discriminatedUnion("type", [
 ]);
 export type NoticeAction = z.infer<typeof NoticeActionSchema>;
 
+// Unix seconds. The cap (year 2286) rejects millisecond timestamps, which
+// would otherwise never expire.
+const UnixSeconds = z.number().int().nonnegative().max(9_999_999_999);
+
 // Strict so a typo like "befor" drops the entry instead of widening it.
 export const NoticeConditionsSchema = z.strictObject({
-  from: z.number().int().nonnegative().optional(),
-  before: z.number().int().nonnegative().optional(),
+  from: UnixSeconds.optional(),
+  before: UnixSeconds.optional(),
   signedIn: z.boolean().optional(),
 });
 export type NoticeConditions = z.infer<typeof NoticeConditionsSchema>;
 
-export const NoticeSchema = z.object({
+// Strict so a typo like "whne" drops the entry instead of losing its conditions.
+export const NoticeSchema = z.strictObject({
   id: z.string().min(1),
   template: NoticeTemplateSchema,
   titleKey: z.string().min(1),

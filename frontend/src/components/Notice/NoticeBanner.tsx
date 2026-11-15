@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getNoticeNamespaces } from "./namespaces";
 import { TEMPLATES } from "./templates";
+import { resolveNoticeText } from "./text";
 
 interface NoticeBannerProps {
   notice: Notice;
@@ -16,21 +17,24 @@ export const NoticeBanner: React.FC<NoticeBannerProps> = ({
   notice,
   placement,
 }) => {
-  const { t } = useTranslation(getNoticeNamespaces(notice));
+  const { t, i18n } = useTranslation(getNoticeNamespaces(notice));
   const navigate = useNavigate();
   const { handleSignIn } = useGoogleSignIn({
     redirectToPath: "/",
     source: `notice:${notice.id}`,
   });
 
+  const Template = TEMPLATES[notice.template] as
+    | (typeof TEMPLATES)[keyof typeof TEMPLATES]
+    | undefined;
+  const text = resolveNoticeText(notice, t, (key) => i18n.exists(key));
+  const visible = Boolean(Template && text);
+
   useEffect(() => {
-    trackNoticeShown({ id: notice.id, placement });
-  }, [notice.id, placement]);
+    if (visible) trackNoticeShown({ id: notice.id, placement });
+  }, [visible, notice.id, placement]);
 
-  const Template = TEMPLATES[notice.template];
-  if (!Template) return null;
-
-  const translate = (key?: string) => (key ? t(key) : undefined);
+  if (!Template || !text) return null;
 
   const onActivate = () => {
     trackNoticeClicked({ id: notice.id, placement });
@@ -42,12 +46,6 @@ export const NoticeBanner: React.FC<NoticeBannerProps> = ({
   };
 
   return (
-    <Template
-      tag={translate(notice.tagKey)}
-      title={t(notice.titleKey)}
-      body={translate(notice.bodyKey)}
-      cta={translate(notice.ctaKey)}
-      onActivate={onActivate}
-    />
+    <Template {...text} onActivate={onActivate} />
   );
 };
