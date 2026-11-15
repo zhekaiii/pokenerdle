@@ -6,6 +6,7 @@ export const RouteNames = Object.freeze({
   DAILY_API: "/v1/daily",
   AUTH_API: "/v1/auth",
   STAT_GUESS_API: "/v1/stat-guesser",
+  NOTICES_API: "/v1/notices",
 });
 
 export enum StatusCode {
