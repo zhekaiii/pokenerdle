@@ -80,21 +80,41 @@ export const fitArtwork = (measure: ArtworkMeasure | null): ArtworkFit => {
   };
 };
 
-// Reads a loaded image's pixels. Needs the image to have been fetched with CORS
-// (crossOrigin="anonymous"); a tainted canvas throws, and so does an image that is not
-// decoded yet. Any failure means no adjustment, never an error.
-export const readArtworkFit = (img: HTMLImageElement): ArtworkFit => {
+// The artwork decoded from a CORS fetch, once per URL. Safari reads back empty pixels from
+// the page's own <img> drawn onto a canvas, so every pixel read here and in rainbowArt.ts
+// starts from this bitmap instead. The bitmap is shared, so callers must not close it.
+const bitmaps = new Map<string, Promise<ImageBitmap>>();
+
+export const loadArtworkBitmap = (src: string): Promise<ImageBitmap> => {
+  let bitmap = bitmaps.get(src);
+  if (!bitmap) {
+    bitmap = (async () => {
+      const response = await fetch(src);
+      if (!response.ok) throw new Error(`The artwork did not load: ${response.status}`);
+      return createImageBitmap(await response.blob());
+    })();
+    bitmaps.set(src, bitmap);
+    // A failure is not kept, so the next call tries again.
+    bitmap.catch(() => bitmaps.delete(src));
+  }
+  return bitmap;
+};
+
+// Measures the artwork at `src`. Any failure (fetch, decode, canvas) means no adjustment,
+// never an error, and is logged as a warning.
+export const readArtworkFit = async (src: string): Promise<ArtworkFit> => {
   try {
-    if (!img.complete || img.naturalWidth === 0) return NO_FIT;
+    const bitmap = await loadArtworkBitmap(src);
     const canvas = document.createElement("canvas");
     canvas.width = SAMPLE_SIZE;
     canvas.height = SAMPLE_SIZE;
     const context = canvas.getContext("2d", { willReadFrequently: true });
-    if (!context) return NO_FIT;
-    context.drawImage(img, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE);
+    if (!context) throw new Error("No 2D canvas");
+    context.drawImage(bitmap, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE);
     const { data } = context.getImageData(0, 0, SAMPLE_SIZE, SAMPLE_SIZE);
     return fitArtwork(measureArtwork(data, SAMPLE_SIZE, SAMPLE_SIZE));
-  } catch {
+  } catch (error) {
+    console.warn("Wrapped card: no artwork fit, the default size and shading stand in", error);
     return NO_FIT;
   }
 };

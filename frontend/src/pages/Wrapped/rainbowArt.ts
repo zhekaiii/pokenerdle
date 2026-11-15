@@ -7,7 +7,7 @@
 // the colour altogether. So the still card carries one plain <img> instead, made here from
 // the same settings (spec section 5).
 
-import { RAINBOW_SHADING_BRIGHTNESS } from "./cardArt";
+import { loadArtworkBitmap, RAINBOW_SHADING_BRIGHTNESS } from "./cardArt";
 
 // The owner's rainbow settings. They match .Rainbow .Art in Card.module.scss.
 const COLOUR_OPACITY = 0.5;
@@ -112,10 +112,8 @@ export const composeRainbowArtwork = async (
     const h = Math.round(height);
 
     // Safari: the page's own <img>, drawn onto a canvas, read back empty, so the artwork is
-    // fetched and decoded here instead (a CORS fetch, as html-to-image makes for the plain one).
-    const response = await fetch(src);
-    if (!response.ok) throw new Error(`The artwork did not load: ${response.status}`);
-    const bitmap = await createImageBitmap(await response.blob());
+    // fetched and decoded instead (loadArtworkBitmap).
+    const bitmap = await loadArtworkBitmap(src);
 
     const fit = Math.min(w / bitmap.width, h / bitmap.height);
     const drawnWidth = bitmap.width * fit;
@@ -128,7 +126,6 @@ export const composeRainbowArtwork = async (
       drawnWidth,
       drawnHeight,
     );
-    bitmap.close();
 
     // The rainbow, cut to the artwork's shape: kept only where the artwork has pixels.
     const colour = newCanvas(w, h);

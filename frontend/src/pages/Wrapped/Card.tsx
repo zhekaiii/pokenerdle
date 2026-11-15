@@ -155,14 +155,21 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
     const img = artRef.current?.querySelector("img");
     const card = ref.current;
     if (!img || !card || !isRare(finish)) return;
-    const adapt = () => {
-      const fit = readArtworkFit(img);
+    let current = true;
+    const adapt = async () => {
+      // A failed artwork swaps itself for the placeholder, which is a load of its own.
+      if (!img.complete || img.naturalWidth === 0) return;
+      const fit = await readArtworkFit(img.currentSrc);
+      if (!current) return;
       card.style.setProperty("--art-scale", String(fit.scale));
       card.style.setProperty("--art-brightness", String(fit.brightness));
     };
-    adapt(); // already loaded: cached, or loaded before hydration
+    void adapt(); // already loaded: cached, or loaded before hydration
     img.addEventListener("load", adapt);
-    return () => img.removeEventListener("load", adapt);
+    return () => {
+      current = false;
+      img.removeEventListener("load", adapt);
+    };
   }, [face.artwork, finish, ref]);
 
   // The still rainbow card has no CSS mask or blend (html-to-image cannot draw them), so
@@ -184,7 +191,7 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
         img.offsetWidth,
         img.offsetHeight,
         card.clientWidth,
-        readArtworkFit(img).brightness,
+        (await readArtworkFit(img.currentSrc)).brightness,
       );
       if (current) setBakedArt(made);
     };
