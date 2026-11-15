@@ -10,7 +10,8 @@
     "start": "NODE_ENV=production node --es-module-specifier-resolution=node dist/index.js",
     "build-db": "./build-db.sh && node ./scripts/databaseArchive.mjs pack",
     "db:pack": "node ./scripts/databaseArchive.mjs pack",
-    "db:unpack": "node ./scripts/databaseArchive.mjs unpack"
+    "db:unpack": "node ./scripts/databaseArchive.mjs unpack",
+    "test": "bun test"
   },
   "type": "module",
   "author": "",

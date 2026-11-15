@@ -40,7 +40,8 @@ export type GoogleSignInSource =
   | "daily_challenge_gameplay"
   | "settings"
   | "profile_dropdown"
-  | "homepage";
+  | "homepage"
+  | `notice:${string}`;
 
 export interface GoogleSignInClickedEvent {
   source: GoogleSignInSource;
@@ -60,4 +61,17 @@ export const trackRoomCreated = (event: RoomCreatedEvent) => {
 
 export const trackGoogleSignInClicked = (event: GoogleSignInClickedEvent) => {
   posthog.capture("google_sign_in_clicked", event);
+};
+
+export interface NoticeEvent {
+  id: string;
+  placement: string;
+}
+
+export const trackNoticeShown = (event: NoticeEvent) => {
+  posthog.capture("notice_shown", event);
+};
+
+export const trackNoticeClicked = (event: NoticeEvent) => {
+  posthog.capture("notice_clicked", event);
 };

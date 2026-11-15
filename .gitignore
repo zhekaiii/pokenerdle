@@ -28,3 +28,4 @@ dist-ssr
 
 tsconfig.tsbuildinfo
 .superpowers
+docs/superpowers

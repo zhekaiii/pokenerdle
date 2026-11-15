@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { NoticeBanner } from "@/components/Notice/NoticeBanner";
 import { GoogleSignInButton } from "@/components/ui/GoogleSignInButton";
 import { useAuth } from "@/hooks/useAuth";
 import { DailyChallengeGuessResponse } from "@pokenerdle/shared/daily";
@@ -166,7 +167,7 @@ const GuessDots: React.FC<GuessDotsProps> = ({ guesses, solved }) => {
 const HomePage: React.FC = () => {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { t } = useTranslation("home");
-  const summary = homeRoute.useLoaderData();
+  const { summary, notice } = homeRoute.useLoaderData();
 
   const displayName = isAuthenticated
     ? ((
@@ -198,6 +199,8 @@ const HomePage: React.FC = () => {
           </div>
           <div className={classes.GreetingName}>{displayName} 👋</div>
         </div>
+
+        {notice && <NoticeBanner notice={notice} placement="home" />}
 
         <ModeCard
           color={TYPE_COLORS.daily}

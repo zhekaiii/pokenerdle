@@ -1,0 +1,20 @@
+{
+  "saveResults": {
+    "tag": "BEFORE DEC 1",
+    "title": "Save your results",
+    "body": "Sign in so your 2026 counts toward Wrapped",
+    "cta": "Sign in"
+  },
+  "signIn": {
+    "tag": "TIP",
+    "title": "Sign in",
+    "body": "Keep your streaks and stats on every device",
+    "cta": "Sign in"
+  },
+  "wrappedTeaser": {
+    "tag": "DEC 1",
+    "title": "2026 Wrapped is coming",
+    "body": "Every daily until Nov 30 counts. Make it a good one.",
+    "cta": "Play today"
+  }
+}
