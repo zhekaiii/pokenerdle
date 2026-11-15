@@ -1,12 +1,18 @@
+import GoogleIcon from "@/assets/google.svg?react";
 import { useGoogleSignIn } from "@/components/ui/GoogleSignInButton";
 import { trackNoticeClicked, trackNoticeShown } from "@/lib/events";
-import type { Notice, NoticePlacement } from "@pokenerdle/shared/notices";
+import type { Notice, NoticeAction, NoticePlacement } from "@pokenerdle/shared/notices";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getNoticeNamespaces } from "./namespaces";
 import { TEMPLATES } from "./templates";
 import { resolveNoticeText } from "./text";
+
+// Icon per action type, so a CTA says where it leads without more words.
+const CTA_ICONS: Partial<Record<NoticeAction["type"], React.ReactNode>> = {
+  signIn: <GoogleIcon className="tw:size-3" />,
+};
 
 interface NoticeBannerProps {
   notice: Notice;
@@ -48,5 +54,11 @@ export const NoticeBanner: React.FC<NoticeBannerProps> = ({
       }
     : undefined;
 
-  return <Template {...text} onActivate={onActivate} />;
+  return (
+    <Template
+      {...text}
+      ctaIcon={action && CTA_ICONS[action.type]}
+      onActivate={onActivate}
+    />
+  );
 };

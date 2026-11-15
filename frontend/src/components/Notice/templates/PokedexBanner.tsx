@@ -11,6 +11,7 @@ export const PokedexBanner: React.FC<NoticeTemplateProps> = ({
   title,
   body,
   cta,
+  ctaIcon,
   onActivate,
 }) => {
   const content = (
@@ -44,7 +45,15 @@ export const PokedexBanner: React.FC<NoticeTemplateProps> = ({
         )}
       </span>
       {onActivate && cta && (
-        <span className="tw:shrink-0 tw:rounded-full tw:bg-[#111] tw:px-2.5 tw:py-1.5 tw:text-xs tw:font-bold tw:whitespace-nowrap tw:text-white tw:dark:bg-[#f5f5f5] tw:dark:text-[#111]">
+        <span className="tw:flex tw:shrink-0 tw:items-center tw:gap-1.5 tw:rounded-full tw:bg-[#111] tw:px-2.5 tw:py-1.5 tw:text-xs tw:font-bold tw:whitespace-nowrap tw:text-white tw:dark:bg-[#f5f5f5] tw:dark:text-[#111]">
+          {ctaIcon && (
+            <span
+              aria-hidden
+              className="tw:flex tw:size-4 tw:items-center tw:justify-center tw:rounded-full tw:bg-white"
+            >
+              {ctaIcon}
+            </span>
+          )}
           {cta}
         </span>
       )}
