@@ -265,12 +265,18 @@ describe("computeWrappedStats", () => {
     expect(stats?.finish).toBe("standard");
   });
 
-  test("finish follows the rounded average and the 30-day rule", () => {
-    const thirty = days(30).flatMap((d) => solvedIn(d, 3));
-    expect(computeWrappedStats(thirty, noTypes).stats?.finish).toBe("rainbow");
+  test("finish follows the exact mean and the 10-solved rule", () => {
+    const ten = days(10).flatMap((d) => solvedIn(d, 3));
+    expect(computeWrappedStats(ten, noTypes).stats?.finish).toBe("rainbow");
 
-    const twelve = days(12).flatMap((d) => solvedIn(d, 3));
-    expect(computeWrappedStats(twelve, noTypes).stats?.finish).toBe("foil");
+    const nine = [...days(9).flatMap((d) => solvedIn(d, 3)), ...playedOn(days(3, 10))];
+    expect(computeWrappedStats(nine, noTypes).stats?.finish).toBe("standard");
+
+    // 24 solves in 4 and one in 3: a mean of 3.96, shown as 4.0, still under 4.0.
+    const justUnder = [...days(24).flatMap((d) => solvedIn(d, 4)), ...solvedIn("2026-03-25", 3)];
+    const stats = computeWrappedStats(justUnder, noTypes).stats;
+    expect(stats?.average).toBe(4);
+    expect(stats?.finish).toBe("rainbow");
   });
 
   test("clock is null when the only 2+ guess solve took over an hour", () => {

@@ -12,17 +12,17 @@ test("average rounds to one decimal", () => {
   expect(roundAverage(4.04)).toBe(4);
   expect(roundAverage(4.449)).toBe(4.4);
 });
-test("finish thresholds are inclusive and use the rounded average", () => {
+test("finish thresholds are exclusive and use the exact mean", () => {
   expect(getWrappedFinish(null, 200)).toBe("standard");
-  expect(getWrappedFinish(4.6, 200)).toBe("standard");
+  expect(getWrappedFinish(5.5, 200)).toBe("standard");
+  expect(getWrappedFinish(5.49, 200)).toBe("foil");
   expect(getWrappedFinish(4.5, 200)).toBe("foil");
-  expect(getWrappedFinish(4.1, 200)).toBe("foil");
+  expect(getWrappedFinish(4.49, 200)).toBe("gold");
   expect(getWrappedFinish(4.0, 200)).toBe("gold");
-  expect(getWrappedFinish(3.6, 200)).toBe("gold");
-  expect(getWrappedFinish(3.5, 200)).toBe("rainbow");
+  expect(getWrappedFinish(3.96, 200)).toBe("rainbow");
 });
-test("gold and rainbow need 30 days, otherwise foil", () => {
-  expect(getWrappedFinish(3.2, 29)).toBe("foil");
-  expect(getWrappedFinish(3.9, 29)).toBe("foil");
-  expect(getWrappedFinish(3.2, 30)).toBe("rainbow");
+test("every finish above standard needs 10 solved days", () => {
+  expect(getWrappedFinish(3.2, 9)).toBe("standard");
+  expect(getWrappedFinish(5.0, 9)).toBe("standard");
+  expect(getWrappedFinish(3.2, 10)).toBe("rainbow");
 });

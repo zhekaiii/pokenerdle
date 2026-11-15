@@ -6,10 +6,10 @@ export const WRAPPED_LAUNCH_DATE = "2026-12-01"; // first Singapore date it is l
 export const WRAPPED_CLOSE_DATE = "2027-01-01";  // first Singapore date it is closed
 export const WRAPPED_MIN_DAYS = 5;
 export const WRAPPED_MIN_STREAK = 3;
-export const WRAPPED_RARE_MIN_DAYS = 30;
-export const WRAPPED_FOIL_MAX_AVG = 4.5;
-export const WRAPPED_GOLD_MAX_AVG = 4.0;
-export const WRAPPED_RAINBOW_MAX_AVG = 3.5;
+export const WRAPPED_FINISH_MIN_SOLVED = 10;
+export const WRAPPED_FOIL_MAX_AVG = 5.5;
+export const WRAPPED_GOLD_MAX_AVG = 4.5;
+export const WRAPPED_RAINBOW_MAX_AVG = 4.0;
 export const WRAPPED_MAX_BATTLE_MS = 60 * 60 * 1000;
 
 export type WrappedPhase = "before" | "live" | "closed";
@@ -48,14 +48,15 @@ export const getWrappedPhase = (todaySgt: string): WrappedPhase => {
 
 export const roundAverage = (mean: number): number => Math.round(mean * 10) / 10;
 
-// average: already rounded to one decimal (see roundAverage). null when there is no average.
+// mean: the exact mean guesses per solve, not rounded. null when there is no solved day.
+// A finish needs the mean strictly under its threshold.
 export const getWrappedFinish = (
-  average: number | null,
-  daysPlayed: number,
+  mean: number | null,
+  daysSolved: number,
 ): WrappedFinish => {
-  if (average === null || average > WRAPPED_FOIL_MAX_AVG) return "standard";
-  if (average > WRAPPED_GOLD_MAX_AVG) return "foil";
-  if (daysPlayed < WRAPPED_RARE_MIN_DAYS) return "foil";
-  if (average > WRAPPED_RAINBOW_MAX_AVG) return "gold";
+  if (mean === null || daysSolved < WRAPPED_FINISH_MIN_SOLVED) return "standard";
+  if (mean >= WRAPPED_FOIL_MAX_AVG) return "standard";
+  if (mean >= WRAPPED_GOLD_MAX_AVG) return "foil";
+  if (mean >= WRAPPED_RAINBOW_MAX_AVG) return "gold";
   return "rainbow";
 };

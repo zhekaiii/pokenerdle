@@ -149,11 +149,11 @@ const findClock = (solved: SolvedDay[]): WrappedStats["clock"] => {
   return { fastest, longest: longest ?? null };
 };
 
-// Mean guess count over solved live days, including one-guess solves. Rounded to one decimal.
-const findAverage = (solved: SolvedDay[]): number | null => {
+// Mean guess count over solved live days, including one-guess solves. Not rounded.
+const findMean = (solved: SolvedDay[]): number | null => {
   if (solved.length === 0) return null;
   const total = solved.reduce((sum, { correct }) => sum + correct.guessNumber, 0);
-  return roundAverage(total / solved.length);
+  return total / solved.length;
 };
 
 export const computeWrappedStats = (
@@ -175,7 +175,7 @@ export const computeWrappedStats = (
     .sort(([idA, a], [idB, b]) => b - a || idA - idB)
     .slice(0, 6)
     .map(([pokemonId]) => pokemonId);
-  const average = findAverage(solved);
+  const mean = findMean(solved);
 
   const stats: WrappedStats = {
     daysPlayed,
@@ -186,8 +186,8 @@ export const computeWrappedStats = (
     opener: findOpener(live),
     topTypes: findTopTypes(guessCounts, totalGuesses, typesOf),
     clock: findClock(solved),
-    average,
-    finish: getWrappedFinish(average, daysPlayed),
+    average: mean === null ? null : roundAverage(mean),
+    finish: getWrappedFinish(mean, daysSolved),
   };
   return { daysPlayed, eligible, stats };
 };

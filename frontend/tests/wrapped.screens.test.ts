@@ -68,10 +68,10 @@ describe("buildScreens", () => {
     expect(buildScreens(stats({ clock: null }))).not.toContain("clock");
   });
 
-  test("average is skipped when the average is null or above 4.5", () => {
+  test("average is skipped when the average is null or above 5.5", () => {
     expect(buildScreens(stats({ average: null }))).not.toContain("average");
-    expect(buildScreens(stats({ average: 4.6 }))).not.toContain("average");
-    expect(buildScreens(stats({ average: 4.5 }))).toContain("average");
+    expect(buildScreens(stats({ average: 5.6 }))).not.toContain("average");
+    expect(buildScreens(stats({ average: 5.5 }))).toContain("average");
   });
 
   test("opener, showingUp, signature, types, thanks and card are always present", () => {
@@ -151,17 +151,17 @@ describe("pickCardRows", () => {
     ]);
   });
 
-  test("an average above 4.5 or null is replaced by unique", () => {
+  test("an average above 5.5 or null is replaced by unique", () => {
     const expected = [
       { kind: "streak", days: 23 },
       { kind: "type", type: "dragon" },
       { kind: "unique", count: 243 },
     ];
-    expect(pickCardRows(stats({ average: 4.6 }))).toEqual(expected);
+    expect(pickCardRows(stats({ average: 5.6 }))).toEqual(expected);
     expect(pickCardRows(stats({ average: null }))).toEqual(expected);
-    expect(pickCardRows(stats({ average: 4.5 }))[2]).toEqual({
+    expect(pickCardRows(stats({ average: 5.5 }))[2]).toEqual({
       kind: "average",
-      value: 4.5,
+      value: 5.5,
     });
   });
 

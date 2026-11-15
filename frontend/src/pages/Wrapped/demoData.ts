@@ -52,7 +52,7 @@ const full: WrappedResponse = {
       fastest: { ms: 38_000, date: "2026-05-12", pokemonId: 448 },
       longest: { ms: 9 * 60_000, date: "2026-08-14", pokemonId: 707 },
     },
-    average: 3.9,
+    average: 4.2,
     finish: "gold",
   },
   simple: null,
@@ -71,9 +71,9 @@ const simple: WrappedResponse = {
 
 // An average that earns each finish, so the story and the card agree with ?finish=.
 const FINISH_AVERAGE: Record<WrappedFinish, number> = {
-  standard: 4.8,
-  foil: 4.4,
-  gold: 3.9,
+  standard: 5.8,
+  foil: 4.9,
+  gold: 4.2,
   rainbow: 3.4,
 };
 
