@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { Link } from "@tanstack/react-router";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { delay } from "../style";
@@ -37,13 +36,6 @@ const Thanks: React.FC<ScreenProps> = () => {
       >
         {t("thanks.body")}
       </div>
-      <Link
-        to="/daily"
-        className={clsx(classes.Button, classes.ButtonLight, classes.Up)}
-        style={delay(1.4)}
-      >
-        {t("thanks.cta")}
-      </Link>
       <div className={classes.Grow} />
       <div className={classes.Go}>{t("thanks.go")}</div>
     </>
