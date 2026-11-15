@@ -143,15 +143,6 @@ const imagesSettled = async (node: HTMLElement) => {
   }
 };
 
-// Waits until every image in `node` is decoded, data URLs included (html-to-image leaves
-// those as they are). A loaded image is not yet a decoded one, and a picture drawn from one
-// that is still being decoded can come out without it. An image that cannot be decoded is
-// the draw's problem, not ours.
-const imagesDecoded = (node: HTMLElement) =>
-  Promise.all(
-    [...node.querySelectorAll("img")].map((img) => img.decode().catch(() => {})),
-  );
-
 // The still rainbow card composes its Pokémon on a canvas once the artwork has loaded
 // (rainbowArt.ts), and marks itself data-art-pending until then. Drawing before that would
 // leave the colour out of the picture. Waits, but not for ever: a card that never gets
@@ -162,17 +153,6 @@ const cardArtReady = async (node: HTMLElement) => {
   while (node.querySelector("[data-art-pending]") && performance.now() < giveUp) {
     await nextFrame();
   }
-};
-
-// The most pictures drawn to get one that has everything in it: the first is the warm-up.
-const MAX_DRAWS = 4;
-
-const sameBytes = async (a: Blob, b: Blob) => {
-  if (a.size !== b.size) return false;
-  const [x, y] = await Promise.all([a.arrayBuffer(), b.arrayBuffer()]).then((buffers) =>
-    buffers.map((buffer) => new Uint8Array(buffer)),
-  );
-  return x.every((byte, i) => byte === y[i]);
 };
 
 // Draws `node`, an element laid out at 1080 × 1920 CSS pixels, to a PNG of exactly that
@@ -199,19 +179,11 @@ export const renderShareImage = async (node: HTMLElement): Promise<Blob> => {
       getComputedStyle(document.documentElement),
     ).filter((name) => !name.startsWith("corner-")),
   };
-  // Safari draws the first picture without its images (and sometimes its fonts), because it
-  // has not loaded the embedded files yet; a draw that follows finds them ready. So draw
-  // again until two draws in a row come out the same, which is when nothing more arrives.
-  let blob: Blob | null = null;
-  for (let draw = 0; draw < MAX_DRAWS; draw++) {
-    await imagesDecoded(node);
-    const next = await toBlob(node, options);
-    if (!next) throw new Error("The share image could not be drawn");
-    const settledNow = blob !== null && (await sameBytes(blob, next));
-    blob = next;
-    if (settledNow) break;
-  }
-  return blob as Blob;
+  // Safari leaves images (sometimes fonts) out of the first picture; a second draw has them.
+  await toBlob(node, options);
+  const blob = await toBlob(node, options);
+  if (!blob) throw new Error("The share image could not be drawn");
+  return blob;
 };
 
 // Downloads the image.
