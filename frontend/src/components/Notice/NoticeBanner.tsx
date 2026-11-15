@@ -20,7 +20,7 @@ export const NoticeBanner: React.FC<NoticeBannerProps> = ({
   const { t, i18n } = useTranslation(getNoticeNamespaces(notice));
   const navigate = useNavigate();
   const { handleSignIn } = useGoogleSignIn({
-    redirectToPath: "/",
+    redirectToPath: import.meta.env.SSR ? "/" : location.pathname + location.search,
     source: `notice:${notice.id}`,
   });
 
@@ -36,17 +36,17 @@ export const NoticeBanner: React.FC<NoticeBannerProps> = ({
 
   if (!Template || !text) return null;
 
-  const onActivate = () => {
-    if (!notice.action) return;
-    trackNoticeClicked({ id: notice.id, placement });
-    if (notice.action.type === "signIn") {
-      void handleSignIn();
-    } else {
-      void navigate({ to: notice.action.href });
-    }
-  };
+  const action = notice.action;
+  const onActivate = action
+    ? () => {
+        trackNoticeClicked({ id: notice.id, placement });
+        if (action.type === "signIn") {
+          void handleSignIn();
+        } else {
+          void navigate({ to: action.href });
+        }
+      }
+    : undefined;
 
-  return (
-    <Template {...text} onActivate={onActivate} />
-  );
+  return <Template {...text} onActivate={onActivate} />;
 };

@@ -3,5 +3,5 @@ export interface NoticeTemplateProps {
   title: string;
   body?: string;
   cta?: string;
-  onActivate: () => void;
+  onActivate?: () => void;
 }
