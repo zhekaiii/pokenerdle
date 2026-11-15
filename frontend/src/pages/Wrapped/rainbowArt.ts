@@ -31,9 +31,8 @@ const SPECTRUM: [number, string][] = [
 // On the live card the colours cycle through the spectrum every 3 s (hue-rotate). A still
 // has to pick a moment, and takes the start of the cycle: the colours as listed above.
 
-// Whether any pixel is not fully transparent. A canvas whose pixels a browser hides from the
-// page (Safari's privacy protections can do this) reads back as all zeros, which is
-// transparent: that is not an artwork, and the composite built from it would be empty.
+// Whether any pixel is not fully transparent. An artwork that read back as all zeros would
+// make an empty composite (no Pokémon at all), so the plain artwork is better.
 export const hasVisiblePixels = (data: Uint8ClampedArray) => {
   for (let i = 3; i < data.length; i += 4) {
     if (data[i] > 0) return true;
@@ -96,43 +95,40 @@ const newCanvas = (width: number, height: number) => {
   return { canvas, context };
 };
 
-const canvasToBlob = (canvas: HTMLCanvasElement) =>
-  new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
-
-// The rainbow Pokémon as a PNG, drawn to fill a box of `width` x `height` the way the
-// artwork's own <img> fills it (object-fit: contain), as an object URL (the caller revokes
-// it), or null when it cannot be made. `cardWidth` sizes the bands, `shading` is the
-// brightness correction for how light the artwork is (1 for none). Needs an artwork loaded
-// with crossOrigin="anonymous": reading the pixels of a tainted canvas throws, and that is a
-// null, never an error.
-//
-// It is an object URL, not a data URL, so the share image treats it exactly like the plain
-// artwork, which Safari draws correctly: html-to-image fetches every image that is not a
-// data URL, embeds it and waits for the embedded copy to load, and it leaves a data URL as
-// it is, unwaited. (The rainbow Pokémon went missing from Safari's picture when it was one.)
+// The rainbow Pokémon as a PNG data URL, drawn to fill a box of `width` x `height` the way
+// the artwork's own <img> fills it (object-fit: contain), or null when it cannot be made.
+// `cardWidth` sizes the bands, `shading` is the brightness correction for how light the
+// artwork is (1 for none). A failure is logged and is a null, never an error.
 export const composeRainbowArtwork = async (
-  img: HTMLImageElement,
+  src: string,
   width: number,
   height: number,
   cardWidth: number,
   shading = 1,
 ): Promise<string | null> => {
   try {
-    if (!img.complete || img.naturalWidth === 0 || width < 1 || height < 1) return null;
+    if (width < 1 || height < 1) throw new Error("The artwork has no size yet");
     const w = Math.round(width);
     const h = Math.round(height);
 
-    const fit = Math.min(w / img.naturalWidth, h / img.naturalHeight);
-    const drawnWidth = img.naturalWidth * fit;
-    const drawnHeight = img.naturalHeight * fit;
+    // Safari: the page's own <img>, drawn onto a canvas, read back empty, so the artwork is
+    // fetched and decoded here instead (a CORS fetch, as html-to-image makes for the plain one).
+    const response = await fetch(src);
+    if (!response.ok) throw new Error(`The artwork did not load: ${response.status}`);
+    const bitmap = await createImageBitmap(await response.blob());
+
+    const fit = Math.min(w / bitmap.width, h / bitmap.height);
+    const drawnWidth = bitmap.width * fit;
+    const drawnHeight = bitmap.height * fit;
     const artwork = newCanvas(w, h);
     artwork.context.drawImage(
-      img,
+      bitmap,
       (w - drawnWidth) / 2,
       (h - drawnHeight) / 2,
       drawnWidth,
       drawnHeight,
     );
+    bitmap.close();
 
     // The rainbow, cut to the artwork's shape: kept only where the artwork has pixels.
     const colour = newCanvas(w, h);
@@ -143,7 +139,7 @@ export const composeRainbowArtwork = async (
 
     // The grey shading, from the artwork's own pixels.
     const pixels = artwork.context.getImageData(0, 0, w, h);
-    if (!hasVisiblePixels(pixels.data)) return null;
+    if (!hasVisiblePixels(pixels.data)) throw new Error("The artwork read back empty");
     shadeArtwork(pixels.data, RAINBOW_SHADING_BRIGHTNESS * shading);
     const grey = newCanvas(w, h);
     grey.context.putImageData(pixels, 0, 0);
@@ -155,9 +151,9 @@ export const composeRainbowArtwork = async (
     out.context.globalAlpha = SHADING_OPACITY;
     out.context.globalCompositeOperation = "multiply";
     out.context.drawImage(grey.canvas, 0, 0);
-    const blob = await canvasToBlob(out.canvas);
-    return blob ? URL.createObjectURL(blob) : null;
-  } catch {
+    return out.canvas.toDataURL("image/png");
+  } catch (error) {
+    console.warn("Wrapped share image: no rainbow Pokémon, the plain artwork stands in", error);
     return null;
   }
 };
