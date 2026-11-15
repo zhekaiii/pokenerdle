@@ -112,5 +112,5 @@
     "compiler": "typescript",
     "experimentalSpecifierResolution": "node"
   },
-  "exclude": ["node_modules", "scripts"]
+  "exclude": ["node_modules", "scripts", "tests"]
 }

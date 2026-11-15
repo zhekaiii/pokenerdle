@@ -6,6 +6,7 @@ import posthog from "posthog-js";
 import battles from "./battles";
 import daily from "./daily";
 import data from "./data/data";
+import notices from "./notices";
 import pathfinder from "./pathfinder/pathfinder";
 import statGuesser from "./statGuesser";
 
@@ -51,6 +52,7 @@ export const createApi = (store?: Store) => {
     battles: battles(axiosInstance),
     pathfinder: pathfinder(axiosInstance),
     statGuesser: statGuesser(axiosInstance),
+    notices: notices(axiosInstance),
   };
 };
 
