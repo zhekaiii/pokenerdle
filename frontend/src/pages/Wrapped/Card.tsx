@@ -6,12 +6,13 @@ import {
   type WrappedResponse,
 } from "@pokenerdle/shared/wrapped";
 import clsx from "clsx";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { readArtworkFit } from "./cardArt";
 import { typeColorVars } from "./cardColors";
 import classes from "./Card.module.scss";
 import { formatDay, pokemonInfo } from "./format";
+import { composeRainbowArtwork } from "./rainbowArt";
 import { pickCardRows, type CardRow } from "./screens";
 import Artwork from "./screens/Artwork";
 import { cssVars } from "./style";
@@ -164,11 +165,42 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
     return () => img.removeEventListener("load", adapt);
   }, [face.artwork, finish, ref]);
 
+  // The still rainbow card has no CSS mask or blend (html-to-image cannot draw them), so
+  // its Pokémon is composed on a canvas once the artwork has loaded, and shown as a plain
+  // picture. undefined until then, a data URL once it is made, null if it cannot be (the
+  // card then shows the plain artwork).
+  const bakesArt = !interactive && finish === "rainbow";
+  const [bakedArt, setBakedArt] = useState<string | null | undefined>(undefined);
+  useEffect(() => {
+    const img = artRef.current?.querySelector("img");
+    const card = ref.current;
+    if (!img || !card || !bakesArt) return;
+    const bake = () =>
+      setBakedArt(
+        composeRainbowArtwork(
+          img,
+          img.offsetWidth,
+          img.offsetHeight,
+          card.clientWidth,
+          readArtworkFit(img).brightness,
+        ),
+      );
+    if (img.complete) bake();
+    // A failed artwork swaps itself for the placeholder, which is a load of its own.
+    img.addEventListener("load", bake);
+    return () => img.removeEventListener("load", bake);
+  }, [face.artwork, bakesArt, ref]);
+
   return (
     <div
       ref={ref}
       data-no-nav
-      className={clsx(classes.Tilt, interactive && classes.Interactive)}
+      // The share image waits for this to go before it draws the card.
+      data-art-pending={bakesArt && bakedArt === undefined ? "" : undefined}
+      className={clsx(
+        classes.Tilt,
+        interactive ? classes.Interactive : classes.Flat,
+      )}
       style={
         hasTypeColours(finish) ? typeColorVars(face.topType) : undefined
       }
@@ -195,7 +227,13 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
             className={classes.Art}
             style={cssVars({ "--art-mask": `url("${face.artwork ?? questionMarkIcon}")` })}
           >
-            <Artwork src={face.artwork} alt={face.name} crossOrigin="anonymous" />
+            <Artwork
+              src={face.artwork}
+              alt={face.name}
+              crossOrigin="anonymous"
+              className={bakedArt ? classes.Replaced : undefined}
+            />
+            {bakedArt && <img src={bakedArt} alt="" draggable={false} />}
             {face.seal && (
               <div className={classes.Seal}>
                 <span>{face.seal}</span>

@@ -143,12 +143,25 @@ const imagesSettled = async (node: HTMLElement) => {
   }
 };
 
+// The still rainbow card composes its Pokémon on a canvas once the artwork has loaded
+// (rainbowArt.ts), and marks itself data-art-pending until then. Drawing before that would
+// leave the colour out of the picture. Waits, but not for ever: a card that never gets
+// there is drawn with the plain artwork.
+const ART_WAIT_MS = 5000;
+const cardArtReady = async (node: HTMLElement) => {
+  const giveUp = performance.now() + ART_WAIT_MS;
+  while (node.querySelector("[data-art-pending]") && performance.now() < giveUp) {
+    await nextFrame();
+  }
+};
+
 // Draws `node`, an element laid out at 1080 × 1920 CSS pixels, to a PNG of exactly that
 // size. The web fonts and the images in the node are embedded in the picture, so callers
 // need not do anything about them beyond rendering them.
 export const renderShareImage = async (node: HTMLElement): Promise<Blob> => {
   // Fonts and artwork that are still loading would be left out of the picture.
   await document.fonts.ready;
+  await cardArtReady(node);
   await imagesSettled(node);
   // Text that fits itself to its box (useFitText) measures again when fonts finish
   // loading; give that a frame to land.

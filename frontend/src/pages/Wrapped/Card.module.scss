@@ -75,6 +75,56 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   }
 }
 
+// A still card, the one the share image is drawn from. html-to-image draws it through an
+// SVG picture, and each browser drops a different part of what that picture cannot carry:
+// a mask, a blend, a clip, an inset shadow. So a still keeps to plain boxes, backgrounds
+// and borders, and the effects that need more are left to the card that moves.
+.Flat {
+  // The shadow sits flat, with no 3D transform.
+  &::before {
+    transform: none;
+  }
+
+  // Without its own stacking context the card (an ordinary box here) does not hold the
+  // layers inside it that have a z-index: the Pokémon, the stripes and the band of light.
+  // On the live card its transform does that. They are clipped by the card's rounded
+  // overflow either way, but this keeps them in it for every engine.
+  .Card {
+    isolation: isolate;
+  }
+
+  // The white ring inside the frame is a border here, not an inset box-shadow. In WebKit
+  // an inset shadow on a box under a rotated ancestor (the card is tilted on the picture)
+  // is painted shorter than the box, which showed as a white bar above the footer. The
+  // background runs under the border, as it ran under the shadow, so it looks the same.
+  .In {
+    box-shadow: none;
+    border: 0.9cqw solid rgba(255, 255, 255, 0.7);
+    padding: 3.1cqw;
+    background-origin: border-box;
+  }
+  .Rainbow .In {
+    box-shadow: none;
+    border-width: 0.7cqw;
+    border-color: rgba(255, 255, 255, 0.85);
+    padding: 3.3cqw;
+  }
+
+  // The rainbow Pokémon is one picture, composed in rainbowArt.ts: no colour layer to mask
+  // and no shading to blend. If that fails, the plain artwork stands in.
+  .Rainbow .Art::before {
+    display: none;
+  }
+  .Rainbow .Art img {
+    filter: none;
+    mix-blend-mode: normal;
+    opacity: 1;
+  }
+  .Rainbow .Art .Replaced {
+    visibility: hidden;
+  }
+}
+
 // The Pokémon shifts slightly against the card as it tilts.
 .Gold .Art img,
 .Rainbow .Art img,
