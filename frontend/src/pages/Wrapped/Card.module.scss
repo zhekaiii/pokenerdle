@@ -751,6 +751,65 @@ $text: "Rubik", "Noto Sans SC", "Noto Sans TC", system-ui, sans-serif;
   }
 }
 
+// The finishes the player may show their card in, under the buttons
+.Finish {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.6cqw;
+  margin-top: 3cqw;
+  font-weight: 900;
+  font-size: 2.6cqw;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+
+  button {
+    font: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+    padding: 1cqw 2.2cqw;
+    color: #111;
+    border: 0.5cqw solid #111;
+    background: #fff;
+
+    // Each button wears its finish, after the card frames above. Foil takes the colour of
+    // the card's strip (set on .Finish): the frame is too dark for the label.
+    &[data-finish="foil"] {
+      background: var(--stripbg);
+    }
+
+    &[data-finish="gold"] {
+      background: linear-gradient(
+        135deg,
+        #c9972b,
+        #ffe680 30%,
+        #e0b54a 55%,
+        #fff3b0 80%,
+        #c9972b
+      );
+    }
+
+    &[data-finish="rainbow"] {
+      background: linear-gradient(
+        115deg,
+        #ff9ecb,
+        #ffc79e 20%,
+        #fff3a0 40%,
+        #a9efb9 60%,
+        #9ed9ff 80%,
+        #c8a9ff
+      );
+    }
+
+    // The picked one stands up off the page, like the buttons above
+    &[aria-pressed="true"] {
+      box-shadow: 0.8cqw 0.8cqw 0 #111;
+      translate: -0.4cqw -0.4cqw;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .Drop,
   .Tilt,

@@ -1,6 +1,7 @@
 import {
   WRAPPED_FOIL_MAX_AVG,
   WRAPPED_MIN_STREAK,
+  type WrappedFinish,
   type WrappedStats,
 } from "@pokenerdle/shared/wrapped";
 
@@ -69,3 +70,9 @@ export const pickCardRows = (stats: WrappedStats): CardRow[] => {
   ];
   return candidates.filter((row): row is CardRow => row !== false).slice(0, CARD_ROWS);
 };
+
+const FINISHES: WrappedFinish[] = ["standard", "foil", "gold", "rainbow"];
+
+// The finishes a player may show their card in: the one they earned and every one below it.
+export const finishesUpTo = (earned: WrappedFinish): WrappedFinish[] =>
+  FINISHES.slice(0, FINISHES.indexOf(earned) + 1);

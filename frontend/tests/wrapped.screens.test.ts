@@ -9,6 +9,7 @@ import { TYPE_COLORS, typeColors, typeColorVars } from "../src/pages/Wrapped/car
 import { pokemonInfo } from "../src/pages/Wrapped/format";
 import {
   buildScreens,
+  finishesUpTo,
   pickCardRows,
   SIMPLE_SCREENS,
 } from "../src/pages/Wrapped/screens";
@@ -440,5 +441,14 @@ describe("shareImage", () => {
       throw broken;
     });
     await expect(shareImage(blob)).rejects.toBe(broken);
+  });
+});
+
+describe("finishesUpTo", () => {
+  test("offers the earned finish and every finish below it", () => {
+    expect(finishesUpTo("standard")).toEqual(["standard"]);
+    expect(finishesUpTo("foil")).toEqual(["standard", "foil"]);
+    expect(finishesUpTo("gold")).toEqual(["standard", "foil", "gold"]);
+    expect(finishesUpTo("rainbow")).toEqual(["standard", "foil", "gold", "rainbow"]);
   });
 });

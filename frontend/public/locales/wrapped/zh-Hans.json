@@ -111,6 +111,13 @@
     "avg": "平均",
     "save": "保存图片",
     "share": "分享",
+    "finish": "卡面",
+    "finishes": {
+      "standard": "普通",
+      "foil": "闪卡",
+      "gold": "金卡",
+      "rainbow": "彩虹"
+    },
     "preparing": "准备中…",
     "imageFailed": "无法生成图片。",
     "retry": "重试",

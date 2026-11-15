@@ -143,10 +143,11 @@ const imagesSettled = async (node: HTMLElement) => {
   }
 };
 
-// The still rainbow card composes its Pokémon on a canvas once the artwork has loaded
-// (rainbowArt.ts), and marks itself data-art-pending until then. Drawing before that would
-// leave the colour out of the picture. Waits, but not for ever: a card that never gets
-// there is drawn with the plain artwork.
+// The gold and rainbow cards fit themselves to their artwork (cardArt.ts), and the still
+// rainbow card composes its Pokémon on a canvas once the artwork has loaded
+// (rainbowArt.ts). Each marks itself data-art-pending until then. Drawing before that
+// would leave the fit or the colour out of the picture. Waits, but not for ever: a card
+// that never gets there is drawn with the plain artwork.
 const ART_WAIT_MS = 5000;
 const cardArtReady = async (node: HTMLElement) => {
   const giveUp = performance.now() + ART_WAIT_MS;

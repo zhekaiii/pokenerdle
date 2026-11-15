@@ -53,7 +53,10 @@ interface CardFace {
   seal: string | null; // the average, on gold and rainbow
 }
 
-const useCardFace = (data: WrappedResponse): CardFace | null => {
+const useCardFace = (
+  data: WrappedResponse,
+  finishOverride: WrappedFinish | undefined,
+): CardFace | null => {
   const { t, i18n } = useTranslation(["wrapped", "types"]);
   const { stats, simple } = data;
 
@@ -83,8 +86,9 @@ const useCardFace = (data: WrappedResponse): CardFace | null => {
 
   if (stats) {
     const mon = pokemonInfo(data, stats.opener.pokemonId, i18n.language);
+    const finish = finishOverride ?? stats.finish;
     return {
-      finish: stats.finish,
+      finish,
       name: mon.name,
       artwork: mon.artwork,
       topType: stats.topTypes[0]?.type,
@@ -98,7 +102,7 @@ const useCardFace = (data: WrappedResponse): CardFace | null => {
       rows: pickCardRows(stats).map(rowText),
       footer: `${stats.daysPlayed}/${WRAPPED_WINDOW_DAYS}`,
       seal:
-        isRare(stats.finish) && stats.average !== null
+        isRare(finish) && stats.average !== null
           ? stats.average.toFixed(1)
           : null,
     };
@@ -131,6 +135,9 @@ interface CardProps {
   // False renders a still: no tilt, no shimmer animation, no landing wobble. The share
   // image is made from a still.
   interactive: boolean;
+  // The finish to show, when the player picked one below the one they earned. Ignored
+  // on the rookie card, which is always standard.
+  finish?: WrappedFinish;
 }
 
 // The collectible card. Renders from data.stats, or the rookie card from data.simple when
@@ -151,6 +158,8 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
   // Gold and rainbow scale the artwork, and rainbow corrects its shading, by what the
   // artwork turns out to be. The result goes straight onto the card as CSS variables.
   // Until it loads, or if its pixels cannot be read, the card keeps the defaults.
+  // `fitted` says the variables are on: the share image waits for it.
+  const [fitted, setFitted] = useState(false);
   useEffect(() => {
     const img = artRef.current?.querySelector("img");
     const card = ref.current;
@@ -163,6 +172,7 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
       if (!current) return;
       card.style.setProperty("--art-scale", String(fit.scale));
       card.style.setProperty("--art-brightness", String(fit.brightness));
+      setFitted(true);
     };
     void adapt(); // already loaded: cached, or loaded before hydration
     img.addEventListener("load", adapt);
@@ -177,7 +187,9 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
   // picture. undefined until then, a data URL once it is made, null if it cannot be (the
   // card then shows the plain artwork).
   const bakesArt = !interactive && finish === "rainbow";
-  const [bakedArt, setBakedArt] = useState<string | null | undefined>(undefined);
+  const [madeArt, setBakedArt] = useState<string | null | undefined>(undefined);
+  // Kept when the player switches away from rainbow and back, but only shown on rainbow.
+  const bakedArt = bakesArt ? madeArt : undefined;
   useEffect(() => {
     const img = artRef.current?.querySelector("img");
     const card = ref.current;
@@ -208,7 +220,11 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
       ref={ref}
       data-no-nav
       // The share image waits for this to go before it draws the card.
-      data-art-pending={bakesArt && bakedArt === undefined ? "" : undefined}
+      data-art-pending={
+        (isRare(finish) && !fitted) || (bakesArt && bakedArt === undefined)
+          ? ""
+          : undefined
+      }
       className={clsx(
         classes.Tilt,
         interactive ? classes.Interactive : classes.Flat,
@@ -273,8 +289,8 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
   );
 };
 
-const Card: React.FC<CardProps> = ({ data, interactive }) => {
-  const face = useCardFace(data);
+const Card: React.FC<CardProps> = ({ data, interactive, finish }) => {
+  const face = useCardFace(data, finish);
   return face ? <CardView face={face} interactive={interactive} /> : null;
 };
 

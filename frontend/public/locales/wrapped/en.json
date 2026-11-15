@@ -118,6 +118,13 @@
     "avg": "avg",
     "save": "Save image",
     "share": "Share",
+    "finish": "Card finish",
+    "finishes": {
+      "standard": "Standard",
+      "foil": "Foil",
+      "gold": "Gold",
+      "rainbow": "Rainbow"
+    },
     "preparing": "Preparing…",
     "imageFailed": "Could not make your image.",
     "retry": "Try again",
