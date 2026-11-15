@@ -30,12 +30,6 @@ const Thanks: React.FC<ScreenProps> = () => {
         {t("thanks.seeYou")}
       </div>
       <div className={classes.Grow} />
-      <div
-        className={clsx(classes.Body, classes.BodyCenter, classes.BodyLight, classes.Up)}
-        style={delay(1.2)}
-      >
-        {t("thanks.body")}
-      </div>
       <div className={classes.Grow} />
       <div className={classes.Go}>{t("thanks.go")}</div>
     </>
