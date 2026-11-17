@@ -16,5 +16,11 @@
     "title": "2026 Wrapped is coming",
     "body": "Every daily until Nov 30 counts. Make it a good one.",
     "cta": "Play today"
+  },
+  "wrappedLive": {
+    "tag": "NOW LIVE",
+    "title": "Your 2026 Wrapped is here",
+    "body": "See how your daily challenges went this year",
+    "cta": "View"
   }
 }

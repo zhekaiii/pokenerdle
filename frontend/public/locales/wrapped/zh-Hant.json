@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "title": "你的 {{year}} Pokenerdle 年度回顧 – PokéNerdle"
+  },
+  "tag": "Pokenerdle Wrapped",
+  "loading": {
+    "title": "載入中",
+    "sticker": "稍等一下"
+  },
+  "error": {
+    "title": "哎呀",
+    "sticker": "年度回顧沒能載入",
+    "body": "請檢查網路連線後再試一次。",
+    "retry": "重試",
+    "home": "回到 Pokenerdle"
+  },
+  "before": {
+    "title": "即將登場",
+    "when": "12 月 1 日",
+    "sticker": "你的 {{year}} Pokenerdle",
+    "body": "屆時再來看看你的每日挑戰戰績吧。"
+  },
+  "closed": {
+    "title": "{{year}} 年度回顧",
+    "sticker": "已經結束",
+    "body": "感謝你的參與。今天的每日挑戰正等著你。",
+    "cta": "去玩今天的挑戰"
+  },
+  "empty": {
+    "title": "這裡還空空的",
+    "sticker": "你的年度回顧是空白的",
+    "body": "年度回顧由你的每日挑戰猜測生成，而目前還沒有紀錄。先去玩一局今天的挑戰吧。",
+    "cta": "去玩每日挑戰"
+  },
+  "opener": {
+    "your": "你的",
+    "in": "年度回顧",
+    "period": "1月1日至11月30日",
+    "go": "點按開始 →"
+  },
+  "showingUp": {
+    "tag": "你一直都在",
+    "days": "遊玩天數，1月至11月",
+    "unique": "還猜過 <em>{{n}}</em><br/>種寶可夢"
+  },
+  "streak": {
+    "tag": "最長連續打卡",
+    "inARow": "天連續打卡",
+    "months": "1,2,3,4,5,6,7,8,9,10,11",
+    "body": "沒有什麼能難倒你。"
+  },
+  "signature": {
+    "tag": "你的招牌開局",
+    "body": "拿不準的時候，你就派出{{name}}。",
+    "days_other": "{{count}} 天首猜都是它"
+  },
+  "types": {
+    "tag": "屬性偏愛",
+    "body": "的猜測都是{{type}}屬性。"
+  },
+  "clock": {
+    "tag": "與時間賽跑",
+    "fastest": "你最快的一次",
+    "secondsFlat": "秒搞定",
+    "minutesFlat": "分鐘搞定",
+    "fastestLine": "{{date}}，{{name}}毫無還手之力。",
+    "longest": "你最久的一戰",
+    "seconds_other": "{{count}} 秒",
+    "minutes_other": "{{count}} 分鐘",
+    "longestLine": "{{date}}，{{name}}負隅頑抗。"
+  },
+  "average": {
+    "tag": "你的平均成績",
+    "lead": "你破解每日挑戰平均只需",
+    "unit": "次猜測",
+    "body_other": "8 次封頂，統計你解開的 {{count}} 天。"
+  },
+  "thanks": {
+    "tag": "年度回顧完畢",
+    "thanksFor": "謝謝你",
+    "playing": "一起玩",
+    "seeYou": "{{nextYear}} 見",
+    "go": "點按查看你的卡片 →"
+  },
+  "firstGuess": {
+    "tag": "新面孔",
+    "line": "你的第一次猜測，在 {{date}}。",
+    "welcome": "歡迎來到 Pokenerdle",
+    "days_other": "你在 1 月至 11 月間玩了 {{count}} 天。"
+  },
+  "card": {
+    "headline": "我的 {{year}} Pokenerdle",
+    "signatureOpener": "招牌開局",
+    "firstGuess": "首猜",
+    "new": "新手",
+    "days_other": "天",
+    "rookieStrip": "我的第一次猜測",
+    "streak": "最長連勝",
+    "type": "最愛屬性",
+    "average": "平均",
+    "unique": "猜過的寶可夢",
+    "solved": "解開天數",
+    "valueDays_other": "{{count}} 天",
+    "valueGuesses": "{{value}} 次猜測",
+    "joined": "加入",
+    "status": "身份",
+    "rookie": "新手",
+    "rookieCard": "新手卡",
+    "avg": "平均",
+    "save": "儲存圖片",
+    "share": "分享",
+    "finish": "卡面",
+    "finishes": {
+      "standard": "普通",
+      "foil": "閃卡",
+      "gold": "金卡",
+      "rainbow": "彩虹"
+    },
+    "preparing": "準備中…",
+    "imageFailed": "無法產生圖片。",
+    "retry": "重試",
+    "shareFailed": "無法開啟分享，請試試儲存圖片。",
+    "playDaily": "去玩今天的挑戰 →"
+  }
+}

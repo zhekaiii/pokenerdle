@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WrappedRouteImport } from './routes/wrapped'
 import { Route as StatGuesserRouteImport } from './routes/stat-guesser'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as PokechainRouteImport } from './routes/pokechain'
@@ -23,6 +24,11 @@ import { Route as HowToPlayDailyRouteImport } from './routes/how-to-play/daily'
 import { Route as HowToPlaySplatRouteImport } from './routes/how-to-play/$'
 import { Route as DailyArchiveRouteImport } from './routes/daily/archive'
 
+const WrappedRoute = WrappedRouteImport.update({
+  id: '/wrapped',
+  path: '/wrapped',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StatGuesserRoute = StatGuesserRouteImport.update({
   id: '/stat-guesser',
   path: '/stat-guesser',
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/pokechain': typeof PokechainRoute
   '/settings': typeof SettingsRoute
   '/stat-guesser': typeof StatGuesserRoute
+  '/wrapped': typeof WrappedRoute
   '/daily/archive': typeof DailyArchiveRoute
   '/how-to-play/$': typeof HowToPlaySplatRoute
   '/how-to-play/daily': typeof HowToPlayDailyRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/pokechain': typeof PokechainRoute
   '/settings': typeof SettingsRoute
   '/stat-guesser': typeof StatGuesserRoute
+  '/wrapped': typeof WrappedRoute
   '/daily/archive': typeof DailyArchiveRoute
   '/how-to-play/$': typeof HowToPlaySplatRoute
   '/how-to-play/daily': typeof HowToPlayDailyRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/pokechain': typeof PokechainRoute
   '/settings': typeof SettingsRoute
   '/stat-guesser': typeof StatGuesserRoute
+  '/wrapped': typeof WrappedRoute
   '/daily/archive': typeof DailyArchiveRoute
   '/how-to-play/$': typeof HowToPlaySplatRoute
   '/how-to-play/daily': typeof HowToPlayDailyRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/pokechain'
     | '/settings'
     | '/stat-guesser'
+    | '/wrapped'
     | '/daily/archive'
     | '/how-to-play/$'
     | '/how-to-play/daily'
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
     | '/pokechain'
     | '/settings'
     | '/stat-guesser'
+    | '/wrapped'
     | '/daily/archive'
     | '/how-to-play/$'
     | '/how-to-play/daily'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/pokechain'
     | '/settings'
     | '/stat-guesser'
+    | '/wrapped'
     | '/daily/archive'
     | '/how-to-play/$'
     | '/how-to-play/daily'
@@ -190,12 +202,20 @@ export interface RootRouteChildren {
   PokechainRoute: typeof PokechainRoute
   SettingsRoute: typeof SettingsRoute
   StatGuesserRoute: typeof StatGuesserRoute
+  WrappedRoute: typeof WrappedRoute
   DailyArchiveRoute: typeof DailyArchiveRoute
   DailyIndexRoute: typeof DailyIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wrapped': {
+      id: '/wrapped'
+      path: '/wrapped'
+      fullPath: '/wrapped'
+      preLoaderRoute: typeof WrappedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stat-guesser': {
       id: '/stat-guesser'
       path: '/stat-guesser'
@@ -317,6 +337,7 @@ const rootRouteChildren: RootRouteChildren = {
   PokechainRoute: PokechainRoute,
   SettingsRoute: SettingsRoute,
   StatGuesserRoute: StatGuesserRoute,
+  WrappedRoute: WrappedRoute,
   DailyArchiveRoute: DailyArchiveRoute,
   DailyIndexRoute: DailyIndexRoute,
 }

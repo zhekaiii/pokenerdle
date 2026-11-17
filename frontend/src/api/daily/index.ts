@@ -4,6 +4,7 @@ import {
   type DailyChallengeStatsResponse,
   type DailyChallengeSubmitGuessResponse,
 } from "@pokenerdle/shared/daily";
+import { type WrappedResponse } from "@pokenerdle/shared/wrapped";
 import { AxiosInstance } from "axios";
 
 export default (axiosInstance: AxiosInstance) => ({
@@ -50,6 +51,11 @@ export default (axiosInstance: AxiosInstance) => ({
     const { data } = await axiosInstance.get<DailyChallengeStatsResponse>(
       "/v1/daily/challenge/stats",
     );
+    return data;
+  },
+  getWrapped: async () => {
+    const { data } =
+      await axiosInstance.get<WrappedResponse>("/v1/daily/wrapped");
     return data;
   },
   getCalendar: async (month: string) => {

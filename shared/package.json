@@ -33,6 +33,10 @@
     "./notices": {
       "types": "./dist/notices/index.d.ts",
       "default": "./dist/notices/index.js"
+    },
+    "./wrapped": {
+      "types": "./dist/wrapped/index.d.ts",
+      "default": "./dist/wrapped/index.js"
     }
   },
   "typesVersions": {
@@ -45,6 +49,9 @@
       ],
       "notices": [
         "./dist/notices/index.d.ts"
+      ],
+      "wrapped": [
+        "./dist/wrapped/index.d.ts"
       ]
     }
   },

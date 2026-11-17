@@ -16,6 +16,7 @@ import {
   hasUserCompletedDailyChallenge,
   submitGuess,
 } from "../services/daily.service.js";
+import { getWrappedService } from "../services/wrapped.service.js";
 import { getUserId } from "../utils/userIdentification.js";
 
 export const submitDailyPokemonGuessController = async (
@@ -136,6 +137,23 @@ export const getUserStatsController = async (
     console.error("Error getting user stats:", error);
     res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
       error: "Failed to get user stats",
+    });
+  }
+};
+
+export const getWrappedController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
+  const userId = getUserId(req)!;
+
+  try {
+    const wrapped = await getWrappedService(userId);
+    res.json(wrapped);
+  } catch (error) {
+    console.error("Error getting wrapped:", error);
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
+      error: "Failed to get wrapped",
     });
   }
 };

@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "title": "Your {{year}} in Pokenerdle – PokéNerdle"
+  },
+  "tag": "Pokenerdle Wrapped",
+  "loading": {
+    "title": "Loading",
+    "sticker": "Hang on"
+  },
+  "error": {
+    "title": "Oops",
+    "sticker": "Wrapped did not load",
+    "body": "Check your connection and try again.",
+    "retry": "Try again",
+    "home": "Back to Pokenerdle"
+  },
+  "before": {
+    "title": "Coming",
+    "when": "1 December",
+    "sticker": "Your {{year}} in Pokenerdle",
+    "body": "Come back then to see how your daily challenges went."
+  },
+  "closed": {
+    "title": "Wrapped {{year}}",
+    "sticker": "Has ended",
+    "body": "Thanks for playing. Today's daily is waiting.",
+    "cta": "Play today's daily"
+  },
+  "empty": {
+    "title": "Nothing here yet",
+    "sticker": "Your Wrapped is blank",
+    "body": "Wrapped is built from your Daily Challenge guesses, and there are none to show. Play today's daily to get started.",
+    "cta": "Play the daily"
+  },
+  "opener": {
+    "your": "Your",
+    "in": "in Pokenerdle",
+    "period": "1 Jan to 30 Nov",
+    "go": "Tap to start →"
+  },
+  "showingUp": {
+    "tag": "You showed up",
+    "days": "days played, Jan to Nov",
+    "unique": "and named <em>{{n}}</em><br/>different Pokémon"
+  },
+  "streak": {
+    "tag": "Longest streak",
+    "inARow": "days in a row",
+    "months": "J,F,M,A,M,J,J,A,S,O,N",
+    "body": "Nothing got past you."
+  },
+  "signature": {
+    "tag": "Your signature opener",
+    "body": "When in doubt, you send out {{name}}.",
+    "days_one": "First guess on {{count}} day",
+    "days_other": "First guess on {{count}} days"
+  },
+  "types": {
+    "tag": "Type loyalty",
+    "body": "of your guesses were {{type}} types."
+  },
+  "clock": {
+    "tag": "Against the clock",
+    "fastest": "Your fastest solve",
+    "secondsFlat": "seconds flat",
+    "minutesFlat": "minutes flat",
+    "fastestLine": "{{date}}. {{name}} never stood a chance.",
+    "longest": "Your longest battle",
+    "seconds_one": "{{count}} second",
+    "seconds_other": "{{count}} seconds",
+    "minutes_one": "{{count}} minute",
+    "minutes_other": "{{count}} minutes",
+    "longestLine": "{{date}}. {{name}} put up a fight."
+  },
+  "average": {
+    "tag": "Your average",
+    "lead": "You crack the daily in",
+    "unit": "guesses on average",
+    "body_one": "Out of 8, across the {{count}} day you solved.",
+    "body_other": "Out of 8, across the {{count}} days you solved."
+  },
+  "thanks": {
+    "tag": "That's a wrap",
+    "thanksFor": "Thanks for",
+    "playing": "playing",
+    "seeYou": "See you in {{nextYear}}",
+    "go": "Tap for your card →"
+  },
+  "firstGuess": {
+    "tag": "Fresh face",
+    "line": "Your very first guess, on {{date}}.",
+    "welcome": "Welcome to Pokenerdle",
+    "days_one": "You played on {{count}} day, Jan to Nov.",
+    "days_other": "You played on {{count}} days, Jan to Nov."
+  },
+  "card": {
+    "headline": "My {{year}} in Pokenerdle",
+    "signatureOpener": "Signature opener",
+    "firstGuess": "First guess",
+    "new": "NEW",
+    "days_one": "day",
+    "days_other": "days",
+    "rookieStrip": "My very first guess",
+    "streak": "Longest streak",
+    "type": "Top type",
+    "average": "Average",
+    "unique": "Pokémon named",
+    "solved": "Days solved",
+    "valueDays_one": "{{count}} day",
+    "valueDays_other": "{{count}} days",
+    "valueGuesses": "{{value}} guesses",
+    "joined": "Joined",
+    "status": "Status",
+    "rookie": "Rookie",
+    "rookieCard": "Rookie card",
+    "avg": "avg",
+    "save": "Save image",
+    "share": "Share",
+    "finish": "Card finish",
+    "finishes": {
+      "standard": "Standard",
+      "foil": "Foil",
+      "gold": "Gold",
+      "rainbow": "Rainbow"
+    },
+    "preparing": "Preparing…",
+    "imageFailed": "Could not make your image.",
+    "retry": "Try again",
+    "shareFailed": "Sharing did not open. Try Save image.",
+    "playDaily": "Play today's daily →"
+  }
+}
