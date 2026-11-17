@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "你的 2026 Pokenerdle 年度回顧 – PokéNerdle"
+    "title": "你的 {{year}} Pokenerdle 年度回顧 – PokéNerdle"
   },
   "tag": "Pokenerdle Wrapped",
   "loading": {
@@ -17,11 +17,11 @@
   "before": {
     "title": "即將登場",
     "when": "12 月 1 日",
-    "sticker": "你的 2026 Pokenerdle",
+    "sticker": "你的 {{year}} Pokenerdle",
     "body": "屆時再來看看你的每日挑戰戰績吧。"
   },
   "closed": {
-    "title": "2026 年度回顧",
+    "title": "{{year}} 年度回顧",
     "sticker": "已經結束",
     "body": "感謝你的參與。今天的每日挑戰正等著你。",
     "cta": "去玩今天的挑戰"
@@ -79,7 +79,7 @@
     "tag": "年度回顧完畢",
     "thanksFor": "謝謝你",
     "playing": "一起玩",
-    "seeYou": "2027 見",
+    "seeYou": "{{nextYear}} 見",
     "go": "點按查看你的卡片 →"
   },
   "firstGuess": {
@@ -89,7 +89,7 @@
     "days_other": "你在 1 月至 11 月間玩了 {{count}} 天。"
   },
   "card": {
-    "headline": "我的 2026 Pokenerdle",
+    "headline": "我的 {{year}} Pokenerdle",
     "signatureOpener": "招牌開局",
     "firstGuess": "首猜",
     "new": "新手",

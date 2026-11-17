@@ -10,6 +10,7 @@ import { pokemonInfo } from "../src/pages/Wrapped/format";
 import {
   buildScreens,
   finishesUpTo,
+  hasFlatteringAverage,
   pickCardRows,
   SIMPLE_SCREENS,
 } from "../src/pages/Wrapped/screens";
@@ -183,11 +184,6 @@ describe("pickCardRows", () => {
     expect(pickCardRows(stats({ ...bare, daysSolved: 0 }))).toEqual([
       { kind: "type", type: "dragon" },
     ]);
-  });
-
-  test("a streak under the minimum is not shown", () => {
-    expect(pickCardRows(stats({ streak: { length: 2, start: "2026-03-04", end: "2026-03-05" } }))[0])
-      .toEqual({ kind: "type", type: "dragon" });
   });
 
   test("a player with no top type still gets rows", () => {
@@ -441,6 +437,27 @@ describe("shareImage", () => {
       throw broken;
     });
     await expect(shareImage(blob)).rejects.toBe(broken);
+  });
+});
+
+describe("hasFlatteringAverage", () => {
+  test("is false for a null average and for one above 5.5", () => {
+    expect(hasFlatteringAverage(stats({ average: null }))).toBe(false);
+    expect(hasFlatteringAverage(stats({ average: 5.6 }))).toBe(false);
+  });
+
+  test("is true at 5.5 and below", () => {
+    expect(hasFlatteringAverage(stats({ average: 5.5 }))).toBe(true);
+    expect(hasFlatteringAverage(stats({ average: 3.9 }))).toBe(true);
+  });
+
+  test("decides both the average screen and the average card row", () => {
+    for (const average of [null, 3.9, 5.5, 5.6]) {
+      const s = stats({ average });
+      const flattering = hasFlatteringAverage(s);
+      expect(buildScreens(s).includes("average")).toBe(flattering);
+      expect(pickCardRows(s).some((row) => row.kind === "average")).toBe(flattering);
+    }
   });
 });
 

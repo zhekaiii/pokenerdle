@@ -1,7 +1,7 @@
 import {
   WRAPPED_WINDOW_DAYS,
+  WRAPPED_WINDOW_END,
   WRAPPED_WINDOW_START,
-  WRAPPED_YEAR,
   type WrappedLang,
   type WrappedResponse,
 } from "@pokenerdle/shared/wrapped";
@@ -73,10 +73,17 @@ export const toLongestBattle = (
     : { unit: "minutes", count: Math.floor(seconds / 60) };
 };
 
-// The year strip covers January to November, one position per day of the window.
+// The year strip covers the months from the window's first month to its last, one position
+// per day of the window. The window sits within one year.
+const WINDOW_START = asUtc(WRAPPED_WINDOW_START);
+const WINDOW_FIRST_MONTH = WINDOW_START.getUTCMonth();
+const WINDOW_MONTHS = asUtc(WRAPPED_WINDOW_END).getUTCMonth() - WINDOW_FIRST_MONTH + 1;
 export const STRIP_MONTH_DAYS = Array.from(
-  { length: 11 },
-  (_, month) => new Date(Date.UTC(WRAPPED_YEAR, month + 1, 0)).getUTCDate(),
+  { length: WINDOW_MONTHS },
+  (_, month) =>
+    new Date(
+      Date.UTC(WINDOW_START.getUTCFullYear(), WINDOW_FIRST_MONTH + month + 1, 0),
+    ).getUTCDate(),
 );
 
 // Where each month ends along the strip, as a fraction of it. The last month ends at the
@@ -94,7 +101,7 @@ export interface StreakPlacement {
   start: number; // where the block starts, as a fraction of the strip
   length: number; // how wide it is, as a fraction of the strip
   centre: number; // the middle of the block, where the flag points
-  firstMonth: number; // 0-based, January is 0
+  firstMonth: number; // 0-based, the window's first month is 0
   lastMonth: number;
 }
 
@@ -109,7 +116,7 @@ export const placeStreak = (streak: {
     start: start / WRAPPED_WINDOW_DAYS,
     length,
     centre: start / WRAPPED_WINDOW_DAYS + length / 2,
-    firstMonth: asUtc(streak.start).getUTCMonth(),
-    lastMonth: asUtc(streak.end).getUTCMonth(),
+    firstMonth: asUtc(streak.start).getUTCMonth() - WINDOW_FIRST_MONTH,
+    lastMonth: asUtc(streak.end).getUTCMonth() - WINDOW_FIRST_MONTH,
   };
 };

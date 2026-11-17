@@ -1,3 +1,4 @@
+import { WRAPPED_YEAR } from "@pokenerdle/shared/wrapped";
 import clsx from "clsx";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -27,7 +28,7 @@ const Thanks: React.FC<ScreenProps> = () => {
         className={clsx(classes.Sticker, classes.StickerSmall, classes.Pop)}
         style={delay(0.9)}
       >
-        {t("thanks.seeYou")}
+        {t("thanks.seeYou", { nextYear: WRAPPED_YEAR + 1 })}
       </div>
       <div className={classes.Grow} />
       <div className={classes.Grow} />

@@ -1,5 +1,3 @@
-import { TZDate } from "@date-fns/tz";
-import { SINGAPORE_TIMEZONE } from "@pokenerdle/shared/date";
 import {
   getWrappedFinish,
   roundAverage,
@@ -11,15 +9,8 @@ import {
   type WrappedSolve,
   type WrappedStats,
 } from "@pokenerdle/shared/wrapped";
-import { addDays, format } from "date-fns";
-
-export interface WrappedGuessRow {
-  dailyChallengeId: string; // yyyy-MM-dd
-  pokemonId: number;
-  guessNumber: number;
-  isCorrect: boolean;
-  createdAt: Date; // UTC instant
-}
+import type { WrappedGuessRow } from "../repositories/daily.repository.js";
+import { addDaysToIsoDate, singaporeDate } from "../utils/date.js";
 
 export interface WrappedComputed {
   daysPlayed: number;
@@ -37,9 +28,6 @@ interface SolvedDay {
   live: LiveDay;
   correct: WrappedGuessRow; // the lowest-numbered correct guess of the day
 }
-
-export const singaporeDate = (instant: Date): string =>
-  format(new TZDate(instant, SINGAPORE_TIMEZONE), "yyyy-MM-dd");
 
 // A day is live when its first guess was made on the challenge date in Singapore.
 // Later guesses are counted in full even if they cross midnight.
@@ -60,16 +48,12 @@ const findLiveDays = (rows: WrappedGuessRow[], windowEnd: string): LiveDay[] => 
   return live.sort((a, b) => a.day.localeCompare(b.day));
 };
 
-// Noon UTC keeps the calendar date stable whatever the server's time zone.
-const nextDay = (day: string): string =>
-  addDays(new Date(`${day}T12:00:00Z`), 1).toISOString().slice(0, 10);
-
 // Longest run of consecutive solved dates. Equal runs keep the earliest, so only a strictly longer run replaces it.
 const longestStreak = (solvedDays: string[]): WrappedStats["streak"] => {
   let best: NonNullable<WrappedStats["streak"]> | null = null;
   let run: NonNullable<WrappedStats["streak"]> | null = null;
   for (const day of solvedDays) {
-    run = run && nextDay(run.end) === day
+    run = run && addDaysToIsoDate(run.end, 1) === day
       ? { length: run.length + 1, start: run.start, end: day }
       : { length: 1, start: day, end: day };
     if (!best || run.length > best.length) best = run;
@@ -98,6 +82,7 @@ const findOpener = (live: LiveDay[]): WrappedStats["opener"] => {
       best = { pokemonId, days, lastDay };
     }
   }
+  // Safe: computeWrappedStats only calls this for eligible players, who have at least WRAPPED_MIN_DAYS live days.
   return { pokemonId: best!.pokemonId, days: best!.days };
 };
 

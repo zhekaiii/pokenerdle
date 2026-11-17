@@ -1,10 +1,11 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, mock, setSystemTime, test } from "bun:test";
-import type { WrappedGuessRow } from "../src/services/wrapped.stats.js";
+import type { WrappedGuessRow } from "../src/repositories/daily.repository.js";
 
 const getUserGuessesInWindow = mock(async (): Promise<WrappedGuessRow[]> => []);
 const getUserFirstGuess = mock(async (): Promise<{ pokemonId: number; createdAt: Date } | null> => null);
 mock.module("../src/repositories/daily.repository.js", () => ({ getUserGuessesInWindow, getUserFirstGuess }));
 
+const getPokemonTypes = mock(async (ids: number[]) => new Map(ids.map((id) => [id, ["normal"]])));
 const getWrappedPokemonInfo = mock(async (ids: number[]) =>
   new Map(
     ids.map((id) => [
@@ -13,7 +14,7 @@ const getWrappedPokemonInfo = mock(async (ids: number[]) =>
     ]),
   ),
 );
-mock.module("../src/repositories/pokemon.repository.js", () => ({ getWrappedPokemonInfo }));
+mock.module("../src/repositories/pokemon.repository.js", () => ({ getPokemonTypes, getWrappedPokemonInfo }));
 
 const { getWrappedService, resolveWrappedWindow } = await import("../src/services/wrapped.service.js");
 
@@ -85,7 +86,7 @@ describe("getWrappedService", () => {
     expect(result.pokemon[445].names.en).toBe("en-445");
   });
 
-  test("a first-guess Pokemon already loaded for the window is not fetched twice", async () => {
+  test("a first-guess Pokemon that is also in the window is loaded once", async () => {
     getUserGuessesInWindow.mockResolvedValue(solvedDays(4));
     getUserFirstGuess.mockResolvedValue({ pokemonId: 1, createdAt: new Date("2026-03-01T04:00:00Z") });
 
@@ -93,7 +94,8 @@ describe("getWrappedService", () => {
 
     expect(result.simple).toEqual({ pokemonId: 1, date: "2026-03-01" });
     expect(Object.keys(result.pokemon)).toEqual(["1"]);
-    expect(getWrappedPokemonInfo.mock.calls.flatMap(([ids]) => ids).filter((id) => id === 1)).toHaveLength(1);
+    expect(getWrappedPokemonInfo).toHaveBeenCalledTimes(1);
+    expect(getWrappedPokemonInfo).toHaveBeenCalledWith([1]);
   });
 
   test("an eligible player has simple null", async () => {

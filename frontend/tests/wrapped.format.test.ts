@@ -134,7 +134,7 @@ describe("the year strip", () => {
     expect(STRIP_MONTH_EDGES[0]).toBeCloseTo(31 / 334);
   });
 
-  test("places a streak by its first day and length, as the prototype does", () => {
+  test("places a streak by its first day and length", () => {
     const place = placeStreak({
       length: 23,
       start: "2026-03-04",

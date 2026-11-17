@@ -8,23 +8,30 @@ import "@fontsource/rubik/900.css";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 import clsx from "clsx";
+import { WRAPPED_YEAR } from "@pokenerdle/shared/wrapped";
 import { useAtomValue } from "jotai";
 import posthog from "posthog-js";
 import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Plate } from "./Background";
 import { getDemoResponse } from "./demoData";
-import { buildScreens, SIMPLE_SCREENS, type ScreenId } from "./screens";
+import {
+  buildScreens,
+  SIMPLE_SCREENS,
+  type ScreenId,
+  type Tone,
+} from "./screens";
 import Story from "./Story";
 import { delay } from "./style";
 import classes from "./Wrapped.module.scss";
 
 export const WRAPPED_QUERY_KEY = "wrapped";
 
-type Tone = "Red" | "Blue" | "Yellow" | "Purple" | "Green";
+// The poster tones, a subset of the story's tones.
+type PosterTone = Exclude<Tone, "Orange" | "Pink">;
 
 // A poster screen uses the plate of the story screen with the same colour.
-const TONE_PLATE: Record<Tone, ScreenId> = {
+const TONE_PLATE: Record<PosterTone, ScreenId> = {
   Red: "opener",
   Blue: "showingUp",
   Yellow: "signature",
@@ -48,7 +55,7 @@ const useChineseFont = (language: string) => {
 };
 
 interface PosterProps {
-  tone: Tone;
+  tone: PosterTone;
   children: React.ReactNode;
   busy?: boolean;
 }
@@ -117,7 +124,7 @@ const BeforeScreen: React.FC = () => {
         {t("before.when")}
       </div>
       <div className={clsx(classes.Sticker, classes.Pop)} style={delay(0.7)}>
-        {t("before.sticker")}
+        {t("before.sticker", { year: WRAPPED_YEAR })}
       </div>
       <div className={clsx(classes.Body, classes.Up)} style={delay(0.95)}>
         {t("before.body")}
@@ -131,7 +138,7 @@ const ClosedScreen: React.FC = () => {
   return (
     <Poster tone="Purple">
       <div className={clsx(classes.Title, classes.Slam)}>
-        {t("closed.title")}
+        {t("closed.title", { year: WRAPPED_YEAR })}
       </div>
       <div className={clsx(classes.Sticker, classes.Pop)} style={delay(0.5)}>
         {t("closed.sticker")}
@@ -222,7 +229,7 @@ const WrappedPage: React.FC = () => {
   } else if (data.eligible || data.simple) {
     // Story keeps an index into its screen list, so a different list needs a fresh Story.
     const screens = data.stats ? buildScreens(data.stats) : SIMPLE_SCREENS;
-    screen = <Story key={screens.join()} data={data} />;
+    screen = <Story key={screens.join()} data={data} screens={screens} />;
   } else {
     screen = <EmptyScreen />;
   }

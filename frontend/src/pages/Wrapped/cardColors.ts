@@ -1,8 +1,8 @@
 import { cssVars } from "./style";
 
 // The colours a type gives a standard or foil card: the frame, the background of the art
-// window, its rim, the info strip and the paper behind the text. Dragon and fire come from
-// the prototype; the rest follow the same recipe (a dark middle between two lights for the
+// window, its rim, the info strip and the paper behind the text. Dragon and fire were tuned by hand;
+// the rest follow the same recipe (a dark middle between two lights for the
 // frame, a white-centred radial for the art window). Gold and rainbow ignore these.
 export interface TypeColors {
   frame: string;

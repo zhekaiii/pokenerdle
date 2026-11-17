@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -14,7 +13,7 @@ import Background, {
   prefersReducedMotion,
   type BackgroundHandle,
 } from "./Background";
-import { buildScreens, SIMPLE_SCREENS, type ScreenId } from "./screens";
+import { TONE, type ScreenId } from "./screens";
 import Average from "./screens/Average";
 import CardScreen from "./screens/CardScreen";
 import Clock from "./screens/Clock";
@@ -37,22 +36,6 @@ export interface ScreenProps {
 // A tap that starts on one of these never turns the page, so a screen's own controls
 // (and its card) can take taps. Mark a non-interactive element with data-no-nav.
 const NO_NAV_SELECTOR = "button, a, input, select, textarea, [data-no-nav]";
-
-type Tone = "Red" | "Blue" | "Orange" | "Yellow" | "Purple" | "Green" | "Pink";
-
-// Text colours follow the plate colour behind each screen.
-const TONE: Record<ScreenId, Tone> = {
-  opener: "Red",
-  showingUp: "Blue",
-  firstGuess: "Blue",
-  streak: "Orange",
-  signature: "Yellow",
-  types: "Purple",
-  clock: "Green",
-  average: "Pink",
-  thanks: "Red",
-  card: "Yellow",
-};
 
 // How a screen arrives: sliding in from the side the story is travelling towards, or
 // fading in when motion is reduced.
@@ -117,11 +100,12 @@ const ScreenView: React.FC<ScreenViewProps> = ({ id, data, enter }) => {
   );
 };
 
-const Story: React.FC<{ data: WrappedResponse }> = ({ data }) => {
-  const screens = useMemo(
-    () => (data.stats ? buildScreens(data.stats) : SIMPLE_SCREENS),
-    [data.stats],
-  );
+interface StoryProps {
+  data: WrappedResponse;
+  screens: ScreenId[];
+}
+
+const Story: React.FC<StoryProps> = ({ data, screens }) => {
   const [index, setIndex] = useState(0); // drives the progress segments
   const [content, setContent] = useState<Content>({
     main: 0,

@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { computeWrappedStats, type WrappedGuessRow } from "../src/services/wrapped.stats.js";
+import type { WrappedGuessRow } from "../src/repositories/daily.repository.js";
+import { computeWrappedStats } from "../src/services/wrapped.stats.js";
 
 // A guess on `day`, made at `time` Singapore time on that same day unless `on` names another date.
 const g = (day: string, guessNumber: number, o: { p?: number; ok?: boolean; time?: string; on?: string } = {}): WrappedGuessRow => ({

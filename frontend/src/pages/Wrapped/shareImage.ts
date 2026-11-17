@@ -1,9 +1,10 @@
+import { WRAPPED_YEAR } from "@pokenerdle/shared/wrapped";
 import { toBlob } from "html-to-image";
 
-// The share image is always this size, whatever the device (spec section 6).
+// The share image is always this size, whatever the device.
 export const SHARE_IMAGE_WIDTH = 1080;
 export const SHARE_IMAGE_HEIGHT = 1920;
-export const SHARE_IMAGE_NAME = "pokenerdle-wrapped-2026.png";
+export const SHARE_IMAGE_NAME = `pokenerdle-wrapped-${WRAPPED_YEAR}.png`;
 
 const toFile = (blob: Blob) =>
   new File([blob], SHARE_IMAGE_NAME, { type: "image/png" });

@@ -1,4 +1,4 @@
-// How the card adapts to its artwork (spec section 5, "Card finishes"). Artwork varies in
+// How the card adapts to its artwork. Artwork varies in
 // how much of its image the drawing fills and in how light it is, so gold and rainbow
 // scale it to a common size and the rainbow shading is corrected for lightness.
 

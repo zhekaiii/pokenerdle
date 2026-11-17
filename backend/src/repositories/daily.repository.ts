@@ -3,7 +3,14 @@ import seedrandom from "seedrandom";
 import { DAILY_CHALLENGE_GUESS_LIMIT } from "../constants/game.js";
 import { Prisma } from "../generated/prisma-pg/client.js";
 import { pgClient } from "../lib/pg.js";
-import type { WrappedGuessRow } from "../services/wrapped.stats.js";
+
+export interface WrappedGuessRow {
+  dailyChallengeId: string; // yyyy-MM-dd
+  pokemonId: number;
+  guessNumber: number;
+  isCorrect: boolean;
+  createdAt: Date; // UTC instant
+}
 
 export const getDailyPokemonFromDb = async (date: string) => {
   return pgClient.dailyChallenge.findUnique({

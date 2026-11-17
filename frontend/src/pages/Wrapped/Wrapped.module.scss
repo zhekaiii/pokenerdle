@@ -1,4 +1,3 @@
-// Ported from docs/superpowers/specs/2026-11-13-wrapped-prototype.html.
 // All sizes are in cqw (container query width) of .Stage, so the poster scales as one piece.
 
 @use "sass:math";
@@ -974,7 +973,7 @@ $p8-edge: 0.07; // cqw, half the softness of a dot's rim, about one device pixel
 }
 
 // The share image: the card screen without its buttons, laid out at 1080 × 1920 CSS
-// pixels in a host that sits off-screen (spec section 6). The image is drawn from the
+// pixels in a host that sits off-screen. The image is drawn from the
 // inner element, because html-to-image copies the node's own position, which would put
 // the picture off-screen too. Headline, card and address stay clear of the top and
 // bottom 13% of the picture, where story apps put their own interface.

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
-import type { WrappedFinish } from "@pokenerdle/shared/wrapped";
+import { WRAPPED_YEAR, type WrappedFinish } from "@pokenerdle/shared/wrapped";
 import posthog from "posthog-js";
 import React, {
   useEffect,
@@ -30,6 +30,9 @@ type ShareImageState =
   | { status: "rendering" }
   | { status: "ready"; blob: Blob }
   | { status: "failed" };
+
+// The address printed under the card.
+const SITE_ADDRESS = "POKENERDLE.APP";
 
 // Drawing the image takes the main thread for a moment. Start once the screen has slid
 // in, so the change of screen stays smooth.
@@ -154,13 +157,13 @@ const CardScreen: React.FC<ScreenProps> = ({ data }) => {
   return (
     <>
       <div className={clsx(classes.Tag, cardClasses.Headline, classes.Pop)}>
-        {t("card.headline")}
+        {t("card.headline", { year: WRAPPED_YEAR })}
       </div>
       <div className={cardClasses.Drop}>
         <Card data={data} interactive finish={finish} />
       </div>
       <div className={clsx(cardClasses.Url, classes.Up)} style={delay(1.2)}>
-        POKENERDLE.APP
+        {SITE_ADDRESS}
       </div>
       <div className={classes.Grow} />
       <div
@@ -245,12 +248,12 @@ const CardScreen: React.FC<ScreenProps> = ({ data }) => {
             </div>
             <section className={clsx(classes.Screen, classes.ShareScreen)}>
               <div className={clsx(classes.Tag, cardClasses.Headline)}>
-                {t("card.headline")}
+                {t("card.headline", { year: WRAPPED_YEAR })}
               </div>
               <div className={cardClasses.Drop}>
                 <Card data={data} interactive={false} finish={name} />
               </div>
-              <div className={cardClasses.Url}>POKENERDLE.APP</div>
+              <div className={cardClasses.Url}>{SITE_ADDRESS}</div>
             </section>
           </div>
         ))}

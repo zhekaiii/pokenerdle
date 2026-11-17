@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { getWrappedFinish, getWrappedPhase, roundAverage } from "../src/wrapped";
+import { getWrappedFinish, getWrappedPhase, roundAverage, WRAPPED_WINDOW_DAYS } from "../src/wrapped";
 
 test("phase flips at the launch and close dates", () => {
   expect(getWrappedPhase("2026-11-30")).toBe("before");
@@ -25,4 +25,7 @@ test("every finish above standard needs 10 solved days", () => {
   expect(getWrappedFinish(3.2, 9)).toBe("standard");
   expect(getWrappedFinish(5.0, 9)).toBe("standard");
   expect(getWrappedFinish(3.2, 10)).toBe("rainbow");
+});
+test("window length is the inclusive day count from start to end", () => {
+  expect(WRAPPED_WINDOW_DAYS).toBe(334);
 });

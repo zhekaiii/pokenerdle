@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Your 2026 in Pokenerdle – PokéNerdle"
+    "title": "Your {{year}} in Pokenerdle – PokéNerdle"
   },
   "tag": "Pokenerdle Wrapped",
   "loading": {
@@ -17,11 +17,11 @@
   "before": {
     "title": "Coming",
     "when": "1 December",
-    "sticker": "Your 2026 in Pokenerdle",
+    "sticker": "Your {{year}} in Pokenerdle",
     "body": "Come back then to see how your daily challenges went."
   },
   "closed": {
-    "title": "Wrapped 2026",
+    "title": "Wrapped {{year}}",
     "sticker": "Has ended",
     "body": "Thanks for playing. Today's daily is waiting.",
     "cta": "Play today's daily"
@@ -83,7 +83,7 @@
     "tag": "That's a wrap",
     "thanksFor": "Thanks for",
     "playing": "playing",
-    "seeYou": "See you in 2027",
+    "seeYou": "See you in {{nextYear}}",
     "go": "Tap for your card →"
   },
   "firstGuess": {
@@ -94,7 +94,7 @@
     "days_other": "You played on {{count}} days, Jan to Nov."
   },
   "card": {
-    "headline": "My 2026 in Pokenerdle",
+    "headline": "My {{year}} in Pokenerdle",
     "signatureOpener": "Signature opener",
     "firstGuess": "First guess",
     "new": "NEW",

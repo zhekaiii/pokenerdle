@@ -140,6 +140,35 @@ interface CardProps {
   finish?: WrappedFinish;
 }
 
+// Runs `run` on the card's artwork once it has loaded: now if it already has, and again on
+// each later load. `isCurrent` turns false when deps change or the card unmounts, so a
+// slow result can be dropped.
+const useOnArtworkLoaded = (
+  artRef: React.RefObject<HTMLDivElement | null>,
+  enabled: boolean,
+  run: (img: HTMLImageElement, isCurrent: () => boolean) => Promise<void>,
+  deps: unknown[],
+) => {
+  useEffect(() => {
+    const img = artRef.current?.querySelector("img");
+    if (!img || !enabled) return;
+    let current = true;
+    const onLoad = () => {
+      // A failed artwork swaps itself for the placeholder, which is a load of its own.
+      if (!img.complete || img.naturalWidth === 0) return;
+      void run(img, () => current);
+    };
+    onLoad(); // already loaded: cached, or loaded before hydration
+    img.addEventListener("load", onLoad);
+    return () => {
+      current = false;
+      img.removeEventListener("load", onLoad);
+    };
+    // `run` is rebuilt every render, so the caller lists what it depends on instead.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [artRef, enabled, ...deps]);
+};
+
 // The collectible card. Renders from data.stats, or the rookie card from data.simple when
 // there are no stats. Sized by its container: it fills the width it is given.
 const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
@@ -160,44 +189,37 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
   // Until it loads, or if its pixels cannot be read, the card keeps the defaults.
   // `fitted` says the variables are on: the share image waits for it.
   const [fitted, setFitted] = useState(false);
-  useEffect(() => {
-    const img = artRef.current?.querySelector("img");
-    const card = ref.current;
-    if (!img || !card || !isRare(finish)) return;
-    let current = true;
-    const adapt = async () => {
-      // A failed artwork swaps itself for the placeholder, which is a load of its own.
-      if (!img.complete || img.naturalWidth === 0) return;
+  useOnArtworkLoaded(
+    artRef,
+    isRare(finish),
+    async (img, isCurrent) => {
+      const card = ref.current;
+      if (!card) return;
       const fit = await readArtworkFit(img.currentSrc);
-      if (!current) return;
+      if (!isCurrent()) return;
       card.style.setProperty("--art-scale", String(fit.scale));
       card.style.setProperty("--art-brightness", String(fit.brightness));
       setFitted(true);
-    };
-    void adapt(); // already loaded: cached, or loaded before hydration
-    img.addEventListener("load", adapt);
-    return () => {
-      current = false;
-      img.removeEventListener("load", adapt);
-    };
-  }, [face.artwork, finish, ref]);
+    },
+    [face.artwork, finish, ref],
+  );
 
   // The still rainbow card has no CSS mask or blend (html-to-image cannot draw them), so
   // its Pokémon is composed on a canvas once the artwork has loaded, and shown as a plain
   // picture. undefined until then, a data URL once it is made, null if it cannot be (the
   // card then shows the plain artwork).
   const bakesArt = !interactive && finish === "rainbow";
-  const [madeArt, setBakedArt] = useState<string | null | undefined>(undefined);
+  const [bakedArtCache, setBakedArtCache] = useState<string | null | undefined>(
+    undefined,
+  );
   // Kept when the player switches away from rainbow and back, but only shown on rainbow.
-  const bakedArt = bakesArt ? madeArt : undefined;
-  useEffect(() => {
-    const img = artRef.current?.querySelector("img");
-    const card = ref.current;
-    if (!img || !card || !bakesArt) return;
-    let current = true;
-    const bake = async () => {
-      // A failed artwork swaps itself for the placeholder, which is a load of its own.
-      if (!img.complete || img.naturalWidth === 0) return;
+  const bakedArt = bakesArt ? bakedArtCache : undefined;
+  useOnArtworkLoaded(
+    artRef,
+    bakesArt,
+    async (img, isCurrent) => {
+      const card = ref.current;
+      if (!card) return;
       const made = await composeRainbowArtwork(
         img.currentSrc,
         img.offsetWidth,
@@ -205,15 +227,10 @@ const CardView: React.FC<{ face: CardFace; interactive: boolean }> = ({
         card.clientWidth,
         (await readArtworkFit(img.currentSrc)).brightness,
       );
-      if (current) setBakedArt(made);
-    };
-    void bake();
-    img.addEventListener("load", bake);
-    return () => {
-      current = false;
-      img.removeEventListener("load", bake);
-    };
-  }, [face.artwork, bakesArt, ref]);
+      if (isCurrent()) setBakedArtCache(made);
+    },
+    [face.artwork, ref],
+  );
 
   return (
     <div

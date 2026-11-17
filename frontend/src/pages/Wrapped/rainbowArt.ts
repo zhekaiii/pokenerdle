@@ -5,7 +5,7 @@
 // layer and a blend mode do not survive html-to-image, which draws the card through an SVG
 // picture: Chrome drops the mask and shows a rectangle of rainbow, Safari and Firefox drop
 // the colour altogether. So the still card carries one plain <img> instead, made here from
-// the same settings (spec section 5).
+// the same settings.
 
 import { loadArtworkBitmap, RAINBOW_SHADING_BRIGHTNESS } from "./cardArt";
 
