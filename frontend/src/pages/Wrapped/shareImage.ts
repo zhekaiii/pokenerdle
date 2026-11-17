@@ -157,6 +157,12 @@ const cardArtReady = async (node: HTMLElement) => {
   }
 };
 
+// Safari, and every iOS browser, which all run on WebKit. Chromium also says AppleWebKit in
+// its user agent, so it is ruled out by its own token.
+const isWebKit = () =>
+  /AppleWebKit/.test(navigator.userAgent) &&
+  !/Chrome\/|Chromium\//.test(navigator.userAgent);
+
 // Draws `node`, an element laid out at 1080 × 1920 CSS pixels, to a PNG of exactly that
 // size. The web fonts and the images in the node are embedded in the picture, so callers
 // need not do anything about them beyond rendering them.
@@ -181,8 +187,8 @@ export const renderShareImage = async (node: HTMLElement): Promise<Blob> => {
       getComputedStyle(document.documentElement),
     ).filter((name) => !name.startsWith("corner-")),
   };
-  // Safari leaves images (sometimes fonts) out of the first picture; a second draw has them.
-  await toBlob(node, options);
+  // WebKit leaves images (sometimes fonts) out of the first picture; a second draw has them.
+  if (isWebKit()) await toBlob(node, options);
   const blob = await toBlob(node, options);
   if (!blob) throw new Error("The share image could not be drawn");
   return blob;

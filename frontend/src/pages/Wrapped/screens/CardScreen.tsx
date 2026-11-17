@@ -4,7 +4,6 @@ import { WRAPPED_YEAR, type WrappedFinish } from "@pokenerdle/shared/wrapped";
 import posthog from "posthog-js";
 import React, {
   useEffect,
-  useMemo,
   useRef,
   useState,
   useSyncExternalStore,
@@ -38,71 +37,55 @@ const SITE_ADDRESS = "POKENERDLE.APP";
 // in, so the change of screen stays smooth.
 const RENDER_DELAY_MS = TRANSITION.busyMs;
 
-// Up to four images of about a megabyte each, one per finish the player may pick.
+// The images drawn so far, one per finish the player has shown, about a megabyte each.
 type ShareImages = Partial<Record<WrappedFinish, ShareImageState>>;
 
-// Draws a share image for every finish in `finishes`, from its node in `nodes`, and keeps
-// them, so a tap on Share can open the share sheet at once (browsers refuse a share that
-// comes too long after the tap) and switching finish needs no new drawing. They are drawn
-// one at a time once the screen has settled, the one on show first: a finish the player
-// picks before its image exists is drawn next.
-const useShareImages = (
-  nodes: React.RefObject<Partial<Record<WrappedFinish, HTMLElement>>>,
-  finishes: WrappedFinish[],
+// Draws the share image for the finish on show, from `node`, and keeps it, so a tap on
+// Share can open the share sheet at once (browsers refuse a share that comes too long
+// after the tap). Only the finish on show is drawn: picking one not drawn yet draws it
+// then, and picking one already drawn reuses its image. The first drawing waits for the
+// screen to settle.
+const useShareImage = (
+  node: React.RefObject<HTMLElement | null>,
   finish: WrappedFinish,
 ) => {
-  const [attempt, setAttempt] = useState(0);
   const [images, setImages] = useState<ShareImages>({});
-  // Read by the drawing loop between images, so it follows the player's picks.
-  const wanted = useRef(finish);
-  const drawn = useRef<ShareImages>({});
-  useEffect(() => {
-    wanted.current = finish;
-  }, [finish]);
-  useEffect(() => {
-    drawn.current = images;
-  }, [images]);
+  const hasStarted = useRef(false);
+  const known = images[finish];
 
   useEffect(() => {
+    if (known) return; // drawn, or failed and waiting for a retry
     let current = true;
-    // Finishes this round has drawn or tried. A retry redraws only the failed ones.
-    const done = new Set(finishes.filter((f) => drawn.current[f]?.status === "ready"));
-    const next = () =>
-      done.has(wanted.current) ? finishes.find((f) => !done.has(f)) : wanted.current;
     const draw = async () => {
-      for (let name = next(); name && current; name = next()) {
-        done.add(name);
-        const node = nodes.current[name];
-        if (!node) continue;
-        let result: ShareImageState;
-        try {
-          result = { status: "ready", blob: await renderShareImage(node) };
-        } catch (error) {
-          console.error("Wrapped share image failed", error);
-          result = { status: "failed" };
-        }
-        if (current) setImages((all) => ({ ...all, [name]: result }));
+      hasStarted.current = true;
+      const el = node.current;
+      if (!el) return;
+      let result: ShareImageState;
+      try {
+        result = { status: "ready", blob: await renderShareImage(el) };
+      } catch (error) {
+        console.error("Wrapped share image failed", error);
+        result = { status: "failed" };
       }
+      if (current) setImages((all) => ({ ...all, [finish]: result }));
     };
     const timer = window.setTimeout(
       () => void draw(),
-      attempt === 0 ? RENDER_DELAY_MS : 0,
+      hasStarted.current ? 0 : RENDER_DELAY_MS,
     );
     return () => {
       current = false;
       window.clearTimeout(timer);
     };
-  }, [nodes, finishes, attempt]);
+  }, [node, finish, known]);
 
-  const retry = () => {
-    setImages((all) =>
-      Object.fromEntries(
-        Object.entries(all).filter(([, image]) => image.status === "ready"),
-      ),
-    );
-    setAttempt((n) => n + 1);
-  };
-  const state: ShareImageState = images[finish] ?? { status: "rendering" };
+  const retry = () =>
+    setImages((all) => {
+      const rest = { ...all };
+      delete rest[finish];
+      return rest;
+    });
+  const state: ShareImageState = known ?? { status: "rendering" };
   return { state, retry };
 };
 
@@ -115,10 +98,10 @@ const CardScreen: React.FC<ScreenProps> = ({ data }) => {
   const { t } = useTranslation("wrapped");
   // The player may show any finish up to the one they earned, and starts on the best.
   const earned = data.stats?.finish ?? "standard";
-  const finishes = useMemo(() => finishesUpTo(earned), [earned]);
+  const finishes = finishesUpTo(earned);
   const [finish, setFinish] = useState<WrappedFinish>(earned);
-  const shareNodes = useRef<Partial<Record<WrappedFinish, HTMLElement>>>({});
-  const { state, retry } = useShareImages(shareNodes, finishes, finish);
+  const shareNode = useRef<HTMLDivElement>(null);
+  const { state, retry } = useShareImage(shareNode, finish);
   // False on the server and while hydrating, then what the browser says: the server
   // cannot know what the browser can share.
   const canShare = useSyncExternalStore(subscribeNever, canShareFiles, () => false);
@@ -230,33 +213,27 @@ const CardScreen: React.FC<ScreenProps> = ({ data }) => {
           {t("card.playDaily")}
         </Link>
       </div>
-      {/* The pictures people save and share: this screen again, at 1080 × 1920 and
-          without the buttons, once per finish, kept off-screen. Each is drawn from its
-          inner element. */}
+      {/* The picture people save and share: this screen again, at 1080 × 1920 and
+          without the buttons, in the finish on show, kept off-screen. It is drawn from
+          its inner element. */}
       <div className={classes.ShareHost} aria-hidden="true">
-        {finishes.map((name) => (
-          <div
-            key={name}
-            ref={(el) => {
-              if (el) shareNodes.current[name] = el;
-              else delete shareNodes.current[name];
-            }}
-            className={clsx(classes.ShareImage, classes.Still, classes.Yellow)}
-          >
-            <div className={classes.Bg}>
-              <Plate id="card" />
-            </div>
-            <section className={clsx(classes.Screen, classes.ShareScreen)}>
-              <div className={clsx(classes.Tag, cardClasses.Headline)}>
-                {t("card.headline", { year: WRAPPED_YEAR })}
-              </div>
-              <div className={cardClasses.Drop}>
-                <Card data={data} interactive={false} finish={name} />
-              </div>
-              <div className={cardClasses.Url}>{SITE_ADDRESS}</div>
-            </section>
+        <div
+          ref={shareNode}
+          className={clsx(classes.ShareImage, classes.Still, classes.Yellow)}
+        >
+          <div className={classes.Bg}>
+            <Plate id="card" />
           </div>
-        ))}
+          <section className={clsx(classes.Screen, classes.ShareScreen)}>
+            <div className={clsx(classes.Tag, cardClasses.Headline)}>
+              {t("card.headline", { year: WRAPPED_YEAR })}
+            </div>
+            <div className={cardClasses.Drop}>
+              <Card data={data} interactive={false} finish={finish} />
+            </div>
+            <div className={cardClasses.Url}>{SITE_ADDRESS}</div>
+          </section>
+        </div>
       </div>
     </>
   );
